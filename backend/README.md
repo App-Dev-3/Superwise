@@ -15,6 +15,7 @@ This is a basic setup with a simple 'Hello World' endpoint. The project structur
 - **nodemailer** for email notifications
 - **Jest** for testing
 - **Swagger/OpenAPI** for API documentation
+- **uuid** for ID generation
 
 ## Prerequisites
 

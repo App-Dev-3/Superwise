@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@vite-pwa/nuxt'
   ],
-  modules: ['@vite-pwa/nuxt'],
+  modules: ['@vite-pwa/nuxt', '@nuxtjs/i18n'],
 
   router: {
     base: '/'

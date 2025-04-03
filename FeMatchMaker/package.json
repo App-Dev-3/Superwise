@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "fe-match-maker",
   "private": true,
   "type": "module",
   "scripts": {

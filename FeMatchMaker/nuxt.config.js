@@ -11,6 +11,10 @@ export default defineNuxtConfig({
   ],
   modules: ['@vite-pwa/nuxt'],
 
+  router: {
+    base: '/'
+  },
+
 
   i18n: {
     detectBrowserLanguage: false,

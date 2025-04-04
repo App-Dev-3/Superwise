@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from "nuxt/config";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
@@ -9,30 +10,39 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@vite-pwa/nuxt'
   ],
+
   modules: ['@vite-pwa/nuxt', '@nuxtjs/i18n'],
 
   router: {
     base: '/'
   },
 
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  css: ["~/assets/css/app.css"],
 
   i18n: {
     detectBrowserLanguage: false,
     legacy: false,
     lazy: true,
     globalInjection: true,
+    strategy: "prefix_except_default",
     locales: [
       {
-        code: 'en-EN',
+        code: 'en',
         file: 'en.js',
       }, 
       {
-        code: 'de-DE',
+        code: 'de',
         file: 'de.js',
       }
     ],
-    defaultLocale: 'en-EN',
+    defaultLocale: 'en',
     langDir: 'locales',
+    bundle: {
+      optimizeTranslationDirective: false,
+    },  
   },
 
   pwa: {

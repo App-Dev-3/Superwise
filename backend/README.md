@@ -95,6 +95,44 @@ Once the application is running, you can access the Swagger documentation at:
 
 [http://localhost:3000/api]
 
+## Available Commands
+
+This project utilizes several commands for development, building, testing, and database management.
+
+### npm Scripts (from `package.json`)
+
+- `npm run build`: Compiles the TypeScript application into JavaScript using the NestJS CLI (`nest build`). The output is placed in the `dist` folder.
+- `npm run format`: Formats all `.ts` files in the `src` and `test` directories using Prettier.
+- `npm run start`: Starts the application using the NestJS CLI (`nest start`). This is typically used for quick starts but `start:dev` is recommended for development.
+- `npm run start:dev`: Starts the application in development mode using `nest start --watch`. This enables hot-reloading, automatically restarting the server when code changes are detected.
+- `npm run start:debug`: Starts the application in debug mode with file watching (`nest start --debug --watch`). Allows attaching a debugger.
+- `npm run start:prod`: Starts the compiled application directly using Node (`node dist/main`). This is intended for production environments after running `npm run build`.
+- `npm run lint`: Lints the codebase using ESLint (`eslint "{src,apps,libs,test}/**/*.ts" --fix`) and attempts to automatically fix linting errors.
+- `npm run test`: Runs unit tests using Jest.
+- `npm run test:watch`: Runs unit tests in watch mode, re-running tests when files change.
+- `npm run test:cov`: Runs unit tests and generates a code coverage report in the `coverage` directory.
+- `npm run test:debug`: Runs unit tests in debug mode, allowing you to attach a debugger.
+- `npm run test:e2e`: Runs end-to-end tests using Jest with a specific configuration (`./test/jest-e2e.json`).
+
+### NestJS CLI (`nest`)
+
+The NestJS CLI is used internally by many npm scripts but can also be used directly for tasks like generating code:
+
+- `npx nest build`: Compiles the application (same as `npm run build`).
+- `npx nest start`: Starts the application (same as `npm run start`).
+- `npx nest generate <schematic> <name> [options]` (alias: `npx nest g`): Generates NestJS building blocks.
+  - Examples:
+    - `npx nest g module users` (Creates a `users` module)
+    - `npx nest g controller users` (Creates a `users` controller)
+    - `npx nest g service users` (Creates a `users` service)
+
+### Prisma CLI (`prisma`)
+
+Prisma is used for database interactions:
+
+- `npx prisma migrate dev`: Creates and applies database migrations based on changes in your `prisma/schema.prisma` file. This command is crucial during development for keeping the database schema in sync with the Prisma schema definition. It will also generate the Prisma Client types.
+- `npx prisma studio`: Opens a GUI tool in your browser to view and manipulate data in your database.
+- `npx prisma generate`: Generates the Prisma Client based on your schema. This is often run automatically by other commands like `prisma migrate dev` or `npm install`.
 
 ## Current Project Structure
 

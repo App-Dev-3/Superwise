@@ -1,36 +1,36 @@
-# Nuxt Minimal Starter
+## Tech stack
+- **Nuxt** framwork for Vue   
+- **Vitest** for testing
+- **I8ln** for localisation 
+- **Pinia** for state managment
+- **DaisyUI** for css designs
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Installation and running
 
-## Setup
-
-Make sure to install dependencies:
+1. Clone the repository
+2. Change into the frontend directory
 
 ```bash
-# npm
+cd FeMatchMaker
+```
+
+3. Install dependencies: 
+```bash
 npm install
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
+```
+4. Run the application
 ```bash
-# npm
 npm run dev
+```
 
-
-## Production
-
-Build the application for production:
-
+## Testing with PWA
+The PWA module is not fully compataibile with hot module replacement due to caching and other "middle man" functionalities. As a result whenever testing with PWA run the following command to boot the applicaiton
 ```bash
-# npm
-npm run build
+npm run generate-preview
+```
 
-Locally preview production build:
 
-```bash
-# npm
-npm run preview
+## Testing
+TBD.
 
 

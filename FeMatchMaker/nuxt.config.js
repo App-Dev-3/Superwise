@@ -11,7 +11,12 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt'
   ],
 
-  modules: ['@vite-pwa/nuxt', '@nuxtjs/i18n', '@pinia/nuxt'],
+  modules: [
+    '@vite-pwa/nuxt',
+    '@nuxtjs/i18n',
+    '@pinia/nuxt',
+    '@nuxt/test-utils/module'
+  ],
 
   router: {
     base: '/'

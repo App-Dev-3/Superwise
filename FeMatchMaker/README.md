@@ -31,6 +31,16 @@ npm run generate-preview
 
 
 ## Testing
-TBD.
+To Run all the test in the application, run the command
+```bash
+npm run test
+```
 
+To run tests on an individual file for development run the command
+```bash
+npm run test <file-name>
+```
+For running specific test (faster for development) install the official **Vitest** extention which would allow running specific test. A play button would appear next to each **Test** in the UI.
+
+>If a play button doesnt appear, open the vitest extention and click the "Refrest Test" button
 

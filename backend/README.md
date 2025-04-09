@@ -142,3 +142,8 @@ Prisma is used for database interactions:
   - `app.controller.ts` - Basic controller with hello world endpoint
   - `app.service.ts` - Basic service
   - `prisma/` - Prisma service and module for database access
+
+
+## This is a simple test for Jira
+
+HIHIHIHI

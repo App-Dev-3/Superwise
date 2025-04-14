@@ -15,8 +15,8 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     '@nuxtjs/i18n',
     '@pinia/nuxt',
-    '@clerk/nuxt',
-    '@nuxt/test-utils/module',
+    // '@clerk/nuxt',
+    // '@nuxt/test-utils/module',
   ],
 
   router: {

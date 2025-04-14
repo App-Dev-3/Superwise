@@ -1,12 +1,12 @@
 <template>
-  <header>
+  <!-- <header>
     <SignedOut>
       <SignInButton />
     </SignedOut>
     <SignedIn>
       <UserButton />
     </SignedIn>
-  </header>
+  </header> -->
   
   <div>
     <VitePwaManifest />

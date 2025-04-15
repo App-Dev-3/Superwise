@@ -25,4 +25,12 @@ const counter = useCounterStore()
 function increment() {
   counter.increment()
 }
+
+$fetch('http://localhost:3000/')
+  .then((data) => {
+    console.log(data)
+  })
+  .catch((error) => {
+    console.error("err")
+  })
 </script>  

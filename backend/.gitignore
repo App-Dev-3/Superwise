@@ -146,3 +146,16 @@ out
 .vscode/
 *.swp
 *.swo
+/.awcache
+/.devcontainer
+*.code-workspace
+/.history
+/.classpath
+/.project
+/.settings
+
+# OS generated files
+.DS_Store
+
+# Local configuration files (potential secrets)
+.npmrc

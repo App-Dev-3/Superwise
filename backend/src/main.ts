@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as fs from 'fs';
+import { env } from 'process';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,12 @@ async function bootstrap() {
   fs.writeFileSync('OpenAPI.json', JSON.stringify(document, null, 2));
 
   SwaggerModule.setup('api', app, document);
+
+  app.enableCors({
+    //todo: figure out with FE how to manage config variables
+    origin: process.env.FRONTEND_HOST, // allow Nuxt
+    credentials: true,              // if you're using cookies or auth
+  });
 
   await app.listen(process.env.PORT || 3000);
 }

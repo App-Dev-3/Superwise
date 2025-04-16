@@ -7,9 +7,10 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Returns a greeting message"
           }
         },
+        "summary": "Hello World endpoint",
         "tags": [
           "app"
         ]

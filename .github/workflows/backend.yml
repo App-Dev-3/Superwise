@@ -3,27 +3,30 @@ name: Backend CI
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
+
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
 
 jobs:
-  build:
+  backend-CI:
+    name: Backend CI
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./backend
 
-    strategy:
-      matrix:
-        node-version: [22.x]
-
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout Branch
+      uses: actions/checkout@v4
     
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 22
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 22
         cache: 'npm'
         cache-dependency-path: './backend/package-lock.json'
     
@@ -40,4 +43,4 @@ jobs:
       run: npm run build --if-present
     
     - name: Test
-      run: npm run test:unit --if-present
+      run: npm run test --if-present

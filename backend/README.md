@@ -56,7 +56,7 @@ These steps follow the general process outlined in the [W3Schools PostgreSQL Ins
     *   `pgAdmin 4` is a useful GUI tool for managing databases but is not strictly required for this project.
     *   `Stack Builder` is used to download and install additional drivers and tools *after* the main installation is complete. You can deselect it or simply cancel it if it runs at the end of the setup; it's not needed for the basic setup.
 5.  **Data Directory:** Choose where the database data will be stored (the default dir is fine).
-6.  **Password:** Set a strong password for the default PostgreSQL superuser (usually `postgres`). **Remember this password**, as you might need it for initial connections or troubleshooting, even though our setup script creates a dedicated user for the application.
+6.  **Password:** Set a strong password for the default PostgreSQL superuser (usually `postgres`). **Remember this password and the username**, as you might need it for initial connections or troubleshooting, even though our setup script creates a dedicated user for the application.
 7.  **Port:** Keep the default port (5432) unless you have a specific reason to change it.
 8.  **Locale:** Select your preferred locale settings.
 9.  **Complete Installation:** Review the summary and proceed with the installation.
@@ -71,13 +71,13 @@ These steps follow the general process outlined in the [W3Schools PostgreSQL Ins
     ```bash
     cd backend
     ```
-3.  Install dependencies:
+3.  Install dependencies (this now includes the `pg` client used by the setup script):
     ```bash
     npm install
     ```
 4.  Create the `.env` file from the example:
     ```bash
-    # macOS/Linux
+    # macOS/Linux/Git Bash
     cp .env.example .env
 
     # Windows (Command Prompt)
@@ -90,32 +90,56 @@ These steps follow the general process outlined in the [W3Schools PostgreSQL Ins
 
 ## Database Setup
 
-This project includes a script to automate the creation of the necessary PostgreSQL user and database (`superwise` by default).
+This project includes a Node.js script (`scripts/setup-database.js`) to automate the creation of the necessary PostgreSQL user and the `superwise` database.
 
-1.  **Ensure PostgreSQL service is running.**
-2.  **Run the setup script from the `backend` directory:**
-    Use the following command, replacing `<your_db_username>` and `<your_db_password>` with your chosen credentials. Pass arguments after `--`:
+1.  **Ensure PostgreSQL service is running** and accessible (usually on `localhost:5432`).
 
+2.  **Run the Setup Command:**
+    From the `backend` directory, run the script providing the desired username and password for the *new* application user:
     ```bash
-    npm run db:setup -- <your_db_username> <your_db_password>
+    npm run db:setup -- <app_user> <app_pass>
     ```
+    *Remember to separate the script arguments (`<app_user>`, `<app_pass>`) from the npm command using `--`.*
 
-    *   This command executes a Node.js script (`scripts/setup-db-runner.js`) which detects your operating system (macOS/Linux or Windows) and runs the appropriate setup script (`db_setup.sh` or `db_setup.bat`).
-    *   It attempts to create the user and the `superwise` database.
-    *   **macOS/Linux:** The script will attempt to automatically find the `.env` file and add/update the `DATABASE_URL` variable.
-    *   **Windows:** The script will output the required `DATABASE_URL` string. You **MUST** manually open the `backend/.env` file and update the `DATABASE_URL` line with the value printed in the terminal.
-    *   *(Optional)* You can provide a custom database name, host, and port as additional arguments if needed:
-        ```bash
-        npm run db:setup -- <user> <pass> <custom_db_name> <host> <port>
-        ```
+3.  **Troubleshooting Failures:**
+    The script needs to connect as an existing PostgreSQL *administrator* to create the new user/database. If the command above fails, check the error message:
 
-3.  **Verify `.env`:** Ensure the `DATABASE_URL` in your `backend/.env` file is correctly set.
-4.  **Apply database migrations:**
-    Still within the `backend` directory, run:
+    *   **If the error is `The admin user '<user>' used for the initial connection does not exist`:**
+        This means the script couldn't find the default admin user (e.g., `postgres`). You need to tell it your actual admin username.
+        *   **Fix:** Find your admin username (often `postgres` on Linux/Windows, your OS username on macOS/Homebrew, or custom). Re-run the command with the `--admin-user` flag:
+            ```bash
+            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user>
+            ```
+
+    *   **If the error is `Authentication failed for admin user '<user>'`:**
+        This means the admin user exists, but requires a password.
+        *   **Fix 1 (Recommended): Use `PGPASSWORD` Environment Variable.** Set this temporarily in your terminal before running the command (more secure):
+            ```bash
+            # Linux/macOS Example:
+            export PGPASSWORD='your_admin_password'
+            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user>
+            unset PGPASSWORD # Optional: clear after use
+            ```
+            *(Adapt for Windows CMD/PowerShell)*
+        *   **Fix 2 (Less Secure): Use `--admin-password` Flag.**
+            ```bash
+            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user> --admin-password <your_admin_password>
+            ```
+            *(Warning: Password may appear in shell history)*
+
+    *   **If the error is `Connection refused`:** Ensure your PostgreSQL server is running.
+
+4.  **On Success:** The script will:
+    *   Create the `<app_user>` with `<app_pass>` and necessary privileges.
+    *   Create the `superwise` database owned by `<app_user>`.
+    *   Update your `backend/.env` file with the correct `DATABASE_URL`.
+
+5.  **Verify `.env`:** Double-check that `backend/.env` contains the correct `DATABASE_URL`.
+
+6.  **Apply Migrations:** Run the migrations to set up the database schema:
     ```bash
     npx prisma migrate dev
     ```
-    This command uses the `DATABASE_URL` in your `.env` file to connect to the `superwise` database and create the necessary tables based on the Prisma schema.
 
 ## Running the Application
 
@@ -152,7 +176,7 @@ This project utilizes several commands for development, building, testing, and d
 - `npm run test:cov`: Runs unit tests and generates a code coverage report in the `coverage` directory.
 - `npm run test:debug`: Runs unit tests in debug mode, allowing you to attach a debugger.
 - `npm run test:e2e`: Runs end-to-end tests using Jest with a specific configuration (`./test/jest-e2e.json`).
-- `npm run db:setup -- <username> <password> [db_name] [host] [port]`: Runs the database setup utility. It detects the OS and executes the appropriate script (`.sh` or `.bat`) from the `scripts` directory to create the PostgreSQL user and database (defaulting to `superwise`). Username and password are required. Remember to separate npm script options from arguments passed to the script with `--`.
+- `npm run db:setup -- <username> <password> [db_name] [host] [port] [--admin-user <admin_username>] [--admin-password <admin_password>]`: Runs the Node.js database setup script (`scripts/setup-database.js`). Creates the specified PostgreSQL user/password for the application database (default: `superwise`), sets owner, and updates `.env`. Requires `<username>` and `<password>`. If initial connection fails, use `--admin-user` to specify your PG admin user and `--admin-password` (less secure) or `PGPASSWORD` env var if authentication is needed. Remember `--` before script arguments.
 
 ### NestJS CLI (`nest`)
 
@@ -182,5 +206,5 @@ Prisma is used for database interactions:
   - `app.controller.ts` - Basic controller with hello world endpoint
   - `app.service.ts` - Basic service
 - `prisma/` - Prisma schema and migration files
-- `scripts/` - Database setup scripts (`db_setup.sh`, `db_setup.bat`, `setup-db-runner.js`)
-- `.env.example` - Example environment variables (including `DATABASE_URL` pointing to `superwise`)
+- `scripts/` - Database setup script (`setup-database.js`)
+- `.env.example` - Example environment variables

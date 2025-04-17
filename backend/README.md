@@ -6,7 +6,7 @@ A backend REST API for matching students with thesis supervisors, named Superwis
 
 This is a basic setup with a simple 'Hello World' endpoint. The project structure is configured but minimal functionality has been implemented.
 
-## Tech Stack
+### Tech Stack
 
 - **NestJS** with TypeScript
 - **Prisma ORM** with PostgreSQL
@@ -17,13 +17,25 @@ This is a basic setup with a simple 'Hello World' endpoint. The project structur
 - **Swagger/OpenAPI** for API documentation
 - **uuid** for ID generation
 
-## Prerequisites
+### Project Structure
+
+- `src/` - Source code
+  - `main.ts` - Application entry point
+  - `app.module.ts` - Root module
+  - `app.controller.ts` - Basic controller with hello world endpoint
+  - `app.service.ts` - Basic service
+- `prisma/` - Prisma schema and migration files
+- `.env.example` - Example environment variables
+
+## How to Install
+
+### Prerequisites
 
 - Node.js (v20 or higher recommended)
 - npm (comes with Node.js)
 - PostgreSQL (v17 installed and running, see below)
 
-### PostgreSQL Installation
+#### PostgreSQL Installation
 
 **macOS (using Homebrew):**
 
@@ -62,16 +74,20 @@ These steps follow the general process outlined in the [W3Schools PostgreSQL Ins
 9.  **Complete Installation:** Review the summary and proceed with the installation.
 10. **Add PATH to System Evironment:** After installation, add the PostgreSQL `bin` directory (e.g., `C:\Program Files\PostgreSQL\17\bin`) to your system's PATH environment variable. This allows `psql` to be run from any terminal. This [Guide by ComputerHope](https://www.computerhope.com/issues/ch000549.htm#0) explains how to do this on Win10 & Win11.
 11. **Restart your Computer**: This ensures the updated PATH environment variable is loaded correctly by all applications, including your terminal. **Otherwise it doesn't work!**
+12. **Verify Service Status:**
+    *   After restarting, check if the PostgreSQL service is running. Open the Windows Services app (press `WinKey+R` and type `services.msc`).
+    *   Find the service (`postgresql-x64-17`). Its status should be "Running".
+    *   If not running, right-click it and select "Start".
+    *   If it fails to start, consult the Windows Event Viewer (Application/System logs) or PostgreSQL logs (`data/log` subdirectory) for errors. Re-running the installer or checking permissions might be needed.
 
-
-## Installation
+### Project Installation
 
 1.  Clone the repository (if you haven't already).
 2.  **Navigate to the backend directory:**
     ```bash
     cd backend
     ```
-3.  Install dependencies (this now includes the `pg` client used by the setup script):
+3.  Install dependencies:
     ```bash
     npm install
     ```
@@ -88,55 +104,34 @@ These steps follow the general process outlined in the [W3Schools PostgreSQL Ins
     ```
     *(The database URL will be configured in the next step)*
 
-## Database Setup
+### Database Setup
 
-This project includes a Node.js script (`scripts/setup-database.js`) to automate the creation of the necessary PostgreSQL user and the `superwise` database.
+Follow these steps to set up the database and user for the application. Run these commands from your terminal.
 
-1.  **Ensure PostgreSQL service is running** and accessible (usually on `localhost:5432`).
+**Note:** You may need to provide the password for the `postgres` user depending on your PostgreSQL configuration.
 
-2.  **Run the Setup Command:**
-    From the `backend` directory, run the script providing the desired username and password for the *new* application user:
+1.  **Create PostgreSQL User:**
+    Replace `<username>` and `<password>` with your desired credentials. Ensure the password is in single quotes.
+    *(If your chosen `<username>` contains uppercase letters, spaces, or special characters, enclose it in double quotes: `"<username>"`)*
     ```bash
-    npm run db:setup -- <app_user> <app_pass>
+    psql -U postgres -c "CREATE USER <username> WITH PASSWORD '<password>' CREATEDB;"
     ```
-    *Remember to separate the script arguments (`<app_user>`, `<app_pass>`) from the npm command using `--`.*
 
-3.  **Troubleshooting Failures:**
-    The script needs to connect as an existing PostgreSQL *administrator* to create the new user/database. If the command above fails, check the error message:
+2.  **Create Database:**
+    Replace `<username>` with the user created in the previous step.
+    *(Use double quotes `"<username>"` if needed, as mentioned above)*
+    ```bash
+    psql -U postgres -c "CREATE DATABASE superwise WITH OWNER = <username>;"
+    ```
 
-    *   **If the error is `The admin user '<user>' used for the initial connection does not exist`:**
-        This means the script couldn't find the default admin user (e.g., `postgres`). You need to tell it your actual admin username.
-        *   **Fix:** Find your admin username (often `postgres` on Linux/Windows, your OS username on macOS/Homebrew, or custom). Re-run the command with the `--admin-user` flag:
-            ```bash
-            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user>
-            ```
+3.  **Update `.env` File:**
+    Open the `backend/.env` file. Find or add the `DATABASE_URL` variable and set it to your connection string, replacing placeholders:
+    ```dotenv
+    DATABASE_URL="postgresql://<username>:<password>@localhost:5432/superwise?schema=public"
+    ```
 
-    *   **If the error is `Authentication failed for admin user '<user>'`:**
-        This means the admin user exists, but requires a password.
-        *   **Fix 1 (Recommended): Use `PGPASSWORD` Environment Variable.** Set this temporarily in your terminal before running the command (more secure):
-            ```bash
-            # Linux/macOS Example:
-            export PGPASSWORD='your_admin_password'
-            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user>
-            unset PGPASSWORD # Optional: clear after use
-            ```
-            *(Adapt for Windows CMD/PowerShell)*
-        *   **Fix 2 (Less Secure): Use `--admin-password` Flag.**
-            ```bash
-            npm run db:setup -- <app_user> <app_pass> --admin-user <your_pg_admin_user> --admin-password <your_admin_password>
-            ```
-            *(Warning: Password may appear in shell history)*
-
-    *   **If the error is `Connection refused`:** Ensure your PostgreSQL server is running.
-
-4.  **On Success:** The script will:
-    *   Create the `<app_user>` with `<app_pass>` and necessary privileges.
-    *   Create the `superwise` database owned by `<app_user>`.
-    *   Update your `backend/.env` file with the correct `DATABASE_URL`.
-
-5.  **Verify `.env`:** Double-check that `backend/.env` contains the correct `DATABASE_URL`.
-
-6.  **Apply Migrations:** Run the migrations to set up the database schema:
+4.  **Run Migrations:**
+    Navigate to the `backend` directory in your terminal and run:
     ```bash
     npx prisma migrate dev
     ```
@@ -160,51 +155,53 @@ Once the application is running, you can access the Swagger documentation at:
 
 ## Available Commands
 
-This project utilizes several commands for development, building, testing, and database management.
+This project provides several scripts and uses CLI tools for common development tasks. While many commands are available, the primary ones you'll use after initial setup are `npm run start:dev` (to run the app) and `npx prisma migrate dev` (to update the database schema). Other commands listed below are optional quality-of-life helpers or used for specific scenarios like production builds or advanced code generation.
 
-### npm Scripts (from `package.json`)
+### Running the Application
 
-- `npm run build`: Compiles the TypeScript application into JavaScript using the NestJS CLI (`nest build`). The output is placed in the `dist` folder.
-- `npm run format`: Formats all `.ts` files in the `src` and `test` directories using Prettier.
-- `npm run start`: Starts the application using the NestJS CLI (`nest start`). This is typically used for quick starts but `start:dev` is recommended for development.
-- `npm run start:dev`: Starts the application in development mode using `nest start --watch`. This enables hot-reloading, automatically restarting the server when code changes are detected.
-- `npm run start:debug`: Starts the application in debug mode with file watching (`nest start --debug --watch`). Allows attaching a debugger.
-- `npm run start:prod`: Starts the compiled application directly using Node (`node dist/main`). This is intended for production environments after running `npm run build`.
-- `npm run lint`: Lints the codebase using ESLint (`eslint "{src,apps,libs,test}/**/*.ts" --fix`) and attempts to automatically fix linting errors.
-- `npm run test`: Runs unit tests using Jest.
-- `npm run test:watch`: Runs unit tests in watch mode, re-running tests when files change.
-- `npm run test:cov`: Runs unit tests and generates a code coverage report in the `coverage` directory.
-- `npm run test:debug`: Runs unit tests in debug mode, allowing you to attach a debugger.
-- `npm run test:e2e`: Runs end-to-end tests using Jest with a specific configuration (`./test/jest-e2e.json`).
-- `npm run db:setup -- <username> <password> [db_name] [host] [port] [--admin-user <admin_username>] [--admin-password <admin_password>]`: Runs the Node.js database setup script (`scripts/setup-database.js`). Creates the specified PostgreSQL user/password for the application database (default: `superwise`), sets owner, and updates `.env`. Requires `<username>` and `<password>`. If initial connection fails, use `--admin-user` to specify your PG admin user and `--admin-password` (less secure) or `PGPASSWORD` env var if authentication is needed. Remember `--` before script arguments.
+-   `npm run start:dev`:
+    Starts the application in development mode with hot-reloading (`nest start --watch`). This is the recommended command for development.
+-   `npm run start`: Starts the application using `nest start`. Less common for development than `start:dev`.
+-   `npm run start:prod`:
+    Starts the compiled application from the `dist` folder (`node dist/main`). Use this *after* running `npm run build` for production-like environments.
+-   `npm run start:debug`:
+    Starts in development mode with the debugger attached (`nest start --debug --watch`).
 
-### NestJS CLI (`nest`)
+### Database (Prisma)
 
-The NestJS CLI is used internally by many npm scripts but can also be used directly for tasks like generating code:
+-   `npx prisma migrate dev`:
+    **Essential command.** Compares your `prisma/schema.prisma` file to the database and applies any necessary changes as a new migration. Also generates/updates the Prisma Client.
+-   `npx prisma studio`:
+    Opens a GUI in your browser to view and interact with your database data.
+-   `npx prisma generate`:
+    Manually generates the Prisma Client based on the schema. Usually run automatically by `migrate dev`.
 
-- `npx nest build`: Compiles the application (same as `npm run build`).
-- `npx nest start`: Starts the application (same as `npm run start`).
-- `npx nest generate <schematic> <name> [options]` (alias: `npx nest g`): Generates NestJS building blocks.
-  - Examples:
-    - `npx nest g module users` (Creates a `users` module)
-    - `npx nest g controller users` (Creates a `users` controller)
-    - `npx nest g service users` (Creates a `users` service)
+### Testing (Jest)
 
-### Prisma CLI (`prisma`)
+-   `npm run test`: Runs all unit tests.
+-   `npm run test:watch`: Runs unit tests in watch mode, rerunning on file changes.
+-   `npm run test:cov`: Runs unit tests and generates a code coverage report.
+-   `npm run test:e2e`: Runs end-to-end tests (requires separate configuration/setup).
+-   `npm run test:debug`: Runs unit tests with the Node debugger attached.
 
-Prisma is used for database interactions:
+### Code Formatting & Linting
 
-- `npx prisma migrate dev`: Creates and applies database migrations based on changes in your `prisma/schema.prisma` file. This command is crucial during development for keeping the `superwise` database schema in sync with the Prisma schema definition. It will also generate the Prisma Client types.
-- `npx prisma studio`: Opens a GUI tool in your browser to view and manipulate data in your database.
-- `npx prisma generate`: Generates the Prisma Client based on your schema. This is often run automatically by other commands like `prisma migrate dev` or `npm install`.
+-   `npm run format`: Formats code in `src` and `test` directories using Prettier.
+-   `npm run lint`: Lints code in `src`, `apps`, `libs`, and `test` using ESLint and attempts to auto-fix issues.
 
-## Current Project Structure
+### Building
 
-- `src/` - Source code
-  - `main.ts` - Application entry point
-  - `app.module.ts` - Root module
-  - `app.controller.ts` - Basic controller with hello world endpoint
-  - `app.service.ts` - Basic service
-- `prisma/` - Prisma schema and migration files
-- `scripts/` - Database setup script (`setup-database.js`)
-- `.env.example` - Example environment variables
+-   `npm run build`:
+    Compiles the TypeScript application to JavaScript in the `dist` folder using `nest build`.
+
+### Code Generation (NestJS CLI)
+
+The NestJS CLI (`nest`) can be used directly (via `npx nest ...`) for advanced tasks, primarily generating modules, controllers, services, etc. It's used internally by some npm scripts (`build`, `start`).
+
+- `npx nest generate <schematic> <name> [options]` (or `npx nest g ...`):
+Generates NestJS components.
+- Example: `npx nest g module users`
+- Example: `npx nest g controller users`
+- Example: `npx nest g service users`
+
+Learn more in the [NestJS CLI Usage Documentation](https://docs.nestjs.com/cli/usages#generate-alias-g).

@@ -11,7 +11,7 @@ async function bootstrap() {
     .setDescription('The MatchMaker API for matching students with thesis supervisors')
     .setVersion('1.0')
     .addTag('matchmaker')
-    .addServer('http://localhost:3000', 'Local development server')
+    .addServer('http://localhost:8080', 'Local development server')
     .addBearerAuth()
     .build();
 

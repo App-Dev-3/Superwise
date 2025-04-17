@@ -1,6 +1,6 @@
 # Superwise API
 
-A backend REST API for matching students with thesis supervisors, now named Superwise. The system provides a platform where students can view real-time supervisor availability and research interests, submit structured requests, and gives supervisors tools to manage their capacity and respond efficiently.
+A backend REST API for matching students with thesis supervisors, named Superwise. The system provides a platform where students can view real-time supervisor availability and research interests, submit structured requests, and gives supervisors tools to manage their capacity and respond efficiently.
 
 ## Current State
 

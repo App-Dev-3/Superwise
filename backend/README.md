@@ -21,7 +21,7 @@ This is a basic setup with a simple 'Hello World' endpoint. The project structur
 
 - Node.js (v20 or higher recommended)
 - npm (comes with Node.js)
-- PostgreSQL (e.g., v16+, installed and running, see below)
+- PostgreSQL (v17 installed and running, see below)
 
 ### PostgreSQL Installation
 

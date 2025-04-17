@@ -22,11 +22,11 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   app.enableCors({
-    //todo: figure out with FE how to manage config variables
-    origin: process.env.FRONTEND_HOST, // allow Nuxt
-    credentials: true,              // if you're using cookies or auth
+    //todo: Figure out with FE how to manage config variables
+    origin: process.env.FRONTEND_HOST,
+    credentials: true,
   });
 
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT || 8080);
 }
 bootstrap();

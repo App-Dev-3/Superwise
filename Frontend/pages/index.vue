@@ -26,7 +26,7 @@ function increment() {
   counter.increment()
 }
 
-$fetch('http://localhost:3000/')
+$fetch('http://localhost:8080/')
   .then((data) => {
     console.log(data)
   })

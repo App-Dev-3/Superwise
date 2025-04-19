@@ -38,6 +38,7 @@ model User {
   role             Role
   profile_image    String?
   is_registered    Boolean       @default(false)
+  is_deleted       Boolean       @default(false)
   created_at       DateTime      @default(now())
   updated_at       DateTime      @updatedAt
            

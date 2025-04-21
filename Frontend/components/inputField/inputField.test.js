@@ -28,6 +28,7 @@ describe('InputField.vue', () => {
     await input.trigger('blur')
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    expect(wrapper.emitted('blur')).toBeTruthy()
     expect(wrapper.emitted('update:modelValue')[0]).toEqual(['John Doe'])
   })
 })

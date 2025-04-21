@@ -13,10 +13,10 @@ const props = defineProps({
   modelValue: String
 })
 
-const emit = defineEmits(['field-value'])
+const emit = defineEmits(['update:modelValue'])
 
-function handleBlur(event) {
-  emit('field-value', event.target.value)
+function handleInput(event) {
+  emit('update:modelValue', event.target.value)
 }
 
 </script>
@@ -32,7 +32,7 @@ function handleBlur(event) {
       class="input input-bordered w-full rounded-full"
       :placeholder="label"
       :value="modelValue"
-      @blur="handleBlur"
+      @input="handleInput"
     />
 
     <p class="text-xs text-gray-500 mt-1">

@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import AppHeader from './AppHeader.vue'
-import { useRouter } from 'vue-router'
 
 const mockBack = vi.fn()
 

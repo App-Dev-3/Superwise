@@ -6,11 +6,18 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  modelValue: {
+    type: String,
+    default: ''
+  },
   note: {
     type: String,
     default: ''
   },
-  modelValue: String
+  placeholder: {
+    type: String,
+    default: ''
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'blur'])
@@ -37,7 +44,7 @@ function handleBlur(event) {
     <input
       type="text"
       class="input input-bordered w-full rounded-full"
-      :placeholder="label"
+      :placeholder="placeholder"
       :value="modelValue"
       @input="handleInput"
       @blur="handleBlur"

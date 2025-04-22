@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 
 const router = useRouter()
 
@@ -30,6 +31,9 @@ function handleInput(value) {
   emit('update:modelValue', value)
 }
 
+const goBack = () => {
+  router.back()
+}
 </script>
 
 <template>
@@ -40,6 +44,7 @@ function handleInput(value) {
           v-if="showBack"
           class="btn btn-ghost btn-circle"
           @click="goBack"
+          data-test="back-button"
         >
           <FontAwesomeIcon icon="arrow-left" class="text-xl" />
           <span class="text-sm font-medium opacity-50	">Back</span>
@@ -48,6 +53,7 @@ function handleInput(value) {
         <button
           v-if="showUser"
           class="btn btn-ghost btn-circle"
+          data-test="user-button"
         >
           <FontAwesomeIcon icon="user" class="text-xl" />
         </button>
@@ -62,6 +68,7 @@ function handleInput(value) {
           v-if="showSearch"
           class="btn btn-ghost btn-circle"
           @click="isSearching = !isSearching"
+          data-test="search-button"
         >
           <FontAwesomeIcon icon="search" class="text-xl" />
         </button>

@@ -13,10 +13,149 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ----- Enums -----
+
+enum Role {
+  STUDENT
+  SUPERVISOR
+  ADMIN
+}
+
+enum RequestState {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
+// ----- Models -----
+
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id               String        @id @default(uuid())
+  email            String        @unique
+  first_name       String
+  last_name        String
+  role             Role
+  profile_image    String?
+  is_registered    Boolean       @default(false)
+  is_deleted       Boolean       @default(false)
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+           
+  student_profile               Student?             @relation("UserToStudent")
+  supervisor_profile            Supervisor?          @relation("UserToSupervisor")
+  tags                          UserTag[]            @relation("UserToUserTag")
+  blocked_users                 UserBlock[]          @relation("UserBlocking") // Users this user has blocked
+  blocked_by_users              UserBlock[]          @relation("UserBlockedBy") // Users who have blocked this user
+
+  @@map("users")
+}
+
+// Profile specific to students
+model Student {
+  id                   String               @id @default(uuid())
+  thesis_description   String?
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+
+  // Relations
+  user_id              String               @unique
+  user                 User                 @relation("UserToStudent", fields: [user_id], references: [id], onDelete: Cascade)
+  supervision_requests SupervisionRequest[] @relation("StudentSentSupervisionRequests")
+  chat_requests        ChatRequest[]        @relation("StudentSentChatRequests")
+
+  @@map("students")
+}
+
+// Profile specific to supervisors
+model Supervisor {
+  id                   String               @id @default(uuid())
+  bio                  String?
+  available_spots      Int                  @default(0)
+  total_spots          Int                  @default(0)
+  created_at           DateTime             @default(now())
+  updated_at           DateTime             @updatedAt
+
+  // Relations
+  user_id              String               @unique
+  user                 User                 @relation("UserToSupervisor", fields: [user_id], references: [id], onDelete: Cascade)
+
+  supervision_requests SupervisionRequest[] @relation("SupervisorReceivedSupervisionRequests")
+  chat_requests        ChatRequest[]        @relation("SupervisorReceivedChatRequests")
+
+  @@map("supervisors")
+}
+
+model Tag {
+  id            String      @id @default(uuid())
+  tag_name_de   String      @unique
+  tag_name_en   String      @unique
+  similar_tags  String[]    // Stores IDs of related tags
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  // Relations
+  users         UserTag[]   @relation("TagToUserTag")
+
+  @@map("tags")
+}
+
+model UserTag {
+  priority      Int
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+
+  // Relations & Keys
+  user_id       String
+  tag_id        String
+  user          User        @relation("UserToUserTag", fields: [user_id], references: [id], onDelete: Cascade)
+  tag           Tag         @relation("TagToUserTag", fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, tag_id])
+  @@map("user_tags")
+}
+
+model UserBlock {
+  blocker_id    String       // The user initiating the block
+  blocked_id    String       // The user being blocked    
+  blocker       User         @relation("UserBlocking", fields: [blocker_id], references: [id], onDelete: Cascade)
+  blocked       User         @relation("UserBlockedBy", fields: [blocked_id], references: [id], onDelete: Cascade)    
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+
+  @@id([blocker_id, blocked_id])
+  @@map("user_blocks")
+}
+
+// Request from a Student to a Supervisor for supervision
+model SupervisionRequest {
+  id              String       @id @default(uuid())
+  request_state   RequestState @default(PENDING)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+
+  // Relations & Keys
+  student_id      String
+  supervisor_id   String
+  student         Student      @relation("StudentSentSupervisionRequests", fields: [student_id], references: [id], onDelete: Cascade)
+  supervisor      Supervisor   @relation("SupervisorReceivedSupervisionRequests", fields: [supervisor_id], references: [id], onDelete: Cascade)
+
+  @@map("supervision_requests")
+}
+
+// Request from a Student to a Supervisor to initiate a chat
+model ChatRequest {
+  id              String       @id @default(uuid())
+  request_message String
+  request_state   RequestState @default(PENDING)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+
+  // Relations & Keys
+  student_id      String
+  supervisor_id   String
+  student         Student      @relation("StudentSentChatRequests", fields: [student_id], references: [id], onDelete: Cascade)
+  supervisor      Supervisor   @relation("SupervisorReceivedChatRequests", fields: [supervisor_id], references: [id], onDelete: Cascade)
+
+  @@map("chat_requests")
 }

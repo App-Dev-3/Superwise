@@ -1,0 +1,19 @@
+name: Enforce Dev Only Merge
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  check-dev-source:
+    name: Enforce Dev Only Merge
+    runs-on: ubuntu-latest
+    steps:
+      - name: Block if source branch is not dev
+        run: |
+          echo "Source branch: ${{ github.head_ref }}"
+          if [ "${{ github.head_ref }}" != "dev" ]; then
+            echo "❌ Only merges from 'dev' to 'main' are allowed."
+            exit 1
+          fi
+          echo "✅ Merge is from 'dev', proceeding."

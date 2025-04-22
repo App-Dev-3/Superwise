@@ -85,7 +85,7 @@ const goBack = () => {
           :modelValue="modelValue"
           placeholder="Search..."
           @update:modelValue="handleInput"
-          label="Seach Field"
+          label="Search Field"
           note=""
           @blur="isSearching = false"
         />

@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
-
+import { UsersModule } from './modules/users/users.module';
 @Module({
   imports: [
     PrismaModule,
+    UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

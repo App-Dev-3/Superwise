@@ -60,7 +60,7 @@ const goBack = () => {
       </div>
 
       <div class="navbar-center">
-        <img src="/" alt="Logo" class="h-6" />
+        <img src="" alt="Logo" class="h-6" />
       </div>
 
       <div class="navbar-end">

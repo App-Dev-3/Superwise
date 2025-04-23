@@ -15,7 +15,8 @@ describe('MultiStepForm.vue', () => {
     })
 
     expect(wrapper.html()).toContain('Step 1 content')
-
+    expect(wrapper.html()).not.contain('Step 2 content')
+    
     await wrapper.find('[data-test="next-button"').trigger('click')
     expect(wrapper.html()).toContain('Step 2 content')
 

@@ -14,10 +14,6 @@ const props = defineProps({
     type: String,
     default: ''
   },
-  rightIcon: {
-    type: String,
-    default: ''
-  },
   modelValue: {
     type: String,
     default: ''
@@ -30,7 +26,13 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  rightIcon: {
+    type: String,
+    default: ''
+  },
 })
+const isClearIcon = computed(() => props.rightIcon === 'xmark')
+
 
 onMounted(() => {
   if (props.autoFocus) {
@@ -53,6 +55,13 @@ function handleInput(event) {
 
 function handleBlur(event) {
   emit('blur', event)
+}
+
+function handleRightIconClick() {
+  if (!isClearIcon.value) {
+    return
+  }
+  emit('update:modelValue', '')
 }
 
 </script>
@@ -86,6 +95,8 @@ function handleBlur(event) {
         v-if="rightIcon"
         :icon='rightIcon'
         class="input-container__rightIcon"
+        :class="{'input-container__rightIcon--clickable': isClearIcon}"
+        @click="handleRightIconClick"
       />
     </div>
 
@@ -124,6 +135,10 @@ function handleBlur(event) {
     pointer-events: none;
     z-index: 10;
     color: #888;
+
+    &--clickable{
+      pointer-events: auto;
+    }
   }
 }
 </style>

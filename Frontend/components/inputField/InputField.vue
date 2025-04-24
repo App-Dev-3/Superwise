@@ -10,6 +10,14 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  leftIcon: {
+    type: String,
+    default: ''
+  },
+  rightIcon: {
+    type: String,
+    default: ''
+  },
   modelValue: {
     type: String,
     default: ''
@@ -55,18 +63,67 @@ function handleBlur(event) {
       {{ label }}
     </legend>
 
-    <input
-      ref="inputFieldRef"
-      type="text"
-      class="input input-bordered w-full rounded-full"
-      :placeholder="placeholder"
-      :value="modelValue"
-      @input="handleInput"
-      @blur="handleBlur"
-    />
+    <div class="input-container">
+      <FontAwesomeIcon
+        v-if="leftIcon"
+        :icon='leftIcon'
+        class="input-container__leftIcon"
+      />
+      <input
+        ref="inputFieldRef"
+        type="text"
+        class="input input-bordered w-full rounded-full"
+        :class="{
+          'input-container__input--left': leftIcon,
+          'input-container__input--right': rightIcon,
+        }"
+        :placeholder="placeholder"
+        :value="modelValue"
+        @input="handleInput"
+        @blur="handleBlur"
+      >
+      <FontAwesomeIcon
+        v-if="rightIcon"
+        :icon='rightIcon'
+        class="input-container__rightIcon"
+      />
+    </div>
 
     <p class="text-xs text-gray-500 mt-1">
       {{ note }}
     </p>
 </div>
 </template>
+
+<style lang="scss" scoped>
+.input-container {
+  position: relative;
+
+  &__leftIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+    color: #888;
+  }
+
+  &__input--left {
+    padding-left: 2.5rem; 
+  }
+  &__input--right {
+    padding-right: 2.5rem; 
+  }
+
+  &__rightIcon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+    color: #888;
+  }
+}
+</style>

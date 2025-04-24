@@ -48,7 +48,7 @@ function submit() {
             class="btn w-3/4"
             data-test="submit-button"
         >
-            Submits
+            Submit
         </button>
     </div>
   </form>

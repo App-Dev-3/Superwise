@@ -87,7 +87,7 @@ const goBack = () => {
           @update:modelValue="handleInput"
           label="Search Field"
           note=""
-          @blur="isSearching = false"
+          rightIcon="xmark"
         />
       </div>
     </transition>

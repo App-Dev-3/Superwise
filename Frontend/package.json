@@ -9,9 +9,11 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "generate-preview": "npm run build && npm run preview",
-    "test": "vitest"
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@clerk/nuxt": "^1.5.9",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
@@ -28,6 +30,7 @@
   "devDependencies": {
     "@nuxt/test-utils": "^3.17.2",
     "@vitejs/plugin-vue": "^5.2.3",
+    "@vitest/coverage-istanbul": "^3.1.2",
     "@vue/test-utils": "^2.4.6",
     "daisyui": "^5.0.12",
     "happy-dom": "^17.4.4",

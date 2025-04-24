@@ -5,6 +5,10 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     globals: true,
-    environment: 'jsdom'
+    environment: 'jsdom',
+    coverage: {
+      reportsDirectory: './tests/coverage',
+      provider: 'istanbul' // or 'v8'
+    }
   },
 })

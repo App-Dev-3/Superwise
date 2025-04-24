@@ -15,6 +15,304 @@
           "app"
         ]
       }
+    },
+    "/users": {
+      "post": {
+        "description": "Creates a new user (student, supervisor, or admin).",
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "User data to create a new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User has been successfully created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data."
+          }
+        },
+        "summary": "Create new user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Retrieves all users.",
+        "operationId": "UsersController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Return all active users.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all users",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search/by-first-name": {
+      "get": {
+        "description": "Find Users by matching their first name.",
+        "operationId": "UsersController_findByFirstName",
+        "parameters": [
+          {
+            "name": "firstName",
+            "required": true,
+            "in": "query",
+            "description": "First name to search for (case insensitive, partial match)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return users matching the given first name."
+          }
+        },
+        "summary": "Search users by first name",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search/by-last-name": {
+      "get": {
+        "description": "Find Users by matching their last name.",
+        "operationId": "UsersController_findByLastName",
+        "parameters": [
+          {
+            "name": "lastName",
+            "required": true,
+            "in": "query",
+            "description": "Last name to search for (case insensitive, partial match)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return users matching the given last name."
+          }
+        },
+        "summary": "Search users by last name",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search/by-tag": {
+      "get": {
+        "description": "Find Users associated with a specific research interest or skill tag.",
+        "operationId": "UsersController_findByTagId",
+        "parameters": [
+          {
+            "name": "tagId",
+            "required": true,
+            "in": "query",
+            "description": "Tag ID to search for",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return users with the specified tag."
+          }
+        },
+        "summary": "Search users by tag ID",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search/by-tags": {
+      "get": {
+        "description": "Find Users associated with any of the specified research interests or skill tags.",
+        "operationId": "UsersController_findByTagIds",
+        "parameters": [
+          {
+            "name": "tagIds",
+            "required": true,
+            "in": "query",
+            "description": "Comma-separated list of tag IDs",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return users with any of the specified tags."
+          }
+        },
+        "summary": "Search users by multiple tag IDs",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Retrieves a specific user by id.",
+        "operationId": "UsersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "The user ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user with the matching id.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Get user by id",
+        "tags": [
+          "Users"
+        ]
+      },
+      "patch": {
+        "description": "Update a user's information such as name, email, role, and profile image.",
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The fields to update on the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User has been successfully updated."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Update user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "delete": {
+        "description": "Soft delete a user. This preserves the data but marks it as deleted.",
+        "operationId": "UsersController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User has been successfully deleted (soft delete)."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Delete user",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{id}/with-relations": {
+      "get": {
+        "description": "Retrieve a specific user with their student/supervisor profile, research interests, and other relationships.",
+        "operationId": "UsersController_findOneWithRelations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Return the user with the specified ID including relations."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Get user by ID with all related entities",
+        "tags": [
+          "Users"
+        ]
+      }
     }
   },
   "info": {
@@ -43,6 +341,193 @@
         "type": "http"
       }
     },
-    "schemas": {}
+    "schemas": {
+      "Role": {
+        "type": "string",
+        "enum": [
+          "STUDENT",
+          "SUPERVISOR",
+          "ADMIN"
+        ],
+        "description": "Role of the user in the system"
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the user",
+            "example": "studentId@fhstp.ac.at"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "First name of the user",
+            "example": "Max"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Last name of the user",
+            "example": "Mustermann"
+          },
+          "role": {
+            "description": "Role of the user in the system",
+            "example": "STUDENT",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
+          "profile_image": {
+            "type": "string",
+            "description": "URL to user profile image",
+            "example": "https://example.com/images/profile.jpg"
+          }
+        },
+        "required": [
+          "email",
+          "first_name",
+          "last_name",
+          "role"
+        ]
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "studentId@fhstp.ac.at"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "User first name",
+            "example": "Max"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "User last name",
+            "example": "Mustermann"
+          },
+          "role": {
+            "type": "string",
+            "description": "User role",
+            "enum": [
+              "STUDENT",
+              "SUPERVISOR",
+              "ADMIN"
+            ],
+            "example": "STUDENT"
+          },
+          "profile_image": {
+            "type": "object",
+            "description": "URL to user profile image",
+            "example": "https://example.com/images/profile.jpg"
+          },
+          "is_registered": {
+            "type": "boolean",
+            "description": "Whether user has completed registration",
+            "example": false
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "Whether user has been deleted (soft deletion)",
+            "example": false
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when user was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when user was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "student_profile": {
+            "type": "object",
+            "description": "Student profile information if role is STUDENT"
+          },
+          "supervisor_profile": {
+            "type": "object",
+            "description": "Supervisor profile information if role is SUPERVISOR"
+          },
+          "tags": {
+            "description": "Tags associated with the user",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "blocked_users": {
+            "description": "Users blocked by this user",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "blocked_by_users": {
+            "description": "Users who have blocked this user",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "role",
+          "is_registered",
+          "is_deleted",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address",
+            "example": "updated@fhstp.ac.at"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "User first name",
+            "example": "UpdatedName"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "User last name",
+            "example": "UpdatedLastName"
+          },
+          "role": {
+            "type": "string",
+            "description": "User role",
+            "enum": [
+              "STUDENT",
+              "SUPERVISOR",
+              "ADMIN"
+            ],
+            "example": "SUPERVISOR"
+          },
+          "profile_image": {
+            "type": "string",
+            "description": "URL to user profile image",
+            "example": "https://example.com/images/updated-profile.jpg"
+          }
+        }
+      }
+    }
   }
 }

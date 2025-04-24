@@ -1,7 +1,11 @@
 <script setup>
-import {defineEmits } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const props = defineProps({
+  autoFocus: {
+    type: Boolean,
+    default: false
+  },
   label: {
     type: String,
     default: ''
@@ -19,6 +23,16 @@ const props = defineProps({
     default: ''
   },
 })
+
+onMounted(() => {
+  if (props.autoFocus) {
+    if (inputFieldRef.value) {
+      inputFieldRef.value.focus()
+    }
+  }
+})
+
+const inputFieldRef = ref(null)
 
 const emit = defineEmits(['update:modelValue', 'blur'])
 
@@ -42,6 +56,7 @@ function handleBlur(event) {
     </legend>
 
     <input
+      ref="inputFieldRef"
       type="text"
       class="input input-bordered w-full rounded-full"
       :placeholder="placeholder"

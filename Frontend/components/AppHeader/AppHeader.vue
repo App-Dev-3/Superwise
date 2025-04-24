@@ -81,7 +81,7 @@ const goBack = () => {
         class="bg-base-100 px-4 pt-3 pb-4 border-t border-base-300"
       >
         <InputField
-          :autofocus="isSearching"
+          :autoFocus="isSearching"
           :modelValue="modelValue"
           placeholder="Search..."
           @update:modelValue="handleInput"

@@ -60,7 +60,7 @@ const goBack = () => {
       </div>
 
       <div class="navbar-center">
-        <img src="" alt="Logo" class="h-6" />
+        <img src="/images/appHeader_logo.svg" alt="Logo image" class="h-6" />
       </div>
 
       <div class="navbar-end">
@@ -81,13 +81,13 @@ const goBack = () => {
         class="bg-base-100 px-4 pt-3 pb-4 border-t border-base-300"
       >
         <InputField
-          :autofocus="isSearching"
+          :autoFocus="isSearching"
           :modelValue="modelValue"
           placeholder="Search..."
           @update:modelValue="handleInput"
           label="Search Field"
           note=""
-          @blur="isSearching = false"
+          rightIcon="xmark"
         />
       </div>
     </transition>

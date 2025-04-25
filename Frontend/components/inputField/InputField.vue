@@ -1,8 +1,16 @@
 <script setup>
-import {defineEmits } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 
 const props = defineProps({
+  autoFocus: {
+    type: Boolean,
+    default: false
+  },
   label: {
+    type: String,
+    default: ''
+  },
+  leftIcon: {
     type: String,
     default: ''
   },
@@ -18,7 +26,23 @@ const props = defineProps({
     type: String,
     default: ''
   },
+  rightIcon: {
+    type: String,
+    default: ''
+  },
 })
+const isClearIcon = computed(() => props.rightIcon === 'xmark')
+
+
+onMounted(() => {
+  if (props.autoFocus) {
+    if (inputFieldRef.value) {
+      inputFieldRef.value.focus()
+    }
+  }
+})
+
+const inputFieldRef = ref(null)
 
 const emit = defineEmits(['update:modelValue', 'blur'])
 
@@ -33,6 +57,13 @@ function handleBlur(event) {
   emit('blur', event)
 }
 
+function handleRightIconClick() {
+  if (!isClearIcon.value) {
+    return
+  }
+  emit('update:modelValue', '')
+}
+
 </script>
 
 <template>
@@ -41,17 +72,73 @@ function handleBlur(event) {
       {{ label }}
     </legend>
 
-    <input
-      type="text"
-      class="input input-bordered w-full rounded-full"
-      :placeholder="placeholder"
-      :value="modelValue"
-      @input="handleInput"
-      @blur="handleBlur"
-    />
+    <div class="input-container">
+      <FontAwesomeIcon
+        v-if="leftIcon"
+        :icon='leftIcon'
+        class="input-container__leftIcon"
+      />
+      <input
+        ref="inputFieldRef"
+        type="text"
+        class="input input-bordered w-full rounded-full"
+        :class="{
+          'input-container__input--left': leftIcon,
+          'input-container__input--right': rightIcon,
+        }"
+        :placeholder="placeholder"
+        :value="modelValue"
+        @input="handleInput"
+        @blur="handleBlur"
+      >
+      <FontAwesomeIcon
+        v-if="rightIcon"
+        :icon='rightIcon'
+        class="input-container__rightIcon"
+        :class="{'input-container__rightIcon--clickable': isClearIcon}"
+        @click="handleRightIconClick"
+      />
+    </div>
 
     <p class="text-xs text-gray-500 mt-1">
       {{ note }}
     </p>
 </div>
 </template>
+
+<style lang="scss" scoped>
+.input-container {
+  position: relative;
+
+  &__leftIcon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+    color: #888;
+  }
+
+  &__input--left {
+    padding-left: 2.5rem; 
+  }
+  &__input--right {
+    padding-right: 2.5rem; 
+  }
+
+  &__rightIcon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    z-index: 10;
+    color: #888;
+
+    &--clickable{
+      pointer-events: auto;
+    }
+  }
+}
+</style>

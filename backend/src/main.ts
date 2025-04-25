@@ -20,7 +20,9 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('MatchMaker API')
-    .setDescription('The MatchMaker API for matching students with thesis supervisors')
+    .setDescription(
+      'The MatchMaker API for matching students with thesis supervisors',
+    )
     .setVersion('1.0')
     .addTag('matchmaker')
     .addServer('http://localhost:8080', 'Local development server')

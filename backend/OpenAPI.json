@@ -364,6 +364,74 @@
           "Authentication"
         ]
       }
+    },
+    "/supervisors/register": {
+      "post": {
+        "description": "Updates supervisor profile with tags and priorities",
+        "operationId": "SupervisorsController_register",
+        "parameters": [
+          {
+            "name": "X-Request-Signature",
+            "in": "header",
+            "description": "HMAC signature",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-Timestamp",
+            "in": "header",
+            "description": "Request timestamp (ISO format)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-User-ID",
+            "in": "header",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "API Key",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupervisorRegistrationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supervisor registered successfully."
+          },
+          "400": {
+            "description": "Bad request - Invalid input data."
+          },
+          "401": {
+            "description": "Unauthorized - Invalid authentication."
+          },
+          "404": {
+            "description": "Not found - User not found or not a supervisor."
+          }
+        },
+        "summary": "Register as a supervisor",
+        "tags": [
+          "Supervisors"
+        ]
+      }
     }
   },
   "info": {
@@ -578,6 +646,50 @@
             "example": "https://example.com/images/updated-profile.jpg"
           }
         }
+      },
+      "UserTagDto": {
+        "type": "object",
+        "properties": {
+          "tag_id": {
+            "type": "string",
+            "description": "Tag ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "priority": {
+            "type": "number",
+            "description": "Priority of the tag for this user",
+            "example": 1
+          }
+        },
+        "required": [
+          "tag_id",
+          "priority"
+        ]
+      },
+      "SupervisorRegistrationDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "description": "Tags and their priorities for the supervisor",
+            "example": [
+              {
+                "tag_id": "123e4567-e89b-12d3-a456-426614174000",
+                "priority": 1
+              },
+              {
+                "tag_id": "223e4567-e89b-12d3-a456-426614174000",
+                "priority": 2
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserTagDto"
+            }
+          }
+        },
+        "required": [
+          "tags"
+        ]
       }
     }
   }

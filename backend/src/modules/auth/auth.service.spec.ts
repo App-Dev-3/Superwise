@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
@@ -11,7 +10,6 @@ describe('AuthService', () => {
   let usersService: UsersService;
 
   beforeEach(async () => {
-
     const mockConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'API_KEY') return 'test-api-key';
@@ -98,57 +96,68 @@ describe('AuthService', () => {
     });
 
     it('should return false if user not found', async () => {
-      jest.spyOn(usersService, 'findUserById').mockRejectedValue(new Error('Not found'));
+      jest
+        .spyOn(usersService, 'findUserById')
+        .mockRejectedValue(new Error('Not found'));
       expect(await service.validateUser('non-existent')).toBe(false);
     });
 
     it('should return false if usersService throws error', async () => {
-      jest.spyOn(usersService, 'findUserById').mockRejectedValue(new Error('Database error'));
+      jest
+        .spyOn(usersService, 'findUserById')
+        .mockRejectedValue(new Error('Database error'));
       expect(await service.validateUser('any-id')).toBe(false);
     });
   });
-  
+
   describe('verifyHmacSignature', () => {
     it('should verify valid signature', () => {
       const payload = { test: 'data' };
       const timestamp = new Date().toISOString();
       const data = JSON.stringify(payload) + timestamp;
-      
+
       const signature = crypto
         .createHmac('sha256', 'test-api-secret')
         .update(data)
         .digest('hex');
-      
-      expect(service.verifyHmacSignature(signature, payload, timestamp)).toBe(true);
+
+      expect(service.verifyHmacSignature(signature, payload, timestamp)).toBe(
+        true,
+      );
     });
-    
+
     it('should reject invalid signature', () => {
-        const payload = { test: 'data' };
-        const timestamp = new Date().toISOString();
-        
-        
-        const invalidSignature = 'a'.repeat(64); 
-        
-        expect(service.verifyHmacSignature(invalidSignature, payload, timestamp)).toBe(false);
-      });
+      const payload = { test: 'data' };
+      const timestamp = new Date().toISOString();
+
+      const invalidSignature = 'a'.repeat(64);
+
+      expect(
+        service.verifyHmacSignature(invalidSignature, payload, timestamp),
+      ).toBe(false);
+    });
 
     it('should throw error if API_SECRET is not configured', () => {
       jest.spyOn(configService, 'get').mockReturnValue(undefined);
-      expect(() => service.verifyHmacSignature('any-signature', {}, 'timestamp')).toThrow();
+      expect(() =>
+        service.verifyHmacSignature('any-signature', {}, 'timestamp'),
+      ).toThrow();
     });
 
     it('should reject if payload is tampered with', () => {
       const originalPayload = { test: 'original' };
       const timestamp = new Date().toISOString();
       const originalData = JSON.stringify(originalPayload) + timestamp;
-      
+
       const signature = crypto
         .createHmac('sha256', 'test-api-secret')
         .update(originalData)
         .digest('hex');
-      
+
       const tamperedPayload = { test: 'tampered' };
-      expect(service.verifyHmacSignature(signature, tamperedPayload, timestamp)).toBe(false);
+      expect(
+        service.verifyHmacSignature(signature, tamperedPayload, timestamp),
+      ).toBe(false);
     });
   });
 });

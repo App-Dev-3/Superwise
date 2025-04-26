@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { ApiAuthMiddleware } from './api-auth.middleware';
 import { AuthService } from '../auth.service';
@@ -46,7 +45,6 @@ describe('ApiAuthMiddleware', () => {
     });
 
     it('should call next() when all validations pass', async () => {
-  
       mockRequest.header.mockImplementation((name: string) => {
         if (name === 'X-API-Key') return 'valid-api-key';
         if (name === 'X-User-ID') return 'valid-user-id';
@@ -55,7 +53,6 @@ describe('ApiAuthMiddleware', () => {
         return null;
       });
 
- 
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(true);
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(true);
       jest.spyOn(authService, 'validateUser').mockResolvedValue(true);
@@ -70,8 +67,9 @@ describe('ApiAuthMiddleware', () => {
     it('should throw UnauthorizedException if headers are missing', async () => {
       mockRequest.header.mockReturnValue(null);
 
-      await expect(middleware.use(mockRequest, mockResponse, nextFunction))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(
+        middleware.use(mockRequest, mockResponse, nextFunction),
+      ).rejects.toThrow(UnauthorizedException);
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -86,8 +84,9 @@ describe('ApiAuthMiddleware', () => {
 
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(false);
 
-      await expect(middleware.use(mockRequest, mockResponse, nextFunction))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(
+        middleware.use(mockRequest, mockResponse, nextFunction),
+      ).rejects.toThrow(UnauthorizedException);
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -103,8 +102,9 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(true);
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(false);
 
-      await expect(middleware.use(mockRequest, mockResponse, nextFunction))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(
+        middleware.use(mockRequest, mockResponse, nextFunction),
+      ).rejects.toThrow(UnauthorizedException);
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -121,8 +121,9 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(true);
       jest.spyOn(authService, 'validateUser').mockResolvedValue(false);
 
-      await expect(middleware.use(mockRequest, mockResponse, nextFunction))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(
+        middleware.use(mockRequest, mockResponse, nextFunction),
+      ).rejects.toThrow(UnauthorizedException);
       expect(nextFunction).not.toHaveBeenCalled();
     });
 
@@ -140,8 +141,9 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'validateUser').mockResolvedValue(true);
       jest.spyOn(authService, 'verifyHmacSignature').mockReturnValue(false);
 
-      await expect(middleware.use(mockRequest, mockResponse, nextFunction))
-        .rejects.toThrow(UnauthorizedException);
+      await expect(
+        middleware.use(mockRequest, mockResponse, nextFunction),
+      ).rejects.toThrow(UnauthorizedException);
       expect(nextFunction).not.toHaveBeenCalled();
     });
   });

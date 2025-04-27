@@ -3,12 +3,12 @@ import { computed } from 'vue'
 
 const props = defineProps({
     // TODO: revise if we need size as a prop
-    // size: {
-    //     type: String,
-    //     default: 'md',
-    //     required: false,
-    //     validator: (value) => ['xs', 'sm', 'md', 'lg', 'xl', ].includes(value),
-    // },
+    size: {
+        type: String,
+        default: 'md',
+        required: false,
+        validator: (value) => ['xs', 'sm', 'md', 'lg', 'xl', ].includes(value),
+    },
     image: {
         type: String,
         required: true,
@@ -62,6 +62,22 @@ const props = defineProps({
 
 const limitedTags = computed(() => props.tags.slice(0, props.maxTagAmount))
 
+const cardSizeClasses = computed(() => ({
+    'w-72 card-xs': props.size === 'xs',
+    'w-80 card-sm': props.size === 'sm',
+    'w-96 card-md': props.size === 'md',
+    'w-[28rem] card-lg': props.size === 'lg',
+    'w-[32rem] card-xl': props.size === 'xl',
+}))
+
+const imageSizeClasses = computed(() => ({
+    'size-8': props.size === 'xs',
+    'size-10': props.size === 'sm',
+    'size-12': props.size === 'md',
+    'size-14': props.size === 'lg',
+    'size-16': props.size === 'xl',
+}))
+
 const emit = defineEmits(['swipeLeft', 'swipeRight'])
 
 const handleSwipeLeft = (event) => {
@@ -76,12 +92,19 @@ const handleSwipeRight = (event) => {
 </script>
 
 <template>
-<!--    TODO: revise if we need size as a prop-->
-    <div class="card w-96 bg-base-100 card-{{ props.size || 'md' }} shadow-lg">
+    <div
+        class="card bg-base-100 shadow-lg"
+        :class="cardSizeClasses"
+    >
         <div class="card-body">
             <h2 class="card-title font-bold">
                 <div class="mask mask-squircle">
-                    <img class="size-12 rounded-box" :src="props.image"/>
+                    <img
+                        class="rounded-box"
+                        :class="imageSizeClasses"
+                        :src="props.image"
+                        alt="Profile Picture of {{ props.name }}"
+                    />
                 </div>{{ props.name }}
             </h2>
 

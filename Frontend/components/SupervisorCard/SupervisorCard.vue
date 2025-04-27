@@ -86,7 +86,7 @@ const imageSizeClasses = computed(() => ({
 
             <p
                 class="text-base-content/50 text-xs line-clamp-4 leading-tight"
-               :class="{ 'h-15': description.trim().length > 0 }"
+               :class="{ 'h-15': props.description.trim().length > 0 }"
             >
                 {{ description }}
             </p>

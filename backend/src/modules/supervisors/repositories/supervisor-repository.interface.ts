@@ -1,15 +1,15 @@
-// src/modules/supervisors/repositories/supervisor-repository.interface.ts
-import { Supervisor, User, UserTag } from '@prisma/client';
+
+import { User, UserTag } from '@prisma/client';
 import { registerSupervisorDto } from '../dto/register-supervisor.dto';
 
 
 export interface SupervisorRepository {
   /**
-   * Find a supervisor by their user ID with related profile
+   * Find a supervisor by their user ID 
    * @param userId The user ID
-   * @returns The user with supervisor profile or null
+   * @returns The user or null
    */
-  findSupervisorByUserId(userId: string): Promise<User & { supervisor_profile: Supervisor | null } | null>;
+  findSupervisorByUserId(userId: string): Promise<User>;
   
   /**
    * Check if a user is a supervisor

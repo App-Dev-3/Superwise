@@ -26,19 +26,14 @@ export class SupervisorsService {
       throw new BadRequestException('User is not a supervisor');
     }
 
-    if (!user.supervisor_profile) {
-      throw new NotFoundException(
-        `Supervisor profile not found for user ${userId}`,
-      );
-    }
 
- 
     const results = await this.supervisorRepository.updateSupervisorTags(userId, registerDto.tags);
 
     if (!user.is_registered) {
       await this.supervisorRepository.updateUserRegistrationStatus(userId, true);
     }
 
+  
     return {
       success: true,
       message: 'Supervisor registered successfully',

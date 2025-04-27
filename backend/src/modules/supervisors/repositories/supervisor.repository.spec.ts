@@ -1,4 +1,3 @@
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaSupervisorRepository } from './supervisor.repository';
 import { PrismaService } from '../../../prisma/prisma.service';
@@ -55,7 +54,6 @@ describe('PrismaSupervisorRepository', () => {
       prismaService.user.findUnique = jest.fn().mockResolvedValue({
         id: userId,
         role: Role.SUPERVISOR,
-        supervisor_profile: { id: 'sup-1' },
       });
 
       await repository.findSupervisorByUserId(userId);
@@ -64,10 +62,7 @@ describe('PrismaSupervisorRepository', () => {
         where: { 
           id: userId,
           is_deleted: false 
-        },
-        include: {
-          supervisor_profile: true,
-        },
+        }
       });
     });
   });
@@ -75,8 +70,7 @@ describe('PrismaSupervisorRepository', () => {
   describe('isSupervisor', () => {
     it('should return true for valid supervisor', async () => {
       prismaService.user.findUnique = jest.fn().mockResolvedValue({
-        role: Role.SUPERVISOR,
-        supervisor_profile: { id: 'sup-1' },
+        role: Role.SUPERVISOR
       });
 
       const result = await repository.isSupervisor(userId);
@@ -85,18 +79,14 @@ describe('PrismaSupervisorRepository', () => {
       expect(prismaService.user.findUnique).toHaveBeenCalledWith({
         where: { id: userId, is_deleted: false },
         select: { 
-          role: true,
-          supervisor_profile: {
-            select: { id: true }
-          }
-        },
+          role: true
+        }
       });
     });
 
     it('should return false for non-supervisor', async () => {
       prismaService.user.findUnique = jest.fn().mockResolvedValue({
-        role: Role.STUDENT,
-        supervisor_profile: null,
+        role: Role.STUDENT
       });
 
       const result = await repository.isSupervisor(userId);
@@ -140,5 +130,4 @@ describe('PrismaSupervisorRepository', () => {
       });
     });
   });
-
 });

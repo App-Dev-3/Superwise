@@ -1,26 +1,29 @@
-// src/modules/supervisors/repositories/supervisor.repository.ts
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { SupervisorRepository } from './supervisor-repository.interface';
 import { registerSupervisorDto } from '../dto/register-supervisor.dto';
-import { Supervisor, User, UserTag } from '@prisma/client';
+import {  User, UserTag } from '@prisma/client';
 
 @Injectable()
 export class PrismaSupervisorRepository implements SupervisorRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findSupervisorByUserId(userId: string): Promise<User & { supervisor_profile: Supervisor | null } | null> {
-    return this.prisma.user.findUnique({
+  async findSupervisorByUserId(userId: string): Promise<User> {
+    const supervisor = await this.prisma.user.findUnique({
       where: { 
         id: userId,
         is_deleted: false 
-      },
-      include: {
-        supervisor_profile: true, // Not sure if we need this. 
-      },
+      }
     });
+    
+    if (!supervisor) {
+      throw new Error('Supervisor not found');
+    }
+    
+    return supervisor;
   }
-
+  
   async isSupervisor(userId: string): Promise<boolean> {
     const user = await this.prisma.user.findUnique({
       where: { 
@@ -28,18 +31,15 @@ export class PrismaSupervisorRepository implements SupervisorRepository {
         is_deleted: false 
       },
       select: { 
-        role: true,
-        supervisor_profile: {
-          select: { id: true } // Not sure if we need this also.
-        }
+        role: true
       },
     });
     
-    return user?.role === 'SUPERVISOR' && !!user?.supervisor_profile;
+    return user?.role === 'SUPERVISOR';
   }
 
   async updateSupervisorTags(userId: string, tags: registerSupervisorDto['tags']): Promise<UserTag[]> {
-   
+  
     await this.prisma.userTag.deleteMany({
       where: { user_id: userId },
     });

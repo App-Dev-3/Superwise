@@ -117,8 +117,11 @@ describe('SupervisorsService', () => {
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(null);
-
+      
+      jest.spyOn(repository, 'findSupervisorByUserId').mockRejectedValue(
+        new Error(`User with ID ${userId} not found`)
+      );
+    
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new NotFoundException(`User with ID ${userId} not found`),
       );
@@ -134,19 +137,6 @@ describe('SupervisorsService', () => {
       );
     });
 
-    it('should throw NotFoundException if supervisor profile not found', async () => {
-      const userWithoutProfile = {
-        ...mockSupervisor,
-        supervisor_profile: null,
-      };
-      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(userWithoutProfile);
-
-      await expect(service.register(userId, registerDto)).rejects.toThrow(
-        new NotFoundException(
-          `Supervisor profile not found for user ${userId}`,
-        ),
-      );
-    });
 
     it('should handle empty tags array gracefully', async () => {
       jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);

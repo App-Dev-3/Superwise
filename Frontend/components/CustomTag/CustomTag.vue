@@ -38,7 +38,10 @@ function handleDelete() {
     class="badge badge-neutral badge-outline p-1"
     :class="[
       `bg-${color}`, 
-      `text-${color}-content`, 
+      `text-${color}-content`,
+      {
+        'cursor-pointer' : clickable,
+      }
     ]"
     @click="handleClick"
   >

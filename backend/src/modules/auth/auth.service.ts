@@ -49,7 +49,7 @@ export class AuthService {
       return false;
     }
   }
-  isTimestampValid(timestamp: string, windowMinutes: number = 5): boolean {
+  isTimestampValid(timestamp: string, windowMinutes: number = 2): boolean {
     const requestTime = new Date(timestamp).getTime();
     const currentTime = Date.now();
     const windowMs = windowMinutes * 60 * 1000;

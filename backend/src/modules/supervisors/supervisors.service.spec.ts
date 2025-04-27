@@ -1,16 +1,15 @@
-// src/modules/supervisors/supervisors.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisorsService } from './supervisors.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { SupervisorRegistrationDto } from './dto/register-supervisor.dto';
+import { registerSupervisorDto } from './dto/register-supervisor.dto';
 
 describe('SupervisorsService', () => {
   let service: SupervisorsService;
   let prismaService: PrismaService;
 
   const userId = 'test-user-id';
-  const registerDto: SupervisorRegistrationDto = {
+  const registerDto: registerSupervisorDto = {
     tags: [
       { tag_id: 'tag-id-1', priority: 1 },
       { tag_id: 'tag-id-2', priority: 2 },

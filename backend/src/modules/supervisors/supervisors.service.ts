@@ -1,4 +1,4 @@
-// src/modules/supervisors/supervisors.service.ts
+
 import {
   Injectable,
   NotFoundException,
@@ -6,14 +6,15 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
-import { SupervisorRegistrationDto } from './dto/register-supervisor.dto';
-import { Prisma } from '@prisma/client';
+import { registerSupervisorDto } from './dto/register-supervisor.dto';
+
+import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
 
 @Injectable()
 export class SupervisorsService {
   constructor(private prisma: PrismaService) {}
 
-  async register(userId: string, registerDto: SupervisorRegistrationDto) {
+  async register(userId: string, registerDto: registerSupervisorDto): Promise<SupervisorRegistrationResponse> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       include: {

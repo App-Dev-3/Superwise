@@ -6,15 +6,17 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import { AuthService } from '../auth.service';
 
+//guard not middleware 
+
 @Injectable()
 export class ApiAuthMiddleware implements NestMiddleware {
   constructor(private authService: AuthService) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    const apiKey = req.header('X-API-Key');
-    const userId = req.header('X-User-ID');
-    const timestamp = req.header('X-Request-Timestamp');
-    const signature = req.header('X-Request-Signature');
+    const apiKey = req.header('API-Key');
+    const userId = req.header('User-ID');
+    const timestamp = req.header('Request-Timestamp');
+    const signature = req.header('Request-Signature');
 
     if (!apiKey || !userId || !timestamp || !signature) {
       throw new UnauthorizedException(

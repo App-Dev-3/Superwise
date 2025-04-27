@@ -319,7 +319,7 @@
         "operationId": "AuthController_testAuth",
         "parameters": [
           {
-            "name": "X-Request-Signature",
+            "name": "Request-Signature",
             "in": "header",
             "description": "HMAC signature",
             "schema": {
@@ -327,7 +327,7 @@
             }
           },
           {
-            "name": "X-Request-Timestamp",
+            "name": "Request-Timestamp",
             "in": "header",
             "description": "Request timestamp (ISO format)",
             "schema": {
@@ -335,7 +335,7 @@
             }
           },
           {
-            "name": "X-User-ID",
+            "name": "User-ID",
             "in": "header",
             "description": "User ID",
             "schema": {
@@ -343,7 +343,7 @@
             }
           },
           {
-            "name": "X-API-Key",
+            "name": "API-Key",
             "in": "header",
             "description": "API Key",
             "schema": {
@@ -369,53 +369,28 @@
       "post": {
         "description": "Updates supervisor profile with tags and priorities",
         "operationId": "SupervisorsController_register",
-        "parameters": [
-          {
-            "name": "X-Request-Signature",
-            "in": "header",
-            "description": "HMAC signature",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Request-Timestamp",
-            "in": "header",
-            "description": "Request timestamp (ISO format)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-User-ID",
-            "in": "header",
-            "description": "User ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-API-Key",
-            "in": "header",
-            "description": "API Key",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "Supervisor Tag and priority data",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupervisorRegistrationDto"
+                "$ref": "#/components/schemas/registerSupervisorDto"
               }
             }
           }
         },
         "responses": {
           "201": {
-            "description": "Supervisor registered successfully."
+            "description": "Supervisor registered successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupervisorRegistrationResponse"
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request - Invalid input data."
@@ -666,7 +641,7 @@
           "priority"
         ]
       },
-      "SupervisorRegistrationDto": {
+      "registerSupervisorDto": {
         "type": "object",
         "properties": {
           "tags": {
@@ -688,6 +663,33 @@
           }
         },
         "required": [
+          "tags"
+        ]
+      },
+      "SupervisorRegistrationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates if the registration was successful",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Response message",
+            "example": "Supervisor registered successfully"
+          },
+          "tags": {
+            "description": "User tags with priorities",
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          }
+        },
+        "required": [
+          "success",
+          "message",
           "tags"
         ]
       }

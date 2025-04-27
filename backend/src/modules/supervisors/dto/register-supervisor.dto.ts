@@ -3,7 +3,7 @@ import { IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UserTagDto } from '../../users/dto/user-tag.dto';
 
-export class SupervisorRegistrationDto {
+export class registerSupervisorDto {
   @ApiProperty({
     description: 'Tags and their priorities for the supervisor',
     type: [UserTagDto],

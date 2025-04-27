@@ -1,8 +1,9 @@
 import { Controller, Post, Body, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { SupervisorsService } from './supervisors.service';
-import { SupervisorRegistrationDto } from './dto/register-supervisor.dto';
+import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { Request } from 'express';
+import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
 
 @ApiTags('Supervisors')
 @Controller('supervisors')
@@ -14,9 +15,14 @@ export class SupervisorsController {
     summary: 'Register as a supervisor',
     description: 'Updates supervisor profile with tags and priorities',
   })
+  @ApiBody({
+    type: registerSupervisorDto,
+    description: 'Supervisor Tag and priority data',
+  })
   @ApiResponse({
     status: 201,
     description: 'Supervisor registered successfully.',
+    type: SupervisorRegistrationResponse
   })
   @ApiResponse({
     status: 400,
@@ -30,26 +36,11 @@ export class SupervisorsController {
     status: 404,
     description: 'Not found - User not found or not a supervisor.',
   })
-  @ApiHeader({
-    name: 'X-API-Key',
-    description: 'API Key',
-  })
-  @ApiHeader({
-    name: 'X-User-ID',
-    description: 'User ID',
-  })
-  @ApiHeader({
-    name: 'X-Request-Timestamp',
-    description: 'Request timestamp (ISO format)',
-  })
-  @ApiHeader({
-    name: 'X-Request-Signature',
-    description: 'HMAC signature',
-  })
+
   register(
-    @Body() registerDto: SupervisorRegistrationDto,
+    @Body() registerDto: registerSupervisorDto,
     @Req() req: Request,
-  ) {
+  ): Promise<SupervisorRegistrationResponse> {
     const userId = req['userId'];
     return this.supervisorsService.register(userId, registerDto);
   }

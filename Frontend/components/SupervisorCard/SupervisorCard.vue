@@ -1,4 +1,6 @@
 <script setup>
+import { computed } from 'vue'
+
 const props = defineProps({
     // TODO: revise if we need size as a prop
     // size: {

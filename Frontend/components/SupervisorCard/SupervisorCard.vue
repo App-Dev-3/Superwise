@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-    // TODO: revise if we need size as a prop
     size: {
         type: String,
         default: 'md',
@@ -46,18 +45,6 @@ const props = defineProps({
         type: Number,
         default: 0,
     },
-    draggingEnabled: {
-        type: Boolean,
-        default: false,
-    },
-    iconSwipeLeft: {
-        type: String,
-        default: 'trash',
-    },
-    iconSwipeRight: {
-        type: String,
-        default: 'check',
-    },
 })
 
 const limitedTags = computed(() => props.tags.slice(0, props.maxTagAmount))
@@ -77,17 +64,6 @@ const imageSizeClasses = computed(() => ({
     'size-14': props.size === 'lg',
     'size-16': props.size === 'xl',
 }))
-
-const emit = defineEmits(['swipeLeft', 'swipeRight'])
-
-const handleSwipeLeft = (event) => {
-    event.preventDefault()
-    emit('swipeLeft', event)
-}
-const handleSwipeRight = (event) => {
-    event.preventDefault()
-    emit('swipeRight', event)
-}
 
 </script>
 

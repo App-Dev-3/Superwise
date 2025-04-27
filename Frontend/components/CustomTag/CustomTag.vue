@@ -12,13 +12,23 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  deletable: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['click'])
+const emit = defineEmits(['click', 'delete'])
 
 function handleClick() {
-  if (props.clickable) {
+  if (props.clickable && !props.deletable) {
     emit('click')
+  }
+}
+
+function handleDelete() {
+  if (props.deletable) {
+    emit('delete')
   }
 }
 </script>
@@ -30,13 +40,14 @@ function handleClick() {
       `bg-${color}`, 
       `text-${color}-content`, 
     ]"
+    @click="handleClick"
   >
     <FontAwesomeIcon
-      v-if="clickable"
+      v-if="deletable"
       icon="xmark"
       class="text-s cursor-pointer"
-      @click="handleClick"
       data-test="icon"
+      @click="handleDelete"
     />
       {{ name }}
   </div>

@@ -12,25 +12,24 @@ describe('PrismaSupervisorRepository', () => {
     { tag_id: 'tag-1', priority: 1 },
     { tag_id: 'tag-2', priority: 2 },
   ];
-
+  const mockPrismaService = {
+    user: {
+      findUnique: jest.fn(),
+      findMany: jest.fn(),
+      update: jest.fn(),
+    },
+    supervisor: {
+      update: jest.fn(),
+      findUnique: jest.fn(),
+    },
+    userTag: {
+      deleteMany: jest.fn(),
+      create: jest.fn(),
+    },
+    $transaction: jest.fn(),
+  };
   beforeEach(async () => {
-    const mockPrismaService = {
-      user: {
-        findUnique: jest.fn(),
-        findMany: jest.fn(),
-        update: jest.fn(),
-      },
-      supervisor: {
-        update: jest.fn(),
-        findUnique: jest.fn(),
-      },
-      userTag: {
-        deleteMany: jest.fn(),
-        create: jest.fn(),
-      },
-      $transaction: jest.fn(),
-    };
-
+    
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PrismaSupervisorRepository,
@@ -43,6 +42,8 @@ describe('PrismaSupervisorRepository', () => {
 
     repository = module.get<PrismaSupervisorRepository>(PrismaSupervisorRepository);
     prismaService = module.get<PrismaService>(PrismaService);
+    jest.clearAllMocks();
+
   });
 
   it('should be defined', () => {

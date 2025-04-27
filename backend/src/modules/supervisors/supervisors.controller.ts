@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { SupervisorsService } from './supervisors.service';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { Request } from 'express';
@@ -11,7 +11,7 @@ import { ApiAuthGuard } from '../auth/guards/api-auth.guard';
 export class SupervisorsController {
   constructor(private readonly supervisorsService: SupervisorsService) {}
   
-// Do we need auth api documentation here in the controller? we would need to upate main.ts aswell i think 
+  // Do we need auth api documentation here in the controller? we would need to upate main.ts aswell i think 
 
   @Post('register')
   @UseGuards(ApiAuthGuard) 
@@ -44,7 +44,10 @@ export class SupervisorsController {
     @Body() registerDto: registerSupervisorDto,
     @Req() req: Request,
   ): Promise<SupervisorRegistrationResponse> {
-    const userId = req['userId'];
+    const userId = req['userId'] as string;
+    if (!userId) {
+      throw new Error('User ID not found in request');
+    }
     return this.supervisorsService.register(userId, registerDto);
   }
 }

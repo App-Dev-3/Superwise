@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import * as crypto from 'crypto';
@@ -45,7 +45,7 @@ export class AuthService {
         );
       }
       return false;
-    } catch (error) {
+    } catch (_) {
       return false;
     }
   }
@@ -66,7 +66,7 @@ export class AuthService {
       }
 
       return !('is_deleted' in user && user.is_deleted === true);
-    } catch (error) {
+    } catch (_) {
       return false;
     }
   }

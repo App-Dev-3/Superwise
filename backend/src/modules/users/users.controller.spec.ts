@@ -8,7 +8,6 @@ import { NotFoundException } from '@nestjs/common';
 
 describe('UsersController', () => {
   let controller: UsersController;
-  let service: UsersService;
 
   // Mock user service to avoid database calls
   const mockUsersService = {
@@ -67,7 +66,6 @@ describe('UsersController', () => {
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
-    service = module.get<UsersService>(UsersService);
     
     // Reset all mocks before each test
     jest.clearAllMocks();

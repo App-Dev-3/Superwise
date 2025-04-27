@@ -7,7 +7,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
-  let prismaService: PrismaService;
 
   // Mock the PrismaService to avoid actual database calls
   const mockPrismaService = {
@@ -48,7 +47,6 @@ describe('UsersRepository', () => {
     }).compile();
 
     repository = module.get<UsersRepository>(UsersRepository);
-    prismaService = module.get<PrismaService>(PrismaService);
     
     // Reset all mocks before each test
     jest.clearAllMocks();

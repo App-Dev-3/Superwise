@@ -8,7 +8,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: UsersRepository;
 
   const mockUsersRepository = {
     create: jest.fn(),
@@ -68,7 +67,6 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<UsersRepository>(UsersRepository);
 
     // Reset all mocks before each test
     jest.clearAllMocks();

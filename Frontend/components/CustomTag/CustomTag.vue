@@ -17,7 +17,7 @@ const props = defineProps({
 const emit = defineEmits(['click'])
 
 function handleClick() {
-  if (clickable) {
+  if (props.clickable) {
     emit('click')
   }
 }
@@ -36,6 +36,7 @@ function handleClick() {
       icon="xmark"
       class="text-s cursor-pointer"
       @click="handleClick"
+      data-test="icon"
     />
       {{ name }}
   </div>

@@ -215,6 +215,7 @@ describe('UsersController', () => {
       const result = await controller.findByTagIds(tagIds);
 
       // Assert
+      expect(result).toEqual([mockUser]);
       expect(mockUsersService.findUsersByTagIds).toHaveBeenCalledWith(splitTagIds);
     });
   });

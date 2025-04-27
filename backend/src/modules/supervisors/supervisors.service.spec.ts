@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisorsService } from './supervisors.service';
-import { PrismaService } from '../../prisma/prisma.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
+import { SupervisorRepository } from './repositories/supervisor-repository.interface';
+import { Role } from '@prisma/client';
 
 describe('SupervisorsService', () => {
   let service: SupervisorsService;
-  let prismaService: PrismaService;
+  let repository: SupervisorRepository;
 
   const userId = 'test-user-id';
   const registerDto: registerSupervisorDto = {
@@ -21,7 +22,8 @@ describe('SupervisorsService', () => {
     email: 'supervisor@example.com',
     first_name: 'Test',
     last_name: 'Supervisor',
-    role: 'SUPERVISOR',
+    role: Role.SUPERVISOR,
+    profile_image: null,
     is_registered: false,
     is_deleted: false,
     created_at: new Date(),
@@ -35,6 +37,10 @@ describe('SupervisorsService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     },
+   
+    tags: [] as any[],
+    blocked_users: [] as any[],
+    blocked_by_users: [] as any[]
   };
 
   const mockTagResults = [
@@ -55,27 +61,25 @@ describe('SupervisorsService', () => {
   ];
 
   beforeEach(async () => {
-    const mockPrismaService = {
-      user: {
-        findUnique: jest.fn(),
-        update: jest.fn(),
-      },
-      userTag: {
-        deleteMany: jest.fn(),
-        create: jest.fn(),
-      },
-      $transaction: jest.fn(),
+    const mockRepository = {
+      findSupervisorByUserId: jest.fn(),
+      updateSupervisorTags: jest.fn(),
+      updateUserRegistrationStatus: jest.fn(),
+      isSupervisor: jest.fn(),
+      updateBio: jest.fn(),
+      getAllSupervisors: jest.fn(),
+      getSupervisorsByTags: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SupervisorsService,
-        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: 'SupervisorRepository', useValue: mockRepository },
       ],
     }).compile();
 
     service = module.get<SupervisorsService>(SupervisorsService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    repository = module.get<SupervisorRepository>('SupervisorRepository');
   });
 
   it('should be defined', () => {
@@ -84,43 +88,16 @@ describe('SupervisorsService', () => {
 
   describe('register', () => {
     it('should successfully register a supervisor with tags', async () => {
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(mockSupervisor);
-      prismaService.userTag.deleteMany = jest
-        .fn()
-        .mockResolvedValue({ count: 0 });
-      prismaService.userTag.create = jest.fn().mockImplementation((data) => {
-        const tagId = data.data.tag_id;
-        const priority = data.data.priority;
-        return Promise.resolve({
-          user_id: userId,
-          tag_id: tagId,
-          priority: priority,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-      });
-      prismaService.$transaction = jest.fn().mockResolvedValue(mockTagResults);
-      prismaService.user.update = jest.fn().mockResolvedValue({
-        ...mockSupervisor,
-        is_registered: true,
-      });
+  
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);
+      jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue(mockTagResults);
+      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue();
 
       const result = await service.register(userId, registerDto);
 
-      expect(prismaService.user.findUnique).toHaveBeenCalledWith({
-        where: { id: userId },
-        include: { supervisor_profile: true },
-      });
-      expect(prismaService.userTag.deleteMany).toHaveBeenCalledWith({
-        where: { user_id: userId },
-      });
-      expect(prismaService.$transaction).toHaveBeenCalled();
-      expect(prismaService.user.update).toHaveBeenCalledWith({
-        where: { id: userId },
-        data: { is_registered: true },
-      });
+      expect(repository.findSupervisorByUserId).toHaveBeenCalledWith(userId);
+      expect(repository.updateSupervisorTags).toHaveBeenCalledWith(userId, registerDto.tags);
+      expect(repository.updateUserRegistrationStatus).toHaveBeenCalledWith(userId, true);
       expect(result).toEqual({
         success: true,
         message: 'Supervisor registered successfully',
@@ -130,21 +107,17 @@ describe('SupervisorsService', () => {
 
     it('should not update is_registered if already registered', async () => {
       const registeredSupervisor = { ...mockSupervisor, is_registered: true };
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(registeredSupervisor);
-      prismaService.userTag.deleteMany = jest
-        .fn()
-        .mockResolvedValue({ count: 0 });
-      prismaService.$transaction = jest.fn().mockResolvedValue(mockTagResults);
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(registeredSupervisor);
+      jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue(mockTagResults);
+      jest.spyOn(repository, 'updateUserRegistrationStatus');
 
       await service.register(userId, registerDto);
 
-      expect(prismaService.user.update).not.toHaveBeenCalled();
+      expect(repository.updateUserRegistrationStatus).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      prismaService.user.findUnique = jest.fn().mockResolvedValue(null);
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(null);
 
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new NotFoundException(`User with ID ${userId} not found`),
@@ -152,11 +125,10 @@ describe('SupervisorsService', () => {
     });
 
     it('should throw BadRequestException if user is not a supervisor', async () => {
-      const nonSupervisorUser = { ...mockSupervisor, role: 'STUDENT' };
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(nonSupervisorUser);
-
+      
+      const nonSupervisorUser = { ...mockSupervisor, role: Role.STUDENT };
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(nonSupervisorUser);
+    
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new BadRequestException('User is not a supervisor'),
       );
@@ -167,9 +139,7 @@ describe('SupervisorsService', () => {
         ...mockSupervisor,
         supervisor_profile: null,
       };
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(userWithoutProfile);
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(userWithoutProfile);
 
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new NotFoundException(
@@ -179,22 +149,13 @@ describe('SupervisorsService', () => {
     });
 
     it('should handle empty tags array gracefully', async () => {
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(mockSupervisor);
-      prismaService.userTag.deleteMany = jest
-        .fn()
-        .mockResolvedValue({ count: 0 });
-      prismaService.$transaction = jest.fn().mockResolvedValue([]);
-      prismaService.user.update = jest.fn().mockResolvedValue({
-        ...mockSupervisor,
-        is_registered: true,
-      });
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);
+      jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue([]);
+      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue();
 
       const result = await service.register(userId, { tags: [] });
 
-      expect(prismaService.userTag.deleteMany).toHaveBeenCalled();
-      expect(prismaService.$transaction).toHaveBeenCalledWith([]);
+      expect(repository.updateSupervisorTags).toHaveBeenCalledWith(userId, []);
       expect(result).toEqual({
         success: true,
         message: 'Supervisor registered successfully',
@@ -202,16 +163,9 @@ describe('SupervisorsService', () => {
       });
     });
 
-    it('should handle database errors during transaction', async () => {
-      prismaService.user.findUnique = jest
-        .fn()
-        .mockResolvedValue(mockSupervisor);
-      prismaService.userTag.deleteMany = jest
-        .fn()
-        .mockResolvedValue({ count: 0 });
-      prismaService.$transaction = jest
-        .fn()
-        .mockRejectedValue(new Error('Database error'));
+    it('should handle database errors during tag update', async () => {
+      jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);
+      jest.spyOn(repository, 'updateSupervisorTags').mockRejectedValue(new Error('Database error'));
 
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         'Database error',

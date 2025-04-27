@@ -314,57 +314,6 @@
         ]
       }
     },
-    "/auth/test": {
-      "post": {
-        "operationId": "AuthController_testAuth",
-        "parameters": [
-          {
-            "name": "Request-Signature",
-            "in": "header",
-            "description": "HMAC signature",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Request-Timestamp",
-            "in": "header",
-            "description": "Request timestamp (ISO format)",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "User-ID",
-            "in": "header",
-            "description": "User ID",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "API-Key",
-            "in": "header",
-            "description": "API Key",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Authentication successful"
-          },
-          "401": {
-            "description": "Unauthorized"
-          }
-        },
-        "summary": "Test authentication mechanism",
-        "tags": [
-          "Authentication"
-        ]
-      }
-    },
     "/supervisors/register": {
       "post": {
         "description": "Updates supervisor profile with tags and priorities",

@@ -3,6 +3,8 @@ import { SupervisorsController } from './supervisors.controller';
 import { SupervisorsService } from './supervisors.service';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
+import { ApiAuthGuard } from '../auth/guards/api-auth.guard';
+import { AuthService } from '../auth/auth.service';
 
 describe('SupervisorsController', () => {
   let controller: SupervisorsController;
@@ -18,8 +20,25 @@ describe('SupervisorsController', () => {
             register: jest.fn(),
           },
         },
+       
+        {
+          provide: AuthService,
+          useValue: {
+            validateApiKey: jest.fn(),
+            isTimestampValid: jest.fn(),
+            validateUser: jest.fn(),
+            verifyHmacSignature: jest.fn(),
+          },
+        },
+       
+        ApiAuthGuard,
       ],
-    }).compile();
+    })
+    .overrideGuard(ApiAuthGuard) 
+    .useValue({
+      canActivate: jest.fn().mockImplementation(() => true),
+    })
+    .compile();
 
     controller = module.get<SupervisorsController>(SupervisorsController);
     service = module.get<SupervisorsService>(SupervisorsService);
@@ -31,7 +50,6 @@ describe('SupervisorsController', () => {
       tags: [{ tag_id: 'tag-1', priority: 1 }],
     };
     const mockRequest: any = { userId: mockUserId };
-
 
     const mockResult: SupervisorRegistrationResponse = { 
       success: true,

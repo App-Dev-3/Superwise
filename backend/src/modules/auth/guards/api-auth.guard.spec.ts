@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ApiAuthMiddleware } from './api-auth.middleware';
+import { ApiAuthGuard } from './api-auth.guard';
 import { AuthService } from '../auth.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException, ExecutionContext } from '@nestjs/common';
 
-describe('ApiAuthMiddleware', () => {
-  let middleware: ApiAuthMiddleware;
+describe('ApiAuthGuard', () => {
+  let guard: ApiAuthGuard;
   let authService: AuthService;
 
   beforeEach(async () => {
@@ -17,39 +17,42 @@ describe('ApiAuthMiddleware', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ApiAuthMiddleware,
+        ApiAuthGuard,
         { provide: AuthService, useValue: authServiceMock },
       ],
     }).compile();
 
-    middleware = module.get<ApiAuthMiddleware>(ApiAuthMiddleware);
+    guard = module.get<ApiAuthGuard>(ApiAuthGuard);
     authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
-    expect(middleware).toBeDefined();
+    expect(guard).toBeDefined();
   });
 
-  describe('use', () => {
+  describe('canActivate', () => {
+    let mockContext: ExecutionContext;
     let mockRequest: any;
-    let mockResponse: any;
-    let nextFunction: jest.Mock;
 
     beforeEach(() => {
       mockRequest = {
         header: jest.fn(),
         body: { test: 'data' },
       };
-      mockResponse = {};
-      nextFunction = jest.fn();
+      
+      mockContext = {
+        switchToHttp: () => ({
+          getRequest: () => mockRequest,
+        }),
+      } as ExecutionContext;
     });
 
-    it('should call next() when all validations pass', async () => {
+    it('should return true when all validations pass', async () => {
       mockRequest.header.mockImplementation((name: string) => {
-        if (name === 'X-API-Key') return 'valid-api-key';
-        if (name === 'X-User-ID') return 'valid-user-id';
-        if (name === 'X-Request-Timestamp') return '2025-04-26T12:00:00.000Z';
-        if (name === 'X-Request-Signature') return 'valid-signature';
+        if (name === 'API-Key') return 'valid-api-key';
+        if (name === 'User-ID') return 'valid-user-id';
+        if (name === 'Request-Timestamp') return '2025-04-26T12:00:00.000Z';
+        if (name === 'Request-Signature') return 'valid-signature';
         return null;
       });
 
@@ -58,9 +61,9 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'validateUser').mockResolvedValue(true);
       jest.spyOn(authService, 'verifyHmacSignature').mockReturnValue(true);
 
-      await middleware.use(mockRequest, mockResponse, nextFunction);
+      const result = await guard.canActivate(mockContext);
 
-      expect(nextFunction).toHaveBeenCalled();
+      expect(result).toBe(true);
       expect(mockRequest['userId']).toBe('valid-user-id');
     });
 
@@ -68,34 +71,32 @@ describe('ApiAuthMiddleware', () => {
       mockRequest.header.mockReturnValue(null);
 
       await expect(
-        middleware.use(mockRequest, mockResponse, nextFunction),
+        guard.canActivate(mockContext)
       ).rejects.toThrow(UnauthorizedException);
-      expect(nextFunction).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException if API key is invalid', async () => {
       mockRequest.header.mockImplementation((name: string) => {
-        if (name === 'X-API-Key') return 'invalid-key';
-        if (name === 'X-User-ID') return 'valid-user-id';
-        if (name === 'X-Request-Timestamp') return '2025-04-26T12:00:00.000Z';
-        if (name === 'X-Request-Signature') return 'valid-signature';
+        if (name === 'API-Key') return 'invalid-key';
+        if (name === 'User-ID') return 'valid-user-id';
+        if (name === 'Request-Timestamp') return '2025-04-26T12:00:00.000Z';
+        if (name === 'Request-Signature') return 'valid-signature';
         return null;
       });
 
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(false);
 
       await expect(
-        middleware.use(mockRequest, mockResponse, nextFunction),
+        guard.canActivate(mockContext)
       ).rejects.toThrow(UnauthorizedException);
-      expect(nextFunction).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException if timestamp is invalid', async () => {
       mockRequest.header.mockImplementation((name: string) => {
-        if (name === 'X-API-Key') return 'valid-api-key';
-        if (name === 'X-User-ID') return 'valid-user-id';
-        if (name === 'X-Request-Timestamp') return 'old-timestamp';
-        if (name === 'X-Request-Signature') return 'valid-signature';
+        if (name === 'API-Key') return 'valid-api-key';
+        if (name === 'User-ID') return 'valid-user-id';
+        if (name === 'Request-Timestamp') return 'old-timestamp';
+        if (name === 'Request-Signature') return 'valid-signature';
         return null;
       });
 
@@ -103,17 +104,16 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(false);
 
       await expect(
-        middleware.use(mockRequest, mockResponse, nextFunction),
+        guard.canActivate(mockContext)
       ).rejects.toThrow(UnauthorizedException);
-      expect(nextFunction).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
       mockRequest.header.mockImplementation((name: string) => {
-        if (name === 'X-API-Key') return 'valid-api-key';
-        if (name === 'X-User-ID') return 'invalid-user-id';
-        if (name === 'X-Request-Timestamp') return '2025-04-26T12:00:00.000Z';
-        if (name === 'X-Request-Signature') return 'valid-signature';
+        if (name === 'API-Key') return 'valid-api-key';
+        if (name === 'User-ID') return 'invalid-user-id';
+        if (name === 'Request-Timestamp') return '2025-04-26T12:00:00.000Z';
+        if (name === 'Request-Signature') return 'valid-signature';
         return null;
       });
 
@@ -122,17 +122,16 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'validateUser').mockResolvedValue(false);
 
       await expect(
-        middleware.use(mockRequest, mockResponse, nextFunction),
+        guard.canActivate(mockContext)
       ).rejects.toThrow(UnauthorizedException);
-      expect(nextFunction).not.toHaveBeenCalled();
     });
 
     it('should throw UnauthorizedException if signature is invalid', async () => {
       mockRequest.header.mockImplementation((name: string) => {
-        if (name === 'X-API-Key') return 'valid-api-key';
-        if (name === 'X-User-ID') return 'valid-user-id';
-        if (name === 'X-Request-Timestamp') return '2025-04-26T12:00:00.000Z';
-        if (name === 'X-Request-Signature') return 'invalid-signature';
+        if (name === 'API-Key') return 'valid-api-key';
+        if (name === 'User-ID') return 'valid-user-id';
+        if (name === 'Request-Timestamp') return '2025-04-26T12:00:00.000Z';
+        if (name === 'Request-Signature') return 'invalid-signature';
         return null;
       });
 
@@ -142,9 +141,8 @@ describe('ApiAuthMiddleware', () => {
       jest.spyOn(authService, 'verifyHmacSignature').mockReturnValue(false);
 
       await expect(
-        middleware.use(mockRequest, mockResponse, nextFunction),
+        guard.canActivate(mockContext)
       ).rejects.toThrow(UnauthorizedException);
-      expect(nextFunction).not.toHaveBeenCalled();
     });
   });
 });

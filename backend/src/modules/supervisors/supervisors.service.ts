@@ -1,26 +1,22 @@
-
 import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
-
 import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
+import { SupervisorRepository } from './repositories/supervisor-repository.interface';
 
 @Injectable()
 export class SupervisorsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    @Inject('SupervisorRepository')
+    private supervisorRepository: SupervisorRepository
+  ) {}
 
   async register(userId: string, registerDto: registerSupervisorDto): Promise<SupervisorRegistrationResponse> {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        supervisor_profile: true,
-      },
-    });
+    const user = await this.supervisorRepository.findSupervisorByUserId(userId);
 
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found`);
@@ -36,27 +32,11 @@ export class SupervisorsService {
       );
     }
 
-    await this.prisma.userTag.deleteMany({
-      where: { user_id: userId },
-    });
-
-    const tagOperations = registerDto.tags.map((tag) => {
-      return this.prisma.userTag.create({
-        data: {
-          user_id: userId,
-          tag_id: tag.tag_id,
-          priority: tag.priority,
-        },
-      });
-    });
-
-    const results = await this.prisma.$transaction(tagOperations);
+ 
+    const results = await this.supervisorRepository.updateSupervisorTags(userId, registerDto.tags);
 
     if (!user.is_registered) {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { is_registered: true },
-      });
+      await this.supervisorRepository.updateUserRegistrationStatus(userId, true);
     }
 
     return {
@@ -65,4 +45,6 @@ export class SupervisorsService {
       tags: results,
     };
   }
+  
+
 }

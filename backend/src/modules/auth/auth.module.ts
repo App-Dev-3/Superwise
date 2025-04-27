@@ -1,21 +1,13 @@
-import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../../prisma/prisma.module';
-import { ApiAuthMiddleware } from './middleware/api-auth.middleware';
-import { SupervisorsController } from '../supervisors/supervisors.controller';
+import { ApiAuthGuard } from './guards/api-auth.guard';
+
 @Module({
   imports: [ConfigModule, UsersModule, PrismaModule],
-  controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService],
+  providers: [AuthService, ApiAuthGuard], 
+  exports: [AuthService, ApiAuthGuard],   
 })
-export class AuthModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(ApiAuthMiddleware)
-      .forRoutes(AuthController, SupervisorsController);
-  }
-}
+export class AuthModule {}

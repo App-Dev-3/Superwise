@@ -1,27 +1,26 @@
 import {
   Injectable,
-  NestMiddleware,
+  CanActivate,
+  ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
+import { Request } from 'express';
 import { AuthService } from '../auth.service';
 
-//guard not middleware 
-
 @Injectable()
-export class ApiAuthMiddleware implements NestMiddleware {
+export class ApiAuthGuard implements CanActivate {
   constructor(private authService: AuthService) {}
 
-  async use(req: Request, res: Response, next: NextFunction) {
-    const apiKey = req.header('API-Key');
-    const userId = req.header('User-ID');
-    const timestamp = req.header('Request-Timestamp');
-    const signature = req.header('Request-Signature');
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
+    
+    const apiKey = request.header('API-Key');
+    const userId = request.header('User-ID');
+    const timestamp = request.header('Request-Timestamp');
+    const signature = request.header('Request-Signature');
 
     if (!apiKey || !userId || !timestamp || !signature) {
-      throw new UnauthorizedException(
-        'Missing required authentication headers',
-      );
+      throw new UnauthorizedException('Missing required authentication headers');
     }
 
     if (!this.authService.validateApiKey(apiKey)) {
@@ -37,12 +36,13 @@ export class ApiAuthMiddleware implements NestMiddleware {
       throw new UnauthorizedException('User not found');
     }
 
-    if (!this.authService.verifyHmacSignature(signature, req.body, timestamp)) {
+    if (!this.authService.verifyHmacSignature(signature, request.body, timestamp)) {
       throw new UnauthorizedException('Invalid request signature');
     }
 
-    req['userId'] = userId;
+    
+    request['userId'] = userId;
 
-    next();
+    return true;
   }
 }

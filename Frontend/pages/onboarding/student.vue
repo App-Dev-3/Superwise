@@ -1,5 +1,6 @@
 <template>
   <div>
+<<<<<<< HEAD
     <SignedOut>
       <RedirectToSignIn />
     </SignedOut>
@@ -44,4 +45,27 @@ const finishOnboarding = async () => {
     console.error("Onboarding error:", err);
   }
 };
+=======
+    <header>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+      <SignedIn>
+        <div v-if="!isLoaded">Loading...</div>
+
+        <div v-else>Hello {{ user?.primaryEmailAddress }}!</div>
+      </SignedIn>
+    </header>
+  </div>
+</template>
+
+<script setup>
+import { useUser } from "@clerk/vue";
+
+definePageMeta({
+  layout: "authenticated",
+});
+
+const { user, isLoaded } = useUser();
+>>>>>>> bc702a0 (added auth and onboarding middleware)
 </script>

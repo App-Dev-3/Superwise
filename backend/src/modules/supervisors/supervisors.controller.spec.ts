@@ -5,6 +5,7 @@ import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
 import { ApiAuthGuard } from '../auth/guards/api-auth.guard';
 import { AuthService } from '../auth/auth.service';
+import { Request } from 'express';
 
 describe('SupervisorsController', () => {
   let controller: SupervisorsController;
@@ -49,7 +50,15 @@ describe('SupervisorsController', () => {
     const mockDto: registerSupervisorDto = {
       tags: [{ tag_id: 'tag-1', priority: 1 }],
     };
-    const mockRequest: any = { userId: mockUserId };
+   
+    const mockRequest = {
+      userId: mockUserId,
+
+      headers: {},
+      query: {},
+      params: {},
+      body: {},
+    } as unknown as Request;
 
     const mockResult: SupervisorRegistrationResponse = { 
       success: true,
@@ -63,7 +72,8 @@ describe('SupervisorsController', () => {
       }]
     };
     
-    (service.register as jest.Mock).mockResolvedValue(mockResult);
+  
+    jest.spyOn(service, 'register').mockResolvedValue(mockResult);
 
     const result = await controller.register(mockDto, mockRequest);
 

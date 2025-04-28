@@ -37,7 +37,6 @@ describe('SupervisorsService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     },
-   
     tags: [] as any[],
     blocked_users: [] as any[],
     blocked_by_users: [] as any[]
@@ -88,10 +87,10 @@ describe('SupervisorsService', () => {
 
   describe('register', () => {
     it('should successfully register a supervisor with tags', async () => {
-  
+      
       jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);
       jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue(mockTagResults);
-      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue();
+      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue(undefined);
 
       const result = await service.register(userId, registerDto);
 
@@ -109,7 +108,7 @@ describe('SupervisorsService', () => {
       const registeredSupervisor = { ...mockSupervisor, is_registered: true };
       jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(registeredSupervisor);
       jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue(mockTagResults);
-      jest.spyOn(repository, 'updateUserRegistrationStatus');
+      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue(undefined);
 
       await service.register(userId, registerDto);
 
@@ -117,7 +116,6 @@ describe('SupervisorsService', () => {
     });
 
     it('should throw NotFoundException if user not found', async () => {
-      
       jest.spyOn(repository, 'findSupervisorByUserId').mockRejectedValue(
         new Error(`User with ID ${userId} not found`)
       );
@@ -128,7 +126,6 @@ describe('SupervisorsService', () => {
     });
 
     it('should throw BadRequestException if user is not a supervisor', async () => {
-      
       const nonSupervisorUser = { ...mockSupervisor, role: Role.STUDENT };
       jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(nonSupervisorUser);
     
@@ -137,11 +134,10 @@ describe('SupervisorsService', () => {
       );
     });
 
-
     it('should handle empty tags array gracefully', async () => {
       jest.spyOn(repository, 'findSupervisorByUserId').mockResolvedValue(mockSupervisor);
       jest.spyOn(repository, 'updateSupervisorTags').mockResolvedValue([]);
-      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue();
+      jest.spyOn(repository, 'updateUserRegistrationStatus').mockResolvedValue(undefined);
 
       const result = await service.register(userId, { tags: [] });
 

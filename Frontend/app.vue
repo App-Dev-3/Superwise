@@ -1,13 +1,4 @@
-<template>
-  <!-- <header>
-    <SignedOut>
-      <SignInButton />
-    </SignedOut>
-    <SignedIn>
-      <UserButton />
-    </SignedIn>
-  </header> -->
-  
+<template>  
   <div>
     <VitePwaManifest />
     <NuxtPage />    

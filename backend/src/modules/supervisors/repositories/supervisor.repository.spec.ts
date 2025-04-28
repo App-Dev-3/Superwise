@@ -66,10 +66,9 @@ describe('PrismaSupervisorRepository', () => {
 
   describe('findSupervisorByUserId', () => {
     it('should call Prisma with correct parameters', async () => {
-
-      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(
-        createMockUser({ id: userId, role: Role.SUPERVISOR })
-      );
+      
+      const spy = jest.spyOn(prismaService.user, 'findUnique');
+      spy.mockResolvedValue(createMockUser({ id: userId, role: Role.SUPERVISOR }));
 
       await repository.findSupervisorByUserId(userId);
 
@@ -84,10 +83,10 @@ describe('PrismaSupervisorRepository', () => {
 
   describe('isSupervisor', () => {
     it('should return true for valid supervisor', async () => {
+    
+      const spy = jest.spyOn(prismaService.user, 'findUnique');
 
-      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(
-        { role: Role.SUPERVISOR } as any
-      );
+      spy.mockResolvedValue({ role: Role.SUPERVISOR } as any);
 
       const result = await repository.isSupervisor(userId);
 
@@ -101,10 +100,9 @@ describe('PrismaSupervisorRepository', () => {
     });
 
     it('should return false for non-supervisor', async () => {
-  
-      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(
-        { role: Role.STUDENT } as any
-      );
+      const spy = jest.spyOn(prismaService.user, 'findUnique');
+     
+      spy.mockResolvedValue({ role: Role.STUDENT } as any);
 
       const result = await repository.isSupervisor(userId);
 
@@ -119,8 +117,11 @@ describe('PrismaSupervisorRepository', () => {
         { user_id: userId, tag_id: 'tag-2', priority: 2 },
       ];
 
-      jest.spyOn(prismaService.userTag, 'deleteMany').mockResolvedValue({ count: 0 });
-      jest.spyOn(prismaService, '$transaction').mockResolvedValue(mockTagResults);
+      const deleteSpy = jest.spyOn(prismaService.userTag, 'deleteMany');
+      deleteSpy.mockResolvedValue({ count: 0 });
+      
+      const transactionSpy = jest.spyOn(prismaService, '$transaction');
+      transactionSpy.mockResolvedValue(mockTagResults);
 
       const result = await repository.updateSupervisorTags(userId, mockTags);
 
@@ -134,13 +135,11 @@ describe('PrismaSupervisorRepository', () => {
 
   describe('updateUserRegistrationStatus', () => {
     it('should update user registration status', async () => {
-     
-      jest.spyOn(prismaService.user, 'update').mockResolvedValue(
-        createMockUser({
-          id: userId,
-          is_registered: true
-        })
-      );
+      const updateSpy = jest.spyOn(prismaService.user, 'update');
+      updateSpy.mockResolvedValue(createMockUser({
+        id: userId,
+        is_registered: true
+      }));
 
       await repository.updateUserRegistrationStatus(userId, true);
 

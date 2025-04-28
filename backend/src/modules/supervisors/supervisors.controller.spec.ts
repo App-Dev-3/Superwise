@@ -50,14 +50,15 @@ describe('SupervisorsController', () => {
     const mockDto: registerSupervisorDto = {
       tags: [{ tag_id: 'tag-1', priority: 1 }],
     };
+    
    
     const mockRequest = {
       userId: mockUserId,
-
+ 
       headers: {},
       query: {},
       params: {},
-      body: {},
+      body: {}
     } as unknown as Request;
 
     const mockResult: SupervisorRegistrationResponse = { 
@@ -73,7 +74,8 @@ describe('SupervisorsController', () => {
     };
     
   
-    jest.spyOn(service, 'register').mockResolvedValue(mockResult);
+    const registerSpy = jest.spyOn(service, 'register');
+    registerSpy.mockResolvedValue(mockResult);
 
     const result = await controller.register(mockDto, mockRequest);
 

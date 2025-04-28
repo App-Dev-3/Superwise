@@ -2,12 +2,18 @@ import { mount } from '@vue/test-utils'
 import CustomTag from './CustomTag.vue'
 import { describe, it, expect } from 'vitest'
 
+vi.mock('@fortawesome/vue-fontawesome', () => ({
+  FontAwesomeIcon: {
+    template: '<i data-test="delete-icon"></i>',
+  },
+}));
+
 describe('CustomTag.vue', () => {
 
-  it('renders the tag name', () => {
+  it('renders the tag text', () => {
     const wrapper = mount(CustomTag, {
       props: {
-        name: 'TestTag'
+        text: 'TestTag'
       }
     })
     expect(wrapper.text()).toContain('TestTag')
@@ -19,8 +25,7 @@ describe('CustomTag.vue', () => {
         color: 'secondary'
       }
     })
-    expect(wrapper.classes()).toContain('bg-secondary')
-    expect(wrapper.classes()).toContain('text-secondary-content')
+    expect(wrapper.classes()).toContain('badge-secondary')
   })
 
   it('emits "click" when badge is clicked if clickable and not deletable', async () => {
@@ -51,7 +56,7 @@ describe('CustomTag.vue', () => {
         deletable: true
       }
     })
-    expect(wrapper.find('[data-test="icon"]').exists()).toBe(true)
+    expect(wrapper.find('[data-test="delete-icon"]').exists()).toBe(true)
   })
 
   it('emits "delete" when delete icon is clicked', async () => {
@@ -60,7 +65,7 @@ describe('CustomTag.vue', () => {
         deletable: true
       }
     })
-    const icon = wrapper.find('[data-test="icon"]')
+    const icon = wrapper.find('[data-test="delete-icon"]')
     await icon.trigger('click')
     expect(wrapper.emitted('delete')).toBeTruthy()
   })

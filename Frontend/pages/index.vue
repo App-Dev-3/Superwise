@@ -1,6 +1,9 @@
 <template>
-  <div/>
+  <p>Index</p>
 </template>
 
-<script setup>
-</script>  
+<script setup lang="ts">
+definePageMeta({
+  layout: "default",
+});
+</script>

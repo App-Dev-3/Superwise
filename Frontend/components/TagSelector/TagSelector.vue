@@ -1,4 +1,5 @@
 <script setup>
+import { ref, computed } from 'vue'
 
 const props = defineProps({
   allTags: {
@@ -48,9 +49,12 @@ function removeTag(tag) {
 
     <div 
       class="border-b border-base-300 pb-4 mb-4 relative"
-      data-test="selected-tags"
+      
       >
-      <div class="flex flex-wrap gap-2 pr-10">
+      <div 
+        class="flex flex-wrap gap-2 pr-10"
+        data-test="selected-tags"
+      >
         <custom-tag
           v-for="(tag, index) in selectedTags"
           :key="`selected-${index}`"
@@ -67,6 +71,7 @@ function removeTag(tag) {
           'text-red-500': selectedTags.length >= props.maxSelection,
           'text-gray-400': selectedTags.length < props.maxSelection
         }"
+        data-test="selected-tags-count"
       >
         {{ selectedTags.length }}/10
       </div>

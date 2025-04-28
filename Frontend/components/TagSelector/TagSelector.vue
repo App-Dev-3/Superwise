@@ -59,7 +59,7 @@ function removeTag(tag) {
           v-for="(tag, index) in selectedTags"
           :key="`selected-${index}`"
           :text="tag"
-          color="success"
+          color="primary"
           deletable
           @delete="removeTag(tag)"
         />

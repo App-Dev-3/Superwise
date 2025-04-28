@@ -10,7 +10,6 @@ const publicPaths = [
     "/__clerk"
 ]
 
-
 export default defineNuxtRouteMiddleware((to) => {
     const { isLoaded, isSignedIn } = useAuth();
 

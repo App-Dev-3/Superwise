@@ -47,10 +47,7 @@ function removeTag(tag) {
 <template>
   <div class="p-4">
 
-    <div 
-      class="border-b border-base-300 pb-4 mb-4 relative"
-      
-      >
+    <div class="border-b border-base-300 pb-4 mb-4 relative">
       <div 
         class="flex flex-wrap gap-2 pr-10"
         data-test="selected-tags"

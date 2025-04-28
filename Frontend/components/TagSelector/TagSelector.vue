@@ -31,8 +31,7 @@ const visibleTags = computed(() => {
 })
 
 function selectTag(tag) {
-  if (selectedTags.value.length >= 10) return
-  if (!selectedTags.value.includes(tag)) {
+  if (!selectedTags.value.includes(tag) && selectedTags.value.length < 10) {
     selectedTags.value.push(tag)
     emit('update:selectedTags', selectedTags.value)
   }
@@ -47,13 +46,16 @@ function removeTag(tag) {
 <template>
   <div class="p-4">
 
-    <div class="border-b border-base-300 pb-4 mb-4 relative">
-      <div class="flex flex-wrap gap-2 pr-16">
+    <div 
+      class="border-b border-base-300 pb-4 mb-4 relative"
+      data-test="selected-tags"
+      >
+      <div class="flex flex-wrap gap-2 pr-10">
         <custom-tag
           v-for="(tag, index) in selectedTags"
           :key="`selected-${index}`"
-          :name="tag"
-          color="primary"
+          :text="tag"
+          color="success"
           deletable
           @delete="removeTag(tag)"
         />
@@ -70,18 +72,22 @@ function removeTag(tag) {
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-2">
+    <div 
+      class="flex flex-wrap gap-2 pr-10;"
+      data-test="tags"
+
+      >
       <custom-tag
         v-for="(tag, index) in visibleTags"
         :key="`available-${index}`"
-        :name="tag"
+        :text="tag"
         color="secondary"
         clickable
         @click="selectTag(tag)"
       />
     </div>
 
-    <div class="flex justify-start text-center mt-4">
+    <div class="flex justify-start mt-4">
       <button 
         v-if="availableTags.length > maxVisibleTags"
         type="button"

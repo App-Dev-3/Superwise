@@ -45,8 +45,8 @@ export class AuthService {
         );
       }
       return false;
-    } catch (error) {
-      console.log('Error in timingSafeEqual:', error.message);
+    } catch {
+      console.log('Error in timingSafeEqual');
       return false;
     }
   }
@@ -67,8 +67,8 @@ export class AuthService {
       }
 
       return !('is_deleted' in user && user.is_deleted === true);
-    } catch (error) {
-      console.log('Error in timingSafeEqual:', error.message);
+    } catch {
+      console.log('Error validating user');
       return false;
     }
   }

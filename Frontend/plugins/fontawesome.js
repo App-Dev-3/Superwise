@@ -9,6 +9,7 @@ import {
   faHourglass,
   faUserGroup
 } from '@fortawesome/free-solid-svg-icons'
+import {defineNuxtPlugin} from "nuxt/app";
 
 library.add(faArrowLeft, faUser, faSearch, faEnvelope, faXmark, faHourglass, faUserGroup)
 

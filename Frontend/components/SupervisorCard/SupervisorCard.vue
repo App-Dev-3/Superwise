@@ -32,7 +32,6 @@ const props = defineProps({
     },
     similarityScore: {
         type: Number,
-        default: 0,
         required: true,
     },
     maxCapacity: {
@@ -80,9 +79,9 @@ const imageSizeClasses = computed(() => ({
                     <img
                         class="rounded-box"
                         :class="imageSizeClasses"
-                        :src="props.image || getPlaceholderImage(props.name)"
+                        :src="props.image"
                         alt="Profile Picture of {{ props.name }}"
-                    />
+                    >
                 </div>{{ props.name }}
             </h2>
 

@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import SupervisorCard from './SupervisorCard.vue'
 import CustomTag from '../CustomTag/CustomTag.vue'
 import { library } from '@fortawesome/fontawesome-svg-core'

@@ -13,7 +13,6 @@ describe('AuthService', () => {
     const mockConfigService = {
       get: jest.fn((key: string) => {
         if (key === 'API_KEY') return 'test-api-key';
-        if (key === 'API_SECRET') return 'test-api-secret';
         return null;
       }),
     };
@@ -117,7 +116,7 @@ describe('AuthService', () => {
       const data = JSON.stringify(payload) + timestamp;
 
       const signature = crypto
-        .createHmac('sha256', 'test-api-secret')
+        .createHmac('sha256', 'test-api-key')
         .update(data)
         .digest('hex');
 
@@ -137,7 +136,7 @@ describe('AuthService', () => {
       ).toBe(false);
     });
 
-    it('should throw error if API_SECRET is not configured', () => {
+    it('should throw error if API_KEY is not configured', () => {
       jest.spyOn(configService, 'get').mockReturnValue(undefined);
       expect(() =>
         service.verifyHmacSignature('any-signature', {}, 'timestamp'),
@@ -150,7 +149,7 @@ describe('AuthService', () => {
       const originalData = JSON.stringify(originalPayload) + timestamp;
 
       const signature = crypto
-        .createHmac('sha256', 'test-api-secret')
+        .createHmac('sha256', 'test-api-key')
         .update(originalData)
         .digest('hex');
 

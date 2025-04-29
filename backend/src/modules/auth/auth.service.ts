@@ -23,15 +23,15 @@ export class AuthService {
     payload: any,
     timestamp: string,
   ): boolean {
-    const apiSecret = this.configService.get<string>('API_SECRET');
-    if (!apiSecret) {
-      throw new Error('API_SECRET is not configured in environment variables');
+    const apiKey = this.configService.get<string>('API_KEY');
+    if (!apiKey) {
+      throw new Error('API_KEY is not configured in environment variables');
     }
 
     const data = JSON.stringify(payload) + timestamp;
 
     const expectedSignature = crypto
-      .createHmac('sha256', apiSecret)
+      .createHmac('sha256', apiKey)
       .update(data)
       .digest('hex');
 

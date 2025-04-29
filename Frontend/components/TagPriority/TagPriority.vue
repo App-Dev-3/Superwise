@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { ref } from 'vue'
 import draggable from 'vuedraggable'
 
 const props = defineProps({
@@ -10,29 +10,31 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:tags'])
-function textColor(index) {
+
+function tagStyles(index) {
   return {
-    'text-green-500': index === 0,
-    'text-orange-500': index === sortedTags.value.length - 1,
-    'text-gray-500': index !== 0 && index !== sortedTags.value.length - 1
+    ...(index === 0 && {
+      bg: 'bg-green-500',
+      text: 'text-white',
+      border: 'border-green-500'
+    }),
+    ...(index === sortedTags.value.length - 1 && {
+      bg: 'bg-orange-500',
+      text: 'text-white',
+      border: 'border-orange-500'
+    }),
+    ...((index !== 0 && index !== sortedTags.value.length - 1) && {
+      bg: 'bg-gray-400',
+      text: 'text-black',
+      border: 'border-gray-400'
+    })
   }
 }
 
-function backgroundColor(index) {
-  return {
-    'bg-green-500': index === 0,
-    'bg-orange-500': index === sortedTags.length - 1,
-    'bg-gray-400': index !== 0 && index !== sortedTags.length - 1
-  }
-}
 
 const sortedTags = ref([...props.tags])
 
-watch(() => props.tags, (newTags) => {
-  sortedTags.value = [...newTags]
-})
-
-function onEnd() {
+function handelChange() {
   emit('update:tags', sortedTags.value)
 }
 </script>
@@ -40,38 +42,36 @@ function onEnd() {
 <template>
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">Arrange tags by priority</h2>
-
     <draggable
       v-model="sortedTags"
       item-key="element"
-      @end="onEnd"
-      :animation="200"
+      :animation="250"
       ghost-class="ghost"
       tag="div"
+      @end="handelChange"
     >
       <template #item="{ element, index }">
         <div
           class="flex items-center mb-3"
         >
           <div
-            class="w-6 text-sm font-semibold text-center"
-            :class="textColor(index)"
-          >
+            class="w-6 text-black-500 text-sm font-semibold text-center rounded-full mr-2"
+            :class="tagStyles(index).bg"
+            >
             {{ index + 1 }}
           </div>
 
           <div
             class="flex flex-1 items-center rounded-full overflow-hidden shadow border"
-            :class="textColor(index)"
+            :class="tagStyles(index).border"
           >
             <div
               class="px-3 py-2 text-white font-bold"
-              :class="backgroundColor(index)"
+              :class="tagStyles(index).bg"
             >
               =
             </div>
 
-            <!-- Tag name -->
             <div class="flex-1 px-4 py-2 text-sm font-medium text-center">
               {{ element }}
             </div>

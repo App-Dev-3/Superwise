@@ -13,6 +13,7 @@ const props = defineProps({
         type: String,
         required: true,
     },
+    // TODO: change name to fname and lname for the fallback image
     name: {
         type: String,
         required: true,
@@ -79,7 +80,7 @@ const imageSizeClasses = computed(() => ({
                     <img
                         class="rounded-box"
                         :class="imageSizeClasses"
-                        :src="props.image"
+                        :src="props.image || getPlaceholderImage(props.name)"
                         alt="Profile Picture of {{ props.name }}"
                     />
                 </div>{{ props.name }}
@@ -92,7 +93,7 @@ const imageSizeClasses = computed(() => ({
                 {{ description }}
             </p>
             <div>
-                <CustomTag v-for="tag in limitedTags" :text=tag size="xl" variant="outline"/>
+                <CustomTag v-for="tag in limitedTags" :key=tag :text=tag size="xl" variant="outline"/>
             </div>
             <div class="card-actions w-full flex justify-between">
                 <CustomTag :text="props.similarityScore + '%'" size="xs" variant="clear" color="base-content/50"/>

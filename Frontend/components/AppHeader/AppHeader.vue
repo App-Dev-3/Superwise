@@ -1,8 +1,8 @@
 <script setup>
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
+import { useRouter } from "vue-router";
+import { ref } from "vue";
 
-const router = useRouter()
+const router = useRouter();
 
 const props = defineProps({
   showBack: {
@@ -19,21 +19,21 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 
-const isSearching = ref(false)
+const isSearching = ref(false);
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
 function handleInput(value) {
-  emit('update:modelValue', value)
+  emit("update:modelValue", value);
 }
 
 const goBack = () => {
-  router.back()
-}
+  router.back();
+};
 </script>
 
 <template>
@@ -41,17 +41,17 @@ const goBack = () => {
     <div class="navbar bg-base-100 shadow z-10">
       <div class="navbar-start ps-3">
         <button
-          v-if="showBack"
+          v-if="props.showBack"
           class="btn btn-ghost btn-circle"
-          @click="goBack"
           data-test="back-button"
+          @click="goBack"
         >
           <FontAwesomeIcon icon="arrow-left" class="text-xl" />
-          <span class="text-sm font-medium opacity-50	">Back</span>
+          <span class="text-sm font-medium opacity-50">Back</span>
         </button>
 
         <button
-          v-if="showUser"
+          v-if="props.showUser"
           class="btn btn-ghost btn-circle"
           data-test="user-button"
         >
@@ -60,15 +60,15 @@ const goBack = () => {
       </div>
 
       <div class="navbar-center">
-        <img src="/images/appHeader_logo.svg" alt="Logo image" class="h-6" />
+        <img src="/images/appHeader_logo.svg" alt="Logo image" class="h-6" >
       </div>
 
       <div class="navbar-end">
         <button
-          v-if="showSearch"
+          v-if="props.showSearch"
           class="btn btn-ghost btn-circle"
-          @click="isSearching = !isSearching"
           data-test="search-button"
+          @click="isSearching = !isSearching"
         >
           <FontAwesomeIcon icon="search" class="text-xl" />
         </button>
@@ -81,13 +81,13 @@ const goBack = () => {
         class="bg-base-100 px-4 pt-3 pb-4 border-t border-base-300"
       >
         <InputField
-          :autoFocus="isSearching"
-          :modelValue="modelValue"
+          :auto-focus="isSearching"
+          :model-value="props.modelValue"
           placeholder="Search..."
-          @update:modelValue="handleInput"
           label="Search Field"
           note=""
-          rightIcon="xmark"
+          right-icon="xmark"
+          @update:model-value="handleInput"
         />
       </div>
     </transition>

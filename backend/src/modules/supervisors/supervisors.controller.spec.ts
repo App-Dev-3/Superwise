@@ -73,13 +73,14 @@ describe('SupervisorsController', () => {
       }]
     };
     
-  
+    
     const registerSpy = jest.spyOn(service, 'register');
     registerSpy.mockResolvedValue(mockResult);
 
     const result = await controller.register(mockDto, mockRequest);
 
-    expect(service.register).toHaveBeenCalledWith(mockUserId, mockDto);
+   
+    expect(registerSpy).toHaveBeenCalledWith(mockUserId, mockDto);
     expect(result).toEqual(mockResult);
   });
 });

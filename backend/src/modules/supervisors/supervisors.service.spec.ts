@@ -99,9 +99,10 @@ describe('SupervisorsService', () => {
 
       const result = await service.register(userId, registerDto);
 
-      expect(repository.findSupervisorByUserId).toHaveBeenCalledWith(userId);
-      expect(repository.updateSupervisorTags).toHaveBeenCalledWith(userId, registerDto.tags);
-      expect(repository.updateUserRegistrationStatus).toHaveBeenCalledWith(userId, true);
+     
+      expect(findSpy).toHaveBeenCalledWith(userId);
+      expect(updateTagsSpy).toHaveBeenCalledWith(userId, registerDto.tags);
+      expect(updateStatusSpy).toHaveBeenCalledWith(userId, true);
       expect(result).toEqual({
         success: true,
         message: 'Supervisor registered successfully',
@@ -157,7 +158,8 @@ describe('SupervisorsService', () => {
 
       const result = await service.register(userId, { tags: [] });
 
-      expect(repository.updateSupervisorTags).toHaveBeenCalledWith(userId, []);
+   
+      expect(updateTagsSpy).toHaveBeenCalledWith(userId, []);
       expect(result).toEqual({
         success: true,
         message: 'Supervisor registered successfully',

@@ -4,7 +4,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { Role } from '@prisma/client';
 
 
-const createMockUser = (overrides = {}) => ({
+const mockSupervisorUser = {
   id: 'test-user-id',
   email: 'test@example.com',
   first_name: 'Test',
@@ -15,8 +15,20 @@ const createMockUser = (overrides = {}) => ({
   is_deleted: false,
   created_at: new Date(),
   updated_at: new Date(),
-  ...overrides
-});
+};
+
+const mockRegisteredSupervisorUser = {
+  id: 'test-user-id',
+  email: 'test@example.com',
+  first_name: 'Test',
+  last_name: 'User',
+  role: Role.SUPERVISOR,
+  profile_image: null,
+  is_registered: true,
+  is_deleted: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+};
 
 describe('PrismaSupervisorRepository', () => {
   let repository: PrismaSupervisorRepository;
@@ -68,11 +80,11 @@ describe('PrismaSupervisorRepository', () => {
     it('should call Prisma with correct parameters', async () => {
       
       const spy = jest.spyOn(prismaService.user, 'findUnique');
-      spy.mockResolvedValue(createMockUser({ id: userId, role: Role.SUPERVISOR }));
+      spy.mockResolvedValue(mockSupervisorUser);
 
       await repository.findSupervisorByUserId(userId);
 
-      expect(prismaService.user.findUnique).toHaveBeenCalledWith({
+      expect(spy).toHaveBeenCalledWith({
         where: { 
           id: userId,
           is_deleted: false 
@@ -91,7 +103,8 @@ describe('PrismaSupervisorRepository', () => {
       const result = await repository.isSupervisor(userId);
 
       expect(result).toBe(true);
-      expect(prismaService.user.findUnique).toHaveBeenCalledWith({
+    
+      expect(spy).toHaveBeenCalledWith({
         where: { id: userId, is_deleted: false },
         select: { 
           role: true
@@ -125,10 +138,11 @@ describe('PrismaSupervisorRepository', () => {
 
       const result = await repository.updateSupervisorTags(userId, mockTags);
 
-      expect(prismaService.userTag.deleteMany).toHaveBeenCalledWith({
+      expect(deleteSpy).toHaveBeenCalledWith({
         where: { user_id: userId },
       });
-      expect(prismaService.$transaction).toHaveBeenCalled();
+
+      expect(transactionSpy).toHaveBeenCalled();
       expect(result).toEqual(mockTagResults);
     });
   });
@@ -136,14 +150,11 @@ describe('PrismaSupervisorRepository', () => {
   describe('updateUserRegistrationStatus', () => {
     it('should update user registration status', async () => {
       const updateSpy = jest.spyOn(prismaService.user, 'update');
-      updateSpy.mockResolvedValue(createMockUser({
-        id: userId,
-        is_registered: true
-      }));
+      updateSpy.mockResolvedValue(mockRegisteredSupervisorUser);
 
       await repository.updateUserRegistrationStatus(userId, true);
 
-      expect(prismaService.user.update).toHaveBeenCalledWith({
+      expect(updateSpy).toHaveBeenCalledWith({
         where: { id: userId },
         data: { is_registered: true },
       });

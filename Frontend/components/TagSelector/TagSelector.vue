@@ -19,7 +19,7 @@ const props = defineProps({
 const emit = defineEmits(['update:selectedTags'])
 
 const showAll = ref(false)
-const maxVisibleTags = 5
+const initialVisibleTags = 5
 
 const selectedTags = ref([...props.initialSelected])
 
@@ -28,7 +28,7 @@ const availableTags = computed(() => {
 })
 
 const visibleTags = computed(() => {
-  return showAll.value ? availableTags.value : availableTags.value.slice(0, maxVisibleTags)
+  return showAll.value ? availableTags.value : availableTags.value.slice(0, initialVisibleTags)
 })
 
 function selectTag(tag) {
@@ -70,7 +70,7 @@ function removeTag(tag) {
         }"
         data-test="selected-tags-count"
       >
-        {{ selectedTags.length }}/10
+        {{ selectedTags.length }}/{{ maxSelection }}
       </div>
     </div>
 
@@ -91,7 +91,7 @@ function removeTag(tag) {
 
     <div class="flex justify-start mt-4">
       <button 
-        v-if="availableTags.length > maxVisibleTags"
+        v-if="availableTags.length > initialVisibleTags"
         type="button"
         class="text-primary underline" 
         @click="showAll = !showAll">

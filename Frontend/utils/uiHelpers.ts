@@ -14,6 +14,6 @@ export const getPlaceholderImage = (fName: string, lName: string) :string => {
 
     return createAvatar(initials, {
         seed: inits,
-        backgroundType: ["gradientLinear","solid"]
+        backgroundType: ["gradientLinear","solid"],
     }).toDataUri()
 }

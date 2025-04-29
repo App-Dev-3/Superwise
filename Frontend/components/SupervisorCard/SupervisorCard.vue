@@ -13,8 +13,11 @@ const props = defineProps({
         type: String,
         required: true,
     },
-    // TODO: change name to fname and lname for the fallback image
-    name: {
+    fName: {
+        type: String,
+        required: true,
+    },
+    lName: {
         type: String,
         required: true,
     },
@@ -79,14 +82,14 @@ const imageSizeClasses = computed(() => ({
                     <img
                         class="rounded-box"
                         :class="imageSizeClasses"
-                        :src="props.image"
-                        alt="Profile Picture of {{ props.name }}"
+                        :src="props.image || getPlaceholderImage(props.fName, props.lName)"
+                        alt="Profile Picture of {{ props.fName }} {{ props.lName }}"
                     >
-                </div>{{ props.name }}
+                </div>{{ props.fName }} {{ props.lName }}
             </h2>
 
             <p
-                class="text-base-content/50 text-xs line-clamp-4 leading-tight"
+                class="text-base-content/75 text-xs line-clamp-4 leading-tight"
                :class="{ 'h-15': props.description.trim().length > 0 }"
             >
                 {{ description }}

@@ -16,7 +16,7 @@ This is a basic setup with a simple 'Hello World' endpoint. The project structur
 - **Jest** for testing
 - **Swagger/OpenAPI** for API documentation
 - **uuid** for ID generation
--  **class-validator** - Decorator-based property validation for incoming request data
+- **class-validator** - Decorator-based property validation for incoming request data
 - **class-transformer** - Object transformation and type conversion for data transfer objects
 
 ### Project Structure

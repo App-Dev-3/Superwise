@@ -159,3 +159,6 @@ out
 
 # Local configuration files (potential secrets)
 .npmrc
+
+# ESLint report
+eslint-report.html

@@ -7,6 +7,7 @@ export class registerSupervisorDto {
   @ApiProperty({
     description: 'Tags and their priorities for the supervisor',
     type: [UserTagDto],
+    isArray: true,
     example: [
       { tag_id: '123e4567-e89b-12d3-a456-426614174000', priority: 1 },
       { tag_id: '223e4567-e89b-12d3-a456-426614174000', priority: 2 },

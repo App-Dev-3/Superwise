@@ -3,7 +3,6 @@ import { ApiAuthGuard } from './api-auth.guard';
 import { AuthService } from '../auth.service';
 import { UnauthorizedException, ExecutionContext } from '@nestjs/common';
 
-
 interface MockRequest {
   header: (name: string) => string | null;
   body: Record<string, unknown>;
@@ -23,10 +22,7 @@ describe('ApiAuthGuard', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ApiAuthGuard,
-        { provide: AuthService, useValue: authServiceMock },
-      ],
+      providers: [ApiAuthGuard, { provide: AuthService, useValue: authServiceMock }],
     }).compile();
 
     guard = module.get<ApiAuthGuard>(ApiAuthGuard);
@@ -46,7 +42,7 @@ describe('ApiAuthGuard', () => {
         header: jest.fn().mockReturnValue(null),
         body: { test: 'data' },
       };
-      
+
       mockContext = {
         switchToHttp: () => ({
           getRequest: () => mockRequest,
@@ -62,7 +58,7 @@ describe('ApiAuthGuard', () => {
         if (name === 'Request-Signature') return 'valid-signature';
         return null;
       });
-      
+
       mockRequest.header = headerMock;
 
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(true);
@@ -80,9 +76,7 @@ describe('ApiAuthGuard', () => {
       const headerMock = jest.fn().mockReturnValue(null);
       mockRequest.header = headerMock;
 
-      await expect(
-        guard.canActivate(mockContext)
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if API key is invalid', async () => {
@@ -97,9 +91,7 @@ describe('ApiAuthGuard', () => {
 
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(false);
 
-      await expect(
-        guard.canActivate(mockContext)
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if timestamp is invalid', async () => {
@@ -115,9 +107,7 @@ describe('ApiAuthGuard', () => {
       jest.spyOn(authService, 'validateApiKey').mockReturnValue(true);
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(false);
 
-      await expect(
-        guard.canActivate(mockContext)
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if user not found', async () => {
@@ -134,9 +124,7 @@ describe('ApiAuthGuard', () => {
       jest.spyOn(authService, 'isTimestampValid').mockReturnValue(true);
       jest.spyOn(authService, 'validateUser').mockResolvedValue(false);
 
-      await expect(
-        guard.canActivate(mockContext)
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should throw UnauthorizedException if signature is invalid', async () => {
@@ -154,9 +142,7 @@ describe('ApiAuthGuard', () => {
       jest.spyOn(authService, 'validateUser').mockResolvedValue(true);
       jest.spyOn(authService, 'verifyHmacSignature').mockReturnValue(false);
 
-      await expect(
-        guard.canActivate(mockContext)
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow(UnauthorizedException);
     });
   });
 });

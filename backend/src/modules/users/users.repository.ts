@@ -23,22 +23,25 @@ export class UsersRepository {
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany({
       where: {
-        is_deleted: false
-      }
+        is_deleted: false,
+      },
     });
   }
 
   async findUserById(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
-      where: { id }
+      where: { id },
     });
   }
 
-  async findUserByIdWithRelations(id: string): Promise<(User & { 
-    student_profile?: any, 
-    supervisor_profile?: any, 
-    tags?: any[]
-  }) | null> {
+  async findUserByIdWithRelations(id: string): Promise<
+    | (User & {
+        student_profile?: any;
+        supervisor_profile?: any;
+        tags?: any[];
+      })
+    | null
+  > {
     return this.prisma.user.findUnique({
       where: { id },
       include: {
@@ -46,10 +49,10 @@ export class UsersRepository {
         supervisor_profile: true,
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
   }
 
@@ -59,9 +62,9 @@ export class UsersRepository {
         is_deleted: false,
         first_name: {
           contains: firstName,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
   }
 
@@ -71,9 +74,9 @@ export class UsersRepository {
         is_deleted: false,
         last_name: {
           contains: lastName,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
   }
 
@@ -83,17 +86,17 @@ export class UsersRepository {
         is_deleted: false,
         tags: {
           some: {
-            tag_id: tagId
-          }
-        }
+            tag_id: tagId,
+          },
+        },
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
   }
 
@@ -104,18 +107,18 @@ export class UsersRepository {
         tags: {
           some: {
             tag_id: {
-              in: tagIds
-            }
-          }
-        }
+              in: tagIds,
+            },
+          },
+        },
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
   }
 
@@ -132,4 +135,4 @@ export class UsersRepository {
       data: { is_deleted: true },
     });
   }
-} 
+}

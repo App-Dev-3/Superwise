@@ -39,7 +39,7 @@ describe('SupervisorsService', () => {
     },
     tags: [] as any[],
     blocked_users: [] as any[],
-    blocked_by_users: [] as any[]
+    blocked_by_users: [] as any[],
   };
 
   const mockTagResults = [
@@ -87,19 +87,17 @@ describe('SupervisorsService', () => {
 
   describe('register', () => {
     it('should successfully register a supervisor with tags', async () => {
-      
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockResolvedValue(mockSupervisor);
-      
+
       const updateTagsSpy = jest.spyOn(repository, 'updateSupervisorTags');
       updateTagsSpy.mockResolvedValue(mockTagResults);
-      
+
       const updateStatusSpy = jest.spyOn(repository, 'updateUserRegistrationStatus');
       updateStatusSpy.mockResolvedValue(undefined);
 
       const result = await service.register(userId, registerDto);
 
-     
       expect(findSpy).toHaveBeenCalledWith(userId);
       expect(updateTagsSpy).toHaveBeenCalledWith(userId, registerDto.tags);
       expect(updateStatusSpy).toHaveBeenCalledWith(userId, true);
@@ -112,13 +110,13 @@ describe('SupervisorsService', () => {
 
     it('should not update is_registered if already registered', async () => {
       const registeredSupervisor = { ...mockSupervisor, is_registered: true };
-      
+
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockResolvedValue(registeredSupervisor);
-      
+
       const updateTagsSpy = jest.spyOn(repository, 'updateSupervisorTags');
       updateTagsSpy.mockResolvedValue(mockTagResults);
-      
+
       const updateStatusSpy = jest.spyOn(repository, 'updateUserRegistrationStatus');
 
       await service.register(userId, registerDto);
@@ -129,7 +127,7 @@ describe('SupervisorsService', () => {
     it('should throw NotFoundException if user not found', async () => {
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockRejectedValue(new Error(`User with ID ${userId} not found`));
-    
+
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new NotFoundException(`User with ID ${userId} not found`),
       );
@@ -137,10 +135,10 @@ describe('SupervisorsService', () => {
 
     it('should throw BadRequestException if user is not a supervisor', async () => {
       const nonSupervisorUser = { ...mockSupervisor, role: Role.STUDENT };
-      
+
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockResolvedValue(nonSupervisorUser);
-    
+
       await expect(service.register(userId, registerDto)).rejects.toThrow(
         new BadRequestException('User is not a supervisor'),
       );
@@ -149,16 +147,15 @@ describe('SupervisorsService', () => {
     it('should handle empty tags array gracefully', async () => {
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockResolvedValue(mockSupervisor);
-      
+
       const updateTagsSpy = jest.spyOn(repository, 'updateSupervisorTags');
       updateTagsSpy.mockResolvedValue([]);
-      
+
       const updateStatusSpy = jest.spyOn(repository, 'updateUserRegistrationStatus');
       updateStatusSpy.mockResolvedValue(undefined);
 
       const result = await service.register(userId, { tags: [] });
 
-   
       expect(updateTagsSpy).toHaveBeenCalledWith(userId, []);
       expect(result).toEqual({
         success: true,
@@ -170,13 +167,11 @@ describe('SupervisorsService', () => {
     it('should handle database errors during tag update', async () => {
       const findSpy = jest.spyOn(repository, 'findSupervisorByUserId');
       findSpy.mockResolvedValue(mockSupervisor);
-      
+
       const updateTagsSpy = jest.spyOn(repository, 'updateSupervisorTags');
       updateTagsSpy.mockRejectedValue(new Error('Database error'));
 
-      await expect(service.register(userId, registerDto)).rejects.toThrow(
-        'Database error',
-      );
+      await expect(service.register(userId, registerDto)).rejects.toThrow('Database error');
     });
   });
 });

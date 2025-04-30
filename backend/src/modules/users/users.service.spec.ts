@@ -25,7 +25,7 @@ describe('UsersService', () => {
   // Sample test data with proper UUID
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
-  
+
   const mockUser = {
     id: USER_UUID,
     email: 'exampleStudent1@fhstp.ac.at',
@@ -40,9 +40,9 @@ describe('UsersService', () => {
   };
 
   const expectedUsers = [
-    mockUser, 
-    { 
-      id: USER_UUID_2, 
+    mockUser,
+    {
+      id: USER_UUID_2,
       email: 'exampleStudent2@fhstp.ac.at',
       first_name: 'Maria',
       last_name: 'Mustermann',
@@ -51,8 +51,8 @@ describe('UsersService', () => {
       is_registered: true,
       is_deleted: false,
       created_at: new Date('2023-02-20T14:45:00Z'),
-      updated_at: new Date('2023-02-20T14:45:00Z')
-    }
+      updated_at: new Date('2023-02-20T14:45:00Z'),
+    },
   ];
 
   beforeEach(async () => {
@@ -253,7 +253,7 @@ describe('UsersService', () => {
       // Arrange
       const tagIds = [
         '123e4567-e89b-12d3-a456-426614174010',
-        '123e4567-e89b-12d3-a456-426614174011'
+        '123e4567-e89b-12d3-a456-426614174011',
       ];
       const expectedUsers = [mockUser];
       mockUsersRepository.findUsersByTagIds.mockResolvedValue(expectedUsers);
@@ -271,7 +271,7 @@ describe('UsersService', () => {
       // Arrange
       const tagIds = [
         '123e4567-e89b-12d3-a456-426614174012',
-        '123e4567-e89b-12d3-a456-426614174013'
+        '123e4567-e89b-12d3-a456-426614174013',
       ];
       mockUsersRepository.findUsersByTagIds.mockResolvedValue([]);
 
@@ -293,7 +293,7 @@ describe('UsersService', () => {
         last_name: 'Kofler',
       };
       const updatedUser = { ...mockUser, ...updateUserDto };
-      
+
       mockUsersRepository.findUserById.mockResolvedValue(mockUser);
       mockUsersRepository.update.mockResolvedValue(updatedUser);
 
@@ -313,7 +313,7 @@ describe('UsersService', () => {
       const updateUserDto: UpdateUserDto = {
         first_name: 'Updated',
       };
-      
+
       mockUsersRepository.findUserById.mockResolvedValue(null);
 
       // Act & Assert
@@ -330,7 +330,7 @@ describe('UsersService', () => {
       // Arrange
       const userId = USER_UUID;
       const deletedUser = { ...mockUser, is_deleted: true };
-      
+
       mockUsersRepository.findUserById.mockResolvedValue(mockUser);
       mockUsersRepository.softDelete.mockResolvedValue(deletedUser);
 
@@ -347,7 +347,7 @@ describe('UsersService', () => {
     it('should throw NotFoundException when trying to delete a non-existent user', async () => {
       // Arrange
       const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      
+
       mockUsersRepository.findUserById.mockResolvedValue(null);
 
       // Act & Assert

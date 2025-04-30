@@ -6,9 +6,7 @@ import { UsersRepository } from './users.repository';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly usersRepository: UsersRepository
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     return this.usersRepository.create(createUserDto);
@@ -20,7 +18,7 @@ export class UsersService {
 
   async findUserById(id: string): Promise<User> {
     const user = await this.usersRepository.findUserById(id);
-    
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -28,13 +26,15 @@ export class UsersService {
     return user;
   }
 
-  async findUserByIdWithRelations(id: string): Promise<User & { 
-    student_profile?: any, 
-    supervisor_profile?: any, 
-    tags?: any[]
-  }> {
+  async findUserByIdWithRelations(id: string): Promise<
+    User & {
+      student_profile?: any;
+      supervisor_profile?: any;
+      tags?: any[];
+    }
+  > {
     const user = await this.usersRepository.findUserByIdWithRelations(id);
-    
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
@@ -61,7 +61,7 @@ export class UsersService {
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     // First check if user exists
     await this.findUserById(id);
-    
+
     return this.usersRepository.update(id, updateUserDto);
   }
 

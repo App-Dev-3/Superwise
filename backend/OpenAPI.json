@@ -503,25 +503,16 @@
             "description": "Supervisor profile information if role is SUPERVISOR"
           },
           "tags": {
-            "description": "Tags associated with the user",
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
+            "type": "object",
+            "description": "Tags associated with the user"
           },
           "blocked_users": {
-            "description": "Users blocked by this user",
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
+            "type": "object",
+            "description": "Users blocked by this user"
           },
           "blocked_by_users": {
-            "description": "Users who have blocked this user",
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
+            "type": "object",
+            "description": "Users who have blocked this user"
           }
         },
         "required": [

@@ -21,7 +21,7 @@ describe('UsersRepository', () => {
   // Sample test data with proper UUID
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
-  
+
   const mockUser = {
     id: USER_UUID,
     email: 'exampleStudent1@fhstp.ac.at',
@@ -47,7 +47,7 @@ describe('UsersRepository', () => {
     }).compile();
 
     repository = module.get<UsersRepository>(UsersRepository);
-    
+
     // Reset all mocks before each test
     jest.clearAllMocks();
   });
@@ -91,17 +91,17 @@ describe('UsersRepository', () => {
     it('should return all non-deleted users from the database', async () => {
       // Arrange
       const expectedUsers = [
-        mockUser, 
-        { 
-          ...mockUser, 
-          id: USER_UUID_2, 
+        mockUser,
+        {
+          ...mockUser,
+          id: USER_UUID_2,
           email: 'exampleStudent2@fhstp.ac.at',
           first_name: 'Maria',
           last_name: 'Mustermann',
           profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
           created_at: new Date('2023-02-20T14:45:00Z'),
-          updated_at: new Date('2023-02-20T14:45:00Z')
-        }
+          updated_at: new Date('2023-02-20T14:45:00Z'),
+        },
       ];
       mockPrismaService.user.findMany.mockResolvedValue(expectedUsers);
 
@@ -184,9 +184,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           first_name: {
             contains: firstName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
       expect(mockPrismaService.user.findMany).toHaveBeenCalledTimes(1);
     });
@@ -205,9 +205,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           first_name: {
             contains: firstName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
     });
 
@@ -226,9 +226,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           first_name: {
             contains: firstName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
     });
   });
@@ -249,9 +249,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           last_name: {
             contains: lastName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
       expect(mockPrismaService.user.findMany).toHaveBeenCalledTimes(1);
     });
@@ -270,9 +270,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           last_name: {
             contains: lastName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
     });
 
@@ -291,9 +291,9 @@ describe('UsersRepository', () => {
           is_deleted: false,
           last_name: {
             contains: lastName,
-            mode: 'insensitive'
-          }
-        }
+            mode: 'insensitive',
+          },
+        },
       });
     });
   });
@@ -314,17 +314,17 @@ describe('UsersRepository', () => {
           is_deleted: false,
           tags: {
             some: {
-              tag_id: tagId
-            }
-          }
+              tag_id: tagId,
+            },
+          },
         },
         include: {
           tags: {
             include: {
-              tag: true
-            }
-          }
-        }
+              tag: true,
+            },
+          },
+        },
       });
       expect(mockPrismaService.user.findMany).toHaveBeenCalledTimes(1);
     });
@@ -344,17 +344,17 @@ describe('UsersRepository', () => {
           is_deleted: false,
           tags: {
             some: {
-              tag_id: tagId
-            }
-          }
+              tag_id: tagId,
+            },
+          },
         },
         include: {
           tags: {
             include: {
-              tag: true
-            }
-          }
-        }
+              tag: true,
+            },
+          },
+        },
       });
     });
   });
@@ -364,7 +364,7 @@ describe('UsersRepository', () => {
       // Arrange
       const tagIds = [
         '123e4567-e89b-12d3-a456-426614174010',
-        '123e4567-e89b-12d3-a456-426614174011'
+        '123e4567-e89b-12d3-a456-426614174011',
       ];
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
@@ -379,18 +379,18 @@ describe('UsersRepository', () => {
           tags: {
             some: {
               tag_id: {
-                in: tagIds
-              }
-            }
-          }
+                in: tagIds,
+              },
+            },
+          },
         },
         include: {
           tags: {
             include: {
-              tag: true
-            }
-          }
-        }
+              tag: true,
+            },
+          },
+        },
       });
       expect(mockPrismaService.user.findMany).toHaveBeenCalledTimes(1);
     });
@@ -399,7 +399,7 @@ describe('UsersRepository', () => {
       // Arrange
       const tagIds = [
         '123e4567-e89b-12d3-a456-426614174012',
-        '123e4567-e89b-12d3-a456-426614174013'
+        '123e4567-e89b-12d3-a456-426614174013',
       ];
       mockPrismaService.user.findMany.mockResolvedValue([]);
 
@@ -414,18 +414,18 @@ describe('UsersRepository', () => {
           tags: {
             some: {
               tag_id: {
-                in: tagIds
-              }
-            }
-          }
+                in: tagIds,
+              },
+            },
+          },
         },
         include: {
           tags: {
             include: {
-              tag: true
-            }
-          }
-        }
+              tag: true,
+            },
+          },
+        },
       });
     });
   });
@@ -475,4 +475,4 @@ describe('UsersRepository', () => {
       expect(mockPrismaService.user.update).toHaveBeenCalledTimes(1);
     });
   });
-}); 
+});

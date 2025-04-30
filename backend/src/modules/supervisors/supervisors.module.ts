@@ -13,15 +13,15 @@ import { PrismaSupervisorRepository } from './repositories/supervisor.repository
     SupervisorsService,
     {
       provide: 'SupervisorRepository',
-      useClass: PrismaSupervisorRepository
-    }
+      useClass: PrismaSupervisorRepository,
+    },
   ],
   exports: [
     SupervisorsService,
     {
       provide: 'SupervisorRepository',
-      useClass: PrismaSupervisorRepository
-    }
+      useClass: PrismaSupervisorRepository,
+    },
   ],
 })
 export class SupervisorsModule {}

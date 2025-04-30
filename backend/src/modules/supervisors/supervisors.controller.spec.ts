@@ -21,7 +21,7 @@ describe('SupervisorsController', () => {
             register: jest.fn(),
           },
         },
-       
+
         {
           provide: AuthService,
           useValue: {
@@ -31,15 +31,15 @@ describe('SupervisorsController', () => {
             verifyHmacSignature: jest.fn(),
           },
         },
-       
+
         ApiAuthGuard,
       ],
     })
-    .overrideGuard(ApiAuthGuard) 
-    .useValue({
-      canActivate: jest.fn().mockImplementation(() => true),
-    })
-    .compile();
+      .overrideGuard(ApiAuthGuard)
+      .useValue({
+        canActivate: jest.fn().mockImplementation(() => true),
+      })
+      .compile();
 
     controller = module.get<SupervisorsController>(SupervisorsController);
     service = module.get<SupervisorsService>(SupervisorsService);
@@ -50,36 +50,35 @@ describe('SupervisorsController', () => {
     const mockDto: registerSupervisorDto = {
       tags: [{ tag_id: 'tag-1', priority: 1 }],
     };
-    
-   
+
     const mockRequest = {
       userId: mockUserId,
- 
+
       headers: {},
       query: {},
       params: {},
-      body: {}
+      body: {},
     } as unknown as Request;
 
-    const mockResult: SupervisorRegistrationResponse = { 
+    const mockResult: SupervisorRegistrationResponse = {
       success: true,
       message: 'Supervisor registered successfully',
-      tags: [{ 
-        user_id: mockUserId, 
-        tag_id: 'tag-1', 
-        priority: 1,
-        created_at: new Date(),
-        updated_at: new Date()
-      }]
+      tags: [
+        {
+          user_id: mockUserId,
+          tag_id: 'tag-1',
+          priority: 1,
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+      ],
     };
-    
-    
+
     const registerSpy = jest.spyOn(service, 'register');
     registerSpy.mockResolvedValue(mockResult);
 
     const result = await controller.register(mockDto, mockRequest);
 
-   
     expect(registerSpy).toHaveBeenCalledWith(mockUserId, mockDto);
     expect(result).toEqual(mockResult);
   });

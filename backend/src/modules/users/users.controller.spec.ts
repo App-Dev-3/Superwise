@@ -26,7 +26,7 @@ describe('UsersController', () => {
   // Sample test data with proper UUID format
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
-  
+
   const mockUser: User = {
     id: USER_UUID,
     email: 'exampleStudent1@fhstp.ac.at',
@@ -41,17 +41,17 @@ describe('UsersController', () => {
   };
 
   const mockUsers = [
-    mockUser, 
-    { 
-      ...mockUser, 
-      id: USER_UUID_2, 
+    mockUser,
+    {
+      ...mockUser,
+      id: USER_UUID_2,
       email: 'exampleStudent2@fhstp.ac.at',
       first_name: 'Maria',
       last_name: 'Mustermann',
       profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
       created_at: new Date('2023-02-20T14:45:00Z'),
-      updated_at: new Date('2023-02-20T14:45:00Z')
-    }
+      updated_at: new Date('2023-02-20T14:45:00Z'),
+    },
   ];
 
   beforeEach(async () => {
@@ -66,7 +66,7 @@ describe('UsersController', () => {
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
-    
+
     // Reset all mocks before each test
     jest.clearAllMocks();
   });
@@ -193,7 +193,10 @@ describe('UsersController', () => {
     it('should split tag IDs string and return users with any of the specified tags', async () => {
       // Arrange
       const tagIds = '123e4567-e89b-12d3-a456-426614174010,123e4567-e89b-12d3-a456-426614174011';
-      const splitTagIds = ['123e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174011'];
+      const splitTagIds = [
+        '123e4567-e89b-12d3-a456-426614174010',
+        '123e4567-e89b-12d3-a456-426614174011',
+      ];
       mockUsersService.findUsersByTagIds.mockResolvedValue([mockUser]);
 
       // Act
@@ -207,8 +210,12 @@ describe('UsersController', () => {
 
     it('should handle tag IDs with whitespace correctly', async () => {
       // Arrange
-      const tagIds = ' 123e4567-e89b-12d3-a456-426614174010 , 123e4567-e89b-12d3-a456-426614174011 ';
-      const splitTagIds = ['123e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174011'];
+      const tagIds =
+        ' 123e4567-e89b-12d3-a456-426614174010 , 123e4567-e89b-12d3-a456-426614174011 ';
+      const splitTagIds = [
+        '123e4567-e89b-12d3-a456-426614174010',
+        '123e4567-e89b-12d3-a456-426614174011',
+      ];
       mockUsersService.findUsersByTagIds.mockResolvedValue([mockUser]);
 
       // Act
@@ -238,7 +245,9 @@ describe('UsersController', () => {
     it('should propagate NotFoundException when user does not exist', async () => {
       // Arrange
       const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      mockUsersService.findUserById.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
+      mockUsersService.findUserById.mockRejectedValue(
+        new NotFoundException(`User with ID ${userId} not found`),
+      );
 
       // Act & Assert
       await expect(controller.findOne(userId)).rejects.toThrow(NotFoundException);
@@ -272,7 +281,9 @@ describe('UsersController', () => {
       const updateUserDto: UpdateUserDto = {
         first_name: 'Updated',
       };
-      mockUsersService.update.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
+      mockUsersService.update.mockRejectedValue(
+        new NotFoundException(`User with ID ${userId} not found`),
+      );
 
       // Act & Assert
       await expect(controller.update(userId, updateUserDto)).rejects.toThrow(NotFoundException);
@@ -299,7 +310,9 @@ describe('UsersController', () => {
     it('should propagate NotFoundException when user does not exist', async () => {
       // Arrange
       const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      mockUsersService.remove.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
+      mockUsersService.remove.mockRejectedValue(
+        new NotFoundException(`User with ID ${userId} not found`),
+      );
 
       // Act & Assert
       await expect(controller.remove(userId)).rejects.toThrow(NotFoundException);

@@ -7,7 +7,7 @@ import { ApiAuthGuard } from './guards/api-auth.guard';
 
 @Module({
   imports: [ConfigModule, UsersModule, PrismaModule],
-  providers: [AuthService, ApiAuthGuard], 
-  exports: [AuthService, ApiAuthGuard],   
+  providers: [AuthService, ApiAuthGuard],
+  exports: [AuthService, ApiAuthGuard],
 })
 export class AuthModule {}

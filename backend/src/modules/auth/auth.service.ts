@@ -18,11 +18,7 @@ export class AuthService {
     return providedApiKey === expectedApiKey;
   }
 
-  verifyHmacSignature(
-    signature: string,
-    payload: any,
-    timestamp: string,
-  ): boolean {
+  verifyHmacSignature(signature: string, payload: any, timestamp: string): boolean {
     const apiKey = this.configService.get<string>('API_KEY');
     if (!apiKey) {
       throw new Error('API_KEY is not configured in environment variables');
@@ -30,19 +26,11 @@ export class AuthService {
 
     const data = JSON.stringify(payload) + timestamp;
 
-    const expectedSignature = crypto
-      .createHmac('sha256', apiKey)
-      .update(data)
-      .digest('hex');
+    const expectedSignature = crypto.createHmac('sha256', apiKey).update(data).digest('hex');
 
     try {
-      if (
-        Buffer.from(signature).length === Buffer.from(expectedSignature).length
-      ) {
-        return crypto.timingSafeEqual(
-          Buffer.from(signature),
-          Buffer.from(expectedSignature),
-        );
+      if (Buffer.from(signature).length === Buffer.from(expectedSignature).length) {
+        return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
       }
       return false;
     } catch {

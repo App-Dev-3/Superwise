@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  CanActivate,
-  ExecutionContext,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
 
@@ -13,7 +8,7 @@ export class ApiAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    
+
     const apiKey = request.header('API-Key');
     const userId = request.header('User-ID');
     const timestamp = request.header('Request-Timestamp');
@@ -40,7 +35,6 @@ export class ApiAuthGuard implements CanActivate {
       throw new UnauthorizedException('Invalid request signature');
     }
 
-    
     request['userId'] = userId;
 
     return true;

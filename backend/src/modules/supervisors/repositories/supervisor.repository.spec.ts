@@ -3,7 +3,6 @@ import { PrismaSupervisorRepository } from './supervisor.repository';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { Role } from '@prisma/client';
 
-
 const mockSupervisorUser = {
   id: 'test-user-id',
   email: 'test@example.com',
@@ -55,7 +54,7 @@ describe('PrismaSupervisorRepository', () => {
     },
     $transaction: jest.fn(),
   };
-  
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -78,24 +77,22 @@ describe('PrismaSupervisorRepository', () => {
 
   describe('findSupervisorByUserId', () => {
     it('should call Prisma with correct parameters', async () => {
-      
       const spy = jest.spyOn(prismaService.user, 'findUnique');
       spy.mockResolvedValue(mockSupervisorUser);
 
       await repository.findSupervisorByUserId(userId);
 
       expect(spy).toHaveBeenCalledWith({
-        where: { 
+        where: {
           id: userId,
-          is_deleted: false 
-        }
+          is_deleted: false,
+        },
       });
     });
   });
 
   describe('isSupervisor', () => {
     it('should return true for valid supervisor', async () => {
-    
       const spy = jest.spyOn(prismaService.user, 'findUnique');
 
       spy.mockResolvedValue({ role: Role.SUPERVISOR } as any);
@@ -103,18 +100,18 @@ describe('PrismaSupervisorRepository', () => {
       const result = await repository.isSupervisor(userId);
 
       expect(result).toBe(true);
-    
+
       expect(spy).toHaveBeenCalledWith({
         where: { id: userId, is_deleted: false },
-        select: { 
-          role: true
-        }
+        select: {
+          role: true,
+        },
       });
     });
 
     it('should return false for non-supervisor', async () => {
       const spy = jest.spyOn(prismaService.user, 'findUnique');
-     
+
       spy.mockResolvedValue({ role: Role.STUDENT } as any);
 
       const result = await repository.isSupervisor(userId);
@@ -132,7 +129,7 @@ describe('PrismaSupervisorRepository', () => {
 
       const deleteSpy = jest.spyOn(prismaService.userTag, 'deleteMany');
       deleteSpy.mockResolvedValue({ count: 0 });
-      
+
       const transactionSpy = jest.spyOn(prismaService, '$transaction');
       transactionSpy.mockResolvedValue(mockTagResults);
 

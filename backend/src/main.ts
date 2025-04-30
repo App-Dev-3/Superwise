@@ -15,14 +15,13 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true, // Convert types when possible
       },
+      forbidUnknownValues: true,
     }),
   );
 
   const config = new DocumentBuilder()
     .setTitle('MatchMaker API')
-    .setDescription(
-      'The MatchMaker API for matching students with thesis supervisors',
-    )
+    .setDescription('The MatchMaker API for matching students with thesis supervisors')
     .setVersion('1.0')
     .addTag('matchmaker')
     .addServer('http://localhost:8080', 'Local development server')
@@ -36,7 +35,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       defaultModelsExpandDepth: 1, // Expand models by default
-      docExpansion: 'list', // Expand operations list 
+      docExpansion: 'list', // Expand operations list
     },
   });
 
@@ -48,4 +47,8 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT || 8080);
 }
-bootstrap();
+
+bootstrap().catch(err => {
+  console.error('Failed to start application:', err);
+  process.exit(1);
+});

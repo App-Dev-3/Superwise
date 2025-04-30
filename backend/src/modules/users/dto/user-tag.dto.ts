@@ -11,4 +11,4 @@ export class UserTagDto {
   @IsInt()
   @IsNotEmpty()
   priority: number;
-} 
+}

@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User, Student, Supervisor, UserTag, Role } from '@prisma/client';
 
 export class UserWithRelationsDto implements User {
@@ -17,7 +17,7 @@ export class UserWithRelationsDto implements User {
   @ApiProperty()
   role: Role;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   profile_image: string | null;
 
   @ApiProperty()
@@ -33,18 +33,18 @@ export class UserWithRelationsDto implements User {
   updated_at: Date;
 
   // Relations
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   student_profile?: Student;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   supervisor_profile?: Supervisor;
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ isArray: true })
   tags?: UserTag[];
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ isArray: true })
   blocked_users?: any[];
 
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional({ isArray: true })
   blocked_by_users?: any[];
-} 
+}

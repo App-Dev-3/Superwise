@@ -6,9 +6,7 @@ import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private prisma: PrismaService
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     return this.prisma.user.create({
@@ -25,28 +23,30 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany({
       where: {
-        is_deleted: false
-      }
+        is_deleted: false,
+      },
     });
   }
 
   async findUserById(id: string): Promise<User> {
     const user = await this.prisma.user.findUnique({
-      where: { id }
+      where: { id },
     });
-    
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    
+
     return user;
   }
 
-  async findUserByIdWithRelations(id: string): Promise<User & { 
-    student_profile?: any, 
-    supervisor_profile?: any, 
-    tags?: any[]
-  }> {
+  async findUserByIdWithRelations(id: string): Promise<
+    User & {
+      student_profile?: any;
+      supervisor_profile?: any;
+      tags?: any[];
+    }
+  > {
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: {
@@ -54,16 +54,16 @@ export class UsersService {
         supervisor_profile: true,
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
-    
+
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    
+
     return user;
   }
 
@@ -73,9 +73,9 @@ export class UsersService {
         is_deleted: false,
         first_name: {
           contains: firstName,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
   }
 
@@ -85,9 +85,9 @@ export class UsersService {
         is_deleted: false,
         last_name: {
           contains: lastName,
-          mode: 'insensitive'
-        }
-      }
+          mode: 'insensitive',
+        },
+      },
     });
   }
 
@@ -97,17 +97,17 @@ export class UsersService {
         is_deleted: false,
         tags: {
           some: {
-            tag_id: tagId
-          }
-        }
+            tag_id: tagId,
+          },
+        },
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
   }
 
@@ -118,25 +118,25 @@ export class UsersService {
         tags: {
           some: {
             tag_id: {
-              in: tagIds
-            }
-          }
-        }
+              in: tagIds,
+            },
+          },
+        },
       },
       include: {
         tags: {
           include: {
-            tag: true
-          }
-        }
-      }
+            tag: true,
+          },
+        },
+      },
     });
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     // First check if user exists
     await this.findUserById(id);
-    
+
     return this.prisma.user.update({
       where: { id },
       data: updateUserDto,
@@ -146,7 +146,7 @@ export class UsersService {
   async remove(id: string): Promise<User> {
     // First check if user exists
     await this.findUserById(id);
-    
+
     // Soft delete
     return this.prisma.user.update({
       where: { id },

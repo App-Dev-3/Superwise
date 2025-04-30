@@ -36,7 +36,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       defaultModelsExpandDepth: 1, // Expand models by default
-      docExpansion: 'list', // Expand operations list
+      docExpansion: 'list', // Expand operations list 
     },
   });
 

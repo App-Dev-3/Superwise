@@ -7,7 +7,7 @@ export interface SupervisorRepository {
    * @param userId The user ID
    * @returns The user or null
    */
-  findSupervisorByUserId(userId: string): Promise<User>;
+  findSupervisorByUserId(userId: string): Promise<User | null>;
 
   /**
    * Check if a user is a supervisor

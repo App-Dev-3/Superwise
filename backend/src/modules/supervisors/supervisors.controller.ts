@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { SupervisorsService } from './supervisors.service';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
@@ -44,7 +44,7 @@ export class SupervisorsController {
   ): Promise<SupervisorRegistrationResponse> {
     const userId = req['userId'] as string;
     if (!userId) {
-      throw new Error('User ID not found in request');
+      throw new UnauthorizedException('User ID not found in request');
     }
     return this.supervisorsService.register(userId, registerDto);
   }

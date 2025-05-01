@@ -4,22 +4,17 @@ import { SupervisorRepository } from './supervisor-repository.interface';
 import { registerSupervisorDto } from '../dto/register-supervisor.dto';
 import { User, UserTag } from '@prisma/client';
 
-/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 @Injectable()
 export class PrismaSupervisorRepository implements SupervisorRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findSupervisorByUserId(userId: string): Promise<User> {
+  async findSupervisorByUserId(userId: string): Promise<User | null> {
     const supervisor = await this.prisma.user.findUnique({
       where: {
         id: userId,
         is_deleted: false,
       },
     });
-
-    if (!supervisor) {
-      throw new Error('Supervisor not found');
-    }
 
     return supervisor;
   }

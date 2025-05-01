@@ -43,8 +43,16 @@ export class UserWithRelationsDto implements User {
   tags?: UserTag[];
 
   @ApiPropertyOptional({ isArray: true })
-  blocked_users?: any[];
+  blocked_users?: {
+    blocker_user_id: string;
+    blocked_user_id: string;
+    created_at: Date;
+  }[];
 
   @ApiPropertyOptional({ isArray: true })
-  blocked_by_users?: any[];
+  blocked_by_users?: {
+    blocker_user_id: string;
+    blocked_user_id: string;
+    created_at: Date;
+  }[];
 }

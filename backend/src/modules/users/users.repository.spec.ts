@@ -8,7 +8,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 describe('UsersRepository', () => {
   let repository: UsersRepository;
 
-  // Mock the PrismaService to avoid actual database calls
   const mockPrismaService = {
     user: {
       create: jest.fn(),
@@ -18,7 +17,6 @@ describe('UsersRepository', () => {
     },
   };
 
-  // Sample test data with proper UUID
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
 

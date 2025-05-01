@@ -80,7 +80,16 @@ describe('AuthService', () => {
       jest.spyOn(usersService, 'findUserById').mockResolvedValue({
         id: 'test-id',
         is_deleted: false,
-      } as any);
+        // Include minimal required properties for User type
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        role: 'STUDENT',
+        is_registered: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+        profile_image: null,
+      });
 
       expect(await service.validateUser('test-id')).toBe(true);
     });
@@ -89,7 +98,16 @@ describe('AuthService', () => {
       jest.spyOn(usersService, 'findUserById').mockResolvedValue({
         id: 'test-id',
         is_deleted: true,
-      } as any);
+        // Include minimal required properties for User type
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        role: 'STUDENT',
+        is_registered: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+        profile_image: null,
+      });
 
       expect(await service.validateUser('test-id')).toBe(false);
     });

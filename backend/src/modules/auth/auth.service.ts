@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private configService: ConfigService,
     private usersService: UsersService,
@@ -18,7 +20,11 @@ export class AuthService {
     return providedApiKey === expectedApiKey;
   }
 
-  verifyHmacSignature(signature: string, payload: any, timestamp: string): boolean {
+  verifyHmacSignature(
+    signature: string,
+    payload: Record<string, unknown>,
+    timestamp: string,
+  ): boolean {
     const apiKey = this.configService.get<string>('API_KEY');
     if (!apiKey) {
       throw new Error('API_KEY is not configured in environment variables');
@@ -34,11 +40,11 @@ export class AuthService {
       }
       return false;
     } catch {
-      console.log('Error in timingSafeEqual');
+      console.error('Error in timingSafeEqual');
       return false;
     }
   }
-  isTimestampValid(timestamp: string, windowMinutes: number = 2): boolean {
+  isTimestampValid(timestamp: string, windowMinutes = 2): boolean {
     const requestTime = new Date(timestamp).getTime();
     const currentTime = Date.now();
     const windowMs = windowMinutes * 60 * 1000;
@@ -55,8 +61,10 @@ export class AuthService {
       }
 
       return !('is_deleted' in user && user.is_deleted === true);
-    } catch {
-      console.log('Error validating user');
+    } catch (error: unknown) {
+      this.logger.debug(
+        `Error validating user: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
       return false;
     }
   }

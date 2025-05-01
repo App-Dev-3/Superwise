@@ -562,25 +562,6 @@
           }
         }
       },
-      "UserTagDto": {
-        "type": "object",
-        "properties": {
-          "tag_id": {
-            "type": "string",
-            "description": "Tag ID",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          },
-          "priority": {
-            "type": "number",
-            "description": "Priority of the tag for this user",
-            "example": 1
-          }
-        },
-        "required": [
-          "tag_id",
-          "priority"
-        ]
-      },
       "registerSupervisorDto": {
         "type": "object",
         "properties": {
@@ -596,10 +577,10 @@
                 "priority": 2
               }
             ],
-            "type": "array",
             "items": {
-              "$ref": "#/components/schemas/UserTagDto"
-            }
+              "type": "array"
+            },
+            "type": "array"
           }
         },
         "required": [

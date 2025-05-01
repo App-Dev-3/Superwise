@@ -95,7 +95,18 @@ describe('PrismaSupervisorRepository', () => {
     it('should return true for valid supervisor', async () => {
       const spy = jest.spyOn(prismaService.user, 'findUnique');
 
-      spy.mockResolvedValue({ role: Role.SUPERVISOR } as any);
+      spy.mockResolvedValue({
+        id: userId,
+        role: Role.SUPERVISOR,
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        profile_image: null,
+        is_registered: true,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
 
       const result = await repository.isSupervisor(userId);
 
@@ -112,7 +123,18 @@ describe('PrismaSupervisorRepository', () => {
     it('should return false for non-supervisor', async () => {
       const spy = jest.spyOn(prismaService.user, 'findUnique');
 
-      spy.mockResolvedValue({ role: Role.STUDENT } as any);
+      spy.mockResolvedValue({
+        id: userId,
+        role: Role.STUDENT,
+        email: 'test@example.com',
+        first_name: 'Test',
+        last_name: 'User',
+        profile_image: null,
+        is_registered: true,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
 
       const result = await repository.isSupervisor(userId);
 

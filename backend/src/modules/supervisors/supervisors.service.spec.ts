@@ -37,9 +37,20 @@ describe('SupervisorsService', () => {
       created_at: new Date(),
       updated_at: new Date(),
     },
-    tags: [] as any[],
-    blocked_users: [] as any[],
-    blocked_by_users: [] as any[],
+    tags: [] as {
+      tag_id: string;
+      priority: number;
+      created_at: Date;
+      updated_at: Date;
+    }[],
+    blocked_users: [] as {
+      blocked_user_id: string;
+      created_at: Date;
+    }[],
+    blocked_by_users: [] as {
+      blocker_user_id: string;
+      created_at: Date;
+    }[],
   };
 
   const mockTagResults = [

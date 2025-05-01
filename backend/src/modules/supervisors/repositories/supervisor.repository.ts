@@ -4,6 +4,7 @@ import { SupervisorRepository } from './supervisor-repository.interface';
 import { registerSupervisorDto } from '../dto/register-supervisor.dto';
 import { User, UserTag } from '@prisma/client';
 
+/* eslint-disable @darraghor/nestjs-typed/injectable-should-be-provided */
 @Injectable()
 export class PrismaSupervisorRepository implements SupervisorRepository {
   constructor(private prisma: PrismaService) {}

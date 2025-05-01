@@ -31,7 +31,13 @@ export class ApiAuthGuard implements CanActivate {
       throw new UnauthorizedException('User not found');
     }
 
-    if (!this.authService.verifyHmacSignature(signature, request.body, timestamp)) {
+    if (
+      !this.authService.verifyHmacSignature(
+        signature,
+        request.body as Record<string, unknown>,
+        timestamp,
+      )
+    ) {
       throw new UnauthorizedException('Invalid request signature');
     }
 

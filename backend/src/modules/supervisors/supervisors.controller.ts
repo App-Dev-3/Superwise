@@ -11,8 +11,6 @@ import { ApiAuthGuard } from '../auth/guards/api-auth.guard';
 export class SupervisorsController {
   constructor(private readonly supervisorsService: SupervisorsService) {}
 
-  // Do we need auth api documentation here in the controller? we would need to upate main.ts aswell i think
-
   @Post('register')
   @UseGuards(ApiAuthGuard)
   @ApiOperation({

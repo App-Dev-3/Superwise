@@ -28,9 +28,36 @@ export class UsersService {
 
   async findUserByIdWithRelations(id: string): Promise<
     User & {
-      student_profile?: any;
-      supervisor_profile?: any;
-      tags?: any[];
+      student_profile?: {
+        id: string;
+        user_id: string;
+        current_semester: number;
+        created_at: Date;
+        updated_at: Date;
+      } | null;
+      supervisor_profile?: {
+        id: string;
+        user_id: string;
+        bio: string | null;
+        available_spots: number;
+        total_spots: number;
+        created_at: Date;
+        updated_at: Date;
+      } | null;
+      tags?: {
+        user_id: string;
+        tag_id: string;
+        priority: number;
+        created_at: Date;
+        updated_at: Date;
+        tag: {
+          id: string;
+          name: string;
+          category: string;
+          created_at: Date;
+          updated_at: Date;
+        };
+      }[];
     }
   > {
     const user = await this.usersRepository.findUserByIdWithRelations(id);

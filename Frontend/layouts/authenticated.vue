@@ -36,9 +36,9 @@ watch(isLoaded, async (loaded) => {
   redirecting.value = true;
 
   const onboardingComplete =
-    user.value.unsafeMetadata.onboardingCompleted === false;
+    user.value?.unsafeMetadata.onboardingCompleted === false;
 
-  const userRole = user.value.unsafeMetadata.role || "student"; //get from nestjs
+  const userRole = user.value?.unsafeMetadata.role || "student"; //get from nestjs
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
   );

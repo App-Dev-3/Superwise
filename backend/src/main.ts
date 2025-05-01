@@ -7,8 +7,6 @@ import * as fs from 'fs';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Question to Bernhard --> Should we use the guard golbally?
-
   // Add validation pipe for all requests
   app.useGlobalPipes(
     new ValidationPipe({

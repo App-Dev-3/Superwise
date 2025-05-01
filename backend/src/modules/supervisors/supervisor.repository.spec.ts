@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaSupervisorRepository } from './supervisor.repository';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { SupervisorRepository } from './supervisor.repository';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Role } from '@prisma/client';
 
 const mockSupervisorUser = {
@@ -29,8 +29,8 @@ const mockRegisteredSupervisorUser = {
   updated_at: new Date(),
 };
 
-describe('PrismaSupervisorRepository', () => {
-  let repository: PrismaSupervisorRepository;
+describe('SupervisorRepository', () => {
+  let repository: SupervisorRepository;
   let prismaService: PrismaService;
 
   const userId = 'test-user-id';
@@ -58,7 +58,7 @@ describe('PrismaSupervisorRepository', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        PrismaSupervisorRepository,
+        SupervisorRepository,
         {
           provide: PrismaService,
           useValue: mockPrismaService,
@@ -66,7 +66,7 @@ describe('PrismaSupervisorRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<PrismaSupervisorRepository>(PrismaSupervisorRepository);
+    repository = module.get<SupervisorRepository>(SupervisorRepository);
     prismaService = module.get<PrismaService>(PrismaService);
     jest.clearAllMocks();
   });

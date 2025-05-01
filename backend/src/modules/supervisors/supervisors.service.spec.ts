@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisorsService } from './supervisors.service';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
-import { SupervisorRepository } from './repositories/supervisor-repository.interface';
+import { SupervisorRepository } from './supervisor.repository';
 import { Role } from '@prisma/client';
 
 describe('SupervisorsService', () => {
@@ -82,14 +82,11 @@ describe('SupervisorsService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        SupervisorsService,
-        { provide: 'SupervisorRepository', useValue: mockRepository },
-      ],
+      providers: [SupervisorsService, { provide: SupervisorRepository, useValue: mockRepository }],
     }).compile();
 
     service = module.get<SupervisorsService>(SupervisorsService);
-    repository = module.get<SupervisorRepository>('SupervisorRepository');
+    repository = module.get<SupervisorRepository>(SupervisorRepository);
   });
 
   it('should be defined', () => {

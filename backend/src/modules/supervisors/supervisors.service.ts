@@ -1,14 +1,11 @@
 import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
 import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { SupervisorRegistrationResponse } from './entities/supervisor-registration.entity';
-import { SupervisorRepository } from './repositories/supervisor-repository.interface';
+import { SupervisorRepository } from './supervisor.repository';
 
 @Injectable()
 export class SupervisorsService {
-  constructor(
-    @Inject('SupervisorRepository')
-    private supervisorRepository: SupervisorRepository,
-  ) {}
+  constructor(private supervisorRepository: SupervisorRepository) {}
 
   async register(
     userId: string,

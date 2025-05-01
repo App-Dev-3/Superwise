@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
-import { SupervisorRepository } from './supervisor-repository.interface';
-import { registerSupervisorDto } from '../dto/register-supervisor.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { registerSupervisorDto } from './dto/register-supervisor.dto';
 import { User, UserTag } from '@prisma/client';
 
+export interface ISupervisorRepository {
+  findSupervisorByUserId(userId: string): Promise<User | null>;
+
+  isSupervisor(userId: string): Promise<boolean>;
+
+  updateSupervisorTags(userId: string, tags: registerSupervisorDto['tags']): Promise<UserTag[]>;
+
+  updateUserRegistrationStatus(userId: string, isRegistered: boolean): Promise<void>;
+}
+
 @Injectable()
-export class PrismaSupervisorRepository implements SupervisorRepository {
+export class SupervisorRepository implements ISupervisorRepository {
   constructor(private prisma: PrismaService) {}
 
   async findSupervisorByUserId(userId: string): Promise<User | null> {

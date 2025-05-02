@@ -37,7 +37,7 @@ const props = defineProps({
             default: false,
             validator(value, props) {
                 if (props.wide && value) {
-                    console.warn("classed 'wide' and 'block' cannot be used together on button");
+                    console.warn("classes 'wide' and 'block' cannot be used together on button");
                     return false;
                 }
                 return true;

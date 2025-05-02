@@ -9,13 +9,17 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  ParseUUIDPipe,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
-import { User } from '@prisma/client';
-import { User as UserEntity } from './entities/user.entity';
+import { User } from './entities/user.entity';
+import { UserTag } from './entities/user-tag.entity';
+import { UserWithRelations } from './entities/user-with-relations.entity';
+import { SetUserTagsDto } from './dto/set-user-tags.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -34,11 +38,12 @@ export class UsersController {
   @ApiResponse({
     status: 201,
     description: 'User has been successfully created.',
-    type: UserEntity,
+    type: User,
   })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid input data.' })
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.create(createUserDto);
+  @ApiResponse({ status: 409, description: 'Conflict - User already exists.' })
+  createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.createUser(createUserDto);
   }
 
   @Get()
@@ -49,10 +54,10 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'Return all active users.',
-    type: [UserEntity],
+    type: [User],
   })
-  findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  findAllUsers(): Promise<User[]> {
+    return this.usersService.findAllUsers();
   }
 
   @Get('search/by-first-name')
@@ -65,8 +70,12 @@ export class UsersController {
     required: true,
     description: 'First name to search for (case insensitive, partial match)',
   })
-  @ApiResponse({ status: 200, description: 'Return users matching the given first name.' })
-  findByFirstName(@Query('firstName') firstName: string): Promise<User[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Return users matching the given first name.',
+    type: [User],
+  })
+  findUsersByFirstName(@Query('firstName') firstName: string): Promise<User[] | null> {
     return this.usersService.findUsersByFirstName(firstName);
   }
 
@@ -80,8 +89,12 @@ export class UsersController {
     required: true,
     description: 'Last name to search for (case insensitive, partial match)',
   })
-  @ApiResponse({ status: 200, description: 'Return users matching the given last name.' })
-  findByLastName(@Query('lastName') lastName: string): Promise<User[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Return users matching the given last name.',
+    type: [User],
+  })
+  findUsersByLastName(@Query('lastName') lastName: string): Promise<User[] | null> {
     return this.usersService.findUsersByLastName(lastName);
   }
 
@@ -90,9 +103,14 @@ export class UsersController {
     summary: 'Search users by tag ID',
     description: 'Find Users associated with a specific research interest or skill tag.',
   })
-  @ApiQuery({ name: 'tagId', required: true, description: 'Tag ID to search for' })
-  @ApiResponse({ status: 200, description: 'Return users with the specified tag.' })
-  findByTagId(@Query('tagId') tagId: string): Promise<User[]> {
+  @ApiQuery({ name: 'tagId', required: true, description: 'Tag ID to search for (UUID)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return users with the specified tag.',
+    type: [User],
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid Tag ID format.' })
+  findUsersByTagId(@Query('tagId', ParseUUIDPipe) tagId: string): Promise<User[] | null> {
     return this.usersService.findUsersByTagId(tagId);
   }
 
@@ -105,11 +123,16 @@ export class UsersController {
   @ApiQuery({
     name: 'tagIds',
     required: true,
-    description: 'Comma-separated list of tag IDs',
+    description: 'Comma-separated list of tag IDs (UUIDs)',
     type: String,
   })
-  @ApiResponse({ status: 200, description: 'Return users with any of the specified tags.' })
-  findByTagIds(@Query('tagIds') tagIds: string): Promise<User[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Return users with any of the specified tags.',
+    type: [User],
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid Tag ID format in list.' })
+  findUsersByTagIds(@Query('tagIds') tagIds: string): Promise<User[] | null> {
     const tagIdsArray = tagIds.split(',').map(id => id.trim());
     return this.usersService.findUsersByTagIds(tagIdsArray);
   }
@@ -128,10 +151,11 @@ export class UsersController {
   @ApiResponse({
     status: 200,
     description: 'Return the user with the matching id.',
-    type: UserEntity,
+    type: User,
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  findOne(@Param('id') id: string): Promise<User> {
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
+  findUserById(@Param('id', ParseUUIDPipe) id: string): Promise<User | null> {
     return this.usersService.findUserById(id);
   }
 
@@ -139,15 +163,23 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get user by ID with all related entities',
     description:
-      'Retrieve a specific user with their student/supervisor profile, research interests, and other relationships.',
+      'Retrieve a specific user with their student/supervisor profile, tags, and block relationships.',
   })
-  @ApiParam({ name: 'id', description: 'User ID', example: '123e4567-e89b-12d3-a456-426614174000' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID (UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @ApiResponse({
     status: 200,
     description: 'Return the user with the specified ID including relations.',
+    type: UserWithRelations,
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  findOneWithRelations(@Param('id') id: string) {
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
+  findUserByIdWithRelations(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UserWithRelations | null> {
     return this.usersService.findUserByIdWithRelations(id);
   }
 
@@ -156,27 +188,100 @@ export class UsersController {
     summary: 'Update user',
     description: "Update a user's information such as name, email, role, and profile image.",
   })
-  @ApiParam({ name: 'id', description: 'User ID', example: '123e4567-e89b-12d3-a456-426614174000' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID (UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @ApiBody({
     type: UpdateUserDto,
     description: 'The fields to update on the user',
   })
-  @ApiResponse({ status: 200, description: 'User has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'User has been successfully updated.',
+    type: User,
+  })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-    return this.usersService.update(id, updateUserDto);
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid input data or ID format.' })
+  @ApiResponse({ status: 409, description: 'Conflict - Update violates unique constraint.' })
+  updateUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
-    summary: 'Delete user',
-    description: 'Soft delete a user. This preserves the data but marks it as deleted.',
+    summary: 'Delete user (Soft Delete)',
+    description: 'Soft delete a user. Preserves data but marks as deleted.',
   })
-  @ApiParam({ name: 'id', description: 'User ID', example: '123e4567-e89b-12d3-a456-426614174000' })
-  @ApiResponse({ status: 204, description: 'User has been successfully deleted (soft delete).' })
+  @ApiParam({
+    name: 'id',
+    description: 'User ID (UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({ status: 204, description: 'User has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'User not found.' })
-  remove(@Param('id') id: string): Promise<User> {
-    return this.usersService.remove(id);
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
+  deleteUser(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
+    return this.usersService.deleteUser(id);
+  }
+
+  /**
+   * User Tag endpoints
+   */
+  @Get(':userId/tags')
+  @ApiOperation({
+    summary: 'Get all tags assigned to a user',
+    description: 'Retrieves all tags assigned to a specific user with their priorities.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'User ID (UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of user tags',
+    type: [UserTag],
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
+  findUserTagsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserTag[] | null> {
+    return this.usersService.findUserTagsByUserId(userId);
+  }
+
+  @Put(':userId/tags')
+  @ApiOperation({
+    summary: 'Set/Replace all tags for a user with priorities',
+    description: 'Updates all tags for a user with the specified priorities.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'User ID (UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiBody({
+    type: SetUserTagsDto,
+    description: 'The new tags and priorities for the user',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User tags updated successfully. Returns the new list of user tags.',
+    type: [UserTag],
+  })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request (e.g., invalid input, non-sequential/duplicate priorities).',
+  })
+  async setUserTagsByUserId(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @Body() setUserTagsDto: SetUserTagsDto,
+  ): Promise<UserTag[]> {
+    return await this.usersService.setUserTagsByUserId(userId, setUserTagsDto);
   }
 }

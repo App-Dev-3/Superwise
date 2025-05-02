@@ -25,10 +25,6 @@ export default defineNuxtConfig({
 >>>>>>> 544a15a (working onboarding)
   ],
 
-  typescript: {
-    typeCheck: true,
-  },
-
   router: {
     base: "/",
   },
@@ -66,8 +62,8 @@ export default defineNuxtConfig({
   },
 
   pwa: {
-    registerType: "autoUpdate",
     manifest: {
+<<<<<<< HEAD
 <<<<<<< HEAD
       name: 'Superwise',
       //TBC.
@@ -116,34 +112,68 @@ export default defineNuxtConfig({
       short_name: "NuxtPWA",
       description: "A Nuxt 3 Progressive Web App",
       theme_color: "#4A90E2",
+=======
+      name: "MatchMaker",
+      //TBC.
+      short_name: "MM",
+      lang: "en",
+      description:
+        "An application that allows studnets to find their perfect supervisor match",
+      display: "standalone",
+      start_url: "/",
+>>>>>>> 15eddab (feat(frontend): Working clerk onboarding process (SCRUM-37))
       icons: [
         {
-          src: "/pwa-icon-192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-        },
-        {
-          src: "/pwa-icon-512x512.png",
+          src: "/icons/MM_512x512.png",
           sizes: "512x512",
           type: "image/png",
         },
+<<<<<<< HEAD
       ],
 >>>>>>> 544a15a (working onboarding)
     },
     workbox: {
       runtimeCaching: [
+=======
+>>>>>>> 15eddab (feat(frontend): Working clerk onboarding process (SCRUM-37))
         {
-          urlPattern: "https://example.com/.*",
-          handler: "NetworkFirst",
-          options: {
-            cacheName: "api-cache",
-            expiration: {
-              maxEntries: 50,
-              maxAgeSeconds: 86400,
-            },
-          },
+          src: "/icons/MM_192x192.png",
+          sizes: "192x192",
+          type: "image/png",
         },
       ],
+      screenshots: [
+        {
+          src: "/screenshots/Login.png",
+          sizes: "320x657",
+          type: "image/png",
+          form_factor: "wide",
+        },
+        {
+          src: "/screenshots/Chat.png",
+          sizes: "320x657",
+          type: "image/png",
+        },
+        {
+          src: "/screenshots/Dashboard.png",
+          sizes: "320x657",
+          type: "image/png",
+        },
+        {
+          src: "/screenshots/Search.png",
+          sizes: "320x657",
+          type: "image/png",
+        },
+      ],
+    },
+
+    workbox: {
+      navigateFallback: "/",
+      globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+    },
+    devOptions: {
+      enabled: false,
+      type: "module",
     },
   },
 });

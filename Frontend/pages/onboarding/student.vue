@@ -19,8 +19,9 @@
   </SignedIn>
 </template>
 
-<script setup>
-import { useUser } from "@clerk/vue";
+<script setup lang="ts">
+import { useUser } from "@clerk/nuxt/composables";
+import { navigateTo } from "nuxt/app";
 
 definePageMeta({
   layout: "default",

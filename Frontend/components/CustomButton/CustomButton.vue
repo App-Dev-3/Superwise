@@ -102,9 +102,9 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center px-2 max-w-full">
         <div v-if="props.topText" class="mb-2">
-            <span class="text-sm text-base-content/70">{{ props.topText }}</span>
+            <span class="text-sm text-base-content/60 block text-center">{{ props.topText }}</span>
         </div>
         <button
             class="btn"
@@ -113,14 +113,14 @@ const props = defineProps({
         >
             <span v-if="props.isLoading && (!props.rightIcon || props.leftIcon)" class="loading"/>
             <FontAwesomeIcon
-                data-test="left-icon"
                 v-if="props.leftIcon && !props.isLoading"
+                data-test="left-icon"
                 :icon="props.leftIcon"
             />
             {{props.text}}
             <FontAwesomeIcon
-                data-test="right-icon"
                 v-if="(props.rightIcon && !props.isLoading) || (props.leftIcon && props.rightIcon)"
+                data-test="right-icon"
                 :icon="props.rightIcon"
             />
             <span v-if="props.isLoading && props.rightIcon && !props.leftIcon" class="loading"/>

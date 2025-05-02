@@ -1,5 +1,5 @@
 <template>
-  <p>Index</p>
+  <p>Please accept our terms and conditions</p>
 </template>
 
 <script setup lang="ts">

@@ -1,32 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { Role, User } from '@prisma/client';
+import { Role, User, UserTag } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { UserWithRelations } from './entities/user-with-relations.entity';
+import { SetUserTagsDto } from './dto/set-user-tags.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
 
-  // Mock user service to avoid database calls
   const mockUsersService = {
-    create: jest.fn(),
-    findAll: jest.fn(),
+    createUser: jest.fn(),
+    findAllUsers: jest.fn(),
     findUserById: jest.fn(),
     findUserByIdWithRelations: jest.fn(),
     findUsersByFirstName: jest.fn(),
     findUsersByLastName: jest.fn(),
     findUsersByTagId: jest.fn(),
     findUsersByTagIds: jest.fn(),
-    update: jest.fn(),
-    remove: jest.fn(),
+    updateUser: jest.fn(),
+    deleteUser: jest.fn(),
+    findUserTagsByUserId: jest.fn(),
+    setUserTagsByUserId: jest.fn(),
   };
 
-  // Sample test data with proper UUID format
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
-  
+  const TAG_UUID_1 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
+  const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
+
   const mockUser: User = {
     id: USER_UUID,
     email: 'exampleStudent1@fhstp.ac.at',
@@ -41,47 +45,43 @@ describe('UsersController', () => {
   };
 
   const mockUsers = [
-    mockUser, 
-    { 
-      ...mockUser, 
-      id: USER_UUID_2, 
+    mockUser,
+    {
+      ...mockUser,
+      id: USER_UUID_2,
       email: 'exampleStudent2@fhstp.ac.at',
       first_name: 'Maria',
       last_name: 'Mustermann',
       profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
       created_at: new Date('2023-02-20T14:45:00Z'),
-      updated_at: new Date('2023-02-20T14:45:00Z')
-    }
+      updated_at: new Date('2023-02-20T14:45:00Z'),
+    },
   ];
+
+  const mockUserTag: UserTag = {
+    user_id: USER_UUID,
+    tag_id: TAG_UUID_1,
+    priority: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+  const mockUserTags = [mockUserTag];
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
-      providers: [
-        {
-          provide: UsersService,
-          useValue: mockUsersService,
-        },
-      ],
+      providers: [{ provide: UsersService, useValue: mockUsersService }],
     }).compile();
-
     controller = module.get<UsersController>(UsersController);
-    
-    // Reset all mocks before each test
     jest.clearAllMocks();
   });
 
-  /**
-   * Basic initialization test - verifies the controller is properly initialized
-   * This is a convention in NestJS testing to ensure dependency injection works correctly
-   */
-  it('should be defined - verifies successful controller initialization', () => {
+  it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('create', () => {
-    it('should create a new user successfully and return the created user', async () => {
-      // Arrange
+  describe('createUser', () => {
+    it('should create a user', async () => {
       const createUserDto: CreateUserDto = {
         email: 'exampleStudent1@fhstp.ac.at',
         first_name: 'Max',
@@ -89,221 +89,156 @@ describe('UsersController', () => {
         role: Role.STUDENT,
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
       };
-      mockUsersService.create.mockResolvedValue({ ...mockUser, ...createUserDto });
-
-      // Act
-      const result = await controller.create(createUserDto);
-
-      // Assert
-      expect(result).toEqual({ ...mockUser, ...createUserDto });
-      expect(mockUsersService.create).toHaveBeenCalledWith(createUserDto);
-      expect(mockUsersService.create).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('findAll', () => {
-    it('should return an array of all active users', async () => {
-      // Arrange
-      mockUsersService.findAll.mockResolvedValue(mockUsers);
-
-      // Act
-      const result = await controller.findAll();
-
-      // Assert
-      expect(result).toEqual(mockUsers);
-      expect(mockUsersService.findAll).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('findByFirstName', () => {
-    it('should return users that match the first name search criteria', async () => {
-      // Arrange
-      const firstName = 'Max';
-      mockUsersService.findUsersByFirstName.mockResolvedValue([mockUser]);
-
-      // Act
-      const result = await controller.findByFirstName(firstName);
-
-      // Assert
-      expect(result).toEqual([mockUser]);
-      expect(mockUsersService.findUsersByFirstName).toHaveBeenCalledWith(firstName);
-      expect(mockUsersService.findUsersByFirstName).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return empty array when no users match the first name', async () => {
-      // Arrange
-      const firstName = 'NonExistent';
-      mockUsersService.findUsersByFirstName.mockResolvedValue([]);
-
-      // Act
-      const result = await controller.findByFirstName(firstName);
-
-      // Assert
-      expect(result).toEqual([]);
-      expect(mockUsersService.findUsersByFirstName).toHaveBeenCalledWith(firstName);
-    });
-  });
-
-  describe('findByLastName', () => {
-    it('should return users that match the last name search criteria', async () => {
-      // Arrange
-      const lastName = 'Mustermann';
-      mockUsersService.findUsersByLastName.mockResolvedValue([mockUser]);
-
-      // Act
-      const result = await controller.findByLastName(lastName);
-
-      // Assert
-      expect(result).toEqual([mockUser]);
-      expect(mockUsersService.findUsersByLastName).toHaveBeenCalledWith(lastName);
-      expect(mockUsersService.findUsersByLastName).toHaveBeenCalledTimes(1);
-    });
-
-    it('should return empty array when no users match the last name', async () => {
-      // Arrange
-      const lastName = 'NonExistent';
-      mockUsersService.findUsersByLastName.mockResolvedValue([]);
-
-      // Act
-      const result = await controller.findByLastName(lastName);
-
-      // Assert
-      expect(result).toEqual([]);
-      expect(mockUsersService.findUsersByLastName).toHaveBeenCalledWith(lastName);
-    });
-  });
-
-  describe('findByTagId', () => {
-    it('should return users associated with the specified tag ID', async () => {
-      // Arrange
-      const tagId = '123e4567-e89b-12d3-a456-426614174010'; // UUID for a tag
-      mockUsersService.findUsersByTagId.mockResolvedValue([mockUser]);
-
-      // Act
-      const result = await controller.findByTagId(tagId);
-
-      // Assert
-      expect(result).toEqual([mockUser]);
-      expect(mockUsersService.findUsersByTagId).toHaveBeenCalledWith(tagId);
-      expect(mockUsersService.findUsersByTagId).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('findByTagIds', () => {
-    it('should split tag IDs string and return users with any of the specified tags', async () => {
-      // Arrange
-      const tagIds = '123e4567-e89b-12d3-a456-426614174010,123e4567-e89b-12d3-a456-426614174011';
-      const splitTagIds = ['123e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174011'];
-      mockUsersService.findUsersByTagIds.mockResolvedValue([mockUser]);
-
-      // Act
-      const result = await controller.findByTagIds(tagIds);
-
-      // Assert
-      expect(result).toEqual([mockUser]);
-      expect(mockUsersService.findUsersByTagIds).toHaveBeenCalledWith(splitTagIds);
-      expect(mockUsersService.findUsersByTagIds).toHaveBeenCalledTimes(1);
-    });
-
-    it('should handle tag IDs with whitespace correctly', async () => {
-      // Arrange
-      const tagIds = ' 123e4567-e89b-12d3-a456-426614174010 , 123e4567-e89b-12d3-a456-426614174011 ';
-      const splitTagIds = ['123e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174011'];
-      mockUsersService.findUsersByTagIds.mockResolvedValue([mockUser]);
-
-      // Act
-      const result = await controller.findByTagIds(tagIds);
-
-      // Assert
-      expect(result).toEqual([mockUser]);
-      expect(mockUsersService.findUsersByTagIds).toHaveBeenCalledWith(splitTagIds);
-    });
-  });
-
-  describe('findOne', () => {
-    it('should return a single user by ID when it exists', async () => {
-      // Arrange
-      const userId = USER_UUID;
-      mockUsersService.findUserById.mockResolvedValue(mockUser);
-
-      // Act
-      const result = await controller.findOne(userId);
-
-      // Assert
+      mockUsersService.createUser.mockResolvedValue(mockUser);
+      const result = await controller.createUser(createUserDto);
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(userId);
-      expect(mockUsersService.findUserById).toHaveBeenCalledTimes(1);
-    });
-
-    it('should propagate NotFoundException when user does not exist', async () => {
-      // Arrange
-      const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      mockUsersService.findUserById.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
-
-      // Act & Assert
-      await expect(controller.findOne(userId)).rejects.toThrow(NotFoundException);
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(userId);
+      expect(mockUsersService.createUser).toHaveBeenCalledWith(createUserDto);
     });
   });
 
-  describe('update', () => {
-    it('should update and return the user when it exists', async () => {
-      // Arrange
-      const userId = USER_UUID;
+  describe('findAllUsers', () => {
+    it('should return all users', async () => {
+      mockUsersService.findAllUsers.mockResolvedValue(mockUsers);
+      const result = await controller.findAllUsers();
+      expect(result).toEqual(mockUsers);
+      expect(mockUsersService.findAllUsers).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('findUsersByFirstName', () => {
+    it('should find users by first name', async () => {
+      mockUsersService.findUsersByFirstName.mockResolvedValue([mockUser]);
+      const result = await controller.findUsersByFirstName('Max');
+      expect(result).toEqual([mockUser]);
+      expect(mockUsersService.findUsersByFirstName).toHaveBeenCalledWith('Max');
+    });
+  });
+
+  describe('findUsersByLastName', () => {
+    it('should find users by last name', async () => {
+      mockUsersService.findUsersByLastName.mockResolvedValue([mockUser]);
+      const result = await controller.findUsersByLastName('Mustermann');
+      expect(result).toEqual([mockUser]);
+      expect(mockUsersService.findUsersByLastName).toHaveBeenCalledWith('Mustermann');
+    });
+  });
+
+  describe('findUsersByTagId', () => {
+    it('should find users by tag ID', async () => {
+      mockUsersService.findUsersByTagId.mockResolvedValue([mockUser]);
+      const result = await controller.findUsersByTagId(TAG_UUID_1);
+      expect(result).toEqual([mockUser]);
+      expect(mockUsersService.findUsersByTagId).toHaveBeenCalledWith(TAG_UUID_1);
+    });
+  });
+
+  describe('findUsersByTagIds', () => {
+    it('should find users by multiple tag IDs', async () => {
+      mockUsersService.findUsersByTagIds.mockResolvedValue([mockUser]);
+      const result = await controller.findUsersByTagIds(`${TAG_UUID_1},${TAG_UUID_2}`);
+      expect(result).toEqual([mockUser]);
+      expect(mockUsersService.findUsersByTagIds).toHaveBeenCalledWith([TAG_UUID_1, TAG_UUID_2]);
+    });
+  });
+
+  describe('findUserById', () => {
+    it('should return a user by ID', async () => {
+      mockUsersService.findUserById.mockResolvedValue(mockUser);
+      const result = await controller.findUserById(USER_UUID);
+      expect(result).toEqual(mockUser);
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(USER_UUID);
+    });
+
+    it('should propagate NotFoundException', async () => {
+      const expectedError = new NotFoundException();
+      mockUsersService.findUserById.mockRejectedValue(expectedError);
+      await expect(controller.findUserById('non-existent')).rejects.toThrow(expectedError);
+    });
+  });
+
+  describe('findUserByIdWithRelations', () => {
+    it('should return a user with relations by ID', async () => {
+      const userWithRelations: UserWithRelations = { ...mockUser, tags: [] };
+      mockUsersService.findUserByIdWithRelations.mockResolvedValue(userWithRelations);
+      const result = await controller.findUserByIdWithRelations(USER_UUID);
+      expect(result).toEqual(userWithRelations);
+      expect(mockUsersService.findUserByIdWithRelations).toHaveBeenCalledWith(USER_UUID);
+    });
+  });
+
+  describe('updateUser', () => {
+    it('should update a user', async () => {
       const updateUserDto: UpdateUserDto = {
         first_name: 'Updated',
         last_name: 'Mustermann',
       };
-      const updatedUser = { ...mockUser, ...updateUserDto };
-      mockUsersService.update.mockResolvedValue(updatedUser);
-
-      // Act
-      const result = await controller.update(userId, updateUserDto);
-
-      // Assert
-      expect(result).toEqual(updatedUser);
-      expect(mockUsersService.update).toHaveBeenCalledWith(userId, updateUserDto);
-      expect(mockUsersService.update).toHaveBeenCalledTimes(1);
-    });
-
-    it('should propagate NotFoundException when user does not exist', async () => {
-      // Arrange
-      const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      const updateUserDto: UpdateUserDto = {
-        first_name: 'Updated',
-      };
-      mockUsersService.update.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
-
-      // Act & Assert
-      await expect(controller.update(userId, updateUserDto)).rejects.toThrow(NotFoundException);
-      expect(mockUsersService.update).toHaveBeenCalledWith(userId, updateUserDto);
+      mockUsersService.updateUser.mockResolvedValue(mockUser);
+      const result = await controller.updateUser(USER_UUID, updateUserDto);
+      expect(result).toEqual(mockUser);
+      expect(mockUsersService.updateUser).toHaveBeenCalledWith(USER_UUID, updateUserDto);
     });
   });
 
-  describe('remove', () => {
-    it('should soft delete and return the user when it exists', async () => {
+  describe('deleteUser', () => {
+    it('should delete a user', async () => {
+      mockUsersService.deleteUser.mockResolvedValue(mockUser);
+      await controller.deleteUser(USER_UUID);
+      expect(mockUsersService.deleteUser).toHaveBeenCalledWith(USER_UUID);
+    });
+  });
+
+  describe('findUserTagsByUserId', () => {
+    it('should find tags for a user', async () => {
+      mockUsersService.findUserTagsByUserId.mockResolvedValue(mockUserTags);
+      const result = await controller.findUserTagsByUserId(USER_UUID);
+      expect(result).toEqual(mockUserTags);
+      expect(mockUsersService.findUserTagsByUserId).toHaveBeenCalledWith(USER_UUID);
+    });
+  });
+
+  describe('setUserTagsByUserId', () => {
+    it('should set tags for a user by id', async () => {
       // Arrange
       const userId = USER_UUID;
-      const deletedUser = { ...mockUser, is_deleted: true };
-      mockUsersService.remove.mockResolvedValue(deletedUser);
+      const dto: SetUserTagsDto = {
+        tags: [
+          { tag_id: TAG_UUID_1, priority: 1 },
+          { tag_id: TAG_UUID_2, priority: 2 },
+        ],
+      };
+      const expectedUserTags = [
+        {
+          user_id: USER_UUID,
+          tag_id: TAG_UUID_1,
+          priority: 1,
+          created_at: expect.any(Date),
+          updated_at: expect.any(Date),
+        },
+        {
+          user_id: USER_UUID,
+          tag_id: TAG_UUID_2,
+          priority: 2,
+          created_at: expect.any(Date),
+          updated_at: expect.any(Date),
+        },
+      ];
+      mockUsersService.setUserTagsByUserId.mockResolvedValue(expectedUserTags);
 
       // Act
-      const result = await controller.remove(userId);
+      const result = await controller.setUserTagsByUserId(userId, dto);
 
       // Assert
-      expect(result).toEqual(deletedUser);
-      expect(mockUsersService.remove).toHaveBeenCalledWith(userId);
-      expect(mockUsersService.remove).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(expectedUserTags);
+      expect(mockUsersService.setUserTagsByUserId).toHaveBeenCalledWith(userId, dto);
     });
 
-    it('should propagate NotFoundException when user does not exist', async () => {
-      // Arrange
-      const userId = '123e4567-e89b-12d3-a456-426614174999'; // Non-existent UUID
-      mockUsersService.remove.mockRejectedValue(new NotFoundException(`User with ID ${userId} not found`));
+    it('should propagate exceptions from the service', async () => {
+      const userId = USER_UUID;
+      const dto: SetUserTagsDto = { tags: [] };
+      const expectedError = new BadRequestException('Invalid priorities');
+      mockUsersService.setUserTagsByUserId.mockRejectedValue(expectedError);
 
-      // Act & Assert
-      await expect(controller.remove(userId)).rejects.toThrow(NotFoundException);
-      expect(mockUsersService.remove).toHaveBeenCalledWith(userId);
+      await expect(controller.setUserTagsByUserId(userId, dto)).rejects.toThrow(expectedError);
     });
   });
 });

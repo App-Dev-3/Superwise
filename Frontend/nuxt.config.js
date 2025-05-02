@@ -3,24 +3,25 @@ import { defineNuxtConfig } from "nuxt/config";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
+  compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
 
-  buildModules: [
-    '@nuxtjs/i18n',
-    '@vite-pwa/nuxt'
-  ],
+  buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
 
   modules: [
-    '@vite-pwa/nuxt',
-    '@nuxtjs/i18n',
-    '@pinia/nuxt',
-    '@clerk/nuxt',
-    '@nuxt/test-utils/module',
+    "@vite-pwa/nuxt",
+    "@nuxtjs/i18n",
+    "@pinia/nuxt",
+    "@clerk/nuxt",
+    "@nuxt/test-utils/module",
   ],
 
+  typescript: {
+    typeCheck: true,
+  },
+
   router: {
-    base: '/'
+    base: "/",
   },
 
   vite: {
@@ -36,75 +37,55 @@ export default defineNuxtConfig({
     strategy: "prefix_except_default",
     locales: [
       {
-        code: 'en',
-        file: 'en.js',
-      }, 
+        code: "en",
+        file: "en.js",
+      },
       {
-        code: 'de',
-        file: 'de.js',
-      }
+        code: "de",
+        file: "de.js",
+      },
     ],
-    defaultLocale: 'en',
-    langDir: 'locales',
+    defaultLocale: "en",
+    langDir: "locales",
     bundle: {
       optimizeTranslationDirective: false,
-    },  
+    },
   },
 
   pwa: {
+    registerType: "autoUpdate",
     manifest: {
-      name: 'MatchMaker',
-      //TBC.
-      short_name: 'MM',
-      lang: 'en',
-      description: 'An application that allows studnets to find their perfect supervisor match',
-      display: 'standalone',
-      start_url: '/',
+      name: "Nuxt 3 PWA",
+      short_name: "NuxtPWA",
+      description: "A Nuxt 3 Progressive Web App",
+      theme_color: "#4A90E2",
       icons: [
         {
-          src: '/icons/MM_512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
+          src: "/pwa-icon-192x192.png",
+          sizes: "192x192",
+          type: "image/png",
         },
         {
-          src: '/icons/MM_192x192.png',
-          sizes: '192x192',
-          type: 'image/png',
+          src: "/pwa-icon-512x512.png",
+          sizes: "512x512",
+          type: "image/png",
         },
       ],
-      screenshots: [
-        {
-          src: '/screenshots/Login.png',
-          sizes: '320x657',
-          type: 'image/png',
-          form_factor: 'wide'
-        },
-        {
-          src: '/screenshots/Chat.png',
-          sizes: '320x657',
-          type: 'image/png',
-        },
-        {
-          src: '/screenshots/Dashboard.png',
-          sizes: '320x657',
-          type: 'image/png',
-        },
-        {
-          src: '/screenshots/Search.png',
-          sizes: '320x657',
-          type: 'image/png',
-        },
-      ]
     },
-
     workbox: {
-      navigateFallback: '/',
-      globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}'], 
+      runtimeCaching: [
+        {
+          urlPattern: "https://example.com/.*",
+          handler: "NetworkFirst",
+          options: {
+            cacheName: "api-cache",
+            expiration: {
+              maxEntries: 50,
+              maxAgeSeconds: 86400,
+            },
+          },
+        },
+      ],
     },
-    devOptions: {
-      enabled: true,
-      type: 'module',
-    }
   },
-
-})
+});

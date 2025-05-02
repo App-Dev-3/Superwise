@@ -48,4 +48,20 @@ export default tseslint.config(
       '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
+  // Testing specific rules
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts'],
+    rules: {
+      // Relax rules that make testing difficult
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      'max-len': 'off',
+      '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
+      '@darraghor/nestjs-typed/api-property-returning-array-should-set-array': 'off',
+      'no-console': 'off'
+    },
+  },
 );

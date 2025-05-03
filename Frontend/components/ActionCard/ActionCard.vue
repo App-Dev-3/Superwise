@@ -1,5 +1,6 @@
 <script setup>
 import {computed} from 'vue';
+import CustomButton from "../CustomButton/CustomButton.vue";
 
 const props = defineProps({
   buttonText: {
@@ -52,15 +53,13 @@ const buttonStyle = computed(() => {
       <slot/>
 
       <!-- Action button at the bottom -->
-      <div class="flex justify-center px-16 py-4 border-t border-base-300">
-        <button
-            :class="buttonStyle"
-            class="w-full btn"
-            data-test="action-button"
+      <div class="px-16 py-4 border-t border-base-300">
+
+        <CustomButton
+            :block
+            :text="props.buttonText"
             @click="handleAction"
-        >
-          {{ props.buttonText }}
-        </button>
+        />
       </div>
     </div>
   </div>

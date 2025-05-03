@@ -16,7 +16,7 @@ export class TagsController {
     type: [Tag],
   })
   @Get()
-  findAllTags() {
+  findAllTags(): Promise<Tag[]> {
     return this.tagsService.findAllTags();
   }
 
@@ -32,7 +32,7 @@ export class TagsController {
     description: 'Tag not found',
   })
   @Get(':id')
-  findTagById(@Param('id', ParseUUIDPipe) id: string) {
+  findTagById(@Param('id', ParseUUIDPipe) id: string): Promise<Tag> {
     return this.tagsService.findTagById(id);
   }
 
@@ -57,7 +57,7 @@ export class TagsController {
   findSimilarTagsByTagId(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('minSimilarity', new ParseFloatPipe({ optional: true })) minSimilarity?: number,
-  ) {
+  ): Promise<{ tag: Tag; similarity: number }[]> {
     return this.tagsService.findSimilarTagsByTagId(id, minSimilarity);
   }
 }

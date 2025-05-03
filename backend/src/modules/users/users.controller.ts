@@ -75,7 +75,7 @@ export class UsersController {
     description: 'Return users matching the given first name.',
     type: [User],
   })
-  findUsersByFirstName(@Query('firstName') firstName: string): Promise<User[] | null> {
+  findUsersByFirstName(@Query('firstName') firstName: string): Promise<User[]> {
     return this.usersService.findUsersByFirstName(firstName);
   }
 
@@ -94,7 +94,7 @@ export class UsersController {
     description: 'Return users matching the given last name.',
     type: [User],
   })
-  findUsersByLastName(@Query('lastName') lastName: string): Promise<User[] | null> {
+  findUsersByLastName(@Query('lastName') lastName: string): Promise<User[]> {
     return this.usersService.findUsersByLastName(lastName);
   }
 
@@ -110,7 +110,8 @@ export class UsersController {
     type: [User],
   })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid Tag ID format.' })
-  findUsersByTagId(@Query('tagId', ParseUUIDPipe) tagId: string): Promise<User[] | null> {
+  @ApiResponse({ status: 404, description: 'Not found - Tag does not exist.' })
+  findUsersByTagId(@Query('tagId', ParseUUIDPipe) tagId: string): Promise<User[]> {
     return this.usersService.findUsersByTagId(tagId);
   }
 
@@ -132,7 +133,8 @@ export class UsersController {
     type: [User],
   })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid Tag ID format in list.' })
-  findUsersByTagIds(@Query('tagIds') tagIds: string): Promise<User[] | null> {
+  @ApiResponse({ status: 404, description: 'Not found - One or more tags do not exist.' })
+  findUsersByTagIds(@Query('tagIds') tagIds: string): Promise<User[]> {
     const tagIdsArray = tagIds.split(',').map(id => id.trim());
     return this.usersService.findUsersByTagIds(tagIdsArray);
   }
@@ -155,7 +157,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserById(@Param('id', ParseUUIDPipe) id: string): Promise<User | null> {
+  findUserById(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
     return this.usersService.findUserById(id);
   }
 
@@ -177,9 +179,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserByIdWithRelations(
-    @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<UserWithRelations | null> {
+  findUserByIdWithRelations(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithRelations> {
     return this.usersService.findUserByIdWithRelations(id);
   }
 
@@ -250,7 +250,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserTagsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserTag[] | null> {
+  findUserTagsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserTag[]> {
     return this.usersService.findUserTagsByUserId(userId);
   }
 
@@ -273,7 +273,7 @@ export class UsersController {
     description: 'User tags updated successfully. Returns the new list of user tags.',
     type: [UserTag],
   })
-  @ApiResponse({ status: 404, description: 'User not found.' })
+  @ApiResponse({ status: 404, description: 'User not found or tag not found.' })
   @ApiResponse({
     status: 400,
     description: 'Bad Request (e.g., invalid input, non-sequential/duplicate priorities).',

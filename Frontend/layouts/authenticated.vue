@@ -35,9 +35,7 @@ watch(isLoaded, async (loaded) => {
 
   redirecting.value = true;
 
-  const onboardingComplete =
-    user.value?.unsafeMetadata.onboardingCompleted === false;
-
+  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
   const userRole = user.value?.unsafeMetadata.role || "student"; //get from nestjs
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
@@ -45,6 +43,7 @@ watch(isLoaded, async (loaded) => {
 
   if (!onboardingComplete && !isOnboardingPage) {
     // not onboarded yet → onboarding
+
     await router.replace(`/onboarding/${userRole}`);
     return;
   }

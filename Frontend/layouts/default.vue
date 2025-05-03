@@ -1,14 +1,16 @@
 <template>
-  <SignedOut>
-    <div>
-      <slot />
-    </div>
-  </SignedOut>
+  <div>
+    <SignedOut>
+      <div>
+        <slot />
+      </div>
+    </SignedOut>
 
-  <SignedIn>
-    <div>
-      <UserButton />
-      <slot />
-    </div>
-  </SignedIn>
+    <SignedIn>
+      <div>
+        <UserButton />
+        <slot />
+      </div>
+    </SignedIn>
+  </div>
 </template>

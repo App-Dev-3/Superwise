@@ -1,24 +1,26 @@
 <template>
-  <SignedOut>
-    <RedirectToSignIn />
-  </SignedOut>
-  <SignedIn>
-    <div class="flex flex-col items-center justify-center h-screen p-4">
-      <h1 class="text-2xl font-semibold mb-6">
-        Welcome to supervisor onboarding
-      </h1>
-      <span v-if="!isLoaded">Loading...</span>
+  <div>
+    <SignedOut>
+      <RedirectToSignIn />
+    </SignedOut>
+    <SignedIn>
+      <div class="flex flex-col items-center justify-center h-screen p-4">
+        <h1 class="text-2xl font-semibold mb-6">
+          Welcome to supervisor onboarding
+        </h1>
+        <span v-if="!isLoaded">Loading...</span>
 
-      <button
-        v-else
-        class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-        :disabled="!isLoaded"
-        @click="finishOnboarding"
-      >
-        <span>Finish onboarding</span>
-      </button>
-    </div>
-  </SignedIn>
+        <button
+          v-else
+          class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          :disabled="!isLoaded"
+          @click="finishOnboarding"
+        >
+          <span>Finish onboarding</span>
+        </button>
+      </div>
+    </SignedIn>
+  </div>
 </template>
 
 <script setup lang="ts">

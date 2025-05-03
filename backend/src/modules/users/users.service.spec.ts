@@ -130,10 +130,14 @@ describe('UsersService', () => {
       expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(USER_UUID);
     });
 
-    it('should return null if user not found', async () => {
+    it('should throw NotFoundException if user not found', async () => {
+      const nonExistentId = 'non-existent';
       mockUsersRepository.findUserById.mockResolvedValue(null);
-      const result = await service.findUserById('non-existent');
-      expect(result).toBeNull();
+
+      await expect(service.findUserById(nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(nonExistentId);
     });
   });
 
@@ -145,7 +149,16 @@ describe('UsersService', () => {
       expect(result).toEqual(userWithRelations);
       expect(mockUsersRepository.findUserByIdWithRelations).toHaveBeenCalledWith(USER_UUID);
     });
-    // Add test for null case
+
+    it('should throw NotFoundException if user with relations not found', async () => {
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserByIdWithRelations.mockResolvedValue(null);
+
+      await expect(service.findUserByIdWithRelations(nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.findUserByIdWithRelations).toHaveBeenCalledWith(nonExistentId);
+    });
   });
 
   describe('findUsersByFirstName', () => {
@@ -200,6 +213,19 @@ describe('UsersService', () => {
       expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(USER_UUID);
       expect(mockUsersRepository.updateUser).toHaveBeenCalledWith(USER_UUID, updateUserDto);
     });
+
+    it('should throw NotFoundException if user to update not found', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      const updateUserDto: UpdateUserDto = { first_name: 'Updated' };
+      mockUsersRepository.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.updateUser(nonExistentId, updateUserDto)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.updateUser).not.toHaveBeenCalled();
+    });
   });
 
   describe('deleteUser', () => {
@@ -213,6 +239,18 @@ describe('UsersService', () => {
       expect(result).toEqual(deletedUser);
       expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(USER_UUID);
       expect(mockUsersRepository.softDeleteUser).toHaveBeenCalledWith(USER_UUID);
+    });
+
+    it('should throw NotFoundException if user to delete not found', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.deleteUser(nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.softDeleteUser).not.toHaveBeenCalled();
     });
   });
 
@@ -228,6 +266,18 @@ describe('UsersService', () => {
       expect(result).toEqual(userTags);
       expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(USER_UUID);
       expect(mockUsersRepository.findUserTagsByUserId).toHaveBeenCalledWith(USER_UUID);
+    });
+
+    it('should throw NotFoundException if user not found when getting tags', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.findUserTagsByUserId(nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.findUserTagsByUserId).not.toHaveBeenCalled();
     });
   });
 

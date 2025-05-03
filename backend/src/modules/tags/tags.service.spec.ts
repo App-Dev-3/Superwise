@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TagsService } from './tags.service';
 import { TagsRepository } from './tags.repository';
 import { Tag } from '@prisma/client';
+import { NotFoundException } from '@nestjs/common';
 
 describe('TagsService', () => {
   let service: TagsService;
@@ -75,14 +76,14 @@ describe('TagsService', () => {
       expect(mockTagsRepository.findTagById).toHaveBeenCalledWith(tagId);
     });
 
-    it('should return null when tag is not found by ID', async () => {
+    it('should throw NotFoundException when tag is not found by ID', async () => {
       // Arrange
       const tagId = '111e4567-e89b-12d3-a456-426614174111'; // Non-existent UUID
       mockTagsRepository.findTagById.mockResolvedValue(null);
-      // Act
-      const result = await service.findTagById(tagId);
-      // Assert
-      expect(result).toBeNull();
+      // Act & Assert
+      await expect(service.findTagById(tagId)).rejects.toThrow(
+        new NotFoundException(`Tag with ID ${tagId} not found`),
+      );
       expect(mockTagsRepository.findTagById).toHaveBeenCalledWith(tagId);
     });
   });

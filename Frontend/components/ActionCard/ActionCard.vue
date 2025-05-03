@@ -1,15 +1,15 @@
 <script setup>
-import {computed} from 'vue';
 import CustomButton from "../CustomButton/CustomButton.vue";
 
 const props = defineProps({
   buttonText: {
     type: String,
-    default: 'Button Text'
+    default: "Click Me",
   },
   cardType: {
     type: String,
     default: 'default',
+    validator: (value) => !value || ["default", "primary"].includes(value),
   },
   action: {
     type: Function,
@@ -31,24 +31,17 @@ function handleAction() {
   emit('action');
 }
 
-// Compute button style based on cardType
-const buttonStyle = computed(() => {
-  switch (props.cardType?.toLocaleLowerCase()) {
-    case "primary":
-      return 'btn-primary';
-    case "default":
-    default:
-      return 'btn-ghost';
-  }
-});
 </script>
 
 <template>
   <div
       class="">
     <p
-        v-if="props.headerText.blankLine"
-    >{{ props.headerText }}</p>
+        v-if="props.headerText"
+        class="px-1"
+    >
+      {{ props.headerText }}
+    </p>
     <div class="card shadow-xl border border-base-300">
       <slot/>
 
@@ -56,8 +49,9 @@ const buttonStyle = computed(() => {
       <div class="px-16 py-4 border-t border-base-300">
 
         <CustomButton
-            :block
+            :color="props.cardType"
             :text="props.buttonText"
+            block
             @click="handleAction"
         />
       </div>

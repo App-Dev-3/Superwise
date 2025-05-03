@@ -2,6 +2,7 @@
   <div>
     <SignedOut>
       <div>
+        <SignInButton />
         <slot />
       </div>
     </SignedOut>

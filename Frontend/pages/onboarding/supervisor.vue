@@ -37,7 +37,7 @@ const finishOnboarding = async () => {
   if (!isLoaded.value || !isSignedIn.value || !user.value) return;
 
   try {
-    await user.value.update({ unsafeMetadata: { onboardingComplete: true } });
+    await user.value.update({ unsafeMetadata: { onboardingCompleted: true } });
 
     return navigateTo(`/dashboard`);
   } catch (err) {

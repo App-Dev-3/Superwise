@@ -104,13 +104,14 @@ const metricTagSize = computed(() => {
     }
 })
 
+const emptyDescription = computed(() => !props.description.trim().length)
 const descriptionClasses = computed(() => ({
     'text-xs line-clamp-4': props.size === 'xs' || props.size === 'sm' || props.size === 'md',
     'text-md line-clamp-4': props.size === 'lg' || props.size === 'xl',
-    'h-0': !props.description.trim().length,
-    'h-15': (props.size === 'xs' || props.size === 'sm' || props.size === 'md') && props.description.trim().length,
-    'h-20': props.size === 'lg' && props.description.trim().length,
-    'h-22': props.size === 'xl' && props.description.trim().length,
+    'h-0': emptyDescription,
+    'h-15': (props.size === 'xs' || props.size === 'sm' || props.size === 'md') && !emptyDescription.value,
+    'h-20': props.size === 'lg' && !emptyDescription.value,
+    'h-22': props.size === 'xl' && !emptyDescription.value,
 }))
 </script>
 

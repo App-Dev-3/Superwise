@@ -88,16 +88,32 @@ model Supervisor {
 
 model Tag {
   id            String      @id @default(uuid())
-  tag_name_de   String      @unique
-  tag_name_en   String      @unique
-  similar_tags  String[]    // Stores IDs of related tags
+  tag_name      String      @unique
   created_at    DateTime    @default(now())
   updated_at    DateTime    @updatedAt
 
   // Relations
-  users         UserTag[]   @relation("TagToUserTag")
+  users                 UserTag[]        @relation("TagToUserTag")
+  similarities_as_tagA  TagSimilarity[]  @relation("TagAToSimilarity")
+  similarities_as_tagB  TagSimilarity[]  @relation("TagBToSimilarity")
 
   @@map("tags")
+}
+
+model TagSimilarity {
+  id            String      @id @default(uuid())
+  similarity    Float       // Score between 0 and 1
+  created_at    DateTime    @default(now())
+  updated_at    DateTime    @updatedAt
+  
+  // Relations & Keys
+  tagA_id       String
+  tagB_id       String
+  tagA          Tag         @relation("TagAToSimilarity", fields: [tagA_id], references: [id], onDelete: Cascade)
+  tagB          Tag         @relation("TagBToSimilarity", fields: [tagB_id], references: [id], onDelete: Cascade)
+  
+  @@unique([tagA_id, tagB_id])
+  @@map("tag_similarities")
 }
 
 model UserTag {

@@ -19,7 +19,7 @@
     "/users": {
       "post": {
         "description": "Creates a new user (student, supervisor, or admin).",
-        "operationId": "UsersController_create",
+        "operationId": "UsersController_createUser",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -45,6 +45,9 @@
           },
           "400": {
             "description": "Bad request - Invalid input data."
+          },
+          "409": {
+            "description": "Conflict - User already exists."
           }
         },
         "summary": "Create new user",
@@ -54,7 +57,7 @@
       },
       "get": {
         "description": "Retrieves all users.",
-        "operationId": "UsersController_findAll",
+        "operationId": "UsersController_findAllUsers",
         "parameters": [],
         "responses": {
           "200": {
@@ -80,7 +83,7 @@
     "/users/search/by-first-name": {
       "get": {
         "description": "Find Users by matching their first name.",
-        "operationId": "UsersController_findByFirstName",
+        "operationId": "UsersController_findUsersByFirstName",
         "parameters": [
           {
             "name": "firstName",
@@ -94,7 +97,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Return users matching the given first name."
+            "description": "Return users matching the given first name.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Search users by first name",
@@ -106,7 +119,7 @@
     "/users/search/by-last-name": {
       "get": {
         "description": "Find Users by matching their last name.",
-        "operationId": "UsersController_findByLastName",
+        "operationId": "UsersController_findUsersByLastName",
         "parameters": [
           {
             "name": "lastName",
@@ -120,7 +133,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Return users matching the given last name."
+            "description": "Return users matching the given last name.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Search users by last name",
@@ -132,13 +155,13 @@
     "/users/search/by-tag": {
       "get": {
         "description": "Find Users associated with a specific research interest or skill tag.",
-        "operationId": "UsersController_findByTagId",
+        "operationId": "UsersController_findUsersByTagId",
         "parameters": [
           {
             "name": "tagId",
             "required": true,
             "in": "query",
-            "description": "Tag ID to search for",
+            "description": "Tag ID to search for (UUID)",
             "schema": {
               "type": "string"
             }
@@ -146,7 +169,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Return users with the specified tag."
+            "description": "Return users with the specified tag.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid Tag ID format."
           }
         },
         "summary": "Search users by tag ID",
@@ -158,13 +194,13 @@
     "/users/search/by-tags": {
       "get": {
         "description": "Find Users associated with any of the specified research interests or skill tags.",
-        "operationId": "UsersController_findByTagIds",
+        "operationId": "UsersController_findUsersByTagIds",
         "parameters": [
           {
             "name": "tagIds",
             "required": true,
             "in": "query",
-            "description": "Comma-separated list of tag IDs",
+            "description": "Comma-separated list of tag IDs (UUIDs)",
             "schema": {
               "type": "string"
             }
@@ -172,7 +208,20 @@
         ],
         "responses": {
           "200": {
-            "description": "Return users with any of the specified tags."
+            "description": "Return users with any of the specified tags.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid Tag ID format in list."
           }
         },
         "summary": "Search users by multiple tag IDs",
@@ -184,7 +233,7 @@
     "/users/{id}": {
       "get": {
         "description": "Retrieves a specific user by id.",
-        "operationId": "UsersController_findOne",
+        "operationId": "UsersController_findUserById",
         "parameters": [
           {
             "name": "id",
@@ -207,6 +256,9 @@
               }
             }
           },
+          "400": {
+            "description": "Bad request - Invalid User ID format."
+          },
           "404": {
             "description": "User not found."
           }
@@ -218,13 +270,13 @@
       },
       "patch": {
         "description": "Update a user's information such as name, email, role, and profile image.",
-        "operationId": "UsersController_update",
+        "operationId": "UsersController_updateUser",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "User ID (UUID)",
             "schema": {
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
@@ -244,10 +296,23 @@
         },
         "responses": {
           "200": {
-            "description": "User has been successfully updated."
+            "description": "User has been successfully updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input data or ID format."
           },
           "404": {
             "description": "User not found."
+          },
+          "409": {
+            "description": "Conflict - Update violates unique constraint."
           }
         },
         "summary": "Update user",
@@ -256,14 +321,14 @@
         ]
       },
       "delete": {
-        "description": "Soft delete a user. This preserves the data but marks it as deleted.",
-        "operationId": "UsersController_remove",
+        "description": "Soft delete a user. Preserves data but marks as deleted.",
+        "operationId": "UsersController_deleteUser",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "User ID (UUID)",
             "schema": {
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
@@ -272,13 +337,16 @@
         ],
         "responses": {
           "204": {
-            "description": "User has been successfully deleted (soft delete)."
+            "description": "User has been successfully deleted."
+          },
+          "400": {
+            "description": "Bad request - Invalid User ID format."
           },
           "404": {
             "description": "User not found."
           }
         },
-        "summary": "Delete user",
+        "summary": "Delete user (Soft Delete)",
         "tags": [
           "Users"
         ]
@@ -286,14 +354,14 @@
     },
     "/users/{id}/with-relations": {
       "get": {
-        "description": "Retrieve a specific user with their student/supervisor profile, research interests, and other relationships.",
-        "operationId": "UsersController_findOneWithRelations",
+        "description": "Retrieve a specific user with their student/supervisor profile, tags, and block relationships.",
+        "operationId": "UsersController_findUserByIdWithRelations",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "User ID (UUID)",
             "schema": {
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
@@ -302,7 +370,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Return the user with the specified ID including relations."
+            "description": "Return the user with the specified ID including relations.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserWithRelations"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid User ID format."
           },
           "404": {
             "description": "User not found."
@@ -311,6 +389,210 @@
         "summary": "Get user by ID with all related entities",
         "tags": [
           "Users"
+        ]
+      }
+    },
+    "/users/{userId}/tags": {
+      "get": {
+        "description": "Retrieves all tags assigned to a specific user with their priorities.",
+        "operationId": "UsersController_findUserTagsByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID (UUID)",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of user tags",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserTag"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid User ID format."
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get all tags assigned to a user",
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "description": "Updates all tags for a user with the specified priorities.",
+        "operationId": "UsersController_setUserTagsByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID (UUID)",
+            "schema": {
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The new tags and priorities for the user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetUserTagsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User tags updated successfully. Returns the new list of user tags.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserTag"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request (e.g., invalid input, non-sequential/duplicate priorities)."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Set/Replace all tags for a user with priorities",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/tags": {
+      "get": {
+        "operationId": "TagsController_findAllTags",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "List of all tags in the system",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all tags",
+        "tags": [
+          "tags"
+        ]
+      }
+    },
+    "/tags/{id}": {
+      "get": {
+        "operationId": "TagsController_findTagById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Tag ID",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The tag with the given ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found"
+          }
+        },
+        "summary": "Get a tag by ID",
+        "tags": [
+          "tags"
+        ]
+      }
+    },
+    "/tags/{id}/similar": {
+      "get": {
+        "operationId": "TagsController_findSimilarTagsByTagId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Tag ID",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "minSimilarity",
+            "required": false,
+            "in": "query",
+            "description": "Minimum similarity score (0-1)",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of similar tags with similarity scores",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TagSimilarity"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found"
+          }
+        },
+        "summary": "Get similar tags to a given tag",
+        "tags": [
+          "tags"
         ]
       }
     }
@@ -460,24 +742,87 @@
             "description": "Supervisor profile information if role is SUPERVISOR"
           },
           "tags": {
-            "description": "Tags associated with the user",
+            "type": "object",
+            "description": "Tags associated with the user"
+          },
+          "blocked_users": {
+            "type": "object",
+            "description": "Users blocked by this user"
+          },
+          "blocked_by_users": {
+            "type": "object",
+            "description": "Users who have blocked this user"
+          }
+        },
+        "required": [
+          "id",
+          "email",
+          "first_name",
+          "last_name",
+          "role",
+          "is_registered",
+          "is_deleted",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "UserWithRelations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "first_name": {
+            "type": "string"
+          },
+          "last_name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "profile_image": {
+            "type": "object"
+          },
+          "is_registered": {
+            "type": "boolean"
+          },
+          "is_deleted": {
+            "type": "boolean"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "student_profile": {
+            "type": "object"
+          },
+          "supervisor_profile": {
+            "type": "object"
+          },
+          "tags": {
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "array"
             }
           },
           "blocked_users": {
-            "description": "Users blocked by this user",
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "array"
             }
           },
           "blocked_by_users": {
-            "description": "Users who have blocked this user",
             "type": "array",
             "items": {
-              "type": "object"
+              "type": "array"
             }
           }
         },
@@ -487,6 +832,7 @@
           "first_name",
           "last_name",
           "role",
+          "profile_image",
           "is_registered",
           "is_deleted",
           "created_at",
@@ -527,6 +873,96 @@
             "example": "https://example.com/images/updated-profile.jpg"
           }
         }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {}
+      },
+      "UserTag": {
+        "type": "object",
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "tag_id": {
+            "type": "string",
+            "description": "Tag ID",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "tag": {
+            "description": "Related tag details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Tag"
+              }
+            ]
+          },
+          "priority": {
+            "type": "number",
+            "description": "Priority of this tag for the user (lower is higher priority)",
+            "example": 1
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the user-tag association was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the user-tag association was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "user_id",
+          "tag_id",
+          "priority",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "SetUserTagsDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "description": "An ordered list of tags with their priorities for the user. Replaces all existing tags for the user.",
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tags"
+        ]
+      },
+      "TagSimilarity": {
+        "type": "object",
+        "properties": {
+          "tag": {
+            "description": "The related tag",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Tag"
+              }
+            ]
+          },
+          "similarity": {
+            "type": "number",
+            "description": "Similarity score between tags (0-1)",
+            "example": 0.85,
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "tag",
+          "similarity"
+        ]
       }
     }
   }

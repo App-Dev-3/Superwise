@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './modules/users/users.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { CommonModule } from './common/common.module';
-
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -14,6 +14,7 @@ import { CommonModule } from './common/common.module';
     UsersModule,
     TagsModule,
     CommonModule,
+    AdminModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

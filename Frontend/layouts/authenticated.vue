@@ -43,7 +43,6 @@ watch(isLoaded, async (loaded) => {
 
   if (!onboardingComplete && !isOnboardingPage) {
     // not onboarded yet → onboarding
-
     await router.replace(`/onboarding/${userRole}`);
     return;
   }

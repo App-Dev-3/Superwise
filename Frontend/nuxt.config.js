@@ -17,6 +17,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     '@clerk/nuxt',
     '@nuxt/test-utils/module',
+    '@nuxtjs/color-mode',
   ],
 
   router: {
@@ -26,8 +27,12 @@ export default defineNuxtConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+
   css: ["~/assets/css/app.css"],
 
+  colorMode: {
+    dataValue: "theme",
+  },
   i18n: {
     detectBrowserLanguage: false,
     legacy: false,

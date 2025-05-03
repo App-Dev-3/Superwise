@@ -601,6 +601,58 @@
           "tags"
         ]
       }
+    },
+    "/admin/tags/bulk-import": {
+      "post": {
+        "operationId": "AdminController_bulkImport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tags and similarities successfully imported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tags and similarities imported successfully"
+                    },
+                    "tagsProcessed": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "similaritiesReplaced": {
+                      "type": "number",
+                      "example": 25
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid data or inconsistent tags and similarities"
+          }
+        },
+        "summary": "Bulk import tags and their similarities",
+        "tags": [
+          "admin"
+        ]
+      }
     }
   },
   "info": {
@@ -993,6 +1045,74 @@
         "required": [
           "tag",
           "similarity"
+        ]
+      },
+      "SimilarityItemDto": {
+        "type": "object",
+        "properties": {
+          "field1": {
+            "type": "string",
+            "description": "First tag name in the similarity relationship",
+            "example": "JavaScript"
+          },
+          "field2": {
+            "type": "string",
+            "description": "Second tag name in the similarity relationship",
+            "example": "TypeScript"
+          },
+          "similarity_score": {
+            "type": "number",
+            "description": "Similarity score between the two tags (0-1)",
+            "minimum": 0,
+            "maximum": 1,
+            "example": 0.85
+          }
+        },
+        "required": [
+          "field1",
+          "field2",
+          "similarity_score"
+        ]
+      },
+      "BulkImportDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "description": "List of all tag names to be imported",
+            "example": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Vue"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "similarities": {
+            "description": "List of similarity relationships between tags",
+            "example": [
+              {
+                "field1": "JavaScript",
+                "field2": "TypeScript",
+                "similarity_score": 0.85
+              },
+              {
+                "field1": "React",
+                "field2": "Vue",
+                "similarity_score": 0.7
+              }
+            ],
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimilarityItemDto"
+            }
+          }
+        },
+        "required": [
+          "tags",
+          "similarities"
         ]
       }
     }

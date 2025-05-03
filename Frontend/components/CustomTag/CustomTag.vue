@@ -3,61 +3,62 @@ import { computed } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const props = defineProps({
-  text: { type: String, default: "Tag" },
-  color: {
-    type: String,
-    default: "primary",
-    validator(value, props) {
-      // TLDR: The color of a badge is constrained to daisyUI colors if the variant is not 'clear' or 'ghost'.
-      // If the variant is 'clear' or 'ghost', the color can be any color.
-      const currentVariant = props.variant || "default";
-      const daisyColors = [
-        "primary",
-        "secondary",
-        "accent",
-        "neutral",
-        "info",
-        "success",
-        "warning",
-        "error",
-      ];
-      const clearVariants = ["clear", "ghost"];
-      if (clearVariants.includes(currentVariant)) {
-        return true;
-      } else {
-        const isValidColor = daisyColors.includes(value);
-        if (!isValidColor) {
-          console.warn(
-            `Invalid color "${value}" for variant "${currentVariant}". Valid colors are: ${daisyColors.join(
-              ", "
-            )}`
-          );
+    text: { type: String, default: "Tag" },
+    color: {
+        type: String,
+        default: "default",
+        validator(value, props) {
+            const currentVariant = props.variant || "default";
+            const clearVariants = ["clear", "ghost"];
+            const daisyColors = [
+                "default",
+                "primary",
+                "secondary",
+                "accent",
+                "neutral",
+                "info",
+                "success",
+                "warning",
+                "error",
+            ];
+            if (clearVariants.includes(currentVariant)) {
+                return (daisyColors.includes(value) || value === "base-content");
+            }
+            return daisyColors.includes(value)
+            },
+    },
+    muted: {
+        type: Boolean,
+        default: false,
+        validator(value, props) {
+            if (value && !["clear", "ghost"].includes(props.variant)) {
+                console.warn("The 'muted' prop can only be applied with 'clear' or 'ghost' variants");
+                return false;
+            }
+            return true;
         }
-        return isValidColor;
-      }
     },
-  },
-  variant: {
-    type: String,
-    default: "default",
-    validator(value) {
-      // FYI: the 'clear' variant is custom. It removes all the background and border styles.
-      // (the 'ghost' variant from daisy was not enough to do that)
-      return ["default", "outline", "ghost", "soft", "dash", "clear"].includes(
-        value
-      );
+    variant: {
+        type: String,
+        default: "default",
+        validator(value) {
+            // FYI: the 'clear' variant is custom. It removes all the background and border styles.
+            // (the 'ghost' variant from daisy was not enough to do that)
+            return ["default", "outline", "ghost", "soft", "dash", "clear"].includes(
+                value
+            );
+        },
     },
-  },
-  size: {
-    type: String,
-    default: "md",
-    validator(value) {
-      return ["xs", "sm", "md", "lg", "xl"].includes(value);
+    size: {
+        type: String,
+        default: "md",
+        validator(value) {
+            return ["xs", "sm", "md", "lg", "xl"].includes(value);
+        },
     },
-  },
-  rightIcon: { type: String, default: "" },
-  clickable: { type: Boolean, default: false },
-  deletable: { type: Boolean, default: false },
+    rightIcon: { type: String, default: "" },
+    clickable: { type: Boolean, default: false },
+    deletable: { type: Boolean, default: false },
 });
 
 const emit = defineEmits(["click", "delete"]);
@@ -74,88 +75,116 @@ function handleDelete() {
   }
 }
 
+const isInvisibleVariant = computed(() => ["clear", "ghost"].includes(props.variant));
+const isMuted = computed(() => props.muted && isInvisibleVariant.value); // muted reduced the opacity
+
 const badgeClasses = computed(() => {
-  // i know we hate margins but with paddings it doesnt work, because padding just pushes the border away
-  const classes = ["badge", "m-0.5"];
+    return {
+        // Base classes
+        'badge': true,
+        'm-0.5': true,
 
-  // Color classes
-  const daisyColors = [
-    "primary",
-    "secondary",
-    "accent",
-    "neutral",
-    "info",
-    "success",
-    "warning",
-    "error",
-  ];
-  const invisibleVariants = ["clear", "ghost"];
-  if (!invisibleVariants.includes(props.variant)) {
-    // if not a clear or ghost variant
-    if (daisyColors.includes(props.color)) {
-      // if the color is a daisy color, create normal badge
-      classes.push(`badge-${props.color}`);
-    }
-  } else {
-    classes.push(`text-${props.color}`);
-  }
+        // Color classes for daisyUI colors (only for visible variants)
+        'badge-primary': !isInvisibleVariant.value && props.color === 'primary',
+        'badge-secondary': !isInvisibleVariant.value && props.color === 'secondary',
+        'badge-accent': !isInvisibleVariant.value && props.color === 'accent',
+        'badge-neutral': !isInvisibleVariant.value && props.color === 'neutral',
+        'badge-info': !isInvisibleVariant.value && props.color === 'info',
+        'badge-success': !isInvisibleVariant.value && props.color === 'success',
+        'badge-warning': !isInvisibleVariant.value && props.color === 'warning',
+        'badge-error': !isInvisibleVariant.value && props.color === 'error',
 
-  // Variant classes
-  switch (props.variant) {
-    case "outline":
-      classes.push("badge-outline");
-      break;
-    case "ghost":
-      classes.push("badge-ghost");
-      break;
-    case "soft":
-      classes.push("badge-soft");
-      break;
-    case "dash":
-      classes.push("badge-dash");
-      break;
-    case "clear":
-      classes.push("bg-transparent");
-      classes.push("border-none");
-      break;
-    default:
-      break;
-  }
+        // Text color for invisible variants (not muted)
+        'text-primary': isInvisibleVariant.value && props.color === 'primary' && !isMuted.value,
+        'text-secondary': isInvisibleVariant.value && props.color === 'secondary' && !isMuted.value,
+        'text-accent': isInvisibleVariant.value && props.color === 'accent' && !isMuted.value,
+        'text-neutral': isInvisibleVariant.value && props.color === 'neutral' && !isMuted.value,
+        'text-info': isInvisibleVariant.value && props.color === 'info' && !isMuted.value,
+        'text-success': isInvisibleVariant.value && props.color === 'success' && !isMuted.value,
+        'text-warning': isInvisibleVariant.value && props.color === 'warning' && !isMuted.value,
+        'text-error': isInvisibleVariant.value && props.color === 'error' && !isMuted.value,
+        'text-base-content': isInvisibleVariant.value && props.color === 'base-content' && !isMuted.value,
 
-  // Size classes
-  classes.push(`badge-${props.size}`);
+        // Muted text colors (with 70% opacity) - only for invisible variants
+        'text-primary/60': isInvisibleVariant.value && props.color === 'primary' && isMuted.value,
+        'text-secondary/60': isInvisibleVariant.value && props.color === 'secondary' && isMuted.value,
+        'text-accent/60': isInvisibleVariant.value && props.color === 'accent' && isMuted.value,
+        'text-neutral/60': isInvisibleVariant.value && props.color === 'neutral' && isMuted.value,
+        'text-info/60': isInvisibleVariant.value && props.color === 'info' && isMuted.value,
+        'text-success/60': isInvisibleVariant.value && props.color === 'success' && isMuted.value,
+        'text-warning/60': isInvisibleVariant.value && props.color === 'warning' && isMuted.value,
+        'text-error/60': isInvisibleVariant.value && props.color === 'error' && isMuted.value,
+        'text-base-content/60': isInvisibleVariant.value && props.color === 'base-content' && isMuted.value,
 
-  // Clickable styling
-  if (props.clickable) {
-    classes.push("cursor-pointer");
-  }
+        // Variant classes
+        'badge-outline': props.variant === 'outline',
+        'badge-ghost': props.variant === 'ghost',
+        'badge-soft': props.variant === 'soft',
+        'badge-dash': props.variant === 'dash',
+        'bg-transparent': props.variant === 'clear',
+        'border-none': props.variant === 'clear',
 
-  return classes;
+        // Size classes
+        'badge-xs': props.size === 'xs',
+        'badge-sm': props.size === 'sm',
+        'badge-md': props.size === 'md',
+        'badge-lg': props.size === 'lg',
+        'badge-xl': props.size === 'xl',
+
+        // Clickable styling
+        'cursor-pointer': props.clickable
+    };
 });
 
 const iconColorClass = computed(() => {
-  return `!fill-${props.color}`;
+    if (props.color === "default") {
+        return {"fill-current": true};
+    }
+
+    return {
+        // Normal icon colors (for invisible variants without muted)
+        'fill-primary': isInvisibleVariant.value && props.color === 'primary' && !isMuted.value,
+        'fill-secondary': isInvisibleVariant.value && props.color === 'secondary' && !isMuted.value,
+        'fill-accent': isInvisibleVariant.value && props.color === 'accent' && !isMuted.value,
+        'fill-neutral': isInvisibleVariant.value && props.color === 'neutral' && !isMuted.value,
+        'fill-info': isInvisibleVariant.value && props.color === 'info' && !isMuted.value,
+        'fill-success': isInvisibleVariant.value && props.color === 'success' && !isMuted.value,
+        'fill-warning': isInvisibleVariant.value && props.color === 'warning' && !isMuted.value,
+        'fill-error': isInvisibleVariant.value && props.color === 'error' && !isMuted.value,
+        'fill-base-content': isInvisibleVariant.value && props.color === 'base-content' && !isMuted.value,
+
+        // Muted icon colors (with 70% opacity) - only for invisible variants
+        'fill-primary/60': isInvisibleVariant.value && props.color === 'primary' && isMuted.value,
+        'fill-secondary/60': isInvisibleVariant.value && props.color === 'secondary' && isMuted.value,
+        'fill-accent/60': isInvisibleVariant.value && props.color === 'accent' && isMuted.value,
+        'fill-neutral/60': isInvisibleVariant.value && props.color === 'neutral' && isMuted.value,
+        'fill-info/60': isInvisibleVariant.value && props.color === 'info' && isMuted.value,
+        'fill-success/60': isInvisibleVariant.value && props.color === 'success' && isMuted.value,
+        'fill-warning/60': isInvisibleVariant.value && props.color === 'warning' && isMuted.value,
+        'fill-error/60': isInvisibleVariant.value && props.color === 'error' && isMuted.value,
+        'fill-base-content/60': isInvisibleVariant.value && props.color === 'base-content' && isMuted.value,
+    };
 });
 </script>
 
 <template>
-  <div :class="badgeClasses" @click="handleClick">
-    <FontAwesomeIcon
-      v-if="props.deletable"
-      icon="xmark"
-      class="text-s cursor-pointer"
-      :class="iconColorClass"
-      data-test="delete-icon"
-      @click="handleDelete"
-    />
-    <span>
-      {{ props.text }}
-      <FontAwesomeIcon
-        v-if="props.rightIcon"
-        :icon="props.rightIcon"
-        :class="iconColorClass"
-        data-test="prop-icon"
-      />
-    </span>
-  </div>
+    <div :class="badgeClasses" @click="handleClick">
+        <FontAwesomeIcon
+            v-if="props.deletable"
+            icon="xmark"
+            class="text-s cursor-pointer"
+            :class="iconColorClass"
+            data-test="delete-icon"
+            @click="handleDelete"
+        />
+        <span>
+            {{ props.text }}
+            <FontAwesomeIcon
+                v-if="props.rightIcon"
+                :icon="props.rightIcon"
+                :class="iconColorClass"
+                data-test="prop-icon"
+            />
+        </span>
+    </div>
 </template>

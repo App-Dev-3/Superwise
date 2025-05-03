@@ -11,8 +11,8 @@ library.add(faUserGroup, faHourglass)
 describe('SupervisorCard', () => {
     const defaultProps = {
         image: 'test-image.jpg',
-        fName: 'John',
-        lName: 'Doe',
+        firstName: 'John',
+        lastName: 'Doe',
         tags: ['tag1', 'tag2', 'tag3'],
         similarityScore: 75,
         maxCapacity: 100,
@@ -33,8 +33,8 @@ describe('SupervisorCard', () => {
         })
 
         expect(wrapper.find('img').attributes('src')).toBe(defaultProps.image)
-        expect(wrapper.text()).toContain(defaultProps.fName)
-        expect(wrapper.text()).toContain(defaultProps.lName)
+        expect(wrapper.text()).toContain(defaultProps.firstName)
+        expect(wrapper.text()).toContain(defaultProps.lastName)
 
         // Check tags
         const tags = wrapper.findAllComponents(CustomTag)

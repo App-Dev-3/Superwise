@@ -9,15 +9,20 @@ const props = defineProps({
         required: false,
         validator: (value) => ['xs', 'sm', 'md', 'lg', 'xl', ].includes(value),
     },
+    fullWidth: {
+        type: Boolean,
+        default: false,
+        required: false,
+    },
     image: {
         type: String,
         required: true,
     },
-    fName: {
+    firstName: {
         type: String,
         required: true,
     },
-    lName: {
+    lastName: {
         type: String,
         required: true,
     },
@@ -54,11 +59,17 @@ const props = defineProps({
 const limitedTags = computed(() => props.tags.slice(0, props.maxTagAmount))
 
 const cardSizeClasses = computed(() => ({
-    'w-72 card-xs': props.size === 'xs',
-    'w-80 card-sm': props.size === 'sm',
-    'w-96 card-md': props.size === 'md',
-    'w-[28rem] card-lg': props.size === 'lg',
-    'w-[32rem] card-xl': props.size === 'xl',
+    'w-full sm:w-[32rem]': props.fullWidth,
+    'w-72 card-xs': !props.fullWidth && props.size === 'xs',
+    'w-80 card-sm': !props.fullWidth && props.size === 'sm',
+    'w-96 card-md': !props.fullWidth && props.size === 'md',
+    'w-[28rem] card-lg': !props.fullWidth && props.size === 'lg',
+    'w-[32rem] card-xl': !props.fullWidth && props.size === 'xl',
+    'card-xs': props.fullWidth && props.size === 'xs',
+    'card-sm': props.fullWidth && props.size === 'sm',
+    'card-md': props.fullWidth && props.size === 'md',
+    'card-lg': props.fullWidth && props.size === 'lg',
+    'card-xl': props.fullWidth && props.size === 'xl',
 }))
 
 const imageSizeClasses = computed(() => ({
@@ -69,6 +80,39 @@ const imageSizeClasses = computed(() => ({
     'size-16': props.size === 'xl',
 }))
 
+// Regular tag size based on card size
+const regularTagSize = computed(() => {
+    switch (props.size) {
+        case 'xs': return 'sm';
+        case 'sm': return 'md';
+        case 'md': return 'md';
+        case 'lg': return 'lg';
+        case 'xl': return 'xl';
+        default: return 'md';
+    }
+})
+
+// Metric tag size (for similarity score, capacity, pending)
+const metricTagSize = computed(() => {
+    switch (props.size) {
+        case 'xs': return 'xs';
+        case 'sm': return 'sm';
+        case 'md': return 'sm';
+        case 'lg': return 'md';
+        case 'xl': return 'md';
+        default: return 'sm';
+    }
+})
+
+const emptyDescription = computed(() => !props.description.trim().length)
+const descriptionClasses = computed(() => ({
+    'text-xs line-clamp-4': props.size === 'xs' || props.size === 'sm' || props.size === 'md',
+    'text-md line-clamp-4': props.size === 'lg' || props.size === 'xl',
+    'h-0': emptyDescription,
+    'h-15': (props.size === 'xs' || props.size === 'sm' || props.size === 'md') && !emptyDescription.value,
+    'h-20': props.size === 'lg' && !emptyDescription.value,
+    'h-22': props.size === 'xl' && !emptyDescription.value,
+}))
 </script>
 
 <template>
@@ -82,37 +126,39 @@ const imageSizeClasses = computed(() => ({
                     <img
                         class="rounded-box"
                         :class="imageSizeClasses"
-                        :src="props.image || getPlaceholderImage(props.fName, props.lName)"
-                        alt="Profile Picture of {{ props.fName }} {{ props.lName }}"
+                        :src="props.image || getPlaceholderImage(props.firstName, props.lastName)"
+                        alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
                     >
-                </div>{{ props.fName }} {{ props.lName }}
+                </div>{{ props.firstName }} {{ props.lastName }}
             </h2>
 
             <p
-                class="text-base-content/75 text-xs line-clamp-4 leading-tight"
-               :class="{ 'h-15': props.description.trim().length > 0 }"
+                class="text-base-content/75 leading-tight"
+               :class="descriptionClasses"
             >
-                {{ description }}
+                {{ description.trim() }}
             </p>
             <div>
-                <CustomTag v-for="tag in limitedTags" :key=tag :text=tag size="xl" variant="outline"/>
+                <CustomTag v-for="tag in limitedTags" :key=tag :text=tag :size="regularTagSize" variant="outline" />
             </div>
             <div class="card-actions w-full flex justify-between">
-                <CustomTag :text="props.similarityScore + '%'" size="xs" variant="clear" color="base-content/50"/>
+                <CustomTag :text="props.similarityScore + '%'" :size="metricTagSize" variant="clear" color="base-content" muted/>
                 <div>
                     <CustomTag
                         :text="props.currentCapacity + '/' + props.maxCapacity + ' '"
                         right-icon="user-group"
-                        size="xs"
+                        :size="metricTagSize"
                         variant="clear"
-                        color="base-content/50"
+                        color="base-content"
+                        muted
                     />
                     <CustomTag
                         :text="props.pendingAmount + ' '"
                         right-icon="hourglass"
-                        size="xs"
+                        :size="metricTagSize"
                         variant="clear"
-                        color="base-content/50"
+                        color="base-content"
+                        muted
                     />
                 </div>
             </div>

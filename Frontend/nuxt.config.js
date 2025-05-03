@@ -53,46 +53,46 @@ export default defineNuxtConfig({
 
   pwa: {
     manifest: {
-      name: 'MatchMaker',
+      name: 'Superwise',
       //TBC.
-      short_name: 'MM',
+      short_name: 'SW',
       lang: 'en',
       description: 'An application that allows studnets to find their perfect supervisor match',
       display: 'standalone',
       start_url: '/',
       icons: [
         {
-          src: '/icons/MM_512x512.png',
+          src: '/icons/SS_512x512.svg',
           sizes: '512x512',
-          type: 'image/png',
+          type: 'image/svg',
         },
         {
-          src: '/icons/MM_192x192.png',
+          src: '/icons/SS_192x192.svg',
           sizes: '192x192',
-          type: 'image/png',
+          type: 'image/svg',
         },
       ],
       screenshots: [
         {
-          src: '/screenshots/Login.png',
+          src: '/screenshots/Login.svg',
           sizes: '320x657',
-          type: 'image/png',
+          type: 'image/svg',
           form_factor: 'wide'
         },
         {
-          src: '/screenshots/Chat.png',
+          src: '/screenshots/Chat.svg',
           sizes: '320x657',
-          type: 'image/png',
+          type: 'image/svg',
         },
         {
-          src: '/screenshots/Dashboard.png',
+          src: '/screenshots/Dashboard.svg',
           sizes: '320x657',
-          type: 'image/png',
+          type: 'image/svg',
         },
         {
-          src: '/screenshots/Search.png',
+          src: '/screenshots/Matching.svg',
           sizes: '320x657',
-          type: 'image/png',
+          type: 'image/svg',
         },
       ]
     },

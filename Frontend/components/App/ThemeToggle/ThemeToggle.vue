@@ -15,7 +15,7 @@
 <template>
 
   <label class="swap swap-rotate">
-    <input v-model="isDark" type="checkbox"/>
+    <input v-model="isDark" type="checkbox">
 
     <font-awesome-icon
       icon="sun"

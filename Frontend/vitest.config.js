@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue'
 import { defineConfig } from 'vitest/config'
+import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
@@ -11,4 +12,9 @@ export default defineConfig({
       provider: 'istanbul' // or 'v8'
     }
   },
+  resolve: {
+    alias: {
+      '#imports': path.resolve(__dirname, 'utils/empty.ts')
+    }
+  }
 })

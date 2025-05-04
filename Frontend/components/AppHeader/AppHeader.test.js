@@ -4,6 +4,12 @@ import AppHeader from './AppHeader.vue'
 
 const mockBack = vi.fn()
 
+vi.mock('#imports', () => ({
+  useColorMode: () => ({
+    preference: 'light',
+    value: 'light',
+  })
+}))
 
 //mock the router
 vi.mock('vue-router', () => ({

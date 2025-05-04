@@ -1,6 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useColorMode } from "#imports";
 
 const router = useRouter();
 const colorMode = useColorMode();

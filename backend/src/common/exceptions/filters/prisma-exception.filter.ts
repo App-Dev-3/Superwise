@@ -3,7 +3,7 @@ import { BaseExceptionFilter } from '@nestjs/core';
 import { Prisma } from '@prisma/client';
 import { Request, Response } from 'express';
 import { WinstonLoggerService } from '../../logging/winston-logger.service';
-
+import { ErrorResponse } from '../interfaces/error-response.interface';
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter extends BaseExceptionFilter {
   constructor(@Inject(WinstonLoggerService) private readonly logger: WinstonLoggerService) {
@@ -109,13 +109,19 @@ export class PrismaExceptionFilter extends BaseExceptionFilter {
     }
   }
 
-  private formatError(statusCode: number, message: string, detail: string, path: string) {
-    return {
+  private formatError(
+    statusCode: number,
+    message: string,
+    detail: string,
+    path: string,
+  ): ErrorResponse {
+    const errorResponse: ErrorResponse = {
       statusCode,
       message,
       detail,
       timestamp: new Date().toISOString(),
       path,
     };
+    return errorResponse;
   }
 }

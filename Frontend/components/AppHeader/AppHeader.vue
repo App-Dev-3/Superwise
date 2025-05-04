@@ -1,8 +1,10 @@
 <script setup>
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useColorMode } from "#imports";
 
 const router = useRouter();
+const colorMode = useColorMode();
 
 const props = defineProps({
   showBack: {
@@ -59,9 +61,14 @@ const goBack = () => {
         </button>
       </div>
 
-      <div class="navbar-center">
-        <img src="/images/appHeader_logo.svg" alt="Logo image" class="h-6" >
-      </div>
+      <ClientOnly>
+        <div class="navbar-center">
+          <img 
+            :src="colorMode.value === 'dark' ? 'images/appHeader_logo_dark.svg' : 'images/appHeader_logo_light.svg'"
+            alt="Logo image" 
+            class="h-6" >
+        </div>
+      </ClientOnly>
 
       <div class="navbar-end">
         <button

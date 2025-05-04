@@ -65,8 +65,8 @@ function removeTag(tag) {
       <div 
         class="absolute right-2 bottom-1 text-sm"
         :class="{
-          'text-red-500': selectedTags.length >= props.maxSelection,
-          'text-gray-400': selectedTags.length < props.maxSelection
+          'text-error': selectedTags.length >= props.maxSelection,
+          'text-base-content/50': selectedTags.length < props.maxSelection
         }"
         data-test="selected-tags-count"
       >
@@ -83,7 +83,8 @@ function removeTag(tag) {
         v-for="(tag, index) in visibleTags"
         :key="`available-${index}`"
         :text="tag"
-        color="secondary"
+        color="primary"
+        variant="outline"
         clickable
         @click="selectTag(tag)"
       />
@@ -93,7 +94,7 @@ function removeTag(tag) {
       <button 
         v-if="availableTags.length > initialVisibleTags"
         type="button"
-        class="text-primary underline" 
+        class="underline" 
         @click="showAll = !showAll">
         {{ showAll ? 'Show less' : 'Show all' }}
       </button>

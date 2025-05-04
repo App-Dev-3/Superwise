@@ -7,11 +7,13 @@ import {
   faEnvelope,
   faXmark,
   faHourglass,
-  faUserGroup
+  faUserGroup,
+  faMoon,
+  faSun,
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
 
-library.add(faArrowLeft, faUser, faSearch, faEnvelope, faXmark, faHourglass, faUserGroup)
+library.add(faArrowLeft, faUser, faSearch, faEnvelope, faXmark, faHourglass, faUserGroup, faMoon, faSun)
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)

@@ -1,5 +1,6 @@
 <script setup>
 import CustomButton from "../CustomButton/CustomButton.vue";
+import {computed} from "vue";
 
 const props = defineProps({
   buttonText: {

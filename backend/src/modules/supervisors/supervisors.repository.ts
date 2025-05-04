@@ -72,7 +72,7 @@ export class SupervisorsRepository {
   }
 
   // this is for admin and supervisor ? or just supervisor
-  async update(id: string, data: Prisma.SupervisorUpdateInput): Promise<Supervisor> {
+  async update(id: string, data: Prisma.SupervisorUpdateInput): Promise<Supervisor | null> {
     return this.prisma.supervisor.update({
       where: { id },
       data,

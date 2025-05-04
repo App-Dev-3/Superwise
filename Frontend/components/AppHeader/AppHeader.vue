@@ -61,14 +61,14 @@ const goBack = () => {
         </button>
       </div>
 
-      <div class="navbar-center">
-        <img 
-          :src="colorMode.value === 'dark'
-            ? '/images/appHeader_logo_dark.svg'
-            : '/images/appHeader_logo_light.svg'" 
-          alt="Logo image" 
-          class="h-6 dark:invert-0a" />
-      </div>
+      <ClientOnly>
+        <div class="navbar-center">
+          <img 
+            :src="colorMode.value === 'dark' ? 'images/appHeader_logo_dark.svg' : 'images/appHeader_logo_light.svg'"
+            alt="Logo image" 
+            class="h-6" >
+        </div>
+      </ClientOnly>
 
       <div class="navbar-end">
         <button

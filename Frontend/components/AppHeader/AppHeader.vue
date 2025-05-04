@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 
 const router = useRouter();
+const colorMode = useColorMode();
 
 const props = defineProps({
   showBack: {
@@ -60,7 +61,12 @@ const goBack = () => {
       </div>
 
       <div class="navbar-center">
-        <img src="/images/appHeader_logo.svg" alt="Logo image" class="h-6" >
+        <img 
+          :src="colorMode.value === 'dark'
+            ? '/images/appHeader_logo_dark.svg'
+            : '/images/appHeader_logo_light.svg'" 
+          alt="Logo image" 
+          class="h-6 dark:invert-0a" />
       </div>
 
       <div class="navbar-end">

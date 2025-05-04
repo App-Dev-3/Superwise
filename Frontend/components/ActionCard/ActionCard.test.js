@@ -40,7 +40,7 @@ describe('ActionCard.vue', () => {
     })
 
     it('accepts only valid cardType values', () => {
-        const validTypes = ['default', 'primary']
+        const validTypes = ['ghost', 'primary']
         validTypes.forEach(type => {
             const wrapper = mount(ActionCard, {
                 props: {cardType: type}

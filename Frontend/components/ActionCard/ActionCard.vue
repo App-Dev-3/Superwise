@@ -8,8 +8,8 @@ const props = defineProps({
   },
   cardType: {
     type: String,
-    default: 'default',
-    validator: (value) => !value || ["default", "primary"].includes(value),
+    default: 'ghost',
+    validator: (value) => !value || ["ghost", "primary"].includes(value),
   },
   action: {
     type: Function,

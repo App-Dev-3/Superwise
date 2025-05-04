@@ -31,6 +31,10 @@ function handleAction() {
   emit('action');
 }
 
+const ghostButton = computed(() => {
+  return props.cardType === 'ghost';
+});
+
 </script>
 
 <template>
@@ -49,9 +53,19 @@ function handleAction() {
       <div class="px-16 py-4 border-t border-base-300">
 
         <CustomButton
-            :color="props.cardType"
+            v-if="!ghostButton"
             :text="props.buttonText"
             block
+            color="primary"
+            @click="handleAction"
+        />
+
+        <CustomButton
+            v-if="ghostButton"
+            :text="props.buttonText"
+            block
+            color="default"
+            variant="ghost"
             @click="handleAction"
         />
       </div>

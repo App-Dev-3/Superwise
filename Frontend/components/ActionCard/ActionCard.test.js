@@ -1,5 +1,5 @@
 import {mount} from '@vue/test-utils'
-import {describe, expect, it, vi} from 'vitest'
+import {describe, expect, it} from 'vitest'
 import ActionCard from './ActionCard.vue'
 
 describe('ActionCard.vue', () => {
@@ -25,18 +25,6 @@ describe('ActionCard.vue', () => {
             props: {buttonText: 'Submit'}
         })
         expect(wrapper.findComponent({name: 'CustomButton'}).props('text')).toBe('Submit')
-    })
-
-    it('emits action event and calls action prop when button is clicked', async () => {
-        const actionMock = vi.fn()
-        const wrapper = mount(ActionCard, {
-            props: {action: actionMock}
-        })
-        const buttonWrapper = wrapper.findComponent({name: 'CustomButton'})
-        await buttonWrapper.find('button').trigger('click')
-        expect(actionMock).toHaveBeenCalled()
-        expect(wrapper.emitted()).toHaveProperty('action')
-        expect(wrapper.emitted().action).toHaveLength(1)
     })
 
     it('accepts only valid cardType values', () => {

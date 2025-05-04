@@ -66,7 +66,7 @@ function removeTag(tag) {
         class="absolute right-2 bottom-1 text-sm"
         :class="{
           'text-error': selectedTags.length >= props.maxSelection,
-          'text-gray-400': selectedTags.length < props.maxSelection
+          'text-base-content/50': selectedTags.length < props.maxSelection
         }"
         data-test="selected-tags-count"
       >

@@ -122,6 +122,7 @@ const badgeClasses = computed(() => {
         'badge-soft': props.variant === 'soft',
         'badge-dash': props.variant === 'dash',
         'bg-transparent': props.variant === 'clear',
+        'bg-none': props.variant === 'clear',
         'border-none': props.variant === 'clear',
 
         // Size classes

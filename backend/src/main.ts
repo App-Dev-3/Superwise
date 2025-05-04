@@ -3,9 +3,16 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
+import { WinstonLoggerService } from './common/logging/winston-logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true, // Buffer logs until our custom logger is available
+  });
+
+  // Use our custom Winston logger
+  const logger = app.get(WinstonLoggerService);
+  app.useLogger(logger);
 
   // Add validation pipe for all requests
   app.useGlobalPipes(
@@ -45,10 +52,13 @@ async function bootstrap() {
     credentials: true,
   });
 
+  logger.log(`Application starting on port ${process.env.PORT || 8080}`, 'Bootstrap');
   await app.listen(process.env.PORT || 8080);
+  logger.log(`Application running on port ${process.env.PORT || 8080}`, 'Bootstrap');
 }
 
 bootstrap().catch(err => {
+  // We use console.error here because our logger might not be initialized yet
   console.error('Failed to start application:', err);
   process.exit(1);
 });

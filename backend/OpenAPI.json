@@ -183,6 +183,9 @@
           },
           "400": {
             "description": "Bad request - Invalid Tag ID format."
+          },
+          "404": {
+            "description": "Not found - Tag does not exist."
           }
         },
         "summary": "Search users by tag ID",
@@ -222,6 +225,9 @@
           },
           "400": {
             "description": "Bad request - Invalid Tag ID format in list."
+          },
+          "404": {
+            "description": "Not found - One or more tags do not exist."
           }
         },
         "summary": "Search users by multiple tag IDs",
@@ -478,7 +484,7 @@
             "description": "Bad Request (e.g., invalid input, non-sequential/duplicate priorities)."
           },
           "404": {
-            "description": "User not found."
+            "description": "User not found or tag not found."
           }
         },
         "summary": "Set/Replace all tags for a user with priorities",
@@ -876,7 +882,32 @@
       },
       "Tag": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier for the tag"
+          },
+          "tag_name": {
+            "type": "string",
+            "description": "The name of the tag"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date and time the tag was created"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "The date and time the tag was last updated"
+          }
+        },
+        "required": [
+          "id",
+          "tag_name",
+          "created_at",
+          "updated_at"
+        ]
       },
       "UserTag": {
         "type": "object",

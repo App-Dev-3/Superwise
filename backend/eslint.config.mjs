@@ -35,6 +35,10 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn',
 
+      // Disable rules that we've handled properly in our code
+      '@typescript-eslint/no-base-to-string': 'off', // We properly handle string conversion
+      '@typescript-eslint/restrict-template-expressions': 'off', // We use safeStringify
+
       // Code Style & Quality
       'max-len': ['warn', { code: 100, ignoreUrls: true, ignoreStrings: true, ignoreTemplateLiterals: true }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],

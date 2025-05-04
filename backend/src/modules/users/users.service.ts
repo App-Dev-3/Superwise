@@ -29,53 +29,65 @@ export class UsersService {
     return this.usersRepository.findAllUsers();
   }
 
-  async findUserById(id: string): Promise<User | null> {
-    return this.usersRepository.findUserById(id);
+  async findUserById(id: string): Promise<User> {
+    const user = await this.usersRepository.findUserById(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  async findUserByIdWithRelations(id: string): Promise<UserWithRelations | null> {
-    return this.usersRepository.findUserByIdWithRelations(id);
+  async findUserByIdWithRelations(id: string): Promise<UserWithRelations> {
+    const user = await this.usersRepository.findUserByIdWithRelations(id);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  async findUsersByFirstName(firstName: string): Promise<User[] | null> {
+  async findUsersByFirstName(firstName: string): Promise<User[]> {
     return this.usersRepository.findUsersByFirstName(firstName);
   }
 
-  async findUsersByLastName(lastName: string): Promise<User[] | null> {
+  async findUsersByLastName(lastName: string): Promise<User[]> {
     return this.usersRepository.findUsersByLastName(lastName);
   }
 
-  async findUsersByTagId(tagId: string): Promise<User[] | null> {
+  async findUsersByTagId(tagId: string): Promise<User[]> {
+    // Verify tag exists before searching
+    await this.tagsService.findTagById(tagId);
     return this.usersRepository.findUsersByTagId(tagId);
   }
 
-  async findUsersByTagIds(tagIds: string[]): Promise<User[] | null> {
+  async findUsersByTagIds(tagIds: string[]): Promise<User[]> {
+    // Verify all tags exist
+    await Promise.all(tagIds.map(id => this.tagsService.findTagById(id)));
     return this.usersRepository.findUsersByTagIds(tagIds);
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    // This will throw NotFoundException if user doesn't exist
     await this.findUserById(id);
     return this.usersRepository.updateUser(id, updateUserDto);
   }
 
   async deleteUser(id: string): Promise<User> {
+    // This will throw NotFoundException if user doesn't exist
     await this.findUserById(id);
     // Soft delete
     return this.usersRepository.softDeleteUser(id);
   }
 
   // User Tag operations
-  async findUserTagsByUserId(userId: string): Promise<UserTag[] | null> {
+  async findUserTagsByUserId(userId: string): Promise<UserTag[]> {
+    // This will throw NotFoundException if user doesn't exist
     await this.findUserById(userId);
     return this.usersRepository.findUserTagsByUserId(userId);
   }
 
   async setUserTagsByUserId(userId: string, dto: SetUserTagsDto): Promise<UserTag[]> {
-    // Verify User Exists
-    const user = await this.findUserById(userId);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
-    }
+    // Verify User Exists - will throw NotFoundException if user doesn't exist
+    await this.findUserById(userId);
 
     // Validate Tag Data
     const priorities = dto.tags.map(t => t.priority);

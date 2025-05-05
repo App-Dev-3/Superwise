@@ -177,11 +177,13 @@ describe('UsersService', () => {
       expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
     });
 
-    it('should return null if no user found with email', async () => {
+    it('should throw NotFoundException if no user found with email', async () => {
       const email = 'nonexistent@example.com';
       mockUsersRepository.findUserByEmail.mockResolvedValue(null);
-      const result = await service.findUserByEmail(email);
-      expect(result).toBeNull();
+
+      await expect(service.findUserByEmail(email)).rejects.toThrow(
+        new NotFoundException(`User with email ${email} not found`),
+      );
       expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
     });
   });

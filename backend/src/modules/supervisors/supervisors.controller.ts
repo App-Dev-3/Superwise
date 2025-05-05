@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Patch, Query } from '@nestjs/common';
 import { SupervisorsService } from './supervisors.service';
 import { ApiOperation, ApiTags, ApiQuery, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreateSupervisorDto } from './dto/create-supervisor.dto';
@@ -30,18 +30,6 @@ export class SupervisorsController {
     });
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a supervisor by ID' })
-  @ApiParam({ name: 'id', description: 'Supervisor ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns a supervisor profile',
-  })
-  @ApiResponse({ status: 404, description: 'Supervisor not found' })
-  async findSupervisorById(@Param('id') id: string) {
-    return this.supervisorsService.findSupervisorById(id);
-  }
-
   @Get('user/:userId')
   @ApiOperation({ summary: 'Get a supervisor by User ID' })
   @ApiParam({ name: 'userId', description: 'User ID' })
@@ -54,6 +42,18 @@ export class SupervisorsController {
     return this.supervisorsService.findSupervisorByUserId(userId);
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Get a supervisor by ID' })
+  @ApiParam({ name: 'id', description: 'Supervisor ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a supervisor profile',
+  })
+  @ApiResponse({ status: 404, description: 'Supervisor not found' })
+  async findSupervisorById(@Param('id') id: string) {
+    return this.supervisorsService.findSupervisorById(id);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new supervisor profile' })
   @ApiResponse({
@@ -64,8 +64,8 @@ export class SupervisorsController {
     return this.supervisorsService.createSupervisorProfile(createSupervisorDto);
   }
 
-  @Put(':id') //patch
-  @ApiOperation({ summary: 'Update a supervisor profile' })
+  @Patch(':id')
+  @ApiOperation({ summary: 'Partially update a supervisor profile' })
   @ApiParam({ name: 'id', description: 'Supervisor ID' })
   @ApiResponse({
     status: 200,

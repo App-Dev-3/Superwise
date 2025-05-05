@@ -709,6 +709,34 @@
         ]
       }
     },
+    "/supervisors/user/{userId}": {
+      "get": {
+        "operationId": "SupervisorsController_findSupervisorByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a supervisor profile"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Get a supervisor by User ID",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
     "/supervisors/{id}": {
       "get": {
         "operationId": "SupervisorsController_findSupervisorById",
@@ -736,7 +764,7 @@
           "supervisors"
         ]
       },
-      "put": {
+      "patch": {
         "operationId": "SupervisorsController_updateSupervisorProfile",
         "parameters": [
           {
@@ -767,35 +795,7 @@
             "description": "Supervisor not found"
           }
         },
-        "summary": "Update a supervisor profile",
-        "tags": [
-          "supervisors"
-        ]
-      }
-    },
-    "/supervisors/user/{userId}": {
-      "get": {
-        "operationId": "SupervisorsController_findSupervisorByUserId",
-        "parameters": [
-          {
-            "name": "userId",
-            "required": true,
-            "in": "path",
-            "description": "User ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Returns a supervisor profile"
-          },
-          "404": {
-            "description": "Supervisor not found"
-          }
-        },
-        "summary": "Get a supervisor by User ID",
+        "summary": "Partially update a supervisor profile",
         "tags": [
           "supervisors"
         ]

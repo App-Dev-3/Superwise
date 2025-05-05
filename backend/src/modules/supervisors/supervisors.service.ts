@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupervisorsRepository } from './supervisors.repository';
-import { Prisma, Supervisor, User } from '@prisma/client';
+import { Prisma, Supervisor } from '@prisma/client';
 import { SupervisorCapacityException } from '../../common/exceptions/custom-exceptions/supervisor-capacity.exception';
+import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 
-// make sure to rename funcions to be consistent with the rest of the codebase !!
 @Injectable()
 export class SupervisorsService {
   constructor(private readonly supervisorsRepository: SupervisorsRepository) {}
@@ -15,7 +15,7 @@ export class SupervisorsService {
     }
     return supervisor;
   }
-  // but i do need to check the role of the user id ?
+
   async findSupervisorByUserId(userId: string): Promise<Supervisor> {
     const supervisor = await this.supervisorsRepository.findSupervisorByUserId(userId);
 
@@ -37,28 +37,33 @@ export class SupervisorsService {
     total_spots?: number;
     user_id: string;
   }): Promise<Supervisor> {
-    // if (data.available_spots && data.total_spots && data.available_spots > data.total_spots) {
-    //   data.available_spots = data.total_spots;
-    // } // do we actually need this first check?
-
+    if (data.available_spots && data.total_spots && data.available_spots > data.total_spots) {
+      data.available_spots = data.total_spots;
+    }
     return this.supervisorsRepository.createSupervisorProfile(data);
   }
-  // use dtos..
+
   async updateSupervisorProfile(
     id: string,
-    data: Prisma.SupervisorUpdateInput,
+    updateSupervisorDto: UpdateSupervisorDto,
   ): Promise<Supervisor> {
     const supervisor = await this.findSupervisorById(id);
-
-    if (
-      typeof supervisor.total_spots !== 'undefined' &&
-      typeof supervisor.available_spots !== 'undefined'
-    ) {
-      if (Number(supervisor.available_spots) > Number(supervisor.total_spots)) {
-        throw new SupervisorCapacityException('Available spots cannot exceed total spots');
-      }
+    const newTotalSpots = updateSupervisorDto.total_spots ?? supervisor.total_spots;
+    const newAvailableSpots = updateSupervisorDto.available_spots ?? supervisor.available_spots;
+    if (newAvailableSpots > newTotalSpots) {
+      throw new SupervisorCapacityException('Available spots cannot exceed total spots');
     }
 
-    return this.supervisorsRepository.updateSupervisorProfile(id, data);
+    const updateData = {
+      bio: updateSupervisorDto.bio !== undefined ? updateSupervisorDto.bio : undefined,
+      available_spots:
+        updateSupervisorDto.available_spots !== undefined
+          ? updateSupervisorDto.available_spots
+          : undefined,
+      total_spots:
+        updateSupervisorDto.total_spots !== undefined ? updateSupervisorDto.total_spots : undefined,
+    };
+
+    return this.supervisorsRepository.updateSupervisorProfile(id, updateData);
   }
 }

@@ -6,16 +6,12 @@ import { Prisma, Supervisor, User } from '@prisma/client';
 export class SupervisorsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  // for finding supervisors by their ids
-  // please use a supervisor with relations entity !! check users code
-  // DO IT : change this function to return less data .. make a new one for relatios then.
   async findSupervisorById(id: string): Promise<Supervisor | null> {
     return this.prisma.supervisor.findUnique({
       where: { id },
     });
   }
 
-  // find a supervisor by user ID
   async findSupervisorByUserId(userId: string): Promise<Supervisor | null> {
     return this.prisma.supervisor.findUnique({
       where: { user_id: userId },
@@ -25,37 +21,24 @@ export class SupervisorsRepository {
   // get all supervisors with filtering options based on what the frontend needs.
   // we can for example select 5 (using take) supervisors that are available for supervision.
   // here separate the logic for filtering and calling.
-  // the soulution would be relations entity.
+  // the soulution would be relations entity in a findsupervisorwithrelatons. (do i actully need this? where does the supervisor need such information about other supervisors ?)
   async findAllSupervisors(params: {
     take?: number;
     where?: Prisma.SupervisorWhereInput;
     orderBy?: Prisma.SupervisorOrderByWithRelationInput;
-  }): Promise<(Supervisor & { user: User })[]> {
+  }): Promise<Supervisor[]> {
     const { take, where, orderBy } = params;
 
     return this.prisma.supervisor.findMany({
       take,
       where,
       orderBy,
-      include: {
-        user: {
-          include: {
-            tags: {
-              include: {
-                tag: true,
-              },
-            },
-          },
-        },
-      },
     });
   }
 
-  // create a new supervisor profile
   async createSupervisorProfile(data: {
-    // take a look later
     bio?: string;
-    available_spots?: number; // not sure if this has to be part of this function, i cant decide for now.
+    available_spots?: number;
     total_spots?: number;
     user_id: string;
   }): Promise<Supervisor> {
@@ -64,10 +47,14 @@ export class SupervisorsRepository {
     });
   }
 
-  // this is for admin and supervisor ? or just supervisor
   async updateSupervisorProfile(
     id: string,
-    data: Prisma.SupervisorUpdateInput,
+    data: {
+      bio?: string;
+      available_spots?: number;
+      total_spots?: number;
+      user_id?: string;
+    },
   ): Promise<Supervisor> {
     return this.prisma.supervisor.update({
       where: { id },

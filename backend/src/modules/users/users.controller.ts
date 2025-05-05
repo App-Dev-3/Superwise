@@ -69,25 +69,30 @@ export class UsersController {
     name: 'email',
     required: true,
     description: 'Email address to search for (exact match)',
+    example: 'studentId@fhstp.ac.at',
+    type: String,
   })
   @ApiResponse({
     status: 200,
-    description: 'Returns the user with the matching email, or null if none found.',
+    description: 'Returns the user with the matching email.',
     type: User,
   })
-  findUserByEmail(@Query('email') email: string): Promise<User | null> {
+  findUserByEmail(@Query('email') email: string): Promise<User> {
     return this.usersService.findUserByEmail(email);
   }
 
   @Get('search/by-first-name')
   @ApiOperation({
     summary: 'Search users by first name',
-    description: 'Find Users by matching their first name.',
+    description:
+      'Find users by matching their first name. Will return multiple users if multiple matches are found.',
   })
   @ApiQuery({
     name: 'firstName',
     required: true,
     description: 'First name to search for (case insensitive, partial match)',
+    example: 'Max',
+    type: String,
   })
   @ApiResponse({
     status: 200,
@@ -101,12 +106,15 @@ export class UsersController {
   @Get('search/by-last-name')
   @ApiOperation({
     summary: 'Search users by last name',
-    description: 'Find Users by matching their last name.',
+    description:
+      'Find users by matching their last name. Will return multiple users if multiple matches are found.',
   })
   @ApiQuery({
     name: 'lastName',
     required: true,
     description: 'Last name to search for (case insensitive, partial match)',
+    example: 'Mustermann',
+    type: String,
   })
   @ApiResponse({
     status: 200,
@@ -120,9 +128,17 @@ export class UsersController {
   @Get('search/by-tag')
   @ApiOperation({
     summary: 'Search users by tag ID',
-    description: 'Find Users associated with a specific research interest or skill tag.',
+    description:
+      'Find users associated with a specific research interest or skill tag. Returns all users that have the specified tag.',
   })
-  @ApiQuery({ name: 'tagId', required: true, description: 'Tag ID to search for (UUID)' })
+  @ApiQuery({
+    name: 'tagId',
+    required: true,
+    description: 'Tag ID to search for (UUID)',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+    type: String,
+    format: 'uuid',
+  })
   @ApiResponse({
     status: 200,
     description: 'Return users with the specified tag.',
@@ -138,12 +154,13 @@ export class UsersController {
   @ApiOperation({
     summary: 'Search users by multiple tag IDs',
     description:
-      'Find Users associated with any of the specified research interests or skill tags.',
+      'Find users associated with any of the specified research interests or skill tags. Returns all users that have at least one of the specified tags.',
   })
   @ApiQuery({
     name: 'tagIds',
     required: true,
     description: 'Comma-separated list of tag IDs (UUIDs)',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,e47ac10b-58cc-4372-a567-0e02b2c3d480',
     type: String,
   })
   @ApiResponse({
@@ -161,13 +178,15 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({
     summary: 'Get user by id',
-    description: 'Retrieves a specific user by id.',
+    description: 'Retrieves a specific user by their unique identifier.',
   })
   @ApiParam({
     name: 'id',
     type: 'string',
-    description: 'The user ID',
+    format: 'uuid',
+    description: 'The user unique identifier (UUID)',
     required: true,
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
     status: 200,
@@ -188,12 +207,15 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    description: 'User ID (UUID)',
+    type: 'string',
+    format: 'uuid',
+    description: 'User unique identifier (UUID)',
+    required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
     status: 200,
-    description: 'Return the user with the specified ID including relations.',
+    description: 'Return the user with the specified ID including all their relations.',
     type: UserWithRelations,
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
@@ -205,11 +227,15 @@ export class UsersController {
   @Patch(':id')
   @ApiOperation({
     summary: 'Update user',
-    description: "Update a user's information such as name, email, role, and profile image.",
+    description:
+      "Update a user's information such as name, email, profile image, and registration status.",
   })
   @ApiParam({
     name: 'id',
-    description: 'User ID (UUID)',
+    type: 'string',
+    format: 'uuid',
+    description: 'User unique identifier (UUID)',
+    required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiBody({
@@ -235,11 +261,15 @@ export class UsersController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete user (Soft Delete)',
-    description: 'Soft delete a user. Preserves data but marks as deleted.',
+    description:
+      'Soft delete a user. Preserves data but marks user as deleted and they will no longer appear in regular queries.',
   })
   @ApiParam({
     name: 'id',
-    description: 'User ID (UUID)',
+    type: 'string',
+    format: 'uuid',
+    description: 'User unique identifier (UUID)',
+    required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({ status: 204, description: 'User has been successfully deleted.' })
@@ -255,16 +285,20 @@ export class UsersController {
   @Get(':userId/tags')
   @ApiOperation({
     summary: 'Get all tags assigned to a user',
-    description: 'Retrieves all tags assigned to a specific user with their priorities.',
+    description:
+      'Retrieves all tags assigned to a specific user with their priority ordering. Tags are sorted by priority where 1 is highest priority.',
   })
   @ApiParam({
     name: 'userId',
-    description: 'User ID (UUID)',
+    type: 'string',
+    format: 'uuid',
+    description: 'User unique identifier (UUID)',
+    required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiResponse({
     status: 200,
-    description: 'List of user tags',
+    description: "List of a user's tags with their priorities and tag details",
     type: [UserTag],
   })
   @ApiResponse({ status: 404, description: 'User not found' })
@@ -276,26 +310,33 @@ export class UsersController {
   @Put(':userId/tags')
   @ApiOperation({
     summary: 'Set/Replace all tags for a user with priorities',
-    description: 'Updates all tags for a user with the specified priorities.',
+    description:
+      'Updates all tags for a user with the specified priorities. This operation replaces all existing tags with the new set provided.',
   })
   @ApiParam({
     name: 'userId',
-    description: 'User ID (UUID)',
+    type: 'string',
+    format: 'uuid',
+    description: 'User unique identifier (UUID)',
+    required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiBody({
     type: SetUserTagsDto,
-    description: 'The new tags and priorities for the user',
+    description:
+      'The new tags and priorities for the user. Priorities must be sequential starting with 1.',
   })
   @ApiResponse({
     status: 200,
-    description: 'User tags updated successfully. Returns the new list of user tags.',
+    description:
+      'User tags updated successfully. Returns the new list of user tags with their priorities.',
     type: [UserTag],
   })
-  @ApiResponse({ status: 404, description: 'User not found or tag not found.' })
+  @ApiResponse({ status: 404, description: 'User not found or one or more tags not found.' })
   @ApiResponse({
     status: 400,
-    description: 'Bad Request (e.g., invalid input, non-sequential/duplicate priorities).',
+    description:
+      'Bad Request - Invalid input, non-sequential priorities, duplicate priorities, or invalid tag IDs.',
   })
   async setUserTagsByUserId(
     @Param('userId', ParseUUIDPipe) userId: string,

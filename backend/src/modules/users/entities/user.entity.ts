@@ -32,7 +32,7 @@ export class User {
 
   @ApiProperty({
     description: 'Whether user has completed registration',
-    example: false,
+    example: true,
   })
   is_registered: boolean;
 

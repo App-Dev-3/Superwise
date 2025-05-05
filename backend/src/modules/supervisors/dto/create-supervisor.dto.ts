@@ -34,5 +34,7 @@ export class CreateSupervisorDto {
   })
   @IsNotEmpty()
   @IsUUID()
-  user_id: string; // should the user_id be passed separately or stay here. Should the user_id be part of supervisor dto or should be handled separately?
+  user_id: string;
+  // should the user_id be passed separately or stay here.
+  // Should the user_id be part of supervisor dto or should be handled separately?
 }

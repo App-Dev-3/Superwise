@@ -1,20 +1,27 @@
-// import { proxyRequest } from 'h3-proxy'
 import { joinURL } from 'ufo'
 
 export default defineEventHandler(async (event) => {
-  console.log('proxy event', event);
   const config = useRuntimeConfig()
-  const path = event.context.params?.path || ''
+  const path = getRouterParam(event, 'path') ?? '' 
   const target = joinURL(config.nestApiUrl, path)
   
-  const headers = await generateSecureHeaders()
-  return {
-    target: target,
-    headers: headers,
+  const headers = {
+    'Content-Type': 'application/json',
+    'bearer-token': 'bebebobo',
+  }
+  
+  let body: any = null
+  const method = event.node.req.method ?? 'GET'
+  if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
+    body = await readBody(event)
   }
 
-  // return proxyRequest(event, target, {
-  //   method: event.method,
-  //   headers
-  // })
+  const response = await fetch(target, {
+    method,
+    headers: headers,
+    body: body ? JSON.stringify(body) : undefined,
+  })
+
+  const data = await response.text()
+  return data  
 })

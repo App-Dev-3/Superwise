@@ -16,6 +16,7 @@ describe('UsersService', () => {
     findAllUsers: jest.fn(),
     findUserById: jest.fn(),
     findUserByIdWithRelations: jest.fn(),
+    findUserByEmail: jest.fn(),
     findUsersByFirstName: jest.fn(),
     findUsersByLastName: jest.fn(),
     findUsersByTagId: jest.fn(),
@@ -101,7 +102,6 @@ describe('UsersService', () => {
         email: 'test@test.com',
         first_name: 'Test',
         last_name: 'User',
-        role: Role.STUDENT,
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
       };
       mockUsersRepository.createUser.mockResolvedValue(mockUser);
@@ -109,7 +109,14 @@ describe('UsersService', () => {
 
       // Assert
       expect(result).toEqual(mockUser);
-      expect(mockUsersRepository.createUser).toHaveBeenCalledWith(createUserDto);
+      expect(mockUsersRepository.createUser).toHaveBeenCalledWith({
+        email: createUserDto.email,
+        first_name: createUserDto.first_name,
+        last_name: createUserDto.last_name,
+        role: Role.STUDENT,
+        profile_image: createUserDto.profile_image,
+        is_registered: true,
+      });
     });
   });
 
@@ -158,6 +165,24 @@ describe('UsersService', () => {
         new NotFoundException(`User with ID ${nonExistentId} not found`),
       );
       expect(mockUsersRepository.findUserByIdWithRelations).toHaveBeenCalledWith(nonExistentId);
+    });
+  });
+
+  describe('findUserByEmail', () => {
+    it('should return a user by email', async () => {
+      const email = 'test@example.com';
+      mockUsersRepository.findUserByEmail.mockResolvedValue(mockUser);
+      const result = await service.findUserByEmail(email);
+      expect(result).toEqual(mockUser);
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('should return null if no user found with email', async () => {
+      const email = 'nonexistent@example.com';
+      mockUsersRepository.findUserByEmail.mockResolvedValue(null);
+      const result = await service.findUserByEmail(email);
+      expect(result).toBeNull();
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
     });
   });
 

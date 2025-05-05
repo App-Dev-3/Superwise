@@ -1,4 +1,4 @@
-import { Role, Student, Supervisor, UserTag, UserBlock } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class User {
@@ -53,30 +53,4 @@ export class User {
     example: '2023-01-01T00:00:00Z',
   })
   updated_at: Date;
-
-  // Relationships with proper Prisma types
-  @ApiPropertyOptional({
-    description: 'Student profile information if role is STUDENT',
-  })
-  student_profile?: Student | null;
-
-  @ApiPropertyOptional({
-    description: 'Supervisor profile information if role is SUPERVISOR',
-  })
-  supervisor_profile?: Supervisor | null;
-
-  @ApiPropertyOptional({
-    description: 'Tags associated with the user',
-  })
-  tags?: UserTag[] | null;
-
-  @ApiPropertyOptional({
-    description: 'Users blocked by this user',
-  })
-  blocked_users?: UserBlock[] | null;
-
-  @ApiPropertyOptional({
-    description: 'Users who have blocked this user',
-  })
-  blocked_by_users?: UserBlock[] | null;
 }

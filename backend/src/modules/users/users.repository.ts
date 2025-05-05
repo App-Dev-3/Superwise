@@ -9,9 +9,11 @@ export interface IUsersRepository {
     last_name: string;
     role: Role;
     profile_image?: string | null;
+    is_registered: boolean;
   }): Promise<User>;
   findAllUsers(): Promise<User[]>;
   findUserById(id: string): Promise<User | null>;
+  findUserByEmail(email: string): Promise<User | null>;
   findUserByIdWithRelations(id: string): Promise<User | null>;
   findUsersByFirstName(firstName: string): Promise<User[]>;
   findUsersByLastName(lastName: string): Promise<User[]>;
@@ -49,6 +51,7 @@ export class UsersRepository implements IUsersRepository {
     last_name: string;
     role: Role;
     profile_image?: string | null;
+    is_registered: boolean;
   }): Promise<User> {
     return this.prisma.user.create({
       data: userData,
@@ -66,6 +69,12 @@ export class UsersRepository implements IUsersRepository {
   async findUserById(id: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { id },
+    });
+  }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { email },
     });
   }
 

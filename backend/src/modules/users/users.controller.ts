@@ -60,6 +60,25 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @Get('search/by-email')
+  @ApiOperation({
+    summary: 'Search user by email',
+    description: 'Find a user by their email address.',
+  })
+  @ApiQuery({
+    name: 'email',
+    required: true,
+    description: 'Email address to search for (exact match)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the user with the matching email, or null if none found.',
+    type: User,
+  })
+  findUserByEmail(@Query('email') email: string): Promise<User | null> {
+    return this.usersService.findUserByEmail(email);
+  }
+
   @Get('search/by-first-name')
   @ApiOperation({
     summary: 'Search users by first name',

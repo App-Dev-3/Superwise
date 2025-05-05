@@ -16,6 +16,7 @@ describe('UsersController', () => {
     findAllUsers: jest.fn(),
     findUserById: jest.fn(),
     findUserByIdWithRelations: jest.fn(),
+    findUserByEmail: jest.fn(),
     findUsersByFirstName: jest.fn(),
     findUsersByLastName: jest.fn(),
     findUsersByTagId: jest.fn(),
@@ -86,7 +87,6 @@ describe('UsersController', () => {
         email: 'exampleStudent1@fhstp.ac.at',
         first_name: 'Max',
         last_name: 'Mustermann',
-        role: Role.STUDENT,
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
       };
       mockUsersService.createUser.mockResolvedValue(mockUser);
@@ -102,6 +102,24 @@ describe('UsersController', () => {
       const result = await controller.findAllUsers();
       expect(result).toEqual(mockUsers);
       expect(mockUsersService.findAllUsers).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('findUserByEmail', () => {
+    it('should find a user by email', async () => {
+      const email = 'exampleStudent1@fhstp.ac.at';
+      mockUsersService.findUserByEmail.mockResolvedValue(mockUser);
+      const result = await controller.findUserByEmail(email);
+      expect(result).toEqual(mockUser);
+      expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('should return null when no user is found with the email', async () => {
+      const email = 'nonexistent@example.com';
+      mockUsersService.findUserByEmail.mockResolvedValue(null);
+      const result = await controller.findUserByEmail(email);
+      expect(result).toBeNull();
+      expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(email);
     });
   });
 

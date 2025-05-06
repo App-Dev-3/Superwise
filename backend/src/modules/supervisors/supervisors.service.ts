@@ -53,17 +53,7 @@ export class SupervisorsService {
     if (newAvailableSpots > newTotalSpots) {
       throw new SupervisorCapacityException('Available spots cannot exceed total spots');
     }
-
-    const updateData = {
-      bio: updateSupervisorDto.bio !== undefined ? updateSupervisorDto.bio : undefined,
-      available_spots:
-        updateSupervisorDto.available_spots !== undefined
-          ? updateSupervisorDto.available_spots
-          : undefined,
-      total_spots:
-        updateSupervisorDto.total_spots !== undefined ? updateSupervisorDto.total_spots : undefined,
-    };
-
-    return this.supervisorsRepository.updateSupervisorProfile(id, updateData);
+  
+    return this.supervisorsRepository.updateSupervisorProfile(id, updateSupervisorDto);
   }
 }

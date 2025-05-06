@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { CommonModule } from './common/common.module';
 import { SupervisorsModule } from './modules/supervisors/supervisors.module';
+
 @Module({
   imports: [
     PrismaModule,

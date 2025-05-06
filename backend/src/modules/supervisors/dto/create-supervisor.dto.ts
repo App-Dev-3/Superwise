@@ -1,10 +1,21 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID, Min } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 export class CreateSupervisorDto {
   @ApiPropertyOptional({
     description: 'The supervisor bio',
     example: 'Professor specializing in artificial intelligence and machine learning',
+  })
+  @MaxLength(2000, {
+    message: 'Bio cannot be longer than 2000 characters',
   })
   @IsOptional()
   @IsString()

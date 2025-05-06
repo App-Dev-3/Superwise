@@ -34,8 +34,6 @@ const bottomNavButtons = [
 </script>
 
 <template>
-    <meta name="viewport" content="viewport-fit=cover"> <!-- is required for responsiveness of the dock in iOS. -->
-
     <div class="dock max-w-7xl w-full mx-auto">
         <button
             v-for="button in bottomNavButtons"

@@ -6,6 +6,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
 
+  app: {
+    head: {
+      viewport: 'viewport-fit=cover', // needed for the bottomNav to work on iOS
+    }
+  },
+
   buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
 
   modules: [

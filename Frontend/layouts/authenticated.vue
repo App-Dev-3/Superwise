@@ -35,25 +35,14 @@ watch(isLoaded, async (loaded) => {
 
   redirecting.value = true;
 
-<<<<<<< HEAD
   const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
   const userRole = user.value?.unsafeMetadata.role || "student"; //get from nestjs
-=======
-  const onboardingComplete =
-    user.value.unsafeMetadata.onboardingCompleted === false;
-
-  const userRole = user.value.unsafeMetadata.role || "student"; //get from nestjs
->>>>>>> bc702a0 (added auth and onboarding middleware)
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
   );
 
   if (!onboardingComplete && !isOnboardingPage) {
     // not onboarded yet → onboarding
-<<<<<<< HEAD
-
-=======
->>>>>>> bc702a0 (added auth and onboarding middleware)
     await router.replace(`/onboarding/${userRole}`);
     return;
   }

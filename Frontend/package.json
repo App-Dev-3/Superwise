@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
@@ -21,25 +21,12 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/vue-fontawesome": "^3.0.8",
-    "@nuxtjs/color-mode": "^3.5.2",
     "@nuxtjs/i18n": "^9.4.0",
     "@pinia/nuxt": "^0.10.1",
     "@tailwindcss/vite": "^4.1.3",
-<<<<<<< HEAD
-<<<<<<< HEAD
     "@vite-pwa/nuxt": "^1.0.0",
     "@vueuse/core": "^13.1.0",
     "nuxt": "^3.17.1",
-=======
-    "@vite-pwa/nuxt": "^0.10.6",
-    "@vueuse/core": "^13.1.0",
-    "nuxt": "^3.16.2",
->>>>>>> bc702a0 (added auth and onboarding middleware)
-=======
-    "@vite-pwa/nuxt": "^1.0.0",
-    "@vueuse/core": "^13.1.0",
-    "nuxt": "^3.17.1",
->>>>>>> eb19750 (major pwa update, added typescript as a dependency, added layouts and clerk onboarding and consisten auth)
     "pinia": "^3.0.1",
     "tailwindcss": "^4.1.3",
     "vue": "^3.5.13",

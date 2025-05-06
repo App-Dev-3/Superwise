@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, Tag, TagSimilarity } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class AdminRepository {

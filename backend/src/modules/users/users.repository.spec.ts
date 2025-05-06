@@ -573,7 +573,6 @@ describe('UsersRepository', () => {
       });
       expect(mockPrismaService.userTag.createMany).toHaveBeenCalledWith({
         data: expect.any(Array),
-        skipDuplicates: false,
       });
       expect(mockPrismaService.userTag.findMany).toHaveBeenCalledWith({
         where: { user_id: userId },

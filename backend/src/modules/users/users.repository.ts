@@ -209,6 +209,7 @@ export class UsersRepository implements IUsersRepository {
           tag_id: tag.tag_id,
           priority: tag.priority,
         })),
+        skipDuplicates: false, 
       });
       operations.push(createTagsOperation);
     }

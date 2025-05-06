@@ -116,7 +116,7 @@
     },
     "/users/search/by-first-name": {
       "get": {
-        "description": "Find users by matching their first name. Will return multiple users if multiple matches are found.",
+        "description": "Find Users by matching their first name.",
         "operationId": "UsersController_findUsersByFirstName",
         "parameters": [
           {
@@ -125,7 +125,6 @@
             "in": "query",
             "description": "First name to search for (case insensitive, partial match)",
             "schema": {
-              "example": "Max",
               "type": "string"
             }
           }
@@ -153,7 +152,7 @@
     },
     "/users/search/by-last-name": {
       "get": {
-        "description": "Find users by matching their last name. Will return multiple users if multiple matches are found.",
+        "description": "Find Users by matching their last name.",
         "operationId": "UsersController_findUsersByLastName",
         "parameters": [
           {
@@ -162,7 +161,6 @@
             "in": "query",
             "description": "Last name to search for (case insensitive, partial match)",
             "schema": {
-              "example": "Mustermann",
               "type": "string"
             }
           }
@@ -190,7 +188,7 @@
     },
     "/users/search/by-tag": {
       "get": {
-        "description": "Find users associated with a specific research interest or skill tag. Returns all users that have the specified tag.",
+        "description": "Find Users associated with a specific research interest or skill tag.",
         "operationId": "UsersController_findUsersByTagId",
         "parameters": [
           {
@@ -199,8 +197,6 @@
             "in": "query",
             "description": "Tag ID to search for (UUID)",
             "schema": {
-              "format": "uuid",
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
               "type": "string"
             }
           }
@@ -234,7 +230,7 @@
     },
     "/users/search/by-tags": {
       "get": {
-        "description": "Find users associated with any of the specified research interests or skill tags. Returns all users that have at least one of the specified tags.",
+        "description": "Find Users associated with any of the specified research interests or skill tags.",
         "operationId": "UsersController_findUsersByTagIds",
         "parameters": [
           {
@@ -243,7 +239,6 @@
             "in": "query",
             "description": "Comma-separated list of tag IDs (UUIDs)",
             "schema": {
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479,e47ac10b-58cc-4372-a567-0e02b2c3d480",
               "type": "string"
             }
           }
@@ -277,17 +272,15 @@
     },
     "/users/{id}": {
       "get": {
-        "description": "Retrieves a specific user by their unique identifier.",
+        "description": "Retrieves a specific user by id.",
         "operationId": "UsersController_findUserById",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "The user unique identifier (UUID)",
+            "description": "The user ID",
             "schema": {
-              "format": "uuid",
-              "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
           }
@@ -316,16 +309,15 @@
         ]
       },
       "patch": {
-        "description": "Update a user's information such as name, email, profile image, and registration status.",
+        "description": "Update a user's information such as name, email, role, and profile image.",
         "operationId": "UsersController_updateUser",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User unique identifier (UUID)",
+            "description": "User ID (UUID)",
             "schema": {
-              "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
@@ -369,16 +361,15 @@
         ]
       },
       "delete": {
-        "description": "Soft delete a user. Preserves data but marks user as deleted and they will no longer appear in regular queries.",
+        "description": "Soft delete a user. Preserves data but marks as deleted.",
         "operationId": "UsersController_deleteUser",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User unique identifier (UUID)",
+            "description": "User ID (UUID)",
             "schema": {
-              "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
@@ -410,9 +401,8 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "User unique identifier (UUID)",
+            "description": "User ID (UUID)",
             "schema": {
-              "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
@@ -420,7 +410,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Return the user with the specified ID including all their relations.",
+            "description": "Return the user with the specified ID including relations.",
             "content": {
               "application/json": {
                 "schema": {
@@ -444,16 +434,15 @@
     },
     "/users/{userId}/tags": {
       "get": {
-        "description": "Retrieves all tags assigned to a specific user with their priority ordering. Tags are sorted by priority where 1 is highest priority.",
+        "description": "Retrieves all tags assigned to a specific user with their priorities.",
         "operationId": "UsersController_findUserTagsByUserId",
         "parameters": [
           {
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "User unique identifier (UUID)",
+            "description": "User ID (UUID)",
             "schema": {
-              "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
@@ -461,7 +450,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of a user's tags with their priorities and tag details",
+            "description": "List of user tags",
             "content": {
               "application/json": {
                 "schema": {
@@ -486,16 +475,15 @@
         ]
       },
       "put": {
-        "description": "Updates all tags for a user with the specified priorities. This operation replaces all existing tags with the new set provided.",
+        "description": "Updates all tags for a user with the specified priorities.",
         "operationId": "UsersController_setUserTagsByUserId",
         "parameters": [
           {
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "User unique identifier (UUID)",
+            "description": "User ID (UUID)",
             "schema": {
-              "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
               "type": "string"
             }
@@ -503,7 +491,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "The new tags and priorities for the user. Priorities must be sequential starting with 1.",
+          "description": "The new tags and priorities for the user",
           "content": {
             "application/json": {
               "schema": {
@@ -514,7 +502,7 @@
         },
         "responses": {
           "200": {
-            "description": "User tags updated successfully. Returns the new list of user tags with their priorities.",
+            "description": "User tags updated successfully. Returns the new list of user tags.",
             "content": {
               "application/json": {
                 "schema": {
@@ -527,10 +515,10 @@
             }
           },
           "400": {
-            "description": "Bad Request - Invalid input, non-sequential priorities, duplicate priorities, or invalid tag IDs."
+            "description": "Bad Request (e.g., invalid input, non-sequential/duplicate priorities)."
           },
           "404": {
-            "description": "User not found or one or more tags not found."
+            "description": "User not found or tag not found."
           }
         },
         "summary": "Set/Replace all tags for a user with priorities",
@@ -541,12 +529,11 @@
     },
     "/tags": {
       "get": {
-        "description": "Retrieves a list of all available tags in the system that can be used for searching and filtering users.",
         "operationId": "TagsController_findAllTags",
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Successfully retrieved list of all tags in the system",
+            "description": "List of all tags in the system",
             "content": {
               "application/json": {
                 "schema": {
@@ -561,30 +548,28 @@
         },
         "summary": "Get all tags",
         "tags": [
-          "Tags"
+          "tags"
         ]
       }
     },
     "/tags/{id}": {
       "get": {
-        "description": "Retrieves detailed information about a specific tag identified by its UUID.",
         "operationId": "TagsController_findTagById",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Tag unique identifier (UUID)",
+            "description": "Tag ID",
             "schema": {
               "format": "uuid",
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved the tag with the given ID",
+            "description": "The tag with the given ID",
             "content": {
               "application/json": {
                 "schema": {
@@ -594,28 +579,26 @@
             }
           },
           "404": {
-            "description": "Tag with the specified ID was not found in the system"
+            "description": "Tag not found"
           }
         },
         "summary": "Get a tag by ID",
         "tags": [
-          "Tags"
+          "tags"
         ]
       }
     },
     "/tags/{id}/similar": {
       "get": {
-        "description": "Finds tags that are semantically similar to the specified tag, with optional minimum similarity threshold.",
         "operationId": "TagsController_findSimilarTagsByTagId",
         "parameters": [
           {
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Tag unique identifier (UUID)",
+            "description": "Tag ID",
             "schema": {
               "format": "uuid",
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
               "type": "string"
             }
           },
@@ -623,16 +606,15 @@
             "name": "minSimilarity",
             "required": false,
             "in": "query",
-            "description": "Minimum similarity score threshold (0-1). Only tags with similarity scores above this value will be returned.",
+            "description": "Minimum similarity score (0-1)",
             "schema": {
-              "example": 0.5,
               "type": "number"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved list of similar tags with their similarity scores",
+            "description": "List of similar tags with similarity scores",
             "content": {
               "application/json": {
                 "schema": {
@@ -645,12 +627,12 @@
             }
           },
           "404": {
-            "description": "Tag with the specified ID was not found in the system"
+            "description": "Tag not found"
           }
         },
         "summary": "Get similar tags to a given tag",
         "tags": [
-          "Tags"
+          "tags"
         ]
       }
     },
@@ -800,6 +782,59 @@
           "supervisors"
         ]
       }
+    },
+    "/admin/tags/bulk-import": {
+      "post": {
+        "operationId": "AdminController_bulkImport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "New Tags and similarities for the application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tags and similarities successfully imported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tags and similarities imported successfully"
+                    },
+                    "tagsProcessed": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "similaritiesReplaced": {
+                      "type": "number",
+                      "example": 25
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid data or inconsistent tags and similarities"
+          }
+        },
+        "summary": "Bulk import tags and their similarities",
+        "tags": [
+          "admin"
+        ]
+      }
     }
   },
   "info": {
@@ -829,6 +864,15 @@
       }
     },
     "schemas": {
+      "Role": {
+        "type": "string",
+        "enum": [
+          "STUDENT",
+          "SUPERVISOR",
+          "ADMIN"
+        ],
+        "description": "Role of the user in the system"
+      },
       "CreateUserDto": {
         "type": "object",
         "properties": {
@@ -847,6 +891,15 @@
             "description": "Last name of the user",
             "example": "Mustermann"
           },
+          "role": {
+            "description": "Role of the user in the system",
+            "example": "STUDENT",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Role"
+              }
+            ]
+          },
           "profile_image": {
             "type": "string",
             "description": "URL to user profile image",
@@ -856,7 +909,8 @@
         "required": [
           "email",
           "first_name",
-          "last_name"
+          "last_name",
+          "role"
         ]
       },
       "User": {
@@ -900,7 +954,7 @@
           "is_registered": {
             "type": "boolean",
             "description": "Whether user has completed registration",
-            "example": true
+            "example": false
           },
           "is_deleted": {
             "type": "boolean",
@@ -918,6 +972,26 @@
             "type": "string",
             "description": "Timestamp when user was last updated",
             "example": "2023-01-01T00:00:00Z"
+          },
+          "student_profile": {
+            "type": "object",
+            "description": "Student profile information if role is STUDENT"
+          },
+          "supervisor_profile": {
+            "type": "object",
+            "description": "Supervisor profile information if role is SUPERVISOR"
+          },
+          "tags": {
+            "type": "object",
+            "description": "Tags associated with the user"
+          },
+          "blocked_users": {
+            "type": "object",
+            "description": "Users blocked by this user"
+          },
+          "blocked_by_users": {
+            "type": "object",
+            "description": "Users who have blocked this user"
           }
         },
         "required": [
@@ -932,163 +1006,60 @@
           "updated_at"
         ]
       },
-      "Role": {
-        "type": "string",
-        "enum": [
-          "STUDENT",
-          "SUPERVISOR",
-          "ADMIN"
-        ],
-        "description": "User role in the system (STUDENT, SUPERVISOR, or ADMIN)"
-      },
       "UserWithRelations": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "description": "User unique identifier (UUID)",
-            "example": "123e4567-e89b-12d3-a456-426614174000",
-            "format": "uuid"
+            "type": "string"
           },
           "email": {
-            "type": "string",
-            "description": "User email address",
-            "example": "studentId@fhstp.ac.at",
-            "format": "email"
+            "type": "string"
           },
           "first_name": {
-            "type": "string",
-            "description": "User first name",
-            "example": "Max"
+            "type": "string"
           },
           "last_name": {
-            "type": "string",
-            "description": "User last name",
-            "example": "Mustermann"
+            "type": "string"
           },
           "role": {
-            "description": "User role in the system (STUDENT, SUPERVISOR, or ADMIN)",
-            "example": "STUDENT",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/Role"
-              }
-            ]
+            "type": "string"
           },
           "profile_image": {
-            "type": "object",
-            "description": "URL to user profile image (null if not set)",
-            "example": "https://example.com/images/profile.jpg",
-            "nullable": true
+            "type": "object"
           },
           "is_registered": {
-            "type": "boolean",
-            "description": "Whether user has completed registration process",
-            "example": true
+            "type": "boolean"
           },
           "is_deleted": {
-            "type": "boolean",
-            "description": "Whether user has been soft deleted from the system",
-            "example": false
+            "type": "boolean"
           },
           "created_at": {
             "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when user was created",
-            "example": "2023-01-01T00:00:00Z"
+            "type": "string"
           },
           "updated_at": {
             "format": "date-time",
-            "type": "string",
-            "description": "Timestamp when user was last updated",
-            "example": "2023-01-01T00:00:00Z"
+            "type": "string"
           },
           "student_profile": {
-            "type": "object",
-            "description": "Student profile data if the user is a student",
-            "nullable": true,
-            "example": {
-              "id": "123e4567-e89b-12d3-a456-426614174000",
-              "user_id": "123e4567-e89b-12d3-a456-426614174000",
-              "thesis_idea": "AI-based recommendation system for supervisor matching",
-              "created_at": "2023-01-01T00:00:00Z",
-              "updated_at": "2023-01-01T00:00:00Z"
-            }
+            "type": "object"
           },
           "supervisor_profile": {
-            "type": "object",
-            "description": "Supervisor profile data if the user is a supervisor",
-            "nullable": true,
-            "example": {
-              "id": "123e4567-e89b-12d3-a456-426614174000",
-              "user_id": "123e4567-e89b-12d3-a456-426614174000",
-              "bio": "I specialize in AI and machine learning with 15+ years of industry and academic experience. My current research focuses on ethical AI applications in healthcare. I enjoy mentoring students who are passionate about pushing the boundaries of technology.",
-              "max_slots": 5,
-              "current_slots": 2,
-              "created_at": "2023-01-01T00:00:00Z",
-              "updated_at": "2023-01-01T00:00:00Z"
-            }
+            "type": "object"
           },
           "tags": {
-            "description": "List of tags associated with this user and their priorities",
-            "example": [
-              {
-                "user_id": "123e4567-e89b-12d3-a456-426614174000",
-                "tag_id": "abc4567-e89b-12d3-a456-426614174001",
-                "priority": 1,
-                "tag": {
-                  "id": "abc4567-e89b-12d3-a456-426614174001",
-                  "tag_name": "Machine Learning",
-                  "created_at": "2023-01-01T00:00:00Z",
-                  "updated_at": "2023-01-01T00:00:00Z"
-                },
-                "created_at": "2023-01-01T00:00:00Z",
-                "updated_at": "2023-01-01T00:00:00Z"
-              },
-              {
-                "user_id": "123e4567-e89b-12d3-a456-426614174000",
-                "tag_id": "def4567-e89b-12d3-a456-426614174002",
-                "priority": 2,
-                "tag": {
-                  "id": "def4567-e89b-12d3-a456-426614174002",
-                  "tag_name": "Data Science",
-                  "created_at": "2023-01-01T00:00:00Z",
-                  "updated_at": "2023-01-01T00:00:00Z"
-                },
-                "created_at": "2023-01-01T00:00:00Z",
-                "updated_at": "2023-01-01T00:00:00Z"
-              }
-            ],
             "type": "array",
             "items": {
               "type": "array"
             }
           },
           "blocked_users": {
-            "description": "List of users blocked by this user",
-            "example": [
-              {
-                "blocker_id": "123e4567-e89b-12d3-a456-426614174000",
-                "blocked_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                "created_at": "2023-01-01T00:00:00Z",
-                "updated_at": "2023-01-01T00:00:00Z"
-              }
-            ],
             "type": "array",
             "items": {
               "type": "array"
             }
           },
           "blocked_by_users": {
-            "description": "List of users who have blocked this user",
-            "example": [
-              {
-                "blocker_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                "blocked_id": "123e4567-e89b-12d3-a456-426614174000",
-                "created_at": "2023-01-01T00:00:00Z",
-                "updated_at": "2023-01-01T00:00:00Z"
-              }
-            ],
             "type": "array",
             "items": {
               "type": "array"
@@ -1126,15 +1097,20 @@
             "description": "User last name",
             "example": "UpdatedLastName"
           },
+          "role": {
+            "type": "string",
+            "description": "User role",
+            "enum": [
+              "STUDENT",
+              "SUPERVISOR",
+              "ADMIN"
+            ],
+            "example": "SUPERVISOR"
+          },
           "profile_image": {
             "type": "string",
             "description": "URL to user profile image",
             "example": "https://example.com/images/updated-profile.jpg"
-          },
-          "is_registered": {
-            "type": "boolean",
-            "description": "Whether user has completed registration",
-            "example": true
           }
         }
       },
@@ -1143,27 +1119,21 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The unique identifier for the tag",
-            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-            "format": "uuid"
+            "description": "The unique identifier for the tag"
           },
           "tag_name": {
             "type": "string",
-            "description": "The name of the tag",
-            "example": "Machine Learning",
-            "maxLength": 100
+            "description": "The name of the tag"
           },
           "created_at": {
             "format": "date-time",
             "type": "string",
-            "description": "The date and time the tag was created",
-            "example": "2023-01-01T00:00:00Z"
+            "description": "The date and time the tag was created"
           },
           "updated_at": {
             "format": "date-time",
             "type": "string",
-            "description": "The date and time the tag was last updated",
-            "example": "2023-01-01T00:00:00Z"
+            "description": "The date and time the tag was last updated"
           }
         },
         "required": [
@@ -1225,20 +1195,6 @@
         "properties": {
           "tags": {
             "description": "An ordered list of tags with their priorities for the user. Replaces all existing tags for the user.",
-            "example": [
-              {
-                "tag_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-                "priority": 1
-              },
-              {
-                "tag_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-                "priority": 2
-              },
-              {
-                "tag_id": "f47ac10b-54cc-6453-b567-0e02b2c3d479",
-                "priority": 3
-              }
-            ],
             "items": {
               "type": "array"
             },
@@ -1253,13 +1209,7 @@
         "type": "object",
         "properties": {
           "tag": {
-            "description": "The related tag with its full details",
-            "example": {
-              "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-              "tag_name": "Machine Learning",
-              "created_at": "2023-01-01T00:00:00Z",
-              "updated_at": "2023-01-01T00:00:00Z"
-            },
+            "description": "The related tag",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Tag"
@@ -1268,7 +1218,7 @@
           },
           "similarity": {
             "type": "number",
-            "description": "Similarity score between two tags (0-1, where 1 is identical)",
+            "description": "Similarity score between tags (0-1)",
             "example": 0.85,
             "minimum": 0,
             "maximum": 1
@@ -1331,6 +1281,47 @@
             "example": "123e4567-e89b-12d3-a456-426614174000"
           }
         }
+      },
+      "BulkImportDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "description": "List of all tag names to be imported",
+            "example": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Vue"
+            ],
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "similarities": {
+            "description": "List of similarity relationships between tags",
+            "example": [
+              {
+                "field1": "JavaScript",
+                "field2": "TypeScript",
+                "similarity_score": 0.85
+              },
+              {
+                "field1": "React",
+                "field2": "Vue",
+                "similarity_score": 0.7
+              }
+            ],
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tags",
+          "similarities"
+        ]
       }
     }
   }

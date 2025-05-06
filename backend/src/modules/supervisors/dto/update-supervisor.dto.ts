@@ -1,8 +1,8 @@
-import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
 import { IsNumber, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 import { CreateSupervisorDto } from './create-supervisor.dto';
 
-export class UpdateSupervisorDto extends PartialType(CreateSupervisorDto) {
+export class UpdateSupervisorDto extends OmitType(PartialType(CreateSupervisorDto),['user_id']) {
   @ApiPropertyOptional({
     description: 'The supervisor bio',
     example: 'Professor specializing in artificial intelligence and machine learning',

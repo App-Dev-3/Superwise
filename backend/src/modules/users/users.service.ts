@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserTag } from '@prisma/client';
+import { User, UserTag, Role } from '@prisma/client';
 import { UsersRepository } from './users.repository';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { UserWithRelations } from './entities/user-with-relations.entity';
@@ -19,8 +19,9 @@ export class UsersService {
       email: createUserDto.email,
       first_name: createUserDto.first_name,
       last_name: createUserDto.last_name,
-      role: createUserDto.role,
+      role: Role.STUDENT,
       profile_image: createUserDto.profile_image,
+      is_registered: true,
     };
     return this.usersRepository.createUser(userData);
   }
@@ -41,6 +42,14 @@ export class UsersService {
     const user = await this.usersRepository.findUserByIdWithRelations(id);
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+
+  async findUserByEmail(email: string): Promise<User> {
+    const user = await this.usersRepository.findUserByEmail(email);
+    if (!user) {
+      throw new NotFoundException(`User with email ${email} not found`);
     }
     return user;
   }

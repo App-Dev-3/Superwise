@@ -54,7 +54,6 @@ export class SupervisorsRepository {
       bio?: string;
       available_spots?: number;
       total_spots?: number;
-      user_id?: string;
     },
   ): Promise<Supervisor> {
     return this.prisma.supervisor.update({

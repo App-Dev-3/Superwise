@@ -2,6 +2,7 @@ import { Injectable, LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
 import { safeStringify } from '../utils/string-utils';
 
+type LogMessage = string | object | Error;
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
   private logger: winston.Logger;
@@ -54,26 +55,26 @@ export class WinstonLoggerService implements LoggerService {
     });
   }
 
-  log(message: any, context?: string): void {
+  log(message: LogMessage, context?: string): void {
     this.logger.info(safeStringify(message), { context });
   }
 
-  error(message: any, trace?: string, context?: string): void {
+  error(message: LogMessage, trace?: string, context?: string): void {
     this.logger.error(safeStringify(message), {
       context,
       stack: trace,
     });
   }
 
-  warn(message: any, context?: string): void {
+  warn(message: LogMessage, context?: string): void {
     this.logger.warn(safeStringify(message), { context });
   }
 
-  debug(message: any, context?: string): void {
+  debug(message: LogMessage, context?: string): void {
     this.logger.debug(safeStringify(message), { context });
   }
 
-  verbose(message: any, context?: string): void {
+  verbose(message: LogMessage, context?: string): void {
     this.logger.verbose(safeStringify(message), { context });
   }
 }

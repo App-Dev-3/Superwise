@@ -8,7 +8,7 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 const exceptionFilters: Provider[] = [
   {
     provide: APP_FILTER,
-    useClass: PrismaExceptionFilter,
+    useClass: AllExceptionsFilter,
   },
   {
     provide: APP_FILTER,
@@ -16,7 +16,7 @@ const exceptionFilters: Provider[] = [
   },
   {
     provide: APP_FILTER,
-    useClass: AllExceptionsFilter,
+    useClass: PrismaExceptionFilter,
   },
 ];
 

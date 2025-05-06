@@ -1324,6 +1324,11 @@
             "type": "number",
             "description": "Total spots for supervision",
             "example": 5
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user associated with this supervisor profile",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           }
         }
       }

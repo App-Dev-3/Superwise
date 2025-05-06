@@ -1,10 +1,56 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, Tag } from '@prisma/client';
 
 @Injectable()
 export class AdminRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async bulkImport(
+    tags: string[],
+    similarities: Array<{ field1: string; field2: string; similarity_score: number }>,
+  ) {
+    return this.prisma.$transaction(async prismaTx => {
+      const syncedTags = await this.syncTags(prismaTx, tags);
+
+      const tagMap = new Map<string, string>();
+      for (const tag of syncedTags) {
+        tagMap.set(tag.tag_name, tag.id);
+      }
+
+      const similaritiesData: Array<{ tagA_id: string; tagB_id: string; similarity: number }> = [];
+
+      for (const similarity of similarities) {
+        const tagA_id = tagMap.get(similarity.field1);
+        const tagB_id = tagMap.get(similarity.field2);
+
+        if (!tagA_id) {
+          throw new BadRequestException(
+            `Tag '${similarity.field1}' from similarities not found in provided tags list.`,
+          );
+        }
+
+        if (!tagB_id) {
+          throw new BadRequestException(
+            `Tag '${similarity.field2}' from similarities not found in provided tags list.`,
+          );
+        }
+
+        similaritiesData.push({
+          tagA_id,
+          tagB_id,
+          similarity: similarity.similarity_score,
+        });
+      }
+
+      const replacedCount = await this.replaceSimilarities(prismaTx, similaritiesData);
+
+      return {
+        tags: syncedTags,
+        replacedCount,
+      };
+    });
+  }
 
   async syncTags(prismaTx: Prisma.TransactionClient, tagNames: string[]): Promise<Tag[]> {
     const existingTags = await prismaTx.tag.findMany({

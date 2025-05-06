@@ -80,6 +80,40 @@
         ]
       }
     },
+    "/users/search/by-email": {
+      "get": {
+        "description": "Find a user by their email address.",
+        "operationId": "UsersController_findUserByEmail",
+        "parameters": [
+          {
+            "name": "email",
+            "required": true,
+            "in": "query",
+            "description": "Email address to search for (exact match)",
+            "schema": {
+              "example": "studentId@fhstp.ac.at",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the user with the matching email.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search user by email",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/users/search/by-first-name": {
       "get": {
         "description": "Find Users by matching their first name.",
@@ -602,6 +636,153 @@
         ]
       }
     },
+    "/supervisors": {
+      "get": {
+        "operationId": "SupervisorsController_findAllSupervisors",
+        "parameters": [
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "availableOnly",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of supervisor profiles"
+          }
+        },
+        "summary": "Get all supervisors with optional filtering",
+        "tags": [
+          "supervisors"
+        ]
+      },
+      "post": {
+        "operationId": "SupervisorsController_createSupervisorProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupervisorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supervisor profile created successfully"
+          }
+        },
+        "summary": "Create a new supervisor profile",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
+    "/supervisors/user/{userId}": {
+      "get": {
+        "operationId": "SupervisorsController_findSupervisorByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a supervisor profile"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Get a supervisor by User ID",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
+    "/supervisors/{id}": {
+      "get": {
+        "operationId": "SupervisorsController_findSupervisorById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervisor ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a supervisor profile"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Get a supervisor by ID",
+        "tags": [
+          "supervisors"
+        ]
+      },
+      "patch": {
+        "operationId": "SupervisorsController_updateSupervisorProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervisor ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupervisorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supervisor profile updated successfully"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Partially update a supervisor profile",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
     "/admin/tags/bulk-import": {
       "post": {
         "operationId": "AdminController_bulkImport",
@@ -1047,6 +1228,59 @@
           "tag",
           "similarity"
         ]
+      },
+      "CreateSupervisorDto": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "description": "The supervisor bio",
+            "example": "Professor specializing in artificial intelligence and machine learning"
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available spots for supervision",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total spots for supervision",
+            "example": 5
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user associated with this supervisor profile",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": [
+          "user_id"
+        ]
+      },
+      "UpdateSupervisorDto": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "description": "The supervisor bio",
+            "example": "Professor specializing in artificial intelligence and machine learning"
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available spots for supervision",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total spots for supervision",
+            "example": 5
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user associated with this supervisor profile",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        }
       },
       "BulkImportDto": {
         "type": "object",

@@ -83,6 +83,7 @@ describe('UsersRepository', () => {
         last_name: 'Mustermann',
         role: Role.STUDENT,
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
+        is_registered: true,
       };
 
       mockPrismaService.user.create.mockResolvedValue(mockUser);
@@ -194,6 +195,38 @@ describe('UsersRepository', () => {
           supervisor_profile: true,
           tags: { include: { tag: true } },
         },
+      });
+    });
+  });
+
+  describe('findUserByEmail', () => {
+    it('should find a user by email', async () => {
+      // Arrange
+      const email = 'exampleStudent1@fhstp.ac.at';
+      mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await repository.findUserByEmail(email);
+
+      // Assert
+      expect(result).toEqual(mockUser);
+      expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
+        where: { email },
+      });
+    });
+
+    it('should return null when no user with the email exists', async () => {
+      // Arrange
+      const email = 'nonexistent@example.com';
+      mockPrismaService.user.findUnique.mockResolvedValue(null);
+
+      // Act
+      const result = await repository.findUserByEmail(email);
+
+      // Assert
+      expect(result).toBeNull();
+      expect(mockPrismaService.user.findUnique).toHaveBeenCalledWith({
+        where: { email },
       });
     });
   });

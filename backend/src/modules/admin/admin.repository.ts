@@ -10,86 +10,88 @@ export class AdminRepository {
     tags: string[],
     similarities: Array<{ field1: string; field2: string; similarity_score: number }>,
   ) {
-    return this.prisma.$transaction(async prismaTx => {
-      const syncedTags = await this.syncTags(prismaTx, tags);
-
-      const tagMap = new Map<string, string>();
-      for (const tag of syncedTags) {
-        tagMap.set(tag.tag_name, tag.id);
-      }
-
-      const similaritiesData: Array<{ tagA_id: string; tagB_id: string; similarity: number }> = [];
-
-      for (const similarity of similarities) {
-        const tagA_id = tagMap.get(similarity.field1);
-        const tagB_id = tagMap.get(similarity.field2);
-
-        if (!tagA_id) {
-          throw new BadRequestException(
-            `Tag '${similarity.field1}' from similarities not found in provided tags list.`,
-          );
-        }
-
-        if (!tagB_id) {
-          throw new BadRequestException(
-            `Tag '${similarity.field2}' from similarities not found in provided tags list.`,
-          );
-        }
-
-        similaritiesData.push({
-          tagA_id,
-          tagB_id,
-          similarity: similarity.similarity_score,
-        });
-      }
-
-      const replacedCount = await this.replaceSimilarities(prismaTx, similaritiesData);
-
-      return {
-        tags: syncedTags,
-        replacedCount,
-      };
-    });
-  }
-
-  async syncTags(prismaTx: Prisma.TransactionClient, tagNames: string[]): Promise<Tag[]> {
-    const existingTags = await prismaTx.tag.findMany({
+    const existingTags = await this.prisma.tag.findMany({
       where: {
         tag_name: {
-          in: tagNames,
+          in: tags,
         },
       },
     });
 
     const existingTagNames = existingTags.map(tag => tag.tag_name);
-    const missingTagNames = tagNames.filter(name => !existingTagNames.includes(name));
+    const missingTagNames = tags.filter(name => !existingTagNames.includes(name));
+
+    const operations: Array<
+      Prisma.PrismaPromise<Prisma.BatchPayload> | Prisma.PrismaPromise<Tag[]>
+    > = [];
 
     if (missingTagNames.length > 0) {
-      await prismaTx.tag.createMany({
-        data: missingTagNames.map(name => ({ tag_name: name })),
-        skipDuplicates: true,
+      operations.push(
+        this.prisma.tag.createMany({
+          data: missingTagNames.map(name => ({ tag_name: name })),
+          skipDuplicates: true,
+        }),
+      );
+    }
+
+    const getAllTagsOpIndex = operations.length;
+    operations.push(
+      this.prisma.tag.findMany({
+        where: {
+          tag_name: {
+            in: tags,
+          },
+        },
+      }),
+    );
+
+    operations.push(this.prisma.tagSimilarity.deleteMany({}));
+
+    const results = await this.prisma.$transaction(operations);
+
+    const syncedTags = results[getAllTagsOpIndex] as Tag[];
+
+    const tagMap = new Map<string, string>();
+    for (const tag of syncedTags) {
+      tagMap.set(tag.tag_name, tag.id);
+    }
+
+    const similaritiesData: Array<{ tagA_id: string; tagB_id: string; similarity: number }> = [];
+
+    for (const similarity of similarities) {
+      const tagA_id = tagMap.get(similarity.field1);
+      const tagB_id = tagMap.get(similarity.field2);
+
+      if (!tagA_id) {
+        throw new BadRequestException(
+          `Tag '${similarity.field1}' from similarities not found in provided tags list.`,
+        );
+      }
+
+      if (!tagB_id) {
+        throw new BadRequestException(
+          `Tag '${similarity.field2}' from similarities not found in provided tags list.`,
+        );
+      }
+
+      similaritiesData.push({
+        tagA_id,
+        tagB_id,
+        similarity: similarity.similarity_score,
       });
     }
 
-    return prismaTx.tag.findMany({
-      where: {
-        tag_name: {
-          in: tagNames,
-        },
-      },
-    });
-  }
+    let replacedCount = 0;
+    if (similaritiesData.length > 0) {
+      const result = await this.prisma.tagSimilarity.createMany({
+        data: similaritiesData,
+      });
+      replacedCount = result.count;
+    }
 
-  async replaceSimilarities(
-    prismaTx: Prisma.TransactionClient,
-    similaritiesData: Array<{ tagA_id: string; tagB_id: string; similarity: number }>,
-  ): Promise<number> {
-    await prismaTx.tagSimilarity.deleteMany({});
-
-    const result = await prismaTx.tagSimilarity.createMany({
-      data: similaritiesData,
-    });
-
-    return result.count;
+    return {
+      tags: syncedTags,
+      replacedCount,
+    };
   }
 }

@@ -33,7 +33,7 @@ export class BulkImportDto {
   @ApiProperty({
     description: 'List of all tag names to be imported',
     isArray: true,
-    type: String,
+    type: [String],
     example: ['JavaScript', 'TypeScript', 'React', 'Vue'],
   })
   @IsArray()
@@ -43,7 +43,7 @@ export class BulkImportDto {
   @ApiProperty({
     description: 'List of similarity relationships between tags',
     isArray: true,
-    type: SimilarityItemDto,
+    type: [SimilarityItemDto],
     example: [
       { field1: 'JavaScript', field2: 'TypeScript', similarity_score: 0.85 },
       { field1: 'React', field2: 'Vue', similarity_score: 0.7 },

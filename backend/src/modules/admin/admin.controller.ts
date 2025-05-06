@@ -1,5 +1,5 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { BulkImportDto } from './dto/bulk-import.dto';
 
@@ -10,6 +10,10 @@ export class AdminController {
 
   @Post('tags/bulk-import')
   @ApiOperation({ summary: 'Bulk import tags and their similarities' })
+  @ApiBody({
+    type: BulkImportDto,
+    description: 'New Tags and similarities for the application',
+  })
   @ApiResponse({
     status: 200,
     description: 'Tags and similarities successfully imported',

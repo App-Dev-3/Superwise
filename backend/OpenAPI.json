@@ -608,6 +608,7 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "New Tags and similarities for the application",
           "content": {
             "application/json": {
               "schema": {
@@ -1047,33 +1048,6 @@
           "similarity"
         ]
       },
-      "SimilarityItemDto": {
-        "type": "object",
-        "properties": {
-          "field1": {
-            "type": "string",
-            "description": "First tag name in the similarity relationship",
-            "example": "JavaScript"
-          },
-          "field2": {
-            "type": "string",
-            "description": "Second tag name in the similarity relationship",
-            "example": "TypeScript"
-          },
-          "similarity_score": {
-            "type": "number",
-            "description": "Similarity score between the two tags (0-1)",
-            "minimum": 0,
-            "maximum": 1,
-            "example": 0.85
-          }
-        },
-        "required": [
-          "field1",
-          "field2",
-          "similarity_score"
-        ]
-      },
       "BulkImportDto": {
         "type": "object",
         "properties": {
@@ -1085,10 +1059,10 @@
               "React",
               "Vue"
             ],
-            "type": "array",
             "items": {
-              "type": "string"
-            }
+              "type": "array"
+            },
+            "type": "array"
           },
           "similarities": {
             "description": "List of similarity relationships between tags",
@@ -1104,10 +1078,10 @@
                 "similarity_score": 0.7
               }
             ],
-            "type": "array",
             "items": {
-              "$ref": "#/components/schemas/SimilarityItemDto"
-            }
+              "type": "array"
+            },
+            "type": "array"
           }
         },
         "required": [

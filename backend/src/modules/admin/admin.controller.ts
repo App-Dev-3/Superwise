@@ -2,6 +2,7 @@ import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { BulkImportDto } from './dto/bulk-import.dto';
+import { BulkImportSuccessDto } from './dto/bulk-import-success.dto';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -30,7 +31,7 @@ export class AdminController {
     status: 400,
     description: 'Bad Request - Invalid data or inconsistent tags and similarities',
   })
-  bulkImport(@Body() dto: BulkImportDto) {
+  async bulkImport(@Body() dto: BulkImportDto): Promise<BulkImportSuccessDto> {
     return this.adminService.bulkImport(dto);
   }
 }

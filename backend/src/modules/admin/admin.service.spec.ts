@@ -56,18 +56,12 @@ describe('AdminService', () => {
         ],
       };
 
-      const now = new Date();
-      // Create mock tags with all required properties
-      const mockTags: Tag[] = [
-        { id: 'tag1', tag_name: 'javascript', created_at: now, updated_at: now },
-        { id: 'tag2', tag_name: 'python', created_at: now, updated_at: now },
-        { id: 'tag3', tag_name: 'react', created_at: now, updated_at: now },
-      ];
-
-      // Setup mock for bulkImport
+      // Setup mock for bulkImport with the correct return structure
       mockBulkImport.mockResolvedValue({
-        tags: mockTags,
-        replacedCount: 2,
+        success: true,
+        message: 'Tags and similarities imported successfully',
+        tagsProcessed: 3,
+        similaritiesReplaced: 2,
       });
 
       // Execute
@@ -82,7 +76,6 @@ describe('AdminService', () => {
         similaritiesReplaced: 2,
       });
     });
-
     it('should throw BadRequestException when tag from similarities not found in tags list (field1)', async () => {
       // Mock data with mismatched tags
       const mockDto: BulkImportDto = {

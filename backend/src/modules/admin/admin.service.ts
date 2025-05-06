@@ -9,7 +9,7 @@ export class AdminService {
     private readonly adminRepository: AdminRepository,
     private readonly tagsRepository: TagsRepository,
   ) {}
- 
+
   async bulkImport(dto: BulkImportDto) {
     const result = await this.adminRepository.bulkImport(dto.tags, dto.similarities);
 

@@ -10,17 +10,12 @@ import { Tag } from '@prisma/client';
 describe('AdminService', () => {
   let service: AdminService;
   let adminRepository: AdminRepository;
-  let prismaService: PrismaService;
   // Create mock functions upfront
-  const mockSyncTags = jest.fn();
-  const mockReplaceSimilarities = jest.fn();
-  const mockTransaction = jest.fn();
+  const mockBulkImport = jest.fn();
 
   beforeEach(async () => {
     // Reset mocks before each test
-    mockSyncTags.mockReset();
-    mockReplaceSimilarities.mockReset();
-    mockTransaction.mockReset();
+    mockBulkImport.mockReset();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -28,8 +23,7 @@ describe('AdminService', () => {
         {
           provide: AdminRepository,
           useValue: {
-            syncTags: mockSyncTags,
-            replaceSimilarities: mockReplaceSimilarities,
+            bulkImport: mockBulkImport,
           },
         },
         {
@@ -38,16 +32,13 @@ describe('AdminService', () => {
         },
         {
           provide: PrismaService,
-          useValue: {
-            $transaction: mockTransaction,
-          },
+          useValue: {},
         },
       ],
     }).compile();
 
     service = module.get<AdminService>(AdminService);
     adminRepository = module.get<AdminRepository>(AdminRepository);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
@@ -73,21 +64,17 @@ describe('AdminService', () => {
         { id: 'tag3', tag_name: 'react', created_at: now, updated_at: now },
       ];
 
-      // Setup mocks directly instead of using jest.spyOn
-      mockSyncTags.mockResolvedValue(mockTags);
-      mockReplaceSimilarities.mockResolvedValue(2);
-      mockTransaction.mockResolvedValue({
-        success: true,
-        message: 'Tags and similarities imported successfully',
-        tagsProcessed: 3,
-        similaritiesReplaced: 2,
+      // Setup mock for bulkImport
+      mockBulkImport.mockResolvedValue({
+        tags: mockTags,
+        replacedCount: 2,
       });
 
       // Execute
       const result = await service.bulkImport(mockDto);
 
       // Verify results
-      expect(mockTransaction).toHaveBeenCalled();
+      expect(mockBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
       expect(result).toEqual({
         success: true,
         message: 'Tags and similarities imported successfully',
@@ -103,8 +90,8 @@ describe('AdminService', () => {
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
 
-      // Mock the transaction to throw the expected error
-      mockTransaction.mockRejectedValue(
+      // Mock the repository method to throw the expected error
+      mockBulkImport.mockRejectedValue(
         new BadRequestException(
           "Tag 'javascript' from similarities not found in provided tags list.",
         ),
@@ -124,8 +111,8 @@ describe('AdminService', () => {
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
 
-      // Mock the transaction to throw the expected error
-      mockTransaction.mockRejectedValue(
+      // Mock the repository method to throw the expected error
+      mockBulkImport.mockRejectedValue(
         new BadRequestException("Tag 'react' from similarities not found in provided tags list."),
       );
 

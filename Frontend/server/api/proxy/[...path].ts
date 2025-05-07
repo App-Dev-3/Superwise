@@ -39,5 +39,5 @@ export default defineEventHandler(async (event) => {
     body
   })
 
-  return response.text()  
+  return response.json()  
 })

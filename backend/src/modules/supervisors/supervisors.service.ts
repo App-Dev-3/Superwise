@@ -53,7 +53,7 @@ export class SupervisorsService {
     if (newAvailableSpots > newTotalSpots) {
       throw new SupervisorCapacityException('Available spots cannot exceed total spots');
     }
-  
+
     return this.supervisorsRepository.updateSupervisorProfile(id, updateSupervisorDto);
   }
 }

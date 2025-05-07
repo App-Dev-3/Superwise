@@ -653,6 +653,206 @@
           "Tags"
         ]
       }
+    },
+    "/supervisors": {
+      "get": {
+        "operationId": "SupervisorsController_findAllSupervisors",
+        "parameters": [
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "availableOnly",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of supervisor profiles"
+          }
+        },
+        "summary": "Get all supervisors with optional filtering",
+        "tags": [
+          "supervisors"
+        ]
+      },
+      "post": {
+        "operationId": "SupervisorsController_createSupervisorProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupervisorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supervisor profile created successfully"
+          }
+        },
+        "summary": "Create a new supervisor profile",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
+    "/supervisors/user/{userId}": {
+      "get": {
+        "operationId": "SupervisorsController_findSupervisorByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a supervisor profile"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Get a supervisor by User ID",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
+    "/supervisors/{id}": {
+      "get": {
+        "operationId": "SupervisorsController_findSupervisorById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervisor ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a supervisor profile"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Get a supervisor by ID",
+        "tags": [
+          "supervisors"
+        ]
+      },
+      "patch": {
+        "operationId": "SupervisorsController_updateSupervisorProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervisor ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupervisorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supervisor profile updated successfully"
+          },
+          "404": {
+            "description": "Supervisor not found"
+          }
+        },
+        "summary": "Partially update a supervisor profile",
+        "tags": [
+          "supervisors"
+        ]
+      }
+    },
+    "/admin/tags/bulk-import": {
+      "post": {
+        "operationId": "AdminController_bulkImport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "New Tags and similarities for the application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tags and similarities successfully imported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tags and similarities imported successfully"
+                    },
+                    "tagsProcessed": {
+                      "type": "number",
+                      "example": 10
+                    },
+                    "similaritiesReplaced": {
+                      "type": "number",
+                      "example": 25
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid data or inconsistent tags and similarities"
+          }
+        },
+        "summary": "Bulk import tags and their similarities",
+        "tags": [
+          "admin"
+        ]
+      }
     }
   },
   "info": {
@@ -1130,6 +1330,95 @@
         "required": [
           "tag",
           "similarity"
+        ]
+      },
+      "CreateSupervisorDto": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "description": "The supervisor bio",
+            "example": "Professor specializing in artificial intelligence and machine learning"
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available spots for supervision",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total spots for supervision",
+            "example": 5
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user associated with this supervisor profile",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": [
+          "user_id"
+        ]
+      },
+      "UpdateSupervisorDto": {
+        "type": "object",
+        "properties": {
+          "bio": {
+            "type": "string",
+            "description": "The supervisor bio",
+            "example": "Professor specializing in artificial intelligence and machine learning"
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available spots for supervision",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total spots for supervision",
+            "example": 5
+          }
+        }
+      },
+      "BulkImportDto": {
+        "type": "object",
+        "properties": {
+          "tags": {
+            "description": "List of all tag names to be imported",
+            "example": [
+              "JavaScript",
+              "TypeScript",
+              "React",
+              "Vue"
+            ],
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "similarities": {
+            "description": "List of similarity relationships between tags",
+            "example": [
+              {
+                "field1": "JavaScript",
+                "field2": "TypeScript",
+                "similarity_score": 0.85
+              },
+              {
+                "field1": "React",
+                "field2": "Vue",
+                "similarity_score": 0.7
+              }
+            ],
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "tags",
+          "similarities"
         ]
       }
     }

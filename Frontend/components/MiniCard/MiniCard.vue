@@ -33,18 +33,22 @@ const props = defineProps({
   topIcon: {
     type: String,
     required: false,
+    default: "",
   },
   topText: {
     type: String,
     required: false,
+    default: "",
   },
   bottomIcon: {
     type: String,
     required: false,
+    default: "",
   },
   bottomText: {
     type: String,
     required: false,
+    default: "",
   },
 });
 
@@ -72,7 +76,7 @@ const cardSizeClasses = computed(() => ({
           props.image || getPlaceholderImage(props.firstName, props.lastName)
         "
         alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-      />
+      >
     </figure>
     <div class="card-body min-w-0">
       <h2 class="card-title">

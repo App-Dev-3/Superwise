@@ -138,11 +138,13 @@ export class MatchingService {
     const fetchPromises = tagsToFetchArray.map(tagId => this.fetchAndCacheTagSimilarities(tagId));
 
     // we wait for all fetches to complete, with retries for failures
+    // (shouldnt happen but who knows)
     await Promise.allSettled(fetchPromises);
   }
 
   private async fetchAndCacheTagSimilarities(tagId: string, retryCount = 2): Promise<void> {
     try {
+      // here we find for one tag the similairties of all other tags
       const similarTags = await this.tagsService.findSimilarTagsByTagId(tagId, 0.0);
 
       //  self-similarity (always 1.0)
@@ -178,7 +180,8 @@ export class MatchingService {
     this.logger.warn(`Cache miss for tag similarity: ${tagId1} - ${tagId2}`);
     return 0;
   }
-
+  // this inizalizing an empty object for the tagid if it has not entery
+  // inside the cache nested object.
   private ensureCacheInitialized(tagId: string): void {
     if (!this.tagSimilarityCache[tagId]) {
       this.tagSimilarityCache[tagId] = {};
@@ -193,7 +196,8 @@ export class MatchingService {
     this.tagSimilarityCache[tagId1][tagId2] = similarity;
     this.tagSimilarityCache[tagId2][tagId1] = similarity;
   }
-
+  // avoids dealing with data integtiy issues since it recalcultes everything
+  // after 24 hours.
   private checkCacheExpiration(): void {
     const now = new Date();
     if (now.getTime() - this.cacheLastRefreshed.getTime() > this.CACHE_TTL) {

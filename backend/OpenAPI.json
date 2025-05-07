@@ -1467,7 +1467,30 @@
       },
       "Match": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "description": "The unique identifier of the student in this match",
+            "example": "5f8d0d55b54764421b7156f1"
+          },
+          "supervisorId": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor in this match",
+            "example": "5f8d0d55b54764421b7156f2"
+          },
+          "compatibilityScore": {
+            "type": "number",
+            "description": "Compatibility score between student and supervisor (0-1)",
+            "example": 85,
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "studentId",
+          "supervisorId",
+          "compatibilityScore"
+        ]
       }
     }
   }

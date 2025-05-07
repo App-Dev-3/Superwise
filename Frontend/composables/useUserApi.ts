@@ -17,9 +17,7 @@ export const useUserApi = () => {
   }
 
   const getUserById = async (data: string) => {
-    return await makeRequest('users/search/', 'GET', {
-      empty: data
-    })
+    return await makeRequest(`users/${data}`, 'GET')
   }
   
   //TODO: upload tags to use this endpoint

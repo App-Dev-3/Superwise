@@ -24,11 +24,11 @@ export default defineEventHandler(async (event) => {
 
   let body: any = undefined
   if (method === 'GET' && data) {
-    //append search param to url since GET shouldnt have a body
+    //append query param to url since GET shouldnt have a body
+    //In the event that its a path param, its already set from calling code
     const url = new URL(target)
     Object.entries(data).forEach(([key, value]) => {
       if (value !== null && value !== undefined) {
-        if (key === 'empty') key =''
         url.searchParams.append(key, String(value))
       }
     })

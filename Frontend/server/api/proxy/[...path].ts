@@ -1,8 +1,5 @@
 import { joinURL } from 'ufo'
 import { getAuth } from '@clerk/nuxt/server'
-import { url } from 'inspector'
-import { json } from 'stream/consumers'
-import { FormData } from 'happy-dom'
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
@@ -12,7 +9,6 @@ export default defineEventHandler(async (event) => {
   const incomingBody = await readBody(event)
   const method = incomingBody.action || 'GET'
   const data = incomingBody.data || {}
-
   //clerk token
   const { getToken } = getAuth(event)
   const token = await getToken()
@@ -22,7 +18,7 @@ export default defineEventHandler(async (event) => {
     'bearer-token': token,
   }
 
-  let body: any = undefined
+  let body;
   if (method === 'GET' && data) {
     //append query param to url since GET shouldnt have a body
     //In the event that its a path param, its already set from calling code
@@ -37,7 +33,6 @@ export default defineEventHandler(async (event) => {
   } else if (data){ 
     body = JSON.stringify(data)
   }
-
   const response = await fetch(target, {
     method,
     headers: headers,

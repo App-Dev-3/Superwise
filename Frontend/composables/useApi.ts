@@ -1,4 +1,8 @@
-export const makeRequest = async (endpoint: string, action: string, payload: Record<string, any> = {}) => {
+// If you do a request, and it has a payload, it always has to be a key-value pair.
+// The key has to match the backend naming convention. Otherwise it will not work.
+
+
+export const makeRequest = async (endpoint: string, action: string, payload: Record<string, unknown> = {}) => {
   const res = await fetch(`/api/proxy/${endpoint}`, {
     //enforce POST to allow the body to be included
     //decide the actual method in the proxy

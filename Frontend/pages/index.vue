@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <!-- <SupervisorCard /> -->
-    <MiniCard firstName="John" lastName="Doe" previewText="HEllo" />
-  </div>
+  <div />
 </template>
 
 <script setup></script>

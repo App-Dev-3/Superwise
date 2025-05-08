@@ -1,6 +1,47 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+@theme {
+  --text-header: 20px;
+  --text-large: 18px;
+  --text-body: 16px;
+  --text-small: 14px;
+  --text-x-small: 12px;
+  --text-xs-heavy: 12px;
+  --text-xs-link: 12px;
+}
+
+.text-header {
+  @apply font-bold;
+  font-size: 20px;
+}
+.text-large {
+  @apply font-bold;
+  font-size: 18px;
+}
+.text-body {
+  @apply font-normal;
+  font-size: 16px;
+}
+.text-small {
+  @apply font-light;
+  font-size: 14px;
+}
+.text-x-small {
+  @apply font-light;
+  font-size: 12px;
+}
+.text-xs-link {
+  @apply font-light underline;
+  color: var(--color-primary);
+  font-size: 12px;
+}
+.text-xs-heavy {
+  @apply font-medium;
+  font-size: 12px;
+}
+
+
 @plugin "daisyui/theme" {
   name: "light";
   default: false;

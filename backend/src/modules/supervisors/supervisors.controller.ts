@@ -1,8 +1,20 @@
-import { Body, Controller, Get, Param, Post, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Patch,
+  Query,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SupervisorsService } from './supervisors.service';
 import { ApiOperation, ApiTags, ApiQuery, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { CreateSupervisorDto } from './dto/create-supervisor.dto';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role, User } from '@prisma/client';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('supervisors')
 @Controller('supervisors')
@@ -55,6 +67,7 @@ export class SupervisorsController {
   }
 
   @Post()
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Create a new supervisor profile' })
   @ApiResponse({
     status: 201,
@@ -75,7 +88,16 @@ export class SupervisorsController {
   async updateSupervisorProfile(
     @Param('id') id: string,
     @Body() updateSupervisorDto: UpdateSupervisorDto,
+    @CurrentUser() currentUser: User,
   ) {
-    return this.supervisorsService.updateSupervisorProfile(id, updateSupervisorDto);
+    // Get the supervisor to verify ownership
+    const supervisor = await this.supervisorsService.findSupervisorById(id);
+
+    // Allow supervisor to update their own profile or admin to update any profile
+    if (supervisor.user_id === currentUser.id || currentUser.role === Role.ADMIN) {
+      return this.supervisorsService.updateSupervisorProfile(id, updateSupervisorDto);
+    }
+
+    throw new UnauthorizedException('You do not have permission to update this supervisor profile');
   }
 }

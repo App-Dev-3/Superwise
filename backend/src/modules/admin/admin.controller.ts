@@ -3,9 +3,12 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { BulkImportDto } from './dto/bulk-import.dto';
 import { BulkImportSuccessDto } from './dto/bulk-import-success.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
 
 @ApiTags('admin')
 @Controller('admin')
+@Roles(Role.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 

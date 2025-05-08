@@ -25,12 +25,14 @@ describe('UsersController', () => {
     deleteUser: jest.fn(),
     findUserTagsByUserId: jest.fn(),
     setUserTagsByUserId: jest.fn(),
+    checkUserRegistration: jest.fn(),
   };
 
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
   const TAG_UUID_1 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
   const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
+  const CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
 
   const mockUser: User = {
     id: USER_UUID,
@@ -41,6 +43,7 @@ describe('UsersController', () => {
     profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
     is_registered: true,
     is_deleted: false,
+    clerk_id: CLERK_ID,
     created_at: new Date('2023-01-15T10:30:00Z'),
     updated_at: new Date('2023-01-15T10:30:00Z'),
   };
@@ -54,6 +57,7 @@ describe('UsersController', () => {
       first_name: 'Maria',
       last_name: 'Mustermann',
       profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
+      clerk_id: 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJZ',
       created_at: new Date('2023-02-20T14:45:00Z'),
       updated_at: new Date('2023-02-20T14:45:00Z'),
     },
@@ -67,6 +71,11 @@ describe('UsersController', () => {
     updated_at: new Date(),
   };
   const mockUserTags = [mockUserTag];
+
+  const mockAuthUser = {
+    clerk_id: CLERK_ID,
+    email: 'exampleStudent1@fhstp.ac.at',
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -90,9 +99,9 @@ describe('UsersController', () => {
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
       };
       mockUsersService.createUser.mockResolvedValue(mockUser);
-      const result = await controller.createUser(createUserDto);
+      const result = await controller.createUser(createUserDto, mockAuthUser);
       expect(result).toEqual(mockUser);
-      expect(mockUsersService.createUser).toHaveBeenCalledWith(createUserDto);
+      expect(mockUsersService.createUser).toHaveBeenCalledWith(mockAuthUser, createUserDto);
     });
   });
 
@@ -178,7 +187,7 @@ describe('UsersController', () => {
     it('should return a user with relations by ID', async () => {
       const userWithRelations: UserWithRelations = { ...mockUser, tags: [] };
       mockUsersService.findUserByIdWithRelations.mockResolvedValue(userWithRelations);
-      const result = await controller.findUserByIdWithRelations(USER_UUID);
+      const result = await controller.findUserByIdWithRelations(USER_UUID, mockUser);
       expect(result).toEqual(userWithRelations);
       expect(mockUsersService.findUserByIdWithRelations).toHaveBeenCalledWith(USER_UUID);
     });
@@ -191,7 +200,7 @@ describe('UsersController', () => {
         last_name: 'Mustermann',
       };
       mockUsersService.updateUser.mockResolvedValue(mockUser);
-      const result = await controller.updateUser(USER_UUID, updateUserDto);
+      const result = await controller.updateUser(USER_UUID, updateUserDto, mockUser);
       expect(result).toEqual(mockUser);
       expect(mockUsersService.updateUser).toHaveBeenCalledWith(USER_UUID, updateUserDto);
     });
@@ -243,7 +252,7 @@ describe('UsersController', () => {
       mockUsersService.setUserTagsByUserId.mockResolvedValue(expectedUserTags);
 
       // Act
-      const result = await controller.setUserTagsByUserId(userId, dto);
+      const result = await controller.setUserTagsByUserId(userId, dto, mockUser);
 
       // Assert
       expect(result).toEqual(expectedUserTags);
@@ -256,7 +265,9 @@ describe('UsersController', () => {
       const expectedError = new BadRequestException('Invalid priorities');
       mockUsersService.setUserTagsByUserId.mockRejectedValue(expectedError);
 
-      await expect(controller.setUserTagsByUserId(userId, dto)).rejects.toThrow(expectedError);
+      await expect(controller.setUserTagsByUserId(userId, dto, mockUser)).rejects.toThrow(
+        expectedError,
+      );
     });
   });
 });

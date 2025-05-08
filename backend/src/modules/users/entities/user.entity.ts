@@ -8,6 +8,12 @@ export class User {
   })
   id: string;
 
+  @ApiPropertyOptional({
+    description: "User's Clerk ID. Available if the user is registered via Clerk.",
+    example: 'user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY',
+  })
+  clerk_id?: string | null;
+
   @ApiProperty({ description: 'User email address', example: 'studentId@fhstp.ac.at' })
   email: string;
 
@@ -31,7 +37,7 @@ export class User {
   profile_image?: string | null;
 
   @ApiProperty({
-    description: 'Whether user has completed registration',
+    description: 'Whether user has completed registration and is linked to clerk auth provider',
     example: true,
   })
   is_registered: boolean;

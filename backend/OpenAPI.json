@@ -16,14 +16,57 @@
         ]
       }
     },
+    "/users/check-registration": {
+      "get": {
+        "description": "Securely checks if a user with the given email exists and its registration status. Only works with the email from your verified JWT.",
+        "operationId": "UsersController_checkUserRegistration",
+        "parameters": [
+          {
+            "name": "email",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns user existence and registration status.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserExistsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - JWT is missing or invalid."
+          },
+          "403": {
+            "description": "Forbidden - Email mismatch with JWT."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Check if user needs to register",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/users": {
       "post": {
-        "description": "Creates a new user (student, supervisor, or admin).",
+        "description": "Creates a new user (defaults to student role) or links an existing supervisor account to the Clerk identity. Uses JWT validation to ensure secure registration without requiring pre-existing clerk_id.",
         "operationId": "UsersController_createUser",
         "parameters": [],
         "requestBody": {
           "required": true,
-          "description": "User data to create a new user",
+          "description": "User data to create a new user or register an existing supervisor",
           "content": {
             "application/json": {
               "schema": {
@@ -34,7 +77,7 @@
         },
         "responses": {
           "201": {
-            "description": "User has been successfully created.",
+            "description": "User has been successfully created or registered.",
             "content": {
               "application/json": {
                 "schema": {
@@ -44,13 +87,21 @@
             }
           },
           "400": {
-            "description": "Bad request - Invalid input data."
+            "description": "Bad request - Invalid input data (e.g., missing first/last name for new student)."
+          },
+          "401": {
+            "description": "Unauthorized - JWT is missing or invalid."
           },
           "409": {
-            "description": "Conflict - User already exists."
+            "description": "Conflict - User already registered, or non-supervisor account exists with this email."
           }
         },
-        "summary": "Create new user",
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create new user or register existing supervisor account",
         "tags": [
           "Users"
         ]
@@ -926,6 +977,25 @@
       }
     },
     "schemas": {
+      "UserExistsDto": {
+        "type": "object",
+        "properties": {
+          "exists": {
+            "type": "boolean",
+            "description": "Whether a user with this email exists in our system",
+            "example": true
+          },
+          "is_registered": {
+            "type": "boolean",
+            "description": "Whether the user has completed registration. If exists=true and is_registered=true, go-to dashboard. If exists=true and is_registered=false, show registration form for supervisor. If exists=false, show registration form for student.",
+            "example": false
+          }
+        },
+        "required": [
+          "exists",
+          "is_registered"
+        ]
+      },
       "CreateUserDto": {
         "type": "object",
         "properties": {
@@ -936,12 +1006,12 @@
           },
           "first_name": {
             "type": "string",
-            "description": "First name of the user",
+            "description": "First name of the user. Required if creating a new student account.",
             "example": "Max"
           },
           "last_name": {
             "type": "string",
-            "description": "Last name of the user",
+            "description": "Last name of the user. Required if creating a new student account.",
             "example": "Mustermann"
           },
           "profile_image": {
@@ -951,9 +1021,7 @@
           }
         },
         "required": [
-          "email",
-          "first_name",
-          "last_name"
+          "email"
         ]
       },
       "User": {
@@ -963,6 +1031,11 @@
             "type": "string",
             "description": "User unique identifier",
             "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "clerk_id": {
+            "type": "object",
+            "description": "User's Clerk ID. Available if the user is registered via Clerk.",
+            "example": "user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY"
           },
           "email": {
             "type": "string",
@@ -996,7 +1069,7 @@
           },
           "is_registered": {
             "type": "boolean",
-            "description": "Whether user has completed registration",
+            "description": "Whether user has completed registration and is linked to clerk auth provider",
             "example": true
           },
           "is_deleted": {
@@ -1046,6 +1119,12 @@
             "description": "User unique identifier (UUID)",
             "example": "123e4567-e89b-12d3-a456-426614174000",
             "format": "uuid"
+          },
+          "clerk_id": {
+            "type": "object",
+            "description": "Clerk user ID for authentication (can only be set once)",
+            "example": "user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY",
+            "nullable": true
           },
           "email": {
             "type": "string",
@@ -1198,7 +1277,6 @@
           "first_name",
           "last_name",
           "role",
-          "profile_image",
           "is_registered",
           "is_deleted",
           "created_at",
@@ -1227,11 +1305,6 @@
             "type": "string",
             "description": "URL to user profile image",
             "example": "https://example.com/images/updated-profile.jpg"
-          },
-          "is_registered": {
-            "type": "boolean",
-            "description": "Whether user has completed registration",
-            "example": true
           }
         }
       },

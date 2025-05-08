@@ -7,6 +7,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { TagsService } from '../tags/tags.service';
+import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -17,6 +18,7 @@ describe('UsersService', () => {
     findUserById: jest.fn(),
     findUserByIdWithRelations: jest.fn(),
     findUserByEmail: jest.fn(),
+    findUserByClerkId: jest.fn(),
     findUsersByFirstName: jest.fn(),
     findUsersByLastName: jest.fn(),
     findUsersByTagId: jest.fn(),
@@ -28,10 +30,18 @@ describe('UsersService', () => {
     setUserTagsByUserId: jest.fn(),
   };
 
+  const mockLoggerService = {
+    debug: jest.fn(),
+    log: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  };
+
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
   const TAG_UUID_1 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
   const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
+  const CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
 
   const mockUser = {
     id: USER_UUID,
@@ -42,6 +52,7 @@ describe('UsersService', () => {
     profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
     is_registered: true,
     is_deleted: false,
+    clerk_id: CLERK_ID,
     created_at: new Date('2023-01-15T10:30:00Z'),
     updated_at: new Date('2023-01-15T10:30:00Z'),
   };
@@ -57,6 +68,7 @@ describe('UsersService', () => {
       profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
       is_registered: true,
       is_deleted: false,
+      clerk_id: 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJZ',
       created_at: new Date('2023-02-20T14:45:00Z'),
       updated_at: new Date('2023-02-20T14:45:00Z'),
     },
@@ -78,6 +90,7 @@ describe('UsersService', () => {
         UsersService,
         { provide: UsersRepository, useValue: mockUsersRepository },
         { provide: TagsService, useValue: mockTagsService },
+        { provide: WinstonLoggerService, useValue: mockLoggerService },
       ],
     }).compile();
     service = module.get<UsersService>(UsersService);
@@ -98,14 +111,20 @@ describe('UsersService', () => {
   // --- Standard User Operations ---
   describe('createUser', () => {
     it('should create a user', async () => {
+      const authUser = {
+        clerk_id: CLERK_ID,
+        email: 'test@fhstp.ac.at',
+      };
+
       const createUserDto: CreateUserDto = {
-        email: 'test@test.com',
+        email: 'test@fhstp.ac.at',
         first_name: 'Test',
         last_name: 'User',
         profile_image: 'https://superwise.at/images/b8a2d4e5-f7c8-41e3-9b9d-89c5f8a12345.jpg',
       };
+      mockUsersRepository.findUserByEmail.mockResolvedValue(null);
       mockUsersRepository.createUser.mockResolvedValue(mockUser);
-      const result = await service.createUser(createUserDto);
+      const result = await service.createUser(authUser, createUserDto);
 
       // Assert
       expect(result).toEqual(mockUser);
@@ -116,6 +135,7 @@ describe('UsersService', () => {
         role: Role.STUDENT,
         profile_image: createUserDto.profile_image,
         is_registered: true,
+        clerk_id: CLERK_ID,
       });
     });
   });

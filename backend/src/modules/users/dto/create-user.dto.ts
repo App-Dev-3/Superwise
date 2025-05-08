@@ -11,28 +11,25 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({
-    description: 'First name of the user',
+  @ApiPropertyOptional({
+    description: 'First name of the user. Required if creating a new student account.',
     example: 'Max',
-    required: true,
   })
   @IsString()
-  @IsNotEmpty()
-  first_name: string;
+  @IsOptional()
+  first_name?: string;
 
-  @ApiProperty({
-    description: 'Last name of the user',
+  @ApiPropertyOptional({
+    description: 'Last name of the user. Required if creating a new student account.',
     example: 'Mustermann',
-    required: true,
   })
   @IsString()
-  @IsNotEmpty()
-  last_name: string;
+  @IsOptional()
+  last_name?: string;
 
   @ApiPropertyOptional({
     description: 'URL to user profile image',
     example: 'https://example.com/images/profile.jpg',
-    required: false,
   })
   @IsString()
   @IsOptional()

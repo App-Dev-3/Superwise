@@ -32,6 +32,7 @@ enum RequestState {
 
 model User {
   id               String        @id @default(uuid())
+  clerk_id         String?       @unique
   email            String        @unique
   first_name       String
   last_name        String

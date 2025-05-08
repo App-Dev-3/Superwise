@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen flex flex-col">
-    <app-header :showBack="true" />
+    <app-header :show-user="true" />
     <div class="flex-1 flex items-center justify-center ">
       <div class="w-3/4 max-w-md">
         <multi-step-form
-          :totalSteps=3
+          :total-steps=3
           @submit="handleSubmit()"
           @step-changed="handleStepChange"
         >
@@ -13,19 +13,19 @@
               v-model="userFormData.first_name"
               label="First Name"
               placeholder="Max"  
-            ></input-field>
+            />
             <input-field
               v-model="userFormData.last_name"
               label="Last Name"
               placeholder="Mustermann"  
-            ></input-field>
+            />
           </template>
 
           <template #step2>
             <tag-selector
-              :allTags="DbTags"
+              :all-tags="DbTags"
               :max-selection=10
-              @update:selectedTags="tags = $event"
+              @update:selected-tags="tags = $event"
             />
           </template>
 
@@ -42,7 +42,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
+import { navigateTo } from '#app';
 
 import type { UserCreateData, UserData } from '~/shared/types/userInterfaces';
 import type { tagData } from '~/shared/types/tagInterfaces';
@@ -66,15 +67,28 @@ const tags = ref([] as tagData[]);
 async function handleStepChange(step: number): Promise<void> {
   if (step == 2 && user.value?.primaryEmailAddress) {
     userFormData.value.email = user.value.primaryEmailAddress.emailAddress; 
-    const res = await createUser(userFormData.value) as UserData;
-    userStore.setUser(res);
+    try {
+      const res = await createUser(userFormData.value) as UserData;
+      userFormData.value = res;
+      userStore.setUser(res);
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+
+      if (error.statusCode === 409 && error.message.includes('unique constraint')) {
+        console.warn('User already registered. Skipping registration.');
+        finishOnboarding();
+      } else {
+        console.error('Unexpected error:', error);
+        await navigateTo('/');
+      }
+    
+    }
   }
-  console.log(userStore.user)
 }
 
 async function handleSubmit() {
-  console.log('tags', tags.value)
   addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
+  await finishOnboarding();
 }
 
 
@@ -82,9 +96,10 @@ const finishOnboarding = async () => {
   if (!isLoaded.value || !isSignedIn.value || !user.value) return;
 
   try {
-    await user.value.update({ unsafeMetadata: { onboardingCompleted: false } });
+    await user.value.update({ unsafeMetadata: { onboardingCompleted: true } });
 
-    //return navigateTo(`/dashboard`);
+    console.log("Onboarding completed");
+    return navigateTo(`/dashboard`);
   } catch (err) {
     console.error("Onboarding error:", err);
   }

@@ -29,19 +29,26 @@ function submit() {
 
     <!-- TODO: Replace buttons with custom component button as soon as it is ready -->
     <div class="flex justify-center pt-4">
-      <button
+      <CustomButton
         v-if="currentStep < totalSteps"
-        type="button"
-        class="btn w-3/4"
+        text="Next"
+        class="w-3/4"
+        right-icon="arrow-right"
         data-test="next-button"
+        :wide="true"
         @click="next"
-      >
-        next
-      </button>
-
-      <button v-else type="submit" class="btn w-3/4" data-test="submit-button">
-        Submit
-      </button>
+      />  
+      
+      <CustomButton
+        v-else
+        text="Start Matching"
+        type="submit"
+        class="w-3/4"
+        right-icon="arrow-right"
+        data-test="submit-button"
+        :wide="true"
+        @click="next"
+      />
     </div>
   </form>
 </template>

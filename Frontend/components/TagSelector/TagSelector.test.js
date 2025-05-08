@@ -4,13 +4,14 @@ import { describe, it, expect } from 'vitest'
 
 describe('TagSelector.vue', () => {
 
-  const allTags = ['AI', 'Programming', 'Web Dev', 'Design', 'Data Science', 'ML', 'UI/UX']
+  const allTags = [{tag_name:'AI'}, {tag_name:'Programming'}, {tag_name:'Web Dev'}, {tag_name:'Design'},
+    {tag_name:'Data Science'}, {tag_name:'ML'},{tag_name: 'UI/UX'}]
 
   it('renders initial selected tags', () => {
     const wrapper = mount(TagSelector, {
       props: {
         allTags,
-        initialSelected: ['AI', 'Programming']
+        initialSelected: [{tag_name:'AI'}, {tag_name:'Programming'}]
       },
       global: {
         stubs: {

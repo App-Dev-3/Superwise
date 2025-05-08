@@ -5,8 +5,6 @@
     </SignedOut>
 
     <SignedIn>
-      <UserButton />
-
       <div v-if="!isLoaded">Loading…</div>
 
       <!-- Once loaded and redirect logic is done, render the page slot -->
@@ -18,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import type { UserData } from "~/shared/types/userInterfaces";
 
@@ -29,22 +27,38 @@ const { getUserByEmail } = useUserApi();
 
 
 const onboardingRoutes = ["/onboarding/student", "/onboarding/supervisor"];
+
 onMounted(() => {
- checkLogged() 
+  CheckStatus() 
 })
+
+watch(isLoaded, () => {
+  CheckStatus();
+});
+
 // track whether we've already kicked off a redirect, so we don't flash content
 const redirecting = ref(false);
-const checkLogged = async () => {
+const CheckStatus = async () => {
   if (!isLoaded || redirecting.value) return;
 
   redirecting.value = true;
 
-  let onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
-  let userRole = "STUDENT"; // default to student
+  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
+  let userRole = "student"; // default to student
   if (user.value?.primaryEmailAddress?.emailAddress) {
-    let res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
-    userRole = res.role;
+    const res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
+    if (res.ok){
+      userRole = res.role;
+    }
   }
+
+  if (userRole === 'admin') {
+    // admins should go to the admin dashboard
+    //Unique layout for admin to ensure security
+    await router.replace("/admin/dashboard");
+    return;
+  }
+
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
   );

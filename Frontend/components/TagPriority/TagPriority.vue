@@ -35,7 +35,11 @@ function tagStyles(index) {
 const sortedTags = ref([...props.tags])
 
 function handelChange() {
-  emit('update:tags', sortedTags.value)
+  const prioritized = sortedTags.value.map((tag, index) => ({
+    tag_id: tag.id, 
+    priority: index + 1    // Priority starts at 1
+  }))
+  emit('update:tags', prioritized)
 }
 </script>
 

@@ -241,4 +241,3 @@ describe('Toast.vue', () => {
         expect(wrapper.emitted().buttonClick.length).toBe(1) // Still just one from earlier
     })
 })
-

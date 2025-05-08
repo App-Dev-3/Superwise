@@ -1468,7 +1468,7 @@
       "Match": {
         "type": "object",
         "properties": {
-          "supervisorId": {
+          "supervisor_userId": {
             "type": "string",
             "description": "The unique identifier of the supervisor in this match",
             "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
@@ -1523,7 +1523,7 @@
           }
         },
         "required": [
-          "supervisorId",
+          "supervisor_userId",
           "firstName",
           "lastName",
           "compatibilityScore",

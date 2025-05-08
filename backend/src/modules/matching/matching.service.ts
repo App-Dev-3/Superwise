@@ -50,7 +50,7 @@ export class MatchingService {
       );
 
       matches.push({
-        supervisorId: supervisor.user_id,
+        supervisor_userId: supervisor.user_id,
         firstName: supervisorUserData?.first_name || '',
         lastName: supervisorUserData?.last_name || '',
         compatibilityScore: compatibility_score,

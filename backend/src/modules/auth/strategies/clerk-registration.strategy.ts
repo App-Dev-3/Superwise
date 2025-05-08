@@ -1,17 +1,24 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
+import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { WinstonLoggerService } from '../../../common/logging/winston-logger.service';
 import * as jwksClient from 'jwks-rsa';
+import { Request } from 'express';
+
+interface JwtHeader {
+  kid: string;
+  alg: string;
+  [key: string]: unknown;
+}
+
+interface SigningKey {
+  getPublicKey(): string;
+}
 
 @Injectable()
 export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk-registration') {
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly logger: WinstonLoggerService,
-  ) {
+  constructor(private readonly logger: WinstonLoggerService) {
     // Create a JWKS client to fetch the public key
     const jwksUri = 'https://heroic-python-12.clerk.accounts.dev/.well-known/jwks.json';
 
@@ -23,66 +30,83 @@ export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk
       jwksRequestsPerMinute: 5,
     });
 
-    // Function to get the signing key
-    const secretOrKeyProvider = async (request: any, rawJwtToken: string, done: Function) => {
+    // Function to get the signing key - using callback approach since jwksClient API is callback-based
+    const secretOrKeyProvider = (
+      request: Request,
+      rawJwtToken: string,
+      done: (err: Error | null, secret: string | null) => void,
+    ): void => {
       try {
         // Extract the JWT header to get the key ID
         const tokenParts = rawJwtToken.split('.');
         if (tokenParts.length < 1) {
-          return done(new UnauthorizedException('Invalid token format'));
+          return done(new UnauthorizedException('Invalid token format'), null);
         }
 
-        const header = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
+        const headerStr = Buffer.from(tokenParts[0], 'base64').toString();
+        const header = JSON.parse(headerStr) as JwtHeader;
         const kid = header.kid;
 
         if (!kid) {
-          return done(new UnauthorizedException('No key ID (kid) found in token header'));
+          return done(new UnauthorizedException('No key ID (kid) found in token header'), null);
         }
 
         // Get the signing key from the JWKS endpoint
-        client.getSigningKey(kid, (err: Error, key: any) => {
+        client.getSigningKey(kid, (err: Error | null, key?: SigningKey) => {
           if (err) {
-            logger.error(`Error getting signing key: ${err.message}`, 'ClerkRegistrationStrategy');
-            return done(new UnauthorizedException('Unable to retrieve signing key'));
+            this.logger.error(
+              `Error getting signing key: ${err.message}`,
+              'ClerkRegistrationStrategy',
+            );
+            return done(new UnauthorizedException('Unable to retrieve signing key'), null);
           }
 
           try {
             if (!key) {
-              return done(new UnauthorizedException('No signing key found'));
+              return done(new UnauthorizedException('No signing key found'), null);
             }
             const signingKey = key.getPublicKey();
             done(null, signingKey);
           } catch (keyErr) {
-            logger.error(
-              `Error extracting public key: ${keyErr.message}`,
+            const errorMessage = keyErr instanceof Error ? keyErr.message : 'Unknown error';
+            this.logger.error(
+              `Error extracting public key: ${errorMessage}`,
               'ClerkRegistrationStrategy',
             );
-            done(new UnauthorizedException('Error processing signing key'));
+            done(new UnauthorizedException('Error processing signing key'), null);
           }
         });
       } catch (error) {
-        logger.error(
-          `JWT validation error: ${error.message}`,
-          error.stack,
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        this.logger.error(
+          `JWT validation error: ${errorMessage}`,
+          errorStack,
           'ClerkRegistrationStrategy',
         );
-        done(new UnauthorizedException('Invalid token structure'));
+        done(new UnauthorizedException('Invalid token structure'), null);
       }
     };
 
-    // Initialize passport strategy
-    super({
+    // Initialize passport strategy with properly typed options
+    const options: StrategyOptions = {
+      // We need to use ExtractJwt as provided by passport-jwt library
+      // eslint-disable-next-line max-len
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       algorithms: ['RS256'],
       secretOrKeyProvider,
       jsonWebTokenOptions: {
-        ignoreNotBefore: true, // Ignore the nbf claim to prevent timing issues
+        ignoreNotBefore: true,
         algorithms: ['RS256'],
       },
-    });
+    };
 
-    logger.debug(
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    super(options);
+
+    this.logger.debug(
       `Initialized ClerkRegistrationStrategy with JWKS URI: ${jwksUri}`,
       'ClerkRegistrationStrategy',
     );
@@ -97,9 +121,11 @@ export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk
         exp: payload.exp,
       };
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
       this.logger.error(
-        `Registration validation error: ${error.message}`,
-        error.stack,
+        `Registration validation error: ${errorMessage}`,
+        errorStack,
         'ClerkRegistrationStrategy',
       );
       throw new UnauthorizedException('Invalid token payload');

@@ -39,9 +39,11 @@ const CheckStatus = async () => {
   const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
   let userRole = "student"; // default to student
   if (user.value?.primaryEmailAddress?.emailAddress) {
-    const res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
-    if (res.ok){
+    try {
+      const res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
       userRole = res.role;
+    } catch (error) {
+      console.error("Error getting user role:", error);
     }
   }
 

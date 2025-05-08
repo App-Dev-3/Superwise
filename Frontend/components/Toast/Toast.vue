@@ -22,7 +22,7 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['buttonClick', 'close']);
+const emit = defineEmits(['buttonClick']);
 
 // Internal visibility state
 const visible = ref(true);

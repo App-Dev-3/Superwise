@@ -11,8 +11,8 @@ export default defineEventHandler(async (event) => {
   const data = incomingBody.data || {}
   //clerk token
   const { getToken } = getAuth(event)
-  const token = await getToken()
-
+  const token = await getToken({ template: 'SuperwiseJWT' })
+  
   const headers = {
     'Content-Type': 'application/json',
     'bearer-token': token,

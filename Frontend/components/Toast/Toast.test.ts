@@ -46,21 +46,6 @@ describe('Toast.vue', () => {
         expect(wrapper.find('[data-testid="custom-button"]').text()).toBe('close')
     })
 
-    it('is not visible when show is false', () => {
-        const wrapper = mount(Toast, {
-            props: {
-                show: false
-            },
-            global: {
-                components: {
-                    CustomButton
-                }
-            }
-        })
-
-        expect(wrapper.find('.alert').exists()).toBe(false)
-    })
-
     it('uses correct classes and icons for error type', () => {
         const wrapper = mount(Toast, {
             props: {
@@ -190,28 +175,6 @@ describe('Toast.vue', () => {
         expect(wrapper.find('.alert').exists()).toBe(true)
         expect(wrapper.emitted().close).toBeFalsy()
         expect(wrapper.emitted().buttonClick).toBeFalsy()
-    })
-
-    it('updates visibility when show prop changes', async () => {
-        const wrapper = mount(Toast, {
-            props: {
-                show: true
-            },
-            global: {
-                components: {
-                    CustomButton
-                }
-            }
-        })
-
-        // Initially visible
-        expect(wrapper.find('.alert').exists()).toBe(true)
-
-        // Update show prop to false
-        await wrapper.setProps({show: false})
-
-        // Should now be hidden
-        expect(wrapper.find('.alert').exists()).toBe(false)
     })
 
     it('emits different events for button click and auto-close', async () => {

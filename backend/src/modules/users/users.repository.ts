@@ -10,10 +10,12 @@ export interface IUsersRepository {
     role: Role;
     profile_image?: string | null;
     is_registered: boolean;
+    clerk_id?: string | null;
   }): Promise<User>;
   findAllUsers(): Promise<User[]>;
   findUserById(id: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
+  findUserByClerkId(clerkId: string): Promise<User | null>;
   findUserByIdWithRelations(id: string): Promise<User | null>;
   findUsersByFirstName(firstName: string): Promise<User[]>;
   findUsersByLastName(lastName: string): Promise<User[]>;
@@ -29,6 +31,7 @@ export interface IUsersRepository {
       profile_image?: string | null;
       is_registered?: boolean;
       is_deleted?: boolean;
+      clerk_id?: string | null;
     },
   ): Promise<User>;
   softDeleteUser(id: string): Promise<User>;
@@ -52,6 +55,7 @@ export class UsersRepository implements IUsersRepository {
     role: Role;
     profile_image?: string | null;
     is_registered: boolean;
+    clerk_id?: string | null;
   }): Promise<User> {
     return this.prisma.user.create({
       data: userData,
@@ -75,6 +79,12 @@ export class UsersRepository implements IUsersRepository {
   async findUserByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: { email },
+    });
+  }
+
+  async findUserByClerkId(clerkId: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { clerk_id: clerkId },
     });
   }
 
@@ -169,6 +179,7 @@ export class UsersRepository implements IUsersRepository {
       profile_image?: string | null;
       is_registered?: boolean;
       is_deleted?: boolean;
+      clerk_id?: string | null;
     },
   ): Promise<User> {
     return this.prisma.user.update({

@@ -11,39 +11,137 @@ import {
   Query,
   ParseUUIDPipe,
   Put,
+  UnauthorizedException,
+  UseGuards,
+  BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBody,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { User } from './entities/user.entity';
 import { UserTag } from './entities/user-tag.entity';
 import { UserWithRelations } from './entities/user-with-relations.entity';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { Role } from '@prisma/client';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { Public } from '../../common/decorators/public.decorator';
+import { ClerkRegistrationGuard } from '../../common/guards/clerk-registration.guard';
+import { UserExistsDto } from './dto/user-exists.dto';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  @Get('check-registration')
+  @UseGuards(ClerkRegistrationGuard)
+  @Public() // Mark as public to bypass the global ClerkAuthGuard
+  @ApiBearerAuth()
   @ApiOperation({
-    summary: 'Create new user',
-    description: 'Creates a new user (student, supervisor, or admin).',
+    summary: 'Check if user needs to register',
+    description:
+      'Securely checks if a user with the given email exists and its registration status. Only works with the email from your verified JWT.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns user existence and registration status.',
+    type: UserExistsDto,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - JWT is missing or invalid.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Email mismatch with JWT.' })
+  async checkUserRegistration(
+    @Query('email') email: string,
+    @CurrentUser() authUser: { clerk_id: string; email: string },
+  ): Promise<UserExistsDto> {
+    // Security check: Only allow checking the email that matches the JWT
+    if (!email || email !== authUser.email) {
+      throw new BadRequestException(
+        'Email mismatch: You can only check the email associated with your authentication.',
+      );
+    }
+
+    try {
+      // Find the user but don't expose the full user object
+      const user = await this.usersService.findUserByEmail(email);
+
+      return {
+        exists: true,
+        is_registered: user.is_registered,
+      };
+    } catch (error) {
+      // If user not found, return exists: false with default values
+      if (error instanceof NotFoundException) {
+        return {
+          exists: false,
+          is_registered: false,
+        };
+      }
+      throw error; // Re-throw other errors
+    }
+  }
+
+  @Post()
+  @UseGuards(ClerkRegistrationGuard)
+  @Public() // Mark as public to bypass the global ClerkAuthGuard
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create new user or register existing supervisor account',
+    description:
+      'Creates a new user (defaults to student role) or links an existing supervisor account to the Clerk identity. Uses JWT validation to ensure secure registration without requiring pre-existing clerk_id.',
   })
   @ApiBody({
     type: CreateUserDto,
-    description: 'User data to create a new user',
+    description: 'User data to create a new user or register an existing supervisor',
   })
   @ApiResponse({
     status: 201,
-    description: 'User has been successfully created.',
+    description: 'User has been successfully created or registered.',
     type: User,
   })
-  @ApiResponse({ status: 400, description: 'Bad request - Invalid input data.' })
-  @ApiResponse({ status: 409, description: 'Conflict - User already exists.' })
-  createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return this.usersService.createUser(createUserDto);
+  @ApiResponse({
+    status: 400,
+    description:
+      'Bad request - Invalid input data (e.g., missing first/last name for new student).',
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized - JWT is missing or invalid.' })
+  @ApiResponse({
+    status: 409,
+    description:
+      'Conflict - User already registered, or non-supervisor account exists with this email.',
+  })
+  createUser(
+    @Body() createUserDto: CreateUserDto,
+    @CurrentUser() authUser: { clerk_id: string; email: string },
+  ): Promise<User> {
+    if (!authUser || !authUser.clerk_id || !authUser.email) {
+      throw new UnauthorizedException('Invalid authentication data.');
+    }
+
+    // Ensure the email in the DTO matches the email in the JWT for security
+    if (createUserDto.email && createUserDto.email !== authUser.email) {
+      throw new UnauthorizedException(
+        'Email mismatch: You can only register with the email verified by your authentication provider.',
+      );
+    }
+
+    // Always use the email from the JWT for security
+    const secureCreateUserDto = {
+      ...createUserDto,
+      email: authUser.email, // Override with JWT email which is verified by Clerk
+    };
+
+    return this.usersService.createUser(authUser, secureCreateUserDto);
   }
 
   @Get()
@@ -220,8 +318,19 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserByIdWithRelations(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithRelations> {
-    return this.usersService.findUserByIdWithRelations(id);
+  findUserByIdWithRelations(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<UserWithRelations> {
+    // Allow users to access their own relation data, but only admins/supervisors can access others
+    if (
+      currentUser.id === id ||
+      currentUser.role === Role.ADMIN ||
+      currentUser.role === Role.SUPERVISOR
+    ) {
+      return this.usersService.findUserByIdWithRelations(id);
+    }
+    throw new UnauthorizedException('You do not have permission to access this user data');
   }
 
   @Patch(':id')
@@ -253,11 +362,17 @@ export class UsersController {
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: User,
   ): Promise<User> {
-    return this.usersService.updateUser(id, updateUserDto);
+    // Allow users to update their own data, but admins can also update other users' data
+    if (currentUser.id === id || currentUser.role === Role.ADMIN) {
+      return this.usersService.updateUser(id, updateUserDto);
+    }
+    throw new UnauthorizedException('You do not have permission to update this user');
   }
 
   @Delete(':id')
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({
     summary: 'Delete user (Soft Delete)',
@@ -341,7 +456,12 @@ export class UsersController {
   async setUserTagsByUserId(
     @Param('userId', ParseUUIDPipe) userId: string,
     @Body() setUserTagsDto: SetUserTagsDto,
+    @CurrentUser() currentUser: User,
   ): Promise<UserTag[]> {
-    return await this.usersService.setUserTagsByUserId(userId, setUserTagsDto);
+    // Allow users to only update their own tags, but admins can also update other users' tags
+    if (currentUser.id === userId || currentUser.role === Role.ADMIN) {
+      return await this.usersService.setUserTagsByUserId(userId, setUserTagsDto);
+    }
+    throw new UnauthorizedException("You do not have permission to update this user's tags");
   }
 }

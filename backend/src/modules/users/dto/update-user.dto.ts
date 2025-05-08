@@ -1,9 +1,7 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateUserDto } from './create-user.dto';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString, IsBoolean } from 'class-validator';
+import { IsEmail, IsOptional, IsString } from 'class-validator';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
+export class UpdateUserDto {
   @ApiPropertyOptional({
     description: 'User email address',
     example: 'updated@fhstp.ac.at',
@@ -35,12 +33,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsString()
   @IsOptional()
   profile_image?: string;
-
-  @ApiPropertyOptional({
-    description: 'Whether user has completed registration',
-    example: true,
-  })
-  @IsBoolean()
-  @IsOptional()
-  is_registered?: boolean;
 }

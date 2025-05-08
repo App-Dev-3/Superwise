@@ -1,24 +1,36 @@
 <script setup lang="ts">
-import type { UseSwipeDirection } from '@vueuse/core'
 import { usePointerSwipe } from '@vueuse/core'
 import { computed, shallowRef } from 'vue'
+
+const emit = defineEmits(['swipeRight', 'swipeLeft'])
+
+defineExpose({
+    reset,
+})
 
 const target = shallowRef<HTMLElement | null>(null)
 const container = shallowRef<HTMLElement | null>(null)
 
-const containerWidth = computed(() => container.value?.offsetWidth)
+const containerWidth = computed(() => container.value?.offsetWidth || 0)
 
 const left = shallowRef('0')
 const opacity = shallowRef(1)
 
+
+const swipeThreshold = ref(30) // Minimum distance to trigger a swipe
+const cardIsAtStartPosition = ref(false)
+
 function reset() {
     left.value = '0'
     opacity.value = 1
+    cardIsAtStartPosition.value = true
 }
 
 const { distanceX, isSwiping } = usePointerSwipe(target, {
     disableTextSelect: true,
-    onSwipe(e: PointerEvent) {
+    threshold: swipeThreshold.value,
+    onSwipe() {
+        cardIsAtStartPosition.value = false
         if (containerWidth.value) {
             if (distanceX.value < 0) {
                 // Swipe right direction (negative distanceX)
@@ -38,42 +50,58 @@ const { distanceX, isSwiping } = usePointerSwipe(target, {
             }
         }
     },
-    onSwipeEnd(e: PointerEvent, direction: UseSwipeDirection) {
+    onSwipeEnd() {
         if (containerWidth.value) {
-            if (distanceX.value < 0 && (Math.abs(distanceX.value) / containerWidth.value) >= 0.5) {
+            // Calculate the ratio relative to container width
+            const ratio = Math.abs(distanceX.value) / containerWidth.value
+            
+            if (distanceX.value < 0 && ratio >= 0.5) {
                 // Swipe right direction threshold reached
                 left.value = '100%'
                 opacity.value = 0
+                emit('swipeRight')
             }
-            else if (distanceX.value > 0 && (distanceX.value / containerWidth.value) >= 0.5) {
+            else if (distanceX.value > 0 && ratio >= 0.5) {
                 // Swipe left direction threshold reached
                 left.value = '-100%'
                 opacity.value = 0
+                emit('swipeLeft')
             }
             else {
                 // Reset if threshold not reached
+                cardIsAtStartPosition.value = true
                 left.value = '0'
                 opacity.value = 1
             }
         }
     },
 })
+
+const backgroundColorClasses = computed(() => {
+    return {
+        'bg-base-100': cardIsAtStartPosition.value,
+        'bg-success': distanceX.value < -swipeThreshold.value/10,
+        'bg-error':  distanceX.value > swipeThreshold.value/10,
+    }
+})
+
 </script>
 
 <template>
-    <div ref="container" class="bg-gray-200 rounded relative w-full h-[80px] m-auto flex items-center justify-center overflow-hidden">
-        <button @click="reset" class="btn">
-            Reset
-        </button>
+    <div class="inline-flex">
         <div
-            ref="target"
-            class="absolute w-full h-full top-0 left-0 bg-[#3eaf7c] flex items-center justify-center"
-            :class="{ 'transition-all duration-200 ease-linear': !isSwiping }"
-            :style="{ left, opacity }"
+            ref="container"
+            class="rounded-3xl relative inline-block overflow-hidden shadow-lg"
+            :class="backgroundColorClasses"
         >
-            <p class="flex text-white items-center">
-                <- Swipe ->
-            </p>
+            <div
+                ref="target"
+                class="relative w-full flex items-center justify-center"
+                :class="{ 'transition-all duration-200 ease-linear': !isSwiping }"
+                :style="{ left, opacity }"
+            >
+                <slot />
+            </div>
         </div>
     </div>
 </template>

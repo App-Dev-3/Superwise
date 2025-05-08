@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class Match {
   @ApiProperty({
     description: 'The unique identifier of the supervisor in this match',
-    example: '5f8d0d55b54764421b7156f2',
+    example: '15d2a5bc-c547-444d-91fb-b1c498ada33c',
   })
   supervisorId: string;
 

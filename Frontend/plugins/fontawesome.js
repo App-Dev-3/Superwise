@@ -2,6 +2,7 @@ import {library} from '@fortawesome/fontawesome-svg-core'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import {
   faArrowLeft,
+  faArrowRight,
   faArrowRightToBracket,
   faCheck,
   faCloudArrowUp,
@@ -36,9 +37,10 @@ library.add(
     faSun,
     faHouse,
     faTriangleExclamation,
-    faCloudArrowUp
+    faCloudArrowUp,
+    faArrowRight
 )
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
+    nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
 })

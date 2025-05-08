@@ -10,6 +10,6 @@
 import { NuxtLink } from "#components";
 
 definePageMeta({
-  layout: "default",
+  layout: "authenticated",
 });
 </script>

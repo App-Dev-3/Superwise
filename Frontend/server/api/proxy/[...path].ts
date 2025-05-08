@@ -38,6 +38,14 @@ export default defineEventHandler(async (event) => {
     headers: headers,
     body
   })
+  if (!response.ok) {
+    const error = await response.json()
+    console.error('API Error:', error)
+    throw createError({
+      statusCode: response.status,
+      statusMessage: error.message,
+    })
+  }
 
   return response.json()  
 })

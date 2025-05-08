@@ -8,12 +8,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(["submit", "step-changed"]);
 
 const currentStep = ref(1);
 
 function next() {
   if (currentStep.value < props.totalSteps) currentStep.value++;
+  emit("step-changed", currentStep.value);
 }
 
 function submit() {
@@ -22,7 +23,7 @@ function submit() {
 </script>
 
 <template>
-  <form class="space-y-6 max-w-md mx-auto p-4" @submit.prevent="submit">
+  <form @submit.prevent="submit">
     <!-- Dynamic slots for each step -->
     <slot :name="`step${currentStep}`" />
 

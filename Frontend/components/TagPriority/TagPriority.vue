@@ -33,7 +33,6 @@ function tagStyles(index) {
 
 
 const sortedTags = ref([...props.tags])
-console.log('sortedTags', sortedTags.value)
 
 function handelChange() {
   emit('update:tags', sortedTags.value)

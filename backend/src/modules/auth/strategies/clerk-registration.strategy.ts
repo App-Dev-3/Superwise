@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { WinstonLoggerService } from '../../../common/logging/winston-logger.service';
+import * as jwksClient from 'jwks-rsa';
 
 @Injectable()
 export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk-registration') {
@@ -11,53 +12,97 @@ export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk
     private readonly configService: ConfigService,
     private readonly logger: WinstonLoggerService,
   ) {
-    // ExtractJwt is a third-party library without proper TypeScript types
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const extractJwtFromBearer = ExtractJwt.fromAuthHeaderAsBearerToken();
+    // Create a JWKS client to fetch the public key
+    const jwksUri = 'https://heroic-python-12.clerk.accounts.dev/.well-known/jwks.json';
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    super({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      jwtFromRequest: extractJwtFromBearer,
-      ignoreExpiration: false,
-      secretOrKeyProvider: (
-        request: unknown,
-        rawJwtToken: string,
-        done: (err: Error | null, secret: string | null) => void,
-      ) => {
-        const secret = this.configService.get<string>('CLERK_JWT_SECRET_KEY');
+    // Create JWKS client for key retrieval
+    const client = jwksClient({
+      jwksUri,
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+    });
 
-        if (!secret) {
-          done(new Error('CLERK_JWT_SECRET_KEY not configured'), null);
-          return;
+    // Function to get the signing key
+    const secretOrKeyProvider = async (request: any, rawJwtToken: string, done: Function) => {
+      try {
+        // Extract the JWT header to get the key ID
+        const tokenParts = rawJwtToken.split('.');
+        if (tokenParts.length < 1) {
+          return done(new UnauthorizedException('Invalid token format'));
         }
 
-        done(null, secret);
+        const header = JSON.parse(Buffer.from(tokenParts[0], 'base64').toString());
+        const kid = header.kid;
+
+        if (!kid) {
+          return done(new UnauthorizedException('No key ID (kid) found in token header'));
+        }
+
+        // Get the signing key from the JWKS endpoint
+        client.getSigningKey(kid, (err: Error, key: any) => {
+          if (err) {
+            logger.error(`Error getting signing key: ${err.message}`, 'ClerkRegistrationStrategy');
+            return done(new UnauthorizedException('Unable to retrieve signing key'));
+          }
+
+          try {
+            if (!key) {
+              return done(new UnauthorizedException('No signing key found'));
+            }
+            const signingKey = key.getPublicKey();
+            done(null, signingKey);
+          } catch (keyErr) {
+            logger.error(
+              `Error extracting public key: ${keyErr.message}`,
+              'ClerkRegistrationStrategy',
+            );
+            done(new UnauthorizedException('Error processing signing key'));
+          }
+        });
+      } catch (error) {
+        logger.error(
+          `JWT validation error: ${error.message}`,
+          error.stack,
+          'ClerkRegistrationStrategy',
+        );
+        done(new UnauthorizedException('Invalid token structure'));
+      }
+    };
+
+    // Initialize passport strategy
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      algorithms: ['RS256'],
+      secretOrKeyProvider,
+      jsonWebTokenOptions: {
+        ignoreNotBefore: true, // Ignore the nbf claim to prevent timing issues
+        algorithms: ['RS256'],
       },
     });
+
+    logger.debug(
+      `Initialized ClerkRegistrationStrategy with JWKS URI: ${jwksUri}`,
+      'ClerkRegistrationStrategy',
+    );
   }
 
   validate(payload: JwtPayload): { clerk_id: string; email: string; exp: number } {
     try {
-      this.logger.debug(
-        `Registration JWT validation for clerk_id: ${payload.sub}, email: ${payload.email}`,
-        'ClerkRegistrationStrategy',
-      );
-
-      // For registration, we only need to extract and return the claims
-      // without looking up the user in the database
+      // For registration, extract and return the claims without DB lookup
       return {
         clerk_id: payload.sub,
-        email: payload.email, // Email from Clerk JWT, verified by Clerk
-        exp: payload.exp, // Include expiration time for consistency
+        email: payload.email,
+        exp: payload.exp,
       };
     } catch (error) {
       this.logger.error(
-        `Registration JWT validation error: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        error instanceof Error ? error.stack : undefined,
+        `Registration validation error: ${error.message}`,
+        error.stack,
         'ClerkRegistrationStrategy',
       );
-      throw error;
+      throw new UnauthorizedException('Invalid token payload');
     }
   }
 }

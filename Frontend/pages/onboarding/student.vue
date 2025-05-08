@@ -1,38 +1,100 @@
 <template>
-  <div class="flex flex-col items-center justify-center h-screen p-4">
-    <h1 class="text-2xl font-semibold mb-6">Welcome to student onboarding</h1>
-    <span v-if="!isLoaded">Loading...</span>
+  <div class="min-h-screen flex flex-col">
+    <app-header :showBack="true" />
+    <div class="flex-1 flex items-center justify-center ">
+      <div class="w-3/4 max-w-md">
+        <multi-step-form
+          :totalSteps=3
+          @submit="handleSubmit()"
+          @step-changed="handleStepChange"
+        >
+          <template #step1>
+            <input-field
+              v-model="userFormData.first_name"
+              label="First Name"
+              placeholder="Max"  
+            ></input-field>
+            <input-field
+              v-model="userFormData.last_name"
+              label="Last Name"
+              placeholder="Mustermann"  
+            ></input-field>
+          </template>
 
-    <button
-      v-else
-      class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-      :disabled="!isLoaded"
-      @click="finishOnboarding"
-    >
-      <span>Finish onboarding</span>
-    </button>
-  </div>
+          <template #step2>
+            <tag-selector
+              :allTags="DbTags"
+              :max-selection=10
+              @update:selectedTags="tags = $event"
+            />
+          </template>
+
+          <template #step3>
+            <TagPriority
+              :tags="tags"
+              @update:tags="tags = $event"
+            />
+          </template>
+        </multi-step-form>
+      </div>
+    </div>
+  </div> 
 </template>
 
 <script setup lang="ts">
-import { useUser } from "@clerk/nuxt/composables";
-import { navigateTo } from "nuxt/app";
+import { onMounted, ref } from 'vue';
+
+import type { UserCreateData, UserData } from '~/shared/types/userInterfaces';
+import type { tagData } from '~/shared/types/tagInterfaces';
+import { useUserStore } from '~/stores/useUserStore'
+
 
 definePageMeta({
   layout: "authenticated",
 });
 
 const { isLoaded, isSignedIn, user } = useUser();
+const  { getTags } = useTagApi();
+const { createUser, addUserTag } = useUserApi();
+const userStore = useUserStore();
+
+const userFormData = ref({} as UserCreateData);
+
+const DbTags = ref([] as tagData[]);
+const tags = ref([] as tagData[]);
+
+async function handleStepChange(step: number): Promise<void> {
+  if (step == 2 && user.value?.primaryEmailAddress) {
+    userFormData.value.email = user.value.primaryEmailAddress.emailAddress; 
+    const res = await createUser(userFormData.value) as UserData;
+    userStore.setUser(res);
+  }
+  console.log(userStore.user)
+}
+
+async function handleSubmit() {
+  console.log('tags', tags.value)
+  addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
+}
+
 
 const finishOnboarding = async () => {
   if (!isLoaded.value || !isSignedIn.value || !user.value) return;
 
   try {
-    await user.value.update({ unsafeMetadata: { onboardingCompleted: true } });
+    await user.value.update({ unsafeMetadata: { onboardingCompleted: false } });
 
-    return navigateTo(`/dashboard`);
+    //return navigateTo(`/dashboard`);
   } catch (err) {
     console.error("Onboarding error:", err);
   }
 };
+
+const fetchAlldata = async () =>{ 
+  DbTags.value = await getTags();
+}
+(async () => {
+  await fetchAlldata();
+})();
+
 </script>

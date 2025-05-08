@@ -33,6 +33,7 @@ function tagStyles(index) {
 
 
 const sortedTags = ref([...props.tags])
+console.log('sortedTags', sortedTags.value)
 
 function handelChange() {
   emit('update:tags', sortedTags.value)
@@ -73,7 +74,7 @@ function handelChange() {
             </div>
 
             <div class="flex-1 px-4 py-2 text-sm font-medium text-center">
-              {{ element }}
+              {{ element.tag_name }}
             </div>
           </div>
         </div>

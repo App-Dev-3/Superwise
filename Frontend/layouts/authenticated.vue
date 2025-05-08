@@ -18,25 +18,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import type { UserData } from "~/shared/types/userInterfaces";
 
 const router = useRouter();
 const route = useRoute();
 const { user, isLoaded } = useUser();
+const { getUserByEmail } = useUserApi();
+
 
 const onboardingRoutes = ["/onboarding/student", "/onboarding/supervisor"];
-
+onMounted(() => {
+ checkLogged() 
+})
 // track whether we've already kicked off a redirect, so we don't flash content
 const redirecting = ref(false);
-
-watch(isLoaded, async (loaded) => {
-  if (!loaded || redirecting.value) return;
+const checkLogged = async () => {
+  if (!isLoaded || redirecting.value) return;
 
   redirecting.value = true;
 
-  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
-  const userRole = user.value?.unsafeMetadata.role || "student"; //get from nestjs
+  let onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
+  let userRole = "STUDENT"; // default to student
+  if (user.value?.primaryEmailAddress?.emailAddress) {
+    let res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
+    userRole = res.role;
+  }
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
   );
@@ -54,5 +62,5 @@ watch(isLoaded, async (loaded) => {
   }
 
   // neither redirect condition matched, so we'll let the slot render
-});
+};
 </script>

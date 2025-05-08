@@ -52,19 +52,15 @@ const goBack = () => {
           <span class="text-sm font-medium opacity-50">Back</span>
         </button>
 
-        <button
-          v-if="props.showUser"
-          class="btn btn-ghost btn-circle"
-          data-test="user-button"
-        >
-          <FontAwesomeIcon icon="user" class="text-xl" />
-        </button>
+        <UserButton v-if="props.showUser" />
       </div>
 
       <ClientOnly>
         <div class="navbar-center">
           <img 
-            :src="colorMode.value === 'dark' ? 'images/appHeader_logo_dark.svg' : 'images/appHeader_logo_light.svg'"
+            :src="colorMode.value === 'dark' ? 
+              '../images/appHeader_logo_dark.svg' 
+              : '../images/appHeader_logo_light.svg'"
             alt="Logo image" 
             class="h-6" >
         </div>

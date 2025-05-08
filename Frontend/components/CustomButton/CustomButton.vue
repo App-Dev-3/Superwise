@@ -63,6 +63,11 @@ const props = defineProps({
             type: String,
             default: "",
         },
+        buttonType: {
+            type: String,
+            default: "button",
+            validator: (value) => ["button", "submit"].includes(value),
+        }
     })
 
     const emit = defineEmits(["click"])
@@ -109,6 +114,7 @@ const props = defineProps({
         <button
             class="btn"
             :class="buttonClasses"
+            :type="props.buttonType"
             @click="props.isActive ? emit('click') : null"
         >
             <span v-if="props.isLoading && (!props.rightIcon || props.leftIcon)" class="loading"/>

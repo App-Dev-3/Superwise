@@ -14,8 +14,12 @@ import { until } from '@vueuse/core';
 
 const { isSignedIn } = useUser();
 
-await until(isSignedIn).toBe(true);
-if (isSignedIn.value) {
-  navigateTo("/dashboard");
+const CheckUserStatus = async () => {
+  await until(isSignedIn).toBe(true);
+  if (isSignedIn.value) {
+    navigateTo("/dashboard");
+  }
 }
+
+CheckUserStatus();
 </script>

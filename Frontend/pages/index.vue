@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 import { NuxtLink } from "#components";
-const { isSignedIn } = useUser();
 
 definePageMeta({
   layout: "default",

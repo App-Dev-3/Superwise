@@ -6,7 +6,6 @@
 
     <SignedIn>
       <div v-if="!isLoaded">Loading…</div>
-
       <!-- Once loaded and redirect logic is done, render the page slot -->
       <div v-else>
         <slot />
@@ -16,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { ref } from "vue";
 import { until } from '@vueuse/core'
 import { useRouter, useRoute } from "vue-router";
 import type { UserData } from "~/shared/types/userInterfaces";

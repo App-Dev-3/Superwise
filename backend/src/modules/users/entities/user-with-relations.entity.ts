@@ -9,7 +9,7 @@ export class UserWithRelations implements User {
   })
   id: string;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'Clerk user ID for authentication (can only be set once)',
     example: 'user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY',
     nullable: true,
@@ -43,7 +43,7 @@ export class UserWithRelations implements User {
   })
   role: Role;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'URL to user profile image (null if not set)',
     example: 'https://example.com/images/profile.jpg',
     nullable: true,

@@ -55,7 +55,7 @@ function removeTag(tag) {
         <custom-tag
           v-for="(tag, index) in selectedTags"
           :key="`selected-${index}`"
-          :text="tag"
+          :text="tag.tag_name"
           color="primary"
           deletable
           @delete="removeTag(tag)"
@@ -82,7 +82,7 @@ function removeTag(tag) {
       <custom-tag
         v-for="(tag, index) in visibleTags"
         :key="`available-${index}`"
-        :text="tag"
+        :text="tag.tag_name"
         color="primary"
         variant="outline"
         clickable

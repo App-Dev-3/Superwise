@@ -6,12 +6,20 @@
         <slot />
       </div>
     </SignedOut>
-
-    <SignedIn>
-      <div>
-        <UserButton />
-        <slot />
-      </div>
-    </SignedIn>
   </div>
 </template>
+
+<script setup lang="ts">
+import { until } from '@vueuse/core';
+
+const { isSignedIn } = useUser();
+
+const CheckUserStatus = async () => {
+  await until(isSignedIn).toBe(true);
+  if (isSignedIn.value) {
+    navigateTo("/dashboard");
+  }
+}
+
+CheckUserStatus();
+</script>

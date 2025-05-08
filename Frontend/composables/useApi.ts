@@ -19,7 +19,9 @@ export const makeRequest = async (endpoint: string, action: string, payload: Rec
   if (!res.ok) {
     const error = await res.json()
     console.error('API Error:', error)
-    throw new Error(`API request failed: ${error.message}`)
-  }
+    throw {
+      statusCode: res.status,
+      message: error.message || 'An unknown error occurred',
+    };  }
   return res.json()
 }

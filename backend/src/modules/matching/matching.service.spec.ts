@@ -196,15 +196,11 @@ describe('MatchingService', () => {
       expect(result[1].compatibilityScore).toBeLessThanOrEqual(1);
 
       // Verify service calls
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(supervisorsService.findAllSupervisors).toHaveBeenCalledWith({
         where: { available_spots: { gt: 0 } },
       });
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith(STUDENT_UUID);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith('user-id-1');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith('user-id-2');
     });
 
@@ -256,7 +252,6 @@ describe('MatchingService', () => {
       await service.calculateAllMatchesForUserId(STUDENT_UUID);
 
       // Verify the tag service was called to fill the cache
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(tagsService.findSimilarTagsByTagId).toHaveBeenCalled();
 
       // Reset the mock call count
@@ -269,7 +264,6 @@ describe('MatchingService', () => {
       await service.calculateAllMatchesForUserId(STUDENT_UUID);
 
       // Verify the tag service was called again after cache reset
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(tagsService.findSimilarTagsByTagId).toHaveBeenCalled();
     });
   });

@@ -3,7 +3,6 @@ import type {UserCreateData} from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {
   const getUserRole = async (data: {email:string}) => {
-    console.log('getUserRole', data)
     return await makeRequest('user/role', 'POST', data) 
   }
 
@@ -23,7 +22,6 @@ export const useUserApi = () => {
   
   //TODO: upload tags to use this endpoint
   const addUserTag = async (data: Record<string, unknown>) => {
-    console.log('addUserTag', data)
     return await makeRequest(`users/${data.id}/tags`, 'PUT', {tags: data.tags})
   }
 

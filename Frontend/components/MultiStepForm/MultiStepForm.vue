@@ -42,7 +42,7 @@ function submit() {
       <CustomButton
         v-else
         text="Start Matching"
-        type="submit"
+        btnType="submit"
         class="w-3/4"
         right-icon="arrow-right"
         data-test="submit-button"

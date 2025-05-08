@@ -63,7 +63,7 @@ const props = defineProps({
             type: String,
             default: "",
         },
-        buttonType: {
+        btnType: {
             type: String,
             default: "button",
             validator: (value) => ["button", "submit"].includes(value),
@@ -114,7 +114,7 @@ const props = defineProps({
         <button
             class="btn"
             :class="buttonClasses"
-            :type="props.buttonType"
+            :type="props.btnType"
             @click="props.isActive ? emit('click') : null"
         >
             <span v-if="props.isLoading && (!props.rightIcon || props.leftIcon)" class="loading"/>

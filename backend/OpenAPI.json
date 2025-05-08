@@ -1035,7 +1035,8 @@
           "clerk_id": {
             "type": "object",
             "description": "User's Clerk ID. Available if the user is registered via Clerk.",
-            "example": "user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY"
+            "example": "user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY",
+            "nullable": true
           },
           "email": {
             "type": "string",
@@ -1065,7 +1066,8 @@
           "profile_image": {
             "type": "object",
             "description": "URL to user profile image",
-            "example": "https://example.com/images/profile.jpg"
+            "example": "https://example.com/images/profile.jpg",
+            "nullable": true
           },
           "is_registered": {
             "type": "boolean",
@@ -1092,10 +1094,12 @@
         },
         "required": [
           "id",
+          "clerk_id",
           "email",
           "first_name",
           "last_name",
           "role",
+          "profile_image",
           "is_registered",
           "is_deleted",
           "created_at",
@@ -1273,10 +1277,12 @@
         },
         "required": [
           "id",
+          "clerk_id",
           "email",
           "first_name",
           "last_name",
           "role",
+          "profile_image",
           "is_registered",
           "is_deleted",
           "created_at",

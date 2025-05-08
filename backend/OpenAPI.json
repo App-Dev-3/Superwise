@@ -1468,11 +1468,6 @@
       "Match": {
         "type": "object",
         "properties": {
-          "studentId": {
-            "type": "string",
-            "description": "The unique identifier of the student in this match",
-            "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
-          },
           "supervisorId": {
             "type": "string",
             "description": "The unique identifier of the supervisor in this match",
@@ -1484,12 +1479,47 @@
             "example": 0.85,
             "minimum": 0,
             "maximum": 1
+          },
+          "bio": {
+            "type": "string",
+            "description": "The supervisor bio",
+            "example": "Professor specializing in artificial intelligence and machine learning"
+          },
+          "tags": {
+            "description": "The supervisor tags",
+            "example": [
+              "Machine Learning",
+              "AI"
+            ],
+            "type": "array",
+            "items": {
+              "type": "array"
+            }
+          },
+          "availableSpots": {
+            "type": "number",
+            "description": "Available supervision spots",
+            "example": 3
+          },
+          "totalSpots": {
+            "type": "number",
+            "description": "Total supervision spots",
+            "example": 5
+          },
+          "pendingRequests": {
+            "type": "number",
+            "description": "Number of pending requests for this supervisor",
+            "example": 2
           }
         },
         "required": [
-          "studentId",
           "supervisorId",
-          "compatibilityScore"
+          "compatibilityScore",
+          "bio",
+          "tags",
+          "availableSpots",
+          "totalSpots",
+          "pendingRequests"
         ]
       }
     }

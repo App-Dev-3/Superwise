@@ -135,8 +135,8 @@ describe('Toast.vue', () => {
         })
 
         await wrapper.find('[data-testid="custom-button"]').trigger('click')
-        expect(wrapper.emitted().close).toBeTruthy()
-        expect(wrapper.emitted().close.length).toBe(1)
+        expect(wrapper.emitted().buttonClick).toBeTruthy()
+        expect(wrapper.emitted().buttonClick.length).toBe(1)
         // Toast should still be visible
         expect(wrapper.find('.alert').exists()).toBe(true)
     })
@@ -162,8 +162,8 @@ describe('Toast.vue', () => {
 
         // Should now be hidden and have emitted close event
         expect(wrapper.find('.alert').exists()).toBe(false)
-        expect(wrapper.emitted().close).toBeTruthy()
-        expect(wrapper.emitted().close.length).toBe(1)
+        expect(wrapper.emitted().buttonClick).toBeTruthy()
+        expect(wrapper.emitted().buttonClick.length).toBe(1)
     })
 
     it('does not disappear if duration is 0', async () => {
@@ -184,7 +184,7 @@ describe('Toast.vue', () => {
 
         // Should still be visible and no close event emitted
         expect(wrapper.find('.alert').exists()).toBe(true)
-        expect(wrapper.emitted().close).toBeFalsy()
+        expect(wrapper.emitted().buttonClick).toBeFalsy()
     })
 
     it('updates visibility when show prop changes', async () => {

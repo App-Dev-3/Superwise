@@ -17,6 +17,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from "vue";
+import { until } from '@vueuse/core'
 import { useRouter, useRoute } from "vue-router";
 import type { UserData } from "~/shared/types/userInterfaces";
 
@@ -25,23 +26,15 @@ const route = useRoute();
 const { user, isLoaded } = useUser();
 const { getUserByEmail } = useUserApi();
 
-
 const onboardingRoutes = ["/onboarding/student", "/onboarding/supervisor"];
-
-onMounted(() => {
-  CheckStatus() 
-})
-
-watch(isLoaded, () => {
-  CheckStatus();
-});
 
 // track whether we've already kicked off a redirect, so we don't flash content
 const redirecting = ref(false);
+
 const CheckStatus = async () => {
-  if (!isLoaded || redirecting.value) return;
 
   redirecting.value = true;
+  await until(isLoaded).toBe(true);
 
   const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
   let userRole = "student"; // default to student
@@ -62,13 +55,13 @@ const CheckStatus = async () => {
   const isOnboardingPage = onboardingRoutes.some((p) =>
     route.path.startsWith(p)
   );
-
+  
   if (!onboardingComplete && !isOnboardingPage) {
     // not onboarded yet → onboarding
     await router.replace(`/onboarding/${userRole}`);
     return;
   }
-
+  
   if (onboardingComplete && isOnboardingPage) {
     // already onboarded but on an onboarding page → send them to dashboard
     await router.replace("/dashboard");
@@ -77,4 +70,5 @@ const CheckStatus = async () => {
 
   // neither redirect condition matched, so we'll let the slot render
 };
+CheckStatus()
 </script>

@@ -1,10 +1,10 @@
 <template>
   <div class="min-h-screen flex flex-col">
-    <app-header :showBack="true" />
+    <app-header :show-back="true" />
     <div class="flex-1 flex items-center justify-center ">
       <div class="w-3/4 max-w-md">
         <multi-step-form
-          :totalSteps=3
+          :total-steps=3
           @submit="handleSubmit()"
           @step-changed="handleStepChange"
         >
@@ -13,19 +13,19 @@
               v-model="userFormData.first_name"
               label="First Name"
               placeholder="Max"  
-            ></input-field>
+            />
             <input-field
               v-model="userFormData.last_name"
               label="Last Name"
               placeholder="Mustermann"  
-            ></input-field>
+            />
           </template>
 
           <template #step2>
             <tag-selector
-              :allTags="DbTags"
+              :all-tags="DbTags"
               :max-selection=10
-              @update:selectedTags="tags = $event"
+              @update:selected-tags="tags = $event"
             />
           </template>
 

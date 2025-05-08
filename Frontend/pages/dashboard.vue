@@ -46,17 +46,17 @@ definePageMeta({
   layout: "authenticated",
 });
 
-const { user, isLoaded } = useUser();
+const { user } = useUser();
 const { getUserByEmail, getMatches, getUserById } = useUserApi();
 const userStore = useUserStore();
 
 type Matches = Awaited<ReturnType<typeof getMatches>>;
-let matches = ref<Matches>([] as Matches);
+const matches = ref<Matches>([] as Matches);
 
 let current_user: UserData | null = userStore.user;
 
 if (!current_user && user.value?.primaryEmailAddress?.emailAddress) {
-  let res = (await getUserByEmail(
+  const res = (await getUserByEmail(
     user.value?.primaryEmailAddress.emailAddress
   )) as UserData;
   userStore.setUser(res);
@@ -65,9 +65,9 @@ if (!current_user && user.value?.primaryEmailAddress?.emailAddress) {
 }
 
 if (current_user !== null) {
-  matches = await getMatches(current_user.id);
+  matches.value = await getMatches(current_user.id);
   console.log(matches);
-} else console.log("noooooooooooooooooooooooooooooooooo");
+}
 
 function navigate(route) {
   dummyRoute.value = route;

@@ -27,11 +27,10 @@ const route = useRoute();
 const { user, isLoaded } = useUser();
 const { getUserByEmail } = useUserApi();
 
-
 const onboardingRoutes = ["/onboarding/student", "/onboarding/supervisor"];
 onMounted(() => {
- checkLogged() 
-})
+  checkLogged();
+});
 // track whether we've already kicked off a redirect, so we don't flash content
 const redirecting = ref(false);
 const checkLogged = async () => {
@@ -39,10 +38,12 @@ const checkLogged = async () => {
 
   redirecting.value = true;
 
-  let onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
+  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
   let userRole = "STUDENT"; // default to student
   if (user.value?.primaryEmailAddress?.emailAddress) {
-    let res = await getUserByEmail(user.value?.primaryEmailAddress.emailAddress) as UserData;
+    const res = (await getUserByEmail(
+      user.value?.primaryEmailAddress.emailAddress
+    )) as UserData;
     userRole = res.role;
   }
   const isOnboardingPage = onboardingRoutes.some((p) =>

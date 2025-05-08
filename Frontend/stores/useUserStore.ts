@@ -1,4 +1,3 @@
-import type { get } from 'http'
 import { defineStore } from 'pinia'
 import type { UserData } from '~/shared/types/userInterfaces'
 

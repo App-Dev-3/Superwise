@@ -12,10 +12,10 @@ import {
   faMoon,
   faSearch,
   faSun,
-  faTriangleExclamation,
-  faUser,
-  faUserGroup,
-  faXmark
+  faHandshakeSimple,
+  faMessage,
+  faArrowRightToBracket,
+  faCheck, faHouse, faCloudArrowUp
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
 

@@ -2,14 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Match {
   @ApiProperty({
-    description: 'The unique identifier of the student in this match',
-    example: '15d2a5bc-c547-444d-91fb-b1c498ada33c',
-  })
-  studentId: string;
-
-  @ApiProperty({
     description: 'The unique identifier of the supervisor in this match',
-    example: '15d2a5bc-c547-444d-91fb-b1c498ada33c',
+    example: '5f8d0d55b54764421b7156f2',
   })
   supervisorId: string;
 
@@ -20,4 +14,33 @@ export class Match {
     maximum: 1,
   })
   compatibilityScore: number;
+
+  @ApiProperty({
+    description: 'The supervisor bio',
+    example: 'Professor specializing in artificial intelligence and machine learning',
+  })
+  bio: string;
+  @ApiProperty({
+    description: 'The supervisor tags',
+    example: ['Machine Learning', 'AI'],
+    isArray: true,
+  })
+  tags: string[];
+  @ApiProperty({
+    description: 'Available supervision spots',
+    example: 3,
+  })
+  availableSpots: number;
+
+  @ApiProperty({
+    description: 'Total supervision spots',
+    example: 5,
+  })
+  totalSpots: number;
+
+  @ApiProperty({
+    description: 'Number of pending requests for this supervisor',
+    example: 2,
+  })
+  pendingRequests: number;
 }

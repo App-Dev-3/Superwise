@@ -19,7 +19,6 @@ export class MatchingService {
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
   ) {}
-
   async calculateAllMatchesForUserId(studentId: string): Promise<Match[]> {
     this.checkCacheExpiration();
     const matches: Match[] = [];
@@ -41,13 +40,25 @@ export class MatchingService {
         supervisorTags,
       );
 
+      const tagNames = await Promise.all(
+        supervisorTags.map(async tag => {
+          const tagInfo = await this.tagsService.findTagById(tag.tag_id);
+          return tagInfo?.tag_name || 'Unknown';
+        }),
+      );
+
       matches.push({
-        studentId,
         supervisorId: supervisor.id,
         compatibilityScore: compatibility_score,
+        bio: supervisor.bio ?? '',
+        tags: tagNames,
+        pendingRequests: 0, // this has to be actually fetched from a service after the request module is done.
+        availableSpots: supervisor.available_spots,
+        totalSpots: supervisor.total_spots,
       });
     }
 
+    matches.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
     return matches;
   }
 

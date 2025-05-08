@@ -13,7 +13,7 @@ import {
   faHandshakeSimple,
   faMessage,
   faArrowRightToBracket,
-  faCheck, faHouse
+  faCheck, faHouse, faCloudArrowUp
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
 
@@ -31,7 +31,8 @@ library.add(
     faCheck,
     faMoon,
     faSun,
-    faHouse
+    faHouse,
+    faCloudArrowUp
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

@@ -853,6 +853,50 @@
           "admin"
         ]
       }
+    },
+    "/match/{userId}": {
+      "get": {
+        "description": "Calculate and retrieve a list of all supervisors with their compatibility scores for a specific student",
+        "operationId": "MatchingController_calculateCompatibilityScore",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User unique identifier (UUID)",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supervisors with compatibility scores for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid User ID format."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        },
+        "summary": "Get all supervisors with compatibility scores for a user",
+        "tags": [
+          "Matching"
+        ]
+      }
     }
   },
   "info": {
@@ -1419,6 +1463,33 @@
         "required": [
           "tags",
           "similarities"
+        ]
+      },
+      "Match": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "string",
+            "description": "The unique identifier of the student in this match",
+            "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
+          },
+          "supervisorId": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor in this match",
+            "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
+          },
+          "compatibilityScore": {
+            "type": "number",
+            "description": "Compatibility score between student and supervisor (0-1)",
+            "example": 0.85,
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "studentId",
+          "supervisorId",
+          "compatibilityScore"
         ]
       }
     }

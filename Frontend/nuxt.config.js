@@ -23,6 +23,10 @@ export default defineNuxtConfig({
     "@nuxtjs/color-mode",
   ],
 
+  runtimeConfig: {
+    nestApiUrl: process.env.NEST_API_URL,
+  },
+
   router: {
     base: "/",
   },

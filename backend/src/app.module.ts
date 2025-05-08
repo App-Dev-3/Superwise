@@ -8,6 +8,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { CommonModule } from './common/common.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SupervisorsModule } from './modules/supervisors/supervisors.module';
+import { MatchingModule } from './modules/matching/matching.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SupervisorsModule } from './modules/supervisors/supervisors.module';
     SupervisorsModule,
     CommonModule,
     AdminModule,
+    MatchingModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

@@ -125,7 +125,7 @@ describe('Toast.vue', () => {
         expect(wrapper.find('[data-testid="custom-button"]').text()).toBe(customButtonText)
     })
 
-    it('emits close event when button is clicked but remains visible', async () => {
+    it('emits buttonClick event when button is clicked and remains visible', async () => {
         const wrapper = mount(Toast, {
             global: {
                 components: {
@@ -137,8 +137,10 @@ describe('Toast.vue', () => {
         await wrapper.find('[data-testid="custom-button"]').trigger('click')
         expect(wrapper.emitted().buttonClick).toBeTruthy()
         expect(wrapper.emitted().buttonClick.length).toBe(1)
-        // Toast should still be visible
+        // Toast should still be visible after button click
         expect(wrapper.find('.alert').exists()).toBe(true)
+        // Should not emit close event when button is clicked
+        expect(wrapper.emitted().close).toBeFalsy()
     })
 
     it('disappears and emits close event after the specified duration', async () => {
@@ -162,8 +164,10 @@ describe('Toast.vue', () => {
 
         // Should now be hidden and have emitted close event
         expect(wrapper.find('.alert').exists()).toBe(false)
-        expect(wrapper.emitted().buttonClick).toBeTruthy()
-        expect(wrapper.emitted().buttonClick.length).toBe(1)
+        expect(wrapper.emitted().close).toBeTruthy()
+        expect(wrapper.emitted().close.length).toBe(1)
+        // Should not emit buttonClick event on auto-close
+        expect(wrapper.emitted().buttonClick).toBeFalsy()
     })
 
     it('does not disappear if duration is 0', async () => {
@@ -184,6 +188,7 @@ describe('Toast.vue', () => {
 
         // Should still be visible and no close event emitted
         expect(wrapper.find('.alert').exists()).toBe(true)
+        expect(wrapper.emitted().close).toBeFalsy()
         expect(wrapper.emitted().buttonClick).toBeFalsy()
     })
 
@@ -208,4 +213,32 @@ describe('Toast.vue', () => {
         // Should now be hidden
         expect(wrapper.find('.alert').exists()).toBe(false)
     })
+
+    it('emits different events for button click and auto-close', async () => {
+        const wrapper = mount(Toast, {
+            props: {
+                duration: 3000
+            },
+            global: {
+                components: {
+                    CustomButton
+                }
+            }
+        })
+
+        // Click button first
+        await wrapper.find('[data-testid="custom-button"]').trigger('click')
+        expect(wrapper.emitted().buttonClick).toBeTruthy()
+        expect(wrapper.emitted().buttonClick.length).toBe(1)
+        expect(wrapper.emitted().close).toBeFalsy()
+
+        // Then wait for auto-close
+        vi.advanceTimersByTime(3000)
+        await nextTick()
+
+        expect(wrapper.emitted().close).toBeTruthy()
+        expect(wrapper.emitted().close.length).toBe(1)
+        expect(wrapper.emitted().buttonClick.length).toBe(1) // Still just one from earlier
+    })
 })
+

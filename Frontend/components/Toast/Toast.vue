@@ -26,7 +26,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['buttonClick']);
+const emit = defineEmits(['buttonClick', 'close']);
 
 // Internal visibility state
 const visible = ref(props.show);
@@ -68,7 +68,7 @@ onMounted(() => {
   if (props.duration > 0) {
     setTimeout(() => {
       visible.value = false;
-      emit('buttonClick');
+      emit('close');
     }, props.duration);
   }
 });

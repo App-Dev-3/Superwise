@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {onMounted, ref, watch} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 
 const props = defineProps({
   show: {
@@ -36,32 +36,19 @@ watch(() => props.show, (newValue) => {
   visible.value = newValue;
 });
 
-// Helper function to get the correct alert class based on type
-const getAlertClass = () => {
-  switch (props.type) {
-    case "success":
-      return 'alert-success';
-    case "error":
-    case "exception":
-      return 'alert-error';
-    default:
-      return 'alert-success';
-  }
-};
+// Helper function to get the correct alert class based on type - now as computed property
+const alertClass = computed(() => ({
+  'alert-success': props.type === 'success' || props.type === undefined,
+  'alert-error': props.type === 'error' || props.type === 'exception',
+}));
 
-// Helper function to get the correct icon based on type
-const getIcon = () => {
-  switch (props.type) {
-    case "success":
-      return 'check';
-    case "error":
-      return 'xmark';
-    case "exception":
-      return 'triangle-exclamation';
-    default:
-      return 'check';
-  }
-};
+
+// Get the actual icon name as a string
+const iconName = computed(() => {
+  if (props.type === 'error') return 'xmark';
+  if (props.type === 'exception') return 'triangle-exclamation';
+  return 'check'; // default for success
+});
 
 // Auto-close toast after duration by changing internal visibility
 onMounted(() => {
@@ -84,9 +71,12 @@ const handleButtonClick = () => {
       v-if="visible"
       class="fixed bottom-18 left-0 right-0 flex justify-center z-50 px-12"
   >
-    <div :class="['alert', getAlertClass(), 'w-full', 'shadow-lg']" role="alert">
-      <FontAwesomeIcon :icon="getIcon()" class="text-xl"/>
-      <span>{{ message }}</span>
+    <div
+        :class="alertClass"
+        class="alert w-full shadow-lg flex"
+        role="alert">
+      <FontAwesomeIcon :icon="iconName" class="text-xl"/>
+      <span class="w-full">{{ message }}</span>
       <CustomButton
           :text="buttonText"
           color="default"

@@ -68,7 +68,10 @@ const cardSizeClasses = computed(() => ({
 </script>
 
 <template>
-  <div class="card card-side bg-base-100 shadow-lg" :class="cardSizeClasses">
+  <div
+    class="card card-side bg-base-100 p-2 w-100 h-auto gap-6 shadow-lg"
+    :class="cardSizeClasses"
+  >
     <figure class="flex-shrink-0 w-24 md:w-32">
       <img
         class="rounded-box w-full h-auto object-cover"
@@ -82,7 +85,7 @@ const cardSizeClasses = computed(() => ({
       <h2 class="card-title">
         <p class="font-bold">{{ props.firstName }} {{ props.lastName }}</p>
         <CustomTag
-          v-if="props.topText"
+          v-if="props.topText || props.topIcon"
           :text="props.topText"
           :right-icon="props.topIcon"
           variant="clear"
@@ -94,11 +97,11 @@ const cardSizeClasses = computed(() => ({
 
       <div class="flex justify-between items-center gap-2">
         <p class="text-base-content/75 truncate w-4/5">
-          {{ previewText }}
+          {{ props.previewText }}
         </p>
         <div class="flex-shrink-0">
           <CustomTag
-            v-if="props.bottomText"
+            v-if="props.bottomText || props.bottomIcon"
             :text="props.bottomText"
             :right-icon="props.bottomIcon"
             variant="clear"

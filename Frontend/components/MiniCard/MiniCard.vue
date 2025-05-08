@@ -49,7 +49,7 @@ const props = defineProps({
 
 <template>
   <div
-      class="flex flex-row gap-3 items-center p-2"
+      class="flex flex-row gap-3 items-center p-2 w-full"
   >
     <div class="avatar">
       <div class="mask mask-squircle w-24">

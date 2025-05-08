@@ -71,6 +71,7 @@ async function handleStepChange(step: number): Promise<void> {
       const res = await createUser(userFormData.value) as UserData;
       userFormData.value = res;
       userStore.setUser(res);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error('Error creating user:', error);
 

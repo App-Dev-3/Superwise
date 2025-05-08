@@ -4,6 +4,7 @@ import { SupervisorsService } from '../supervisors/supervisors.service';
 import { UsersService } from '../users/users.service';
 import { TagsService } from '../tags/tags.service';
 import { UserTag } from '../users/entities/user-tag.entity';
+import { Role } from '@prisma/client';
 
 describe('MatchingService', () => {
   let service: MatchingService;
@@ -13,16 +14,16 @@ describe('MatchingService', () => {
 
   // Sample UUIDs for testing
   const STUDENT_UUID = '123e4567-e89b-12d3-a456-426614174000';
-  const SUPERVISOR_UUID_1 = '123e4567-e89b-12d3-a456-426614174001';
-  const SUPERVISOR_UUID_2 = '123e4567-e89b-12d3-a456-426614174002';
+  const USER_UUID_1 = '123e4567-e89b-12d3-a456-426614174001';
+  const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174002';
   const TAG_UUID_1 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
   const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
   const TAG_UUID_3 = 'b2c3d4e5-f6a7-8901-2345-67890abcdef0';
 
   const mockSupervisors = [
     {
-      id: SUPERVISOR_UUID_1,
-      user_id: 'user-id-1',
+      id: 'supervisor-id-1',
+      user_id: USER_UUID_1,
       bio: 'Test bio 1',
       available_spots: 3,
       total_spots: 5,
@@ -30,11 +31,38 @@ describe('MatchingService', () => {
       updated_at: new Date(),
     },
     {
-      id: SUPERVISOR_UUID_2,
-      user_id: 'user-id-2',
+      id: 'supervisor-id-2',
+      user_id: USER_UUID_2,
       bio: 'Test bio 2',
       available_spots: 2,
       total_spots: 4,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
+
+  const mockUsers = [
+    {
+      id: USER_UUID_1,
+      email: 'john.doe@example.com',
+      first_name: 'John',
+      last_name: 'Doe',
+      role: Role.SUPERVISOR,
+      profile_image: null,
+      is_registered: true,
+      is_deleted: false,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: USER_UUID_1,
+      email: 'jane.smith@example.com',
+      first_name: 'Jane',
+      last_name: 'Smith',
+      role: Role.SUPERVISOR,
+      profile_image: null,
+      is_registered: true,
+      is_deleted: false,
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -71,7 +99,7 @@ describe('MatchingService', () => {
 
   const mockSupervisorTags: UserTag[] = [
     {
-      user_id: 'user-id-1',
+      user_id: USER_UUID_1,
       tag_id: TAG_UUID_1,
       priority: 1,
       tag: {
@@ -84,7 +112,7 @@ describe('MatchingService', () => {
       updated_at: new Date(),
     },
     {
-      user_id: 'user-id-1',
+      user_id: USER_UUID_1,
       tag_id: TAG_UUID_3,
       priority: 2,
       tag: {
@@ -136,6 +164,7 @@ describe('MatchingService', () => {
 
     const usersServiceMock = {
       findUserTagsByUserId: jest.fn(),
+      findUserById: jest.fn(),
     };
 
     const tagsServiceMock = {
@@ -171,9 +200,30 @@ describe('MatchingService', () => {
       supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
       usersService.findUserTagsByUserId.mockImplementation(userId => {
         if (userId === STUDENT_UUID) return Promise.resolve(mockStudentTags);
-        if (userId === 'user-id-1' || userId === 'user-id-2')
+        if (userId === USER_UUID_1 || userId === USER_UUID_2)
           return Promise.resolve(mockSupervisorTags);
         return Promise.resolve([]);
+      });
+      
+      // Create a default user for unknown IDs
+      const defaultUser = {
+        id: 'unknown-id',
+        email: 'unknown@example.com',
+        first_name: 'Unknown',
+        last_name: 'User',
+        role: Role.SUPERVISOR,
+        profile_image: null,
+        is_registered: true,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+      
+      usersService.findUserById.mockImplementation(userId => {
+        if (userId === USER_UUID_1) return Promise.resolve(mockUsers[0]);
+        if (userId === USER_UUID_2) return Promise.resolve(mockUsers[1]);
+        // Return default user instead of null
+        return Promise.resolve(defaultUser);
       });
       tagsService.findSimilarTagsByTagId.mockImplementation(tagId => {
         if (tagId === TAG_UUID_1) return Promise.resolve(mockTagSimilarities);
@@ -216,14 +266,18 @@ describe('MatchingService', () => {
       // Assertions
       expect(result).toHaveLength(2); // Should match number of supervisors
 
-      expect(result[0].supervisorId).toEqual(SUPERVISOR_UUID_1);
+      expect(result[0].supervisor_userId).toEqual(USER_UUID_1);
+      expect(result[0].firstName).toEqual('John');
+      expect(result[0].lastName).toEqual('Doe');
       expect(result[0].bio).toEqual('Test bio 1');
       expect(result[0].availableSpots).toEqual(3);
       expect(result[0].totalSpots).toEqual(5);
       expect(result[0].pendingRequests).toEqual(0);
       expect(result[0].tags).toEqual(['Machine Learning', 'Data Science']);
 
-      expect(result[1].supervisorId).toEqual(SUPERVISOR_UUID_2);
+      expect(result[1].supervisor_userId).toEqual(USER_UUID_2);
+      expect(result[1].firstName).toEqual('Jane');
+      expect(result[1].lastName).toEqual('Smith');
       expect(result[1].bio).toEqual('Test bio 2');
       expect(result[1].availableSpots).toEqual(2);
       expect(result[1].totalSpots).toEqual(4);

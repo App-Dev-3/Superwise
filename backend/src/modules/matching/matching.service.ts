@@ -34,7 +34,9 @@ export class MatchingService {
     const studentTags = await this.usersService.findUserTagsByUserId(studentId);
 
     for (const supervisor of availableSupervisors) {
+      const supervisorUserData = await this.usersService.findUserById(supervisor.user_id);
       const supervisorTags = await this.usersService.findUserTagsByUserId(supervisor.user_id);
+
       const compatibility_score = await this.calculateCompatibilityScore(
         studentTags,
         supervisorTags,
@@ -48,7 +50,9 @@ export class MatchingService {
       );
 
       matches.push({
-        supervisorId: supervisor.id,
+        supervisor_userId: supervisor.user_id,
+        firstName: supervisorUserData?.first_name || '',
+        lastName: supervisorUserData?.last_name || '',
         compatibilityScore: compatibility_score,
         bio: supervisor.bio ?? '',
         tags: tagNames,

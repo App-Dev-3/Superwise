@@ -5,7 +5,19 @@ export class Match {
     description: 'The unique identifier of the supervisor in this match',
     example: '15d2a5bc-c547-444d-91fb-b1c498ada33c',
   })
-  supervisorId: string;
+  supervisor_userId: string;
+
+  @ApiProperty({
+    description: "The supervisor's first name",
+    example: 'John',
+  })
+  firstName: string;
+
+  @ApiProperty({
+    description: "The supervisor's last name",
+    example: 'Smith',
+  })
+  lastName: string;
 
   @ApiProperty({
     description: 'Compatibility score between student and supervisor (0-1)',

@@ -1473,6 +1473,16 @@
             "description": "The unique identifier of the supervisor in this match",
             "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
           },
+          "firstName": {
+            "type": "string",
+            "description": "The supervisor's first name",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "The supervisor's last name",
+            "example": "Smith"
+          },
           "compatibilityScore": {
             "type": "number",
             "description": "Compatibility score between student and supervisor (0-1)",
@@ -1514,6 +1524,8 @@
         },
         "required": [
           "supervisorId",
+          "firstName",
+          "lastName",
           "compatibilityScore",
           "bio",
           "tags",

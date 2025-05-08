@@ -8,6 +8,18 @@ export class Match {
   supervisorId: string;
 
   @ApiProperty({
+    description: "The supervisor's first name",
+    example: 'John',
+  })
+  firstName: string;
+
+  @ApiProperty({
+    description: "The supervisor's last name",
+    example: 'Smith',
+  })
+  lastName: string;
+
+  @ApiProperty({
     description: 'Compatibility score between student and supervisor (0-1)',
     example: 0.85,
     minimum: 0,

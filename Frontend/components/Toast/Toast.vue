@@ -51,15 +51,21 @@ const iconName = computed(() => {
 });
 
 // Auto-close toast after duration by changing internal visibility
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
 onMounted(() => {
   if (props.duration > 0) {
-    setTimeout(() => {
+    timeoutId = setTimeout(() => {
       visible.value = false;
       emit('close');
     }, props.duration);
   }
 });
 
+onBeforeUnmount(() => {
+  if (timeoutId !== null) {
+    clearTimeout(timeoutId);
+  }
+});
 // Just emit the event, don't change visibility
 const handleButtonClick = () => {
   emit('buttonClick');

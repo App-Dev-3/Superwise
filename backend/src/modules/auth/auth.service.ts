@@ -1,17 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { verifyToken } from '@clerk/backend';
 
 /**
- * Service for handling Clerk authentication operations.
+ * This is a placeholder service for future Clerk authentication operations.
  *
- * Note: This service is currently not used in the application.
- * It might be used in the future for additional authentication features.
+ * IMPORTANT: This service is currently NOT USED in the application and is not decorated with @Injectable().
+ * When needed in the future:
+ * 1. Add the @Injectable() decorator
+ * 2. Add to providers array in AuthModule
+ * 3. Inject where needed
+ *
  * For now, authentication is handled directly by the Passport strategies.
  */
-@Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,

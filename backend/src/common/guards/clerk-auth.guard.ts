@@ -29,6 +29,7 @@ export class ClerkAuthGuard extends AuthGuard('clerk-jwt') {
     return super.canActivate(context);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleRequest<TUser = unknown>(err: Error | null, user: TUser, _info: unknown): TUser {
     // Handle errors from the Passport strategy
     if (err || !user) {

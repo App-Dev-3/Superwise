@@ -62,6 +62,7 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/unbound-method': 'off', // Disable unbound-method rule for tests
       'max-len': 'off',
       '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
       '@darraghor/nestjs-typed/api-property-returning-array-should-set-array': 'off',

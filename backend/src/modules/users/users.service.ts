@@ -6,7 +6,6 @@ import { UsersRepository } from './users.repository';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { UserWithRelations } from './entities/user-with-relations.entity';
 import { TagsService } from '../tags/tags.service';
-import { InvalidClerkIdException } from '../../common/exceptions/custom-exceptions/invalid-clerk-id.exception';
 import { UserRegistrationException } from '../../common/exceptions/custom-exceptions/user-registration.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 

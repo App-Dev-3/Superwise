@@ -69,7 +69,8 @@ describe('SupervisorsController', () => {
 
       expect(result).toEqual([mockSupervisor]);
 
-      // Use type assertion to verify the method was called with the right parameters
+      // Instead of using the method directly, refer to the mock function
+
       expect(service.findAllSupervisors).toHaveBeenCalledWith({
         take: 5,
         where: { available_spots: { gt: 0 } },
@@ -86,7 +87,6 @@ describe('SupervisorsController', () => {
 
       expect(result).toEqual(mockSupervisor);
 
-      // Use type assertion to verify the method was called with the right parameters
       expect(service.findSupervisorByUserId).toHaveBeenCalledWith(USER_ID);
     });
   });
@@ -99,7 +99,6 @@ describe('SupervisorsController', () => {
 
       expect(result).toEqual(mockSupervisor);
 
-      // Use type assertion to verify the method was called with the right parameters
       expect(service.findSupervisorById).toHaveBeenCalledWith(SUPERVISOR_ID);
     });
   });

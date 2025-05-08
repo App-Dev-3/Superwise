@@ -50,7 +50,7 @@ describe('SupervisorsService', () => {
       const result = await service.findAllSupervisors({});
 
       expect(result).toEqual([mockSupervisor]);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(repository.findAllSupervisors).toHaveBeenCalledWith({});
     });
   });
@@ -62,7 +62,7 @@ describe('SupervisorsService', () => {
       const result = await service.findSupervisorById('supervisor-id-1');
 
       expect(result).toEqual(mockSupervisor);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(repository.findSupervisorById).toHaveBeenCalledWith('supervisor-id-1');
     });
 
@@ -89,7 +89,7 @@ describe('SupervisorsService', () => {
       const result = await service.createSupervisorProfile(createDto);
 
       expect(result).toEqual(mockSupervisor);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+
       expect(repository.createSupervisorProfile).toHaveBeenCalledWith(createDto);
     });
   });

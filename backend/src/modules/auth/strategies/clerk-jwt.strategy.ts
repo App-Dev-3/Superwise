@@ -18,11 +18,14 @@ export class ClerkJwtStrategy extends PassportStrategy(Strategy, 'clerk-jwt') {
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly logger: WinstonLoggerService,
   ) {
-    // Create extractors outside constructor to avoid ESLint unsafe calls
-    const jwtExtractor = ExtractJwt.fromAuthHeaderAsBearerToken();
+    // ExtractJwt is a third-party library without proper TypeScript types
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const extractJwtFromBearer = ExtractJwt.fromAuthHeaderAsBearerToken();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     super({
-      jwtFromRequest: jwtExtractor,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      jwtFromRequest: extractJwtFromBearer,
       ignoreExpiration: false,
       secretOrKeyProvider: (
         request: unknown,

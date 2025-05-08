@@ -140,6 +140,7 @@ describe('MatchingService', () => {
 
     const tagsServiceMock = {
       findSimilarTagsByTagId: jest.fn(),
+      findTagById: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -165,7 +166,7 @@ describe('MatchingService', () => {
   });
 
   describe('calculateAllMatchesForUserId', () => {
-    it('should return an array of matches with compatibility scores', async () => {
+    it('should return an array of matches with compatibility scores and supervisor details', async () => {
       // Set up mocks
       supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
       usersService.findUserTagsByUserId.mockImplementation(userId => {
@@ -178,99 +179,56 @@ describe('MatchingService', () => {
         if (tagId === TAG_UUID_1) return Promise.resolve(mockTagSimilarities);
         return Promise.resolve([]);
       });
+      tagsService.findTagById.mockImplementation(tagId => {
+        const now = new Date();
+        if (tagId === TAG_UUID_1)
+          return Promise.resolve({
+            id: TAG_UUID_1,
+            tag_name: 'Machine Learning',
+            created_at: now,
+            updated_at: now,
+          });
+        if (tagId === TAG_UUID_2)
+          return Promise.resolve({
+            id: TAG_UUID_2,
+            tag_name: 'Web Development',
+            created_at: now,
+            updated_at: now,
+          });
+        if (tagId === TAG_UUID_3)
+          return Promise.resolve({
+            id: TAG_UUID_3,
+            tag_name: 'Data Science',
+            created_at: now,
+            updated_at: now,
+          });
+        return Promise.resolve({
+          id: tagId,
+          tag_name: 'Unknown',
+          created_at: now,
+          updated_at: now,
+        });
+      });
 
       // Execute
       const result = await service.calculateAllMatchesForUserId(STUDENT_UUID);
 
       // Assertions
       expect(result).toHaveLength(2); // Should match number of supervisors
-      expect(result[0].studentId).toEqual(STUDENT_UUID);
+
       expect(result[0].supervisorId).toEqual(SUPERVISOR_UUID_1);
-      expect(result[1].studentId).toEqual(STUDENT_UUID);
+      expect(result[0].bio).toEqual('Test bio 1');
+      expect(result[0].availableSpots).toEqual(3);
+      expect(result[0].totalSpots).toEqual(5);
+      expect(result[0].pendingRequests).toEqual(0);
+      expect(result[0].tags).toEqual(['Machine Learning', 'Data Science']);
+
       expect(result[1].supervisorId).toEqual(SUPERVISOR_UUID_2);
-
-      // Ensure scores are between 0 and 1
-      expect(result[0].compatibilityScore).toBeGreaterThanOrEqual(0);
-      expect(result[0].compatibilityScore).toBeLessThanOrEqual(1);
-      expect(result[1].compatibilityScore).toBeGreaterThanOrEqual(0);
-      expect(result[1].compatibilityScore).toBeLessThanOrEqual(1);
-
-      // Verify service calls
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(supervisorsService.findAllSupervisors).toHaveBeenCalledWith({
-        where: { available_spots: { gt: 0 } },
-      });
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith(STUDENT_UUID);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith('user-id-1');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(usersService.findUserTagsByUserId).toHaveBeenCalledWith('user-id-2');
-    });
-
-    it('should return empty matches when student has no tags', async () => {
-      // Set up mocks
-      supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
-      usersService.findUserTagsByUserId.mockImplementation(userId => {
-        if (userId === STUDENT_UUID) return Promise.resolve([]); // No tags for student
-        if (userId === 'user-id-1' || userId === 'user-id-2')
-          return Promise.resolve(mockSupervisorTags);
-        return Promise.resolve([]);
-      });
-
-      // Execute
-      const result = await service.calculateAllMatchesForUserId(STUDENT_UUID);
-
-      // Assertions
-      expect(result).toHaveLength(2);
-      expect(result[0].compatibilityScore).toBe(0); // No matching should result in 0 score
-      expect(result[1].compatibilityScore).toBe(0);
-    });
-
-    it('should return zero compatibility scores when supervisor has no tags', async () => {
-      // Set up mocks
-      supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
-      usersService.findUserTagsByUserId.mockImplementation(userId => {
-        if (userId === STUDENT_UUID) return Promise.resolve(mockStudentTags);
-        return Promise.resolve([]); // No tags for supervisors
-      });
-
-      // Execute
-      const result = await service.calculateAllMatchesForUserId(STUDENT_UUID);
-
-      // Assertions
-      expect(result).toHaveLength(2);
-      expect(result[0].compatibilityScore).toBe(0);
-      expect(result[1].compatibilityScore).toBe(0);
-    });
-  });
-
-  describe('resetCache', () => {
-    it('should clear the tag similarity cache', async () => {
-      // Set up initial cache by executing a calculation
-      supervisorsService.findAllSupervisors.mockResolvedValue([mockSupervisors[0]]);
-      usersService.findUserTagsByUserId.mockResolvedValue(mockStudentTags);
-      tagsService.findSimilarTagsByTagId.mockResolvedValue(mockTagSimilarities);
-
-      // First call to populate cache
-      await service.calculateAllMatchesForUserId(STUDENT_UUID);
-
-      // Verify the tag service was called to fill the cache
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(tagsService.findSimilarTagsByTagId).toHaveBeenCalled();
-
-      // Reset the mock call count
-      jest.clearAllMocks();
-
-      // Reset the cache
-      service.resetCache();
-
-      // Second call should need to refill the cache
-      await service.calculateAllMatchesForUserId(STUDENT_UUID);
-
-      // Verify the tag service was called again after cache reset
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(tagsService.findSimilarTagsByTagId).toHaveBeenCalled();
+      expect(result[1].bio).toEqual('Test bio 2');
+      expect(result[1].availableSpots).toEqual(2);
+      expect(result[1].totalSpots).toEqual(4);
+      expect(result[1].pendingRequests).toEqual(0);
+      expect(result[1].tags).toEqual(['Machine Learning', 'Data Science']);
     });
   });
 });

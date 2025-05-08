@@ -4,6 +4,7 @@ import {
   faArrowLeft,
   faArrowRightToBracket,
   faCheck,
+  faCloudArrowUp,
   faEnvelope,
   faHandshakeSimple,
   faHourglass,
@@ -15,8 +16,7 @@ import {
   faTriangleExclamation,
   faUser,
   faUserGroup,
-  faXmark,
-    faCloudArrowUp
+  faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
 

@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <SignedOut>
-      <div>
-        <SignInButton />
-        <slot />
-      </div>
-    </SignedOut>
-  </div>
+    <div class="w-full h-screen flex max-w-3xl m-auto flex-col">
+        <SignedOut>
+            <slot/>
+        </SignedOut>
+
+        <SignedIn>
+            <slot/>
+        </SignedIn>
+    </div>
 </template>
 
 <script setup lang="ts">

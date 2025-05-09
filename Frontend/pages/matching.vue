@@ -30,9 +30,9 @@
                 :message="toast.message"
                 :duration="3000"
                 button-text="undo"
-                @buttonClick="handleButtonClick()"
+                @button-click="handleButtonClick()"
                 @close="toast.visible = false"
-              > </Toast>
+              />
             </SwipeContainer>
           </div>
           

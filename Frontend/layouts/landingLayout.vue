@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-import { SignedIn, SignedOut } from '#components';
 import { until } from '@vueuse/core';
 
 const { isSignedIn, isLoaded } = useUser();

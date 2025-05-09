@@ -33,7 +33,6 @@
 
 <script setup>
 import {useColorMode} from "#imports";
-import { until } from '@vueuse/core';
 
 definePageMeta({
     layout: "landing-layout",

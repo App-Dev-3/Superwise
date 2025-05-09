@@ -10,7 +10,7 @@
               class="w-full max-w-96">
         </ClientOnly>
       </div>
-      <div class="py-16 flex flex-col gap-4">
+      <div class="py-16 flex flex-col gap-2">
         <div class="text-x-small">
           In order to find the perfect supervisor for you, we hace to collect and process some data.
         </div>

@@ -3,21 +3,21 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import {
   faArrowLeft,
   faArrowRight,
-  faSearch,
-  faEnvelope,
+  faArrowRightToBracket,
+  faCheck,
+  faCloudArrowUp,
+  faEnvelope, faFileDownload,
   faHandshakeSimple,
   faHourglass,
   faHouse,
   faMessage,
   faMoon,
-  faSun,
+  faSearch,
+  faSun, faTrashCan,
   faTriangleExclamation,
   faUser,
   faUserGroup,
-  faXmark,
-  faCheck,
-  faCloudArrowUp,
-  faArrowRightToBracket
+  faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
 
@@ -38,7 +38,10 @@ library.add(
     faSun,
     faHouse,
     faTriangleExclamation,
-    faCloudArrowUp
+    faCloudArrowUp,
+    faArrowRight,
+    faFileDownload,
+    faTrashCan
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

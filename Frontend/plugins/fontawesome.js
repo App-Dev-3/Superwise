@@ -6,14 +6,14 @@ import {
   faArrowRightToBracket,
   faCheck,
   faCloudArrowUp,
-  faEnvelope,
+  faEnvelope, faFileDownload,
   faHandshakeSimple,
   faHourglass,
   faHouse,
   faMessage,
   faMoon,
   faSearch,
-  faSun,
+  faSun, faTrashCan,
   faTriangleExclamation,
   faUser,
   faUserGroup,
@@ -39,7 +39,9 @@ library.add(
     faHouse,
     faTriangleExclamation,
     faCloudArrowUp,
-    faArrowRight
+    faArrowRight,
+    faFileDownload,
+    faTrashCan
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

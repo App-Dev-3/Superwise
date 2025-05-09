@@ -33,10 +33,12 @@
 
 <script setup>
 import {useColorMode} from "#imports";
+import { until } from '@vueuse/core';
+
+definePageMeta({
+    layout: "landing-layout",
+});
 
 const colorMode = useColorMode();
 
-definePageMeta({
-    layout: "landingLayout",
-});
 </script>

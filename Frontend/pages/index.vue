@@ -26,24 +26,14 @@
                     text="Continue"
                 />
             </SignInButton>
-
-
         </div>
-
-
     </div>
 </template>
 
 <script setup>
 import {useColorMode} from "#imports";
-import {useRouter} from 'vue-router';
 
 const colorMode = useColorMode();
-const router = useRouter();
-
-const navigateToNext = () => {
-    router.push('/onboarding');
-};
 
 definePageMeta({
     layout: "default",

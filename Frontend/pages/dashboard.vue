@@ -4,12 +4,12 @@
             <AppHeader show-search show-user />
             <StatusBar :step="1" class="mt-4" />
             <div class="my-auto mx-auto max-w-7xl w-full p-12">
-                <ActionCard button-text="Start Matching!" card-type="primary">
+                <ActionCard button-text="Start Matching!" card-type="primary" @action-button-clicked="navigate('/matching')">
                     <div class="flex flex-col w-full items-center p-3">
                         <h2 class="text-xl mx-4 py-8">Find your supervisor now!</h2>
                         <CardStack :amount="matches.length">
                             <SupervisorCard
-                                size="lg"
+                                size="xs"
                                 :first-name="matches[0].firstName"
                                 :last-name="matches[0].lastName"
                                 :tags="matches[0].tags"
@@ -71,6 +71,7 @@ if (userStore.user !== null) {
 
 function navigate(route: string) {
     dummyRoute.value = route;
+    navigateTo(route);
     console.log("Navigating to:", route);
 }
 

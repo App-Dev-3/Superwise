@@ -11,6 +11,12 @@ actions: {
   },
   clearSupervisors() {
     this.supervisors = []
+  },
+  removeSupervisor(supervisorId: string) {
+    this.supervisors = this.supervisors.filter(supervisor => supervisor.supervisor_userId !== supervisorId)
+  },
+  addSupervisor(supervisor: SupervisorData) {
+    this.supervisors.push(supervisor)
   }
 },
 })

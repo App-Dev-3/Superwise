@@ -53,6 +53,8 @@ const goBack = () => {
         </button>
 
         <UserButton v-if="props.showUser" />
+
+        <AppThemeToggle class="ml-5"/>
       </div>
 
       <ClientOnly>

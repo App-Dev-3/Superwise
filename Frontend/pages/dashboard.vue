@@ -6,6 +6,7 @@
             <div class="my-auto mx-auto max-w-7xl w-full p-12">
                 <ActionCard button-text="Start Matching!" card-type="primary">
                     <div class="flex flex-col w-full items-center p-3">
+                        <h2 class="text-xl mx-4 py-8">Find your supervisor now!</h2>
                         <CardStack :amount="matches.length">
                             <SupervisorCard
                                 size="lg"

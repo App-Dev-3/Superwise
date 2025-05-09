@@ -1,5 +1,6 @@
 <template>
     <div class="w-full h-screen flex flex-col justify-center items-center p-8 gap-4">
+        <UserButton/>
         <ClientOnly>
             <img
                 :src="colorMode.value === 'dark' ? 'images/appLanding_logo_dark.svg' : 'images/appLanding_logo_light.svg'"
@@ -36,6 +37,6 @@ import {useColorMode} from "#imports";
 const colorMode = useColorMode();
 
 definePageMeta({
-    layout: "default",
+    layout: "landingLayout",
 });
 </script>

@@ -9,9 +9,9 @@
             <SwipeContainer
                 v-for="(supervisor, index) in supervisorStore.supervisors"
                 :key="supervisor.supervisor_userId || index"
-                @swipeLeft="handleSwipeLeft"
-                @swipeRight="handleSwipeRight"
                 class="mb-4"
+                @swipe-left="handleSwipeLeft"
+                @swipe-right="handleSwipeRight"
             >
               <SupervisorCard
                 size="xl"

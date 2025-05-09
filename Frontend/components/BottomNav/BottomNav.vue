@@ -34,7 +34,7 @@ const bottomNavButtons = [
 </script>
 
 <template>
-    <div class="dock max-w-7xl w-full mx-auto">
+    <div class="dock max-w-3xl w-full mx-auto">
         <button
             v-for="button in bottomNavButtons"
             :key="button.route"

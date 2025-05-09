@@ -25,12 +25,17 @@ export const useUserApi = () => {
     return await makeRequest(`users/${data.id}/tags`, 'PUT', {tags: data.tags})
   }
 
+  const getMatches = async (data: string) => {
+    return await makeRequest(`match/${data}`, 'GET');
+  }
+
   return {
     getUserRole,
     createUser,
     getUserByEmail,
     getUserById,
-    addUserTag
+    addUserTag,
+    getMatches
   }
 
 }

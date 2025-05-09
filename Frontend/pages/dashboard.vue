@@ -9,10 +9,12 @@
                         <CardStack :amount="matches.length">
                             <SupervisorCard
                                 size="lg"
+                                :first-name="matches[0].firstName"
+                                :last-name="matches[0].lastName"
                                 :tags="matches[0].tags"
                                 :current-capacity="matches[0].availableSpots"
                                 :max-capacity="matches[0].totalSpots"
-                                :similarity-score="matches[0].compatibilityScore"
+                                :similarity-score="Math.round(matches[0].compatibilityScore * 100)"
                                 name="Hello name"
                                 image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                                 :description="matches[0].bio"
@@ -22,7 +24,7 @@
                 </ActionCard>
             </div>
 
-            <div class="max-w-7xl w-full">
+            <div class="">
                 <BottomNav
                     :active-route="dummyRoute"
                     :always-show-labels="false"
@@ -35,12 +37,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import BottomNav from "../components/BottomNav/BottomNav.vue";
-import AppHeader from "../components/AppHeader/AppHeader.vue";
-import StatusBar from "../components/StatusBar/StatusBar.vue";
-import ActionCard from "../components/ActionCard/ActionCard.vue";
 import { useUserStore } from "~/stores/useUserStore";
+import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { UserData } from "~/shared/types/userInterfaces";
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 
 definePageMeta({
     layout: "authenticated",
@@ -49,24 +49,23 @@ definePageMeta({
 const { user } = useUser();
 const { getUserByEmail, getMatches} = useUserApi();
 const userStore = useUserStore();
+const supervisorStore = useSupervisorStore();
 
-type Matches = Awaited<ReturnType<typeof getMatches>>;
-const matches = ref<Matches>([] as Matches);
+const matches = ref([] as SupervisorData[]);
 
-let current_user: UserData | null = userStore.user;
-
-if (!current_user && user.value?.primaryEmailAddress?.emailAddress) {
+if (!userStore.user && user.value?.primaryEmailAddress?.emailAddress) {
     const res = (await getUserByEmail(
         user.value?.primaryEmailAddress.emailAddress
     )) as UserData;
     userStore.setUser(res);
 
-    current_user = res;
 }
 
-if (current_user !== null) {
-    matches.value = await getMatches(current_user.id);
-    console.log(matches);
+if (userStore.user !== null) {
+  const res = await getMatches(userStore.user.id) as SupervisorData[];
+  supervisorStore.setSupervisors(res);
+  matches.value = res;
+  console.log('matches', matches.value);
 }
 
 function navigate(route: string) {

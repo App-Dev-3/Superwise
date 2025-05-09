@@ -10,24 +10,32 @@
                 v-for="(supervisor, index) in supervisorStore.supervisors"
                 :key="supervisor.supervisor_userId || index"
                 class="mb-4"
-                @swipe-left="handleSwipeLeft"
-                @swipe-right="handleSwipeRight"
+                @swipe-left="handleSwipeLeft(supervisor)"
+                @swipe-right="handleSwipeRight(supervisor)"
             >
               <SupervisorCard
-                size="xl"
-                :first-name="supervisorStore.supervisors[0].firstName"
-                :last-name="supervisorStore.supervisors[0].lastName"
-                :tags="supervisorStore.supervisors[0].tags"
-                :current-capacity="supervisorStore.supervisors[0].availableSpots"
-                :max-capacity="supervisorStore.supervisors[0].totalSpots"
-                :similarity-score="Math.round(supervisorStore.supervisors[0].compatibilityScore * 100)"
+                size="md"
+                :first-name="supervisor.firstName"
+                :last-name="supervisor.lastName"
+                :tags="supervisor.tags"
+                :current-capacity="supervisor.availableSpots"
+                :max-capacity="supervisor.totalSpots"
+                :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
                 image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                :description="supervisorStore.supervisors[0].bio"
+                :description="supervisor.bio"
               />
-
-
+              <Toast
+                v-if="toast.visible"
+                :type="toast.type"
+                :message="toast.message"
+                :duration="3000"
+                button-text="undo"
+                @buttonClick="handleButtonClick()"
+                @close="toast.visible = false"
+              > </Toast>
             </SwipeContainer>
           </div>
+          
           <div class="">
               <BottomNav
                   :active-route="dummyRoute"
@@ -44,6 +52,8 @@
 import { useUserStore } from '~/stores/useUserStore'
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { ref } from 'vue';
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
+
 
 definePageMeta({
     layout: "authenticated",
@@ -54,16 +64,43 @@ const supervisorStore = useSupervisorStore();
 
 console.log('userStore', userStore.user);
 console.log('supervisorStore', supervisorStore.supervisors);
+const removedSupervisor = ref(null);
+const toast = ref({
+    visible: false,
+    type: "success",
+    message: "This is a toast message",
+});
 
-const handleSwipeLeft = () => {
+const handleSwipeLeft = (supervisor: SupervisorData) => {
     console.log("Swiped left!");
+    toast.value = {
+        visible: true,
+        type: "error",
+        message: "Supervisor has been dismissed",
+    };
+    removedSupervisor.value = supervisor;
+    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
+    console.log("removed: ", supervisorStore.supervisors);
+
+
     // Handle the left swipe action here
 };
-const handleSwipeRight = () => {
+const handleSwipeRight = (supervisor: SupervisorData) => {
     console.log("Swiped right!");
+    toast.value = {
+        visible: true,
+        type: "success",
+        message: "Chat request has been sent",
+    };
+    removedSupervisor.value = supervisor;
+    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
     // Handle the right swipe action here
 };
 
+const handleButtonClick = () => {
+  toast.value.visible = false;
+  supervisorStore.addSupervisor(removedSupervisor.value);
+};
 
 
 

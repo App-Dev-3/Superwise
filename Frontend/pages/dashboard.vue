@@ -9,7 +9,7 @@
                         <h2 class="text-xl mx-4 py-8">Find your supervisor now!</h2>
                         <CardStack :amount="matches.length">
                             <SupervisorCard
-                                size="lg"
+                                size="xs"
                                 :first-name="matches[0].firstName"
                                 :last-name="matches[0].lastName"
                                 :tags="matches[0].tags"

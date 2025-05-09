@@ -64,12 +64,10 @@ const CheckStatus = async () => {
   }
   
   if (onboardingComplete && isOnboardingPage) {
-    console.log(route.path, " here");
     // already onboarded but on an onboarding page → send them to dashboard
     await router.replace("/dashboard");
     return;
   }
-  console.log(route.path, " there");
 
   // neither redirect condition matched, so we'll let the slot render
 };

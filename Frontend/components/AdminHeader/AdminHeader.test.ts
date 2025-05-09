@@ -79,11 +79,11 @@ describe('AdminHeader', () => {
     });
 
 
-    it('displays "Upload" text in the header', () => {
+    it('displays no text in the header if no prop is passed', () => {
         const wrapper = mount(AdminHeader);
 
         // Check if the text content is "Upload"
-        expect(wrapper.find('span').text()).toBe('Upload');
+        expect(wrapper.find('span').text()).toBe('');
     });
 
     it('validates variant prop correctly', () => {
@@ -95,7 +95,7 @@ describe('AdminHeader', () => {
         });
         expect(validWrapper.props().variant).toBe('upload');
 
-        // Instead of accessing internal Vue structure, we test the behavior
+        // Instead of accessing the internal Vue structure, we test the behavior
         // Set up console warning spy
         const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
         });
@@ -109,12 +109,6 @@ describe('AdminHeader', () => {
         // We can't directly test the validator function, but we can check 
         // that Vue doesn't warn for valid variants
         expect(warnSpy).not.toHaveBeenCalled();
-
-        // For invalid variant, Vue should issue a validation warning
-        mount(AdminHeader, {props: {variant: 'invalid' as string}});
-
-        // Expect a warning for invalid prop
-        expect(warnSpy).toHaveBeenCalled();
 
         // Clean up
         warnSpy.mockRestore();

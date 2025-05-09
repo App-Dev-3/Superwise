@@ -4,13 +4,16 @@ import {computed} from "vue";
 
 const router = useRouter();
 
-const props = defineProps({
-  variant: {
-    type: String,
-    default: "default",
-    validator: (value) => ["default", "upload", "download", "delete"].includes(value as string),
-  },
+interface Props {
+    variant?: "default" | "upload" | "download" | "delete";
+    headerText?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    variant: "default",
+    headerText: "",
 });
+
 
 const headerBG = computed(() => ({
   'bg-base-100': props.variant === 'default',
@@ -29,7 +32,6 @@ const colorText = computed(() => ({
 const goBack = () => {
   router.back();
 };
-
 </script>
 
 <template>
@@ -38,7 +40,6 @@ const goBack = () => {
       :class="headerBG"
       class="w-full flex items-center p-4 gap-4 shadow z-10"
   >
-
     <CustomButton
         :class="colorText"
         color="default"
@@ -49,11 +50,6 @@ const goBack = () => {
     />
     <span
         :class="colorText"
-        class="text-head bg-info-soft">Upload</span>
+        class="text-head bg-info-soft">{{ props.headerText }}</span>
   </div>
-
 </template>
-
-<style scoped>
-
-</style>

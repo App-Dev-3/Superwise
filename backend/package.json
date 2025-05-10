@@ -36,6 +36,7 @@
     "jwks-rsa": "^3.2.0",
     "nest-winston": "^1.10.2",
     "nodemailer": "^6.10.1",
+    "npm": "^11.3.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",

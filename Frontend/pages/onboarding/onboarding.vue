@@ -10,21 +10,20 @@ onMounted(async() => {
   const { isLoaded, isSignedIn, user } = useUser();
   
   await until(isLoaded).toBe(true);
-  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
 
+  const userEmail = user.value?.primaryEmailAddress?.emailAddress;
+  let role = "student"; // default to student
+  console.log("issue occuring form here" );
+  if (!userEmail) return; 
   try {
-    const userEmail = user.value?.primaryEmailAddress?.emailAddress;
-    let role = "student"; // default to student
-    console.log("issue occuring form here" );
-    if (!userEmail) return; 
     const res = await getUserByEmail( userEmail ) as UserData;
     role = res.role;
     console.log("redirecting to onboarding page");
-    navigateTo(`/onboarding/${res.role}`);
     
   } catch (error) {
     console.error("Error getting user role:", error);
   }
+  navigateTo(`/onboarding/${role}`);
 });
 
 </script>

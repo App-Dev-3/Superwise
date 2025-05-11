@@ -34,6 +34,10 @@ function tagStyles(index) {
 
 const sortedTags = ref([...props.tags])
 
+onMounted(() => {
+  handelChange()
+});
+
 function handelChange() {
   const prioritized = sortedTags.value.map((tag, index) => ({
     tag_id: tag.id, 

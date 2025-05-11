@@ -43,10 +43,6 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { UserData } from "~/shared/types/userInterfaces";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 
-definePageMeta({
-    layout: "authenticated",
-});
-
 const { user } = useUser();
 const { getUserByEmail, getMatches} = useUserApi();
 const userStore = useUserStore();

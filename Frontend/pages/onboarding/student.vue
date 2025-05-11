@@ -43,16 +43,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { navigateTo } from '#app';
 
 import type { UserCreateData, UserData } from '~/shared/types/userInterfaces';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import { useUserStore } from '~/stores/useUserStore'
-
-
-definePageMeta({
-  layout: "authenticated",
-});
 
 const { isLoaded, isSignedIn, user } = useUser();
 const  { getTags } = useTagApi();
@@ -75,7 +69,7 @@ async function handleStepChange(step: number): Promise<void> {
     } catch (error: any) {
       console.error('Error creating user:', error);
 
-      if (error.statusCode === 409 && error.message.includes('unique constraint')) {
+      if (error.statusCode === 409 && error.message.includes('Unique constraint violation')) {
         console.warn('User already registered. Skipping registration.');
         finishOnboarding();
       } else {

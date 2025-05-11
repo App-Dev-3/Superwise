@@ -30,9 +30,9 @@
                 :message="toast.message"
                 :duration="3000"
                 button-text="undo"
-                @button-click="handleButtonClick()"
+                @buttonClick="handleButtonClick()"
                 @close="toast.visible = false"
-              />
+              > </Toast>
             </SwipeContainer>
           </div>
           
@@ -53,11 +53,6 @@ import { useUserStore } from '~/stores/useUserStore'
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { ref } from 'vue';
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
-
-
-definePageMeta({
-    layout: "authenticated",
-});
 
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();

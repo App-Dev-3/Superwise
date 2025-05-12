@@ -10,8 +10,8 @@ interface CustomToggleProps {
 
 const props = withDefaults(defineProps<CustomToggleProps>(), {
   checked: false,
-  offIcon: undefined,
-  onIcon: undefined,
+  offIcon: "",
+  onIcon: "",
 });
 
 const emit = defineEmits<{
@@ -45,12 +45,14 @@ const toggle = (event: Event) => {
         @change="toggle"
     >
     <FontAwesomeIcon
-        :icon="onIcon as string"
+        v-if="onIcon"
+        :icon="onIcon"
         aria-label="enabled"
         class="opacity-75 !h-3"
     />
     <FontAwesomeIcon
-        :icon="offIcon as string"
+        v-if="offIcon"
+        :icon="offIcon"
         aria-label="disabled"
         class="opacity-75 !h-3"
     />

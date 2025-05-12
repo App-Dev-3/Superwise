@@ -49,6 +49,7 @@ describe('MatchingService', () => {
       last_name: 'Doe',
       role: Role.SUPERVISOR,
       profile_image: null,
+      clerk_id: null,
       is_registered: true,
       is_deleted: false,
       created_at: new Date(),
@@ -61,6 +62,7 @@ describe('MatchingService', () => {
       last_name: 'Smith',
       role: Role.SUPERVISOR,
       profile_image: null,
+      clerk_id: null,
       is_registered: true,
       is_deleted: false,
       created_at: new Date(),
@@ -204,7 +206,7 @@ describe('MatchingService', () => {
           return Promise.resolve(mockSupervisorTags);
         return Promise.resolve([]);
       });
-      
+
       // Create a default user for unknown IDs
       const defaultUser = {
         id: 'unknown-id',
@@ -213,12 +215,13 @@ describe('MatchingService', () => {
         last_name: 'User',
         role: Role.SUPERVISOR,
         profile_image: null,
+        clerk_id: null,
         is_registered: true,
         is_deleted: false,
         created_at: new Date(),
         updated_at: new Date(),
       };
-      
+
       usersService.findUserById.mockImplementation(userId => {
         if (userId === USER_UUID_1) return Promise.resolve(mockUsers[0]);
         if (userId === USER_UUID_2) return Promise.resolve(mockUsers[1]);

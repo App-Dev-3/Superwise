@@ -2,13 +2,13 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {computed} from 'vue';
 
-interface props {
+interface CustomToggleProps {
   checked: boolean;
   offIcon?: string;
   onIcon?: string;
 }
 
-const props = withDefaults(defineProps<props>(), {
+const props = withDefaults(defineProps<CustomToggleProps>(), {
   checked: false,
 });
 

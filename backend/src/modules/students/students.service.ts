@@ -17,13 +17,13 @@ export class StudentsService {
     return student;
   }
 
-  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations> {
+  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations | null> {
     const student = await this.studentsRepository.findStudentByIdWithRelations(id);
 
     if (!student) {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
-    return student as StudentWithRelations;
+    return student;
   }
 
   async findStudentByUserId(userId: string): Promise<Student> {

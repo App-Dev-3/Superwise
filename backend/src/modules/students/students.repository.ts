@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, Student } from '@prisma/client';
+import { StudentWithRelations } from './entities/student-with-relations.entity';
 
 @Injectable()
 export class StudentsRepository {
@@ -12,7 +13,7 @@ export class StudentsRepository {
     });
   }
 
-  async findStudentByIdWithRelations(id: string): Promise<any> {
+  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations | null> {
     return this.prisma.student.findUnique({
       where: { id },
       include: {

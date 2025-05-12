@@ -85,7 +85,7 @@ export class UserWithRelations implements User {
     example: {
       id: '123e4567-e89b-12d3-a456-426614174000',
       user_id: '123e4567-e89b-12d3-a456-426614174000',
-      thesis_idea: 'AI-based recommendation system for supervisor matching',
+      thesis_description: 'AI-based recommendation system for supervisor matching',
       created_at: '2023-01-01T00:00:00Z',
       updated_at: '2023-01-01T00:00:00Z',
     },

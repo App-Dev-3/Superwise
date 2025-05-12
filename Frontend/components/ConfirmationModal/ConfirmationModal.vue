@@ -1,7 +1,10 @@
 <script setup lang="ts">
     import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+    import {ref} from "vue";
 
     interface Props {
+        // The id of the component that will be linked to this modal. This MUST BE UNIQUE,
+        // as modals get closed by ID references! Could be a UUID etc.
         linkedComponentId: string;
         image?: string;
         headline: string;
@@ -27,11 +30,17 @@
 
     const dontShowAgain = ref(false);
 
+    const closeModal = () => {
+        const modal = document.getElementById(props.linkedComponentId) as HTMLDialogElement;
+        if (modal) modal.close();
+    };
+
     const handleCancel = () => {
         emit('abort');
         if (dontShowAgain.value) {
             emit('dontShowAgain');
         }
+        closeModal();
     }
 
     const handleConfirm = () => {
@@ -39,11 +48,12 @@
         if (dontShowAgain.value) {
             emit('dontShowAgain');
         }
+        closeModal();
     }
 </script>
 
 <template>
-    <dialog :id="props.linkedComponentId" class="modal">
+    <dialog :id="props.linkedComponentId" class="modal" @cancel="handleCancel">
         <div class="modal-box w-11/12 max-w-3xl">
             <div class="w-full flex justify-between mb-8">
                 <h3 class="text-2xl font-bold">{{ props.headline }}</h3>
@@ -68,10 +78,10 @@
                 </label>
             </div>
             
-            <form method="dialog" class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2">
                 <CustomButton block size="xl" :text="props.cancelButtonText" variant="ghost" color="default" @click="handleCancel"/>
                 <CustomButton :left-icon="props.confirmButtonIcon" block size="xl" :color="props.confirmButtonColor" :text="props.confirmButtonText" variant="soft" @click="handleConfirm"/>
-            </form>
+            </div>
         </div>
     </dialog>
 </template>

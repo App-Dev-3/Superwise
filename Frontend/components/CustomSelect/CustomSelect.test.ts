@@ -4,9 +4,9 @@ import CustomSelect from './CustomSelect.vue';
 
 describe('CustomSelect', () => {
     const options = [
-        {value: 'option1', label: 'Option 1'},
-        {value: 'option2', label: 'Option 2'},
-        {value: 'option3', label: 'Option 3'}
+        {key: 'option1', value: 'Option 1'},
+        {key: 'option2', value: 'Option 2'},
+        {key: 'option3', value: 'Option 3'}
     ];
 
     it('renders properly', () => {
@@ -43,8 +43,8 @@ describe('CustomSelect', () => {
         expect(optionElements.length).toBe(options.length);
 
         options.forEach((option, index) => {
-            expect(optionElements[index].text()).toBe(option.label);
-            expect(optionElements[index].attributes('value')).toBe(String(option.value));
+            expect(optionElements[index].text()).toBe(option.value);
+            expect(optionElements[index].attributes('value')).toBe(String(option.key));
         });
     });
 
@@ -56,7 +56,8 @@ describe('CustomSelect', () => {
             }
         });
 
-        expect(wrapper.find('select').element.value).toBe('option2');
+        const selected = wrapper.find('option[value="option2"]');
+        expect(selected.element.selected).toBe(true);
     });
 
     it('emits update:modelValue event when an option is selected', async () => {
@@ -74,8 +75,8 @@ describe('CustomSelect', () => {
 
     it('works with numeric values', async () => {
         const numericOptions = [
-            {value: 1, label: 'Option 1'},
-            {value: 2, label: 'Option 2'}
+            {key: 1, value: 'Option 1'},
+            {key: 2, value: 'Option 2'}
         ];
 
         const wrapper = mount(CustomSelect, {
@@ -85,7 +86,8 @@ describe('CustomSelect', () => {
             }
         });
 
-        expect(wrapper.find('select').element.value).toBe('1');
+        const selected = wrapper.find('option[value="1"]');
+        expect(selected.element.selected).toBe(true);
 
         await wrapper.find('select').setValue('2');
         const emittedEvents = wrapper.emitted('update:modelValue');

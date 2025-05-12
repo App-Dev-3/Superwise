@@ -4,8 +4,9 @@ import { CreateStudentDto } from './create-student.dto';
 
 export class UpdateStudentDto extends PartialType(CreateStudentDto) {
   @ApiPropertyOptional({
-    description: 'The student thesis description or research interests',
+    description: "Brief description of the student's thesis or research interests",
     example: 'AI-based recommendation system for supervisor matching',
+    maxLength: 2000,
   })
   @IsOptional()
   @IsString()

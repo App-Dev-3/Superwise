@@ -1,8 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Student as PrismaStudent, User, SupervisionRequest, ChatRequest } from '@prisma/client';
+import { User, SupervisionRequest, ChatRequest, Student } from '@prisma/client';
 import { User as UserEntity } from '../../users/entities/user.entity';
 
-export class StudentWithRelations implements PrismaStudent {
+export class StudentWithRelations implements Student {
   @ApiProperty({
     description: 'Student unique identifier',
     example: '123e4567-e89b-12d3-a456-426614174000',

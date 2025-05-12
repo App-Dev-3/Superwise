@@ -48,6 +48,7 @@ export class StudentWithRelations implements PrismaStudent {
   @ApiPropertyOptional({
     description: 'Supervision requests sent by this student',
     type: 'array',
+    isArray: true,
     items: {
       type: 'object',
       properties: {
@@ -65,6 +66,7 @@ export class StudentWithRelations implements PrismaStudent {
   @ApiPropertyOptional({
     description: 'Chat requests sent by this student',
     type: 'array',
+    isArray: true,
     items: {
       type: 'object',
       properties: {

@@ -16,6 +16,7 @@ import { UpdateStudentDto } from './dto/update-student.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { StudentWithRelations } from './entities/student-with-relations.entity';
 
 @ApiTags('students')
 @Controller('students')
@@ -46,6 +47,18 @@ export class StudentsController {
   @ApiResponse({ status: 404, description: 'Student not found' })
   async findStudentByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.studentsService.findStudentByUserId(userId);
+  }
+
+  @Get(':id/relations')
+  @ApiOperation({ summary: 'Get a student by ID with all relations' })
+  @ApiParam({ name: 'id', description: 'Student ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns a student profile with relations',
+  })
+  @ApiResponse({ status: 404, description: 'Student not found' })
+  async findStudentByIdWithRelations(@Param('id', ParseUUIDPipe) id: string) {
+    return this.studentsService.findStudentByIdWithRelations(id);
   }
 
   @Get(':id')

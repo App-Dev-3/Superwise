@@ -12,6 +12,17 @@ export class StudentsRepository {
     });
   }
 
+  async findStudentByIdWithRelations(id: string): Promise<any> {
+    return this.prisma.student.findUnique({
+      where: { id },
+      include: {
+        user: true,
+        supervision_requests: true,
+        chat_requests: true,
+      },
+    });
+  }
+
   async findStudentByUserId(userId: string): Promise<Student | null> {
     return this.prisma.student.findUnique({
       where: { user_id: userId },

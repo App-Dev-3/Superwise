@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { StudentsRepository } from './students.repository';
 import { Prisma, Student } from '@prisma/client';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { StudentWithRelations } from './entities/student-with-relations.entity';
 
 @Injectable()
 export class StudentsService {
@@ -14,6 +15,15 @@ export class StudentsService {
       throw new NotFoundException(`Student with ID ${id} not found`);
     }
     return student;
+  }
+
+  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations> {
+    const student = await this.studentsRepository.findStudentByIdWithRelations(id);
+
+    if (!student) {
+      throw new NotFoundException(`Student with ID ${id} not found`);
+    }
+    return student as StudentWithRelations;
   }
 
   async findStudentByUserId(userId: string): Promise<Student> {

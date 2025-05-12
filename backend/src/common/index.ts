@@ -14,3 +14,4 @@ export * from './exceptions/custom-exceptions/user-registration.exception';
 export * from './exceptions/custom-exceptions/discarded-user.exception';
 export * from './exceptions/custom-exceptions/supervisor-capacity.exception';
 export * from './exceptions/custom-exceptions/request-already-exists.exception';
+export * from './exceptions/custom-exceptions/student-thesis-limit.exception';

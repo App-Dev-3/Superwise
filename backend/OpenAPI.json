@@ -852,6 +852,145 @@
         ]
       }
     },
+    "/students": {
+      "get": {
+        "operationId": "StudentsController_findAllStudents",
+        "parameters": [
+          {
+            "name": "take",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns an array of student profiles"
+          }
+        },
+        "summary": "Get all students with optional filtering",
+        "tags": [
+          "students"
+        ]
+      },
+      "post": {
+        "operationId": "StudentsController_createStudentProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStudentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Student profile created successfully"
+          }
+        },
+        "summary": "Create a new student profile",
+        "tags": [
+          "students"
+        ]
+      }
+    },
+    "/students/user/{userId}": {
+      "get": {
+        "operationId": "StudentsController_findStudentByUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "User ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a student profile"
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        },
+        "summary": "Get a student by User ID",
+        "tags": [
+          "students"
+        ]
+      }
+    },
+    "/students/{id}": {
+      "get": {
+        "operationId": "StudentsController_findStudentById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Student ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a student profile"
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        },
+        "summary": "Get a student by ID",
+        "tags": [
+          "students"
+        ]
+      },
+      "patch": {
+        "operationId": "StudentsController_updateStudentProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Student ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStudentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Student profile updated successfully"
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        },
+        "summary": "Partially update a student profile",
+        "tags": [
+          "students"
+        ]
+      }
+    },
     "/admin/tags/bulk-import": {
       "post": {
         "operationId": "AdminController_bulkImport",
@@ -1500,6 +1639,26 @@
             "type": "number",
             "description": "Total spots for supervision",
             "example": 5
+          }
+        }
+      },
+      "CreateStudentDto": {
+        "type": "object",
+        "properties": {
+          "thesis_description": {
+            "type": "string",
+            "description": "The student thesis description or research interests",
+            "example": "AI-based recommendation system for supervisor matching"
+          }
+        }
+      },
+      "UpdateStudentDto": {
+        "type": "object",
+        "properties": {
+          "thesis_description": {
+            "type": "string",
+            "description": "The student thesis description or research interests",
+            "example": "AI-based recommendation system for supervisor matching"
           }
         }
       },

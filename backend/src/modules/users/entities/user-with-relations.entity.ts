@@ -10,6 +10,13 @@ export class UserWithRelations implements User {
   id: string;
 
   @ApiProperty({
+    description: 'Clerk user ID for authentication (can only be set once)',
+    example: 'user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY',
+    nullable: true,
+  })
+  clerk_id: string | null;
+
+  @ApiProperty({
     description: 'User email address',
     example: 'studentId@fhstp.ac.at',
     format: 'email',

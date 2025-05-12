@@ -1,5 +1,5 @@
 import { Role } from '@prisma/client';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class User {
   @ApiProperty({
@@ -7,6 +7,13 @@ export class User {
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   id: string;
+
+  @ApiProperty({
+    description: "User's Clerk ID. Available if the user is registered via Clerk.",
+    example: 'user_2VgdKDGF1Y3oMf4QmIaYM0uyvlY',
+    nullable: true,
+  })
+  clerk_id: string | null;
 
   @ApiProperty({ description: 'User email address', example: 'studentId@fhstp.ac.at' })
   email: string;
@@ -24,14 +31,15 @@ export class User {
   })
   role: Role;
 
-  @ApiPropertyOptional({
+  @ApiProperty({
     description: 'URL to user profile image',
     example: 'https://example.com/images/profile.jpg',
+    nullable: true,
   })
-  profile_image?: string | null;
+  profile_image: string | null;
 
   @ApiProperty({
-    description: 'Whether user has completed registration',
+    description: 'Whether user has completed registration and is linked to clerk auth provider',
     example: true,
   })
   is_registered: boolean;

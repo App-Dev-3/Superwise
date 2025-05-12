@@ -860,6 +860,7 @@
             "name": "take",
             "required": false,
             "in": "query",
+            "description": "Limit the number of students returned",
             "schema": {
               "type": "number"
             }
@@ -867,7 +868,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns an array of student profiles"
+            "description": "Returns an array of student profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get all students with optional filtering",
@@ -880,6 +891,7 @@
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "Student profile creation data",
           "content": {
             "application/json": {
               "schema": {
@@ -890,7 +902,17 @@
         },
         "responses": {
           "201": {
-            "description": "Student profile created successfully"
+            "description": "Student profile created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Student profile already exists for this user"
           }
         },
         "summary": "Create a new student profile",
@@ -907,21 +929,65 @@
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "Unique identifier of the user",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a student profile"
+            "description": "Returns a student profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
           },
           "404": {
             "description": "Student not found"
           }
         },
         "summary": "Get a student by User ID",
+        "tags": [
+          "students"
+        ]
+      }
+    },
+    "/students/{id}/relations": {
+      "get": {
+        "operationId": "StudentsController_findStudentByIdWithRelations",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Unique identifier of the student profile",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns a student profile with relations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StudentWithRelations"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Student not found"
+          }
+        },
+        "summary": "Get a student by ID with all relations",
         "tags": [
           "students"
         ]
@@ -935,15 +1001,23 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Student ID",
+            "description": "Unique identifier of the student",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a student profile"
+            "description": "Returns a student profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
           },
           "404": {
             "description": "Student not found"
@@ -961,14 +1035,16 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "Student ID",
+            "description": "Unique identifier of the student",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "requestBody": {
           "required": true,
+          "description": "Student profile update data",
           "content": {
             "application/json": {
               "schema": {
@@ -979,7 +1055,17 @@
         },
         "responses": {
           "200": {
-            "description": "Student profile updated successfully"
+            "description": "Student profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Student"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to update this profile"
           },
           "404": {
             "description": "Student not found"
@@ -1642,13 +1728,120 @@
           }
         }
       },
+      "Student": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Student unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "thesis_description": {
+            "type": "object",
+            "description": "Brief description of thesis or research interests",
+            "example": "AI-based recommendation system for supervisor matching",
+            "nullable": true
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user this student profile belongs to",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the student profile was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the student profile was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "thesis_description",
+          "user_id",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "StudentWithRelations": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Student unique identifier",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "thesis_description": {
+            "type": "object",
+            "description": "Brief description of thesis or research interests",
+            "example": "AI-based recommendation system for supervisor matching",
+            "nullable": true
+          },
+          "user_id": {
+            "type": "string",
+            "description": "ID of the user this student profile belongs to",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the student profile was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the student profile was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "user": {
+            "description": "Associated user data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/User"
+              }
+            ]
+          },
+          "supervision_requests": {
+            "description": "Supervision requests sent by this student",
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "chat_requests": {
+            "description": "Chat requests sent by this student",
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "thesis_description",
+          "user_id",
+          "created_at",
+          "updated_at"
+        ]
+      },
       "CreateStudentDto": {
         "type": "object",
         "properties": {
           "thesis_description": {
             "type": "string",
-            "description": "The student thesis description or research interests",
-            "example": "AI-based recommendation system for supervisor matching"
+            "description": "Brief description of the student's thesis or research interests",
+            "example": "AI-based recommendation system for supervisor matching",
+            "maxLength": 2000
           }
         }
       },
@@ -1657,8 +1850,9 @@
         "properties": {
           "thesis_description": {
             "type": "string",
-            "description": "The student thesis description or research interests",
-            "example": "AI-based recommendation system for supervisor matching"
+            "description": "Brief description of the student's thesis or research interests",
+            "example": "AI-based recommendation system for supervisor matching",
+            "maxLength": 2000
           }
         }
       },

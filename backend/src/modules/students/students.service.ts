@@ -17,7 +17,7 @@ export class StudentsService {
     return student;
   }
 
-  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations | null> {
+  async findStudentByIdWithRelations(id: string): Promise<StudentWithRelations> {
     const student = await this.studentsRepository.findStudentByIdWithRelations(id);
 
     if (!student) {

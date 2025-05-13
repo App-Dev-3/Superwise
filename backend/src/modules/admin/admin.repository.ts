@@ -14,15 +14,19 @@ export class AdminRepository {
     message: string;
     tagsProcessed: number;
     similaritiesReplaced: number;
+    duplicateTagsSkipped: number;
+    duplicateSimsSkipped: number;
   }> {
     return this.prisma.$transaction(
       async tx => {
+        const normalizedTags = tags.map(tag => tag.toLowerCase());
+
         const existingTags = await tx.tag.findMany({
-          where: { tag_name: { in: tags } },
+          where: { tag_name: { in: normalizedTags } },
         });
 
         const existingTagNames = new Set(existingTags.map(tag => tag.tag_name));
-        const newTags = tags.filter(tag => !existingTagNames.has(tag));
+        const newTags = normalizedTags.filter(tag => !existingTagNames.has(tag));
 
         if (newTags.length > 0) {
           await tx.tag.createMany({
@@ -32,7 +36,7 @@ export class AdminRepository {
         }
 
         const syncedTags = await tx.tag.findMany({
-          where: { tag_name: { in: tags } },
+          where: { tag_name: { in: normalizedTags } },
         });
 
         await tx.tagSimilarity.deleteMany({});
@@ -41,14 +45,14 @@ export class AdminRepository {
         syncedTags.forEach(tag => tagMap.set(tag.tag_name, tag.id));
 
         const similaritiesData = similarities.map(sim => {
-          const tagA_id = tagMap.get(sim.field1);
-          const tagB_id = tagMap.get(sim.field2);
+          const tagA_id = tagMap.get(sim.field1.toLowerCase());
+          const tagB_id = tagMap.get(sim.field2.toLowerCase());
 
           if (!tagA_id) {
-            throw new BadRequestException("Tag '${sim.field1}' not found in provided tags list.");
+            throw new BadRequestException(`Tag '${sim.field1}' not found in provided tags list.`);
           }
           if (!tagB_id) {
-            throw new BadRequestException("Tag '${sim.field2}' not found in provided tags list.");
+            throw new BadRequestException(`Tag '${sim.field2}' not found in provided tags list.`);
           }
 
           return {
@@ -72,6 +76,8 @@ export class AdminRepository {
           message: `${newTags.length} new tags added, ${existingTags.length} tags already existed`,
           tagsProcessed: newTags.length,
           similaritiesReplaced: replacedCount,
+          duplicateTagsSkipped: tags.length - new Set(tags).size,
+          duplicateSimsSkipped: similarities.length - replacedCount,
         };
       },
       {

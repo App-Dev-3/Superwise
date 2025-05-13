@@ -31,14 +31,14 @@ const toggle = (event: Event) => {
 <template>
 
   <input
-      v-show="!hasIcons"
+      v-if="!hasIcons"
       :checked="checked"
       class="toggle"
       type="checkbox"
       @change="toggle"
   >
 
-  <label v-show="hasIcons" class="toggle text-base-content">
+  <label v-else class="toggle text-base-content">
     <input
         :checked="checked"
         type="checkbox"

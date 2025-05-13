@@ -8,6 +8,7 @@ import { TagsModule } from './modules/tags/tags.module';
 import { CommonModule } from './common/common.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { SupervisorsModule } from './modules/supervisors/supervisors.module';
+import { StudentsModule } from './modules/students/students.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
@@ -20,6 +21,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     UsersModule,
     TagsModule,
     SupervisorsModule,
+    StudentsModule,
     CommonModule,
     AdminModule,
     MatchingModule,

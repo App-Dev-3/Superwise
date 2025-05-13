@@ -7,6 +7,7 @@ import {
   Patch,
   Query,
   UnauthorizedException,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { SupervisorsService } from './supervisors.service';
 import { ApiOperation, ApiTags, ApiQuery, ApiParam, ApiResponse } from '@nestjs/swagger';
@@ -50,7 +51,7 @@ export class SupervisorsController {
     description: 'Returns a supervisor profile',
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
-  async findSupervisorByUserId(@Param('userId') userId: string) {
+  async findSupervisorByUserId(@Param('userId', ParseUUIDPipe) userId: string) {
     return this.supervisorsService.findSupervisorByUserId(userId);
   }
 
@@ -62,7 +63,7 @@ export class SupervisorsController {
     description: 'Returns a supervisor profile',
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
-  async findSupervisorById(@Param('id') id: string) {
+  async findSupervisorById(@Param('id', ParseUUIDPipe) id: string) {
     return this.supervisorsService.findSupervisorById(id);
   }
 
@@ -78,6 +79,7 @@ export class SupervisorsController {
   }
 
   @Patch(':id')
+  @Roles(Role.SUPERVISOR, Role.ADMIN)
   @ApiOperation({ summary: 'Partially update a supervisor profile' })
   @ApiParam({ name: 'id', description: 'Supervisor ID' })
   @ApiResponse({
@@ -86,7 +88,7 @@ export class SupervisorsController {
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
   async updateSupervisorProfile(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSupervisorDto: UpdateSupervisorDto,
     @CurrentUser() currentUser: User,
   ) {

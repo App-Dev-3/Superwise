@@ -3,19 +3,19 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {computed} from 'vue';
 
 interface CustomToggleProps {
-  checked?: boolean;
+  modelValue?: boolean;
   offIcon?: string;
   onIcon?: string;
 }
 
 const props = withDefaults(defineProps<CustomToggleProps>(), {
-  checked: false,
+  modelValue: false,
   offIcon: "",
   onIcon: "",
 });
 
 const emit = defineEmits<{
-  (event: 'update:checked', value: boolean): void;
+  (event: 'update:modelValue', value: boolean): void;
 }>();
 
 const hasIcons = computed(() => {
@@ -24,7 +24,7 @@ const hasIcons = computed(() => {
 
 const toggle = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit('update:checked', target.checked);
+  emit('update:modelValue', target.checked);
 };
 </script>
 
@@ -32,7 +32,7 @@ const toggle = (event: Event) => {
 
   <input
       v-if="!hasIcons"
-      :checked="checked"
+      :checked="modelValue"
       class="toggle"
       type="checkbox"
       @change="toggle"
@@ -40,7 +40,7 @@ const toggle = (event: Event) => {
 
   <label v-else class="toggle text-base-content">
     <input
-        :checked="checked"
+        :checked="modelValue"
         type="checkbox"
         @change="toggle"
     >

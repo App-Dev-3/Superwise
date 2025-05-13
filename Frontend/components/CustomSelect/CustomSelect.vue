@@ -6,13 +6,15 @@ interface Option {
 
 interface CustomSelectProps {
   placeholder?: string;
-  options?: Option[];
+  options?: Option[]
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   modelValue?: string | number;
 }
 
 const props = withDefaults(defineProps<CustomSelectProps>(), {
   placeholder: '',
   options: () => [],
+  size: 'md',
   modelValue: ''
 });
 
@@ -20,6 +22,15 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | number];
 }>();
 
+const selectSize = computed(() => {
+  return {
+    'xs': 'select-xs',
+    'sm': 'select-sm',
+    'md': 'select-md',
+    'lg': 'select-lg',
+    'xl': 'select-xl'
+  }[props.size];
+})
 const handleSelect = (event: Event) => {
   const rawValue = (event.target as HTMLSelectElement).value;
   const option = props.options?.find(opt => String(opt.key) === rawValue);
@@ -30,8 +41,9 @@ const handleSelect = (event: Event) => {
 
 <template>
   <select
+      :class="selectSize"
       :title="props?.placeholder?.toString()||props.modelValue?.toString() || ''"
-      class="select"
+      class="select w-fit"
       @change="handleSelect"
   >
     <option v-if="props.placeholder !== ''" :selected="props.modelValue === ''" disabled title="placeholder" value="">

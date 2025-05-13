@@ -33,10 +33,6 @@
 <script setup>
 import {useColorMode} from "#imports";
 
-definePageMeta({
-    layout: "landing-layout",
-});
-
 const colorMode = useColorMode();
 
 </script>

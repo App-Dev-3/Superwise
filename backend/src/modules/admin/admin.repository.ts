@@ -17,7 +17,6 @@ export class AdminRepository {
   }> {
     return this.prisma.$transaction(
       async tx => {
-    
         const existingTags = await tx.tag.findMany({
           where: { tag_name: { in: tags } },
         });
@@ -63,14 +62,15 @@ export class AdminRepository {
         if (similaritiesData.length > 0) {
           const result = await tx.tagSimilarity.createMany({
             data: similaritiesData,
+            skipDuplicates: true,
           });
           replacedCount = result.count;
         }
 
         return {
           success: true,
-          message: 'Tags and similarities imported successfully',
-          tagsProcessed: syncedTags.length,
+          message: `${newTags.length} new tags added, ${existingTags.length} tags already existed`,
+          tagsProcessed: newTags.length,
           similaritiesReplaced: replacedCount,
         };
       },

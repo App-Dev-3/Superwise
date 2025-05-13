@@ -4,6 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 import { WinstonLoggerService } from './common/logging/winston-logger.service';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -13,7 +14,7 @@ async function bootstrap() {
   // Use our custom Winston logger
   const logger = app.get(WinstonLoggerService);
   app.useLogger(logger);
-
+  app.use(json({ limit: '50mb' })); // added this because the payload of bulk tag upload was too large.
   // Add validation pipe for all requests
   app.useGlobalPipes(
     new ValidationPipe({

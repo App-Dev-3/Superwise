@@ -91,7 +91,7 @@ describe('AdminService', () => {
       // Execute & assert
       await expect(service.bulkImport(mockDto)).rejects.toThrow(BadRequestException);
       await expect(service.bulkImport(mockDto)).rejects.toThrow(
-        /Tag 'javascript' from similarities not found in provided tags list/,
+        /Tag 'javascript' not found in provided tags list./,
       );
     });
 

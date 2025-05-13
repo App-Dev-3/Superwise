@@ -30,7 +30,7 @@ const handleSelect = (event: Event) => {
 
 <template>
   <select class="select" @change="handleSelect">
-    <option v-if="placeholder !== ''" disabled :selected="!props.modelValue" value="">{{ props.placeholder }}</option>
+    <option v-if="placeholder !== ''" disabled :selected="props.modelValue === ''" value="">{{ props.placeholder }}</option>
     <option
         v-for="option in props.options" :key="option.key" :selected="props.modelValue === option.key"
         :value="option.key">

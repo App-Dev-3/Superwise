@@ -21,7 +21,9 @@ const emit = defineEmits<{
 }>();
 
 const handleSelect = (event: Event) => {
-  const value = (event.target as HTMLSelectElement).value;
+  const rawValue = (event.target as HTMLSelectElement).value;
+  const option = props.options?.find(opt => String(opt.key) === rawValue);
+  const value = option && typeof option.key === 'number' ? Number(rawValue) : rawValue;
   emit('update:modelValue', value);
 };
 </script>

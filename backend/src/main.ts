@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 import { WinstonLoggerService } from './common/logging/winston-logger.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true, // Buffer logs until our custom logger is available

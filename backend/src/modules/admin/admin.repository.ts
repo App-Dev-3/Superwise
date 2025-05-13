@@ -17,12 +17,20 @@ export class AdminRepository {
   }> {
     return this.prisma.$transaction(
       async tx => {
-        await tx.tag.deleteMany({});
-
-        await tx.tag.createMany({
-          data: tags.map(name => ({ tag_name: name })),
-          skipDuplicates: false,
+    
+        const existingTags = await tx.tag.findMany({
+          where: { tag_name: { in: tags } },
         });
+
+        const existingTagNames = new Set(existingTags.map(tag => tag.tag_name));
+        const newTags = tags.filter(tag => !existingTagNames.has(tag));
+
+        if (newTags.length > 0) {
+          await tx.tag.createMany({
+            data: newTags.map(name => ({ tag_name: name })),
+            skipDuplicates: true,
+          });
+        }
 
         const syncedTags = await tx.tag.findMany({
           where: { tag_name: { in: tags } },

@@ -59,7 +59,7 @@ describe('AdminService', () => {
       // Setup mock for bulkImport with the correct return structure
       mockBulkImport.mockResolvedValue({
         success: true,
-        message: 'Tags and similarities imported successfully',
+        message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
       });
@@ -71,7 +71,7 @@ describe('AdminService', () => {
       expect(mockBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
       expect(result).toEqual({
         success: true,
-        message: 'Tags and similarities imported successfully',
+        message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
       });
@@ -85,9 +85,7 @@ describe('AdminService', () => {
 
       // Mock the repository method to throw the expected error
       mockBulkImport.mockRejectedValue(
-        new BadRequestException(
-          "Tag 'javascript' from similarities not found in provided tags list.",
-        ),
+        new BadRequestException(`Tag 'javascript' not found in provided tags list.`),
       );
 
       // Execute & assert

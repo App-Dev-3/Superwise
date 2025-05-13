@@ -92,7 +92,7 @@ describe('CustomSelect', () => {
         await wrapper.find('select').setValue('2');
         const emittedEvents = wrapper.emitted('update:modelValue');
         expect(emittedEvents).toBeTruthy();
-        expect(emittedEvents?.[0]).toEqual(['2']);
+        expect(emittedEvents?.[0]).toEqual([2]);
     });
 });
 

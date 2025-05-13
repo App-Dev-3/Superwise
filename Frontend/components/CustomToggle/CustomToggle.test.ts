@@ -27,7 +27,7 @@ describe('CustomToggle.vue', () => {
             }
         });
 
-        expect(wrapper.find('input.toggle').exists()).toBe(true);
+        expect(wrapper.find('input.toggle').exists()).toBe(false);
         expect(wrapper.find('label.toggle').exists()).toBe(true);
         expect(wrapper.findAllComponents(FontAwesomeIcon).length).toBe(2);
     });

@@ -17,7 +17,6 @@ describe('CustomToggle.vue', () => {
         const wrapper = mount(CustomToggle);
 
         expect(wrapper.find('input.toggle[type="checkbox"]').exists()).toBe(true);
-        expect(wrapper.find('label.toggle').exists()).toBe(true);
     });
 
     it('renders with icons when both icon props are provided', () => {

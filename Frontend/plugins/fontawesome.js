@@ -6,14 +6,21 @@ import {
   faArrowRightToBracket, faBan,
   faCheck,
   faCloudArrowUp,
-  faEnvelope, faFileDownload,
+  faCopy,
+  faEnvelope,
+  faEye,
+  faFileDownload,
+  faGear,
   faHandshakeSimple,
   faHourglass,
   faHouse,
+  faInfoCircle,
   faMessage,
   faMoon,
+  faPhone,
   faSearch,
-  faSun, faTrashCan,
+  faSun,
+  faTrashCan,
   faTriangleExclamation,
   faUser,
   faUserGroup,
@@ -42,9 +49,14 @@ library.add(
     faArrowRight,
     faFileDownload,
     faTrashCan,
+    faCopy,
+    faGear,
+    faInfoCircle,
+    faPhone,
+    faEye,
     faBan
 )
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
+    nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
 })

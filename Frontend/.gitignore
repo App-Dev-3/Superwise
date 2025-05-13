@@ -27,4 +27,4 @@ logs
 .sw.*
 
 # Ignore Test Page
-pages/prototype.vue
+/pages/prototype.vue

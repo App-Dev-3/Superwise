@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import {
   faArrowLeft,
   faArrowRight,
-  faArrowRightToBracket,
+  faArrowRightToBracket, faBan,
   faCheck,
   faCloudArrowUp,
   faEnvelope, faFileDownload,
@@ -41,7 +41,8 @@ library.add(
     faCloudArrowUp,
     faArrowRight,
     faFileDownload,
-    faTrashCan
+    faTrashCan,
+    faBan
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

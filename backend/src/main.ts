@@ -4,17 +4,18 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 import { WinstonLoggerService } from './common/logging/winston-logger.service';
-import { json } from 'express';
-
+import { NestExpressApplication } from '@nestjs/platform-express';
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true, // Buffer logs until our custom logger is available
   });
 
   // Use our custom Winston logger
   const logger = app.get(WinstonLoggerService);
   app.useLogger(logger);
-  app.use(json({ limit: '50mb' }));
+  app.useBodyParser('json', { limit: '20mb' });
+  app.useBodyParser('urlencoded', { extended: true, limit: '20mb' });
+
   // Add validation pipe for all requests
   app.useGlobalPipes(
     new ValidationPipe({

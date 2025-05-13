@@ -53,6 +53,8 @@ describe('AdminController', () => {
         message: 'Tags and similarities imported successfully',
         tagsProcessed: 3,
         similaritiesReplaced: 1,
+        duplicateTagsSkipped: 0,
+        duplicateSimsSkipped: 0,
       };
 
       // Setup mock
@@ -97,6 +99,8 @@ describe('AdminController', () => {
         message: 'Tags and similarities imported successfully',
         tagsProcessed: 0,
         similaritiesReplaced: 0,
+        duplicateTagsSkipped: 0,
+        duplicateSimsSkipped: 0,
       };
 
       // Setup mock

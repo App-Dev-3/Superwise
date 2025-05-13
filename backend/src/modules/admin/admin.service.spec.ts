@@ -62,6 +62,8 @@ describe('AdminService', () => {
         message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
+        duplicateTagsSkipped: 0,
+        duplicateSimsSkipped: 0,
       });
 
       // Execute
@@ -74,8 +76,48 @@ describe('AdminService', () => {
         message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
+        duplicateTagsSkipped: 0,
+        duplicateSimsSkipped: 0,
       });
     });
+
+    it('should handle duplicates with formatting inconsistencies', async () => {
+      // Mock data with case and whitespace inconsistencies
+      const mockDto: BulkImportDto = {
+        tags: ['JavaScript', 'javascript', ' python ', 'Python', 'react'],
+        similarities: [
+          { field1: 'JavaScript', field2: 'react', similarity_score: 0.8 },
+          { field1: 'javascript', field2: 'react', similarity_score: 0.8 }, // Duplicate with different case
+          { field1: ' python ', field2: 'react', similarity_score: 0.6 },
+          { field1: 'Python', field2: 'react', similarity_score: 0.6 }, // Duplicate with different case
+        ],
+      };
+
+      // Setup mock for bulkImport
+      mockBulkImport.mockResolvedValue({
+        success: true,
+        message: '3 new tags added, 0 tags already existed',
+        tagsProcessed: 3,
+        similaritiesReplaced: 2,
+        duplicateTagsSkipped: 2, // 5 tags - 3 unique (case-insensitive)
+        duplicateSimsSkipped: 2, // 4 similarities - 2 unique (case-insensitive)
+      });
+
+      // Execute
+      const result = await service.bulkImport(mockDto);
+
+      // Verify results
+      expect(mockBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
+      expect(result).toEqual({
+        success: true,
+        message: '3 new tags added, 0 tags already existed',
+        tagsProcessed: 3,
+        similaritiesReplaced: 2,
+        duplicateTagsSkipped: 2,
+        duplicateSimsSkipped: 2,
+      });
+    });
+
     it('should throw BadRequestException when tag from similarities not found in tags list (field1)', async () => {
       // Mock data with mismatched tags
       const mockDto: BulkImportDto = {

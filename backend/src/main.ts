@@ -14,7 +14,7 @@ async function bootstrap() {
   // Use our custom Winston logger
   const logger = app.get(WinstonLoggerService);
   app.useLogger(logger);
-  app.use(json({ limit: '50mb' })); // added this because the payload of bulk tag upload was too large.
+  app.use(json({ limit: '50mb' }));
   // Add validation pipe for all requests
   app.useGlobalPipes(
     new ValidationPipe({

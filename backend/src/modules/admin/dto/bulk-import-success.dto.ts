@@ -24,4 +24,16 @@ export class BulkImportSuccessDto {
     example: 15,
   })
   similaritiesReplaced: number;
+
+  @ApiProperty({
+    description: 'Number of duplicate tags skipped',
+    example: 8,
+  })
+  duplicateTagsSkipped: number;
+
+  @ApiProperty({
+    description: 'Number of duplicate similarities skipped',
+    example: 8,
+  })
+  duplicateSimsSkipped: number;
 }

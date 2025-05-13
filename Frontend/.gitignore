@@ -25,3 +25,6 @@ logs
 
 # PWA
 .sw.*
+
+# Ignore Test Page
+pages/prototype.vue

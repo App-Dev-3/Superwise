@@ -29,11 +29,19 @@ const handleSelect = (event: Event) => {
 </script>
 
 <template>
-  <select class="select" @change="handleSelect">
-    <option v-if="props.placeholder !== ''" disabled :selected="props.modelValue === ''" value="">{{ props.placeholder }}</option>
+  <select
+      :title="props?.placeholder?.toString()||props.modelValue?.toString() || ''"
+      class="select"
+      @change="handleSelect"
+  >
+    <option v-if="props.placeholder !== ''" :selected="props.modelValue === ''" disabled title="placeholder" value="">
+      {{ props.placeholder }}
+    </option>
     <option
         v-for="option in props.options" :key="option.key" :selected="props.modelValue === option.key"
-        :value="option.key">
+        :title="option.value"
+        :value="option.key"
+    >
       {{ option.value }}
     </option>
   </select>

@@ -23,6 +23,22 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    default: "Lena",
+
+    required: true,
+  },
+  lastName: {
+    type: String,
+    default: "Stad",
+
+    required: true,
+  },
 });
 
 const isSearching = ref(false);
@@ -52,19 +68,100 @@ const goBack = () => {
           <span class="text-sm font-medium opacity-50">Back</span>
         </button>
 
-        <UserButton v-if="props.showUser" />
+        <div v-if="props.showUser">
+          <div class="drawer">
+            <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+            <div class="drawer-content">
+              <!-- Page content here -->
+              <label for="my-drawer" class="drawer-button"
+                ><div class="avatar">
+                  <div class="mask mask-squircle w-8 rounded-full">
+                    <img
+                      :src="
+                        props.image ||
+                        getPlaceholderImage(props.firstName, props.lastName)
+                      "
+                      alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
+                    />
+                  </div></div
+              ></label>
+            </div>
+            <div class="drawer-side z-40">
+              <label
+                for="my-drawer"
+                aria-label="close sidebar"
+                class="drawer-overlay"
+              ></label>
+              <div
+                class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
+              >
+                <!-- logo -->
+                <img
+                  :src="
+                    colorMode.value === 'dark'
+                      ? '../images/appHeader_logo_dark.svg'
+                      : '../images/appHeader_logo_light.svg'
+                  "
+                  alt="Logo"
+                  class="h-6 mb-8"
+                />
 
-        <AppThemeToggle class="ml-5"/>
+                <!-- menu items -->
+                <ul class="space-y-3 flex-grow">
+                  <li>
+                    <NuxtLink to="/profile">
+                      <FontAwesomeIcon icon="user" class="text-xl mr-3" />
+                      Profile
+                    </NuxtLink>
+                  </li>
+                  <li>
+                    <NuxtLink to="/settings">
+                      <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
+                      Settings
+                    </NuxtLink>
+                  </li>
+                  <li>
+                    <NuxtLink to="/tour">
+                      <FontAwesomeIcon icon="map" class="text-xl mr-3" />
+                      App Tour
+                    </NuxtLink>
+                  </li>
+                  <li>
+                    <NuxtLink to="/data-protection">
+                      <FontAwesomeIcon
+                        icon="user-shield"
+                        class="text-xl mr-3"
+                      />
+                      Data Protection
+                    </NuxtLink>
+                  </li>
+                </ul>
+                <!-- logout at bottom -->
+                <li>
+                  <NuxtLink to="/logout">
+                    <FontAwesomeIcon icon="fa-right-from-bracket" class="" />
+                    Logout
+                  </NuxtLink>
+                </li>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <AppThemeToggle class="ml-5" />
       </div>
 
       <ClientOnly>
         <div class="navbar-center">
-          <img 
-            :src="colorMode.value === 'dark' ? 
-              '../images/appHeader_logo_dark.svg' 
-              : '../images/appHeader_logo_light.svg'"
-            alt="Logo image" 
-            class="h-6" >
+          <img
+            :src="
+              colorMode.value === 'dark'
+                ? '../images/appHeader_logo_dark.svg'
+                : '../images/appHeader_logo_light.svg'
+            "
+            alt="Logo image"
+            class="h-6"
+          />
         </div>
       </ClientOnly>
 

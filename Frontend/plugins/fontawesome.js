@@ -6,7 +6,7 @@ import {
   faArrowRightToBracket, faBan,
   faCheck,
   faCloudArrowUp,
-  faEnvelope, faEye, faEyeSlash, faFileDownload,
+  faEnvelope, faFileDownload,
   faHandshakeSimple,
   faHourglass,
   faHouse,
@@ -44,7 +44,11 @@ library.add(
     faTrashCan,
     faBan,
     faEye,
-    faEyeSlash
+    faEyeSlash,
+    faGear,
+    faUserShield,
+    faMap,
+    faRightFromBracket
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

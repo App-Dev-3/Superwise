@@ -7,7 +7,7 @@ import { TagsBulkImportSuccessDto } from './dto/tagsBulk-import-success.dto';
 export class AdminService {
   constructor(private readonly adminRepository: AdminRepository) {}
 
-  async bulkImport(dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
-    return this.adminRepository.bulkImport(dto.tags, dto.similarities);
+  async tagsBulkImport(dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
+    return this.adminRepository.tagsBulkImport(dto.tags, dto.similarities);
   }
 }

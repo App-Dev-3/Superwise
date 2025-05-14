@@ -67,7 +67,7 @@ describe('AdminService', () => {
       });
 
       // Execute
-      const result = await service.bulkImport(mockDto);
+      const result = await service.tagsBulkImport(mockDto);
 
       // Verify results
       expect(mockBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
@@ -104,7 +104,7 @@ describe('AdminService', () => {
       });
 
       // Execute
-      const result = await service.bulkImport(mockDto);
+      const result = await service.tagsBulkImport(mockDto);
 
       // Verify results
       expect(mockBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
@@ -131,8 +131,8 @@ describe('AdminService', () => {
       );
 
       // Execute & assert
-      await expect(service.bulkImport(mockDto)).rejects.toThrow(BadRequestException);
-      await expect(service.bulkImport(mockDto)).rejects.toThrow(
+      await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
+      await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(
         /Tag 'javascript' not found in provided tags list./,
       );
     });
@@ -150,8 +150,8 @@ describe('AdminService', () => {
       );
 
       // Execute & assert
-      await expect(service.bulkImport(mockDto)).rejects.toThrow(BadRequestException);
-      await expect(service.bulkImport(mockDto)).rejects.toThrow(
+      await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
+      await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(
         /Tag 'react' from similarities not found in provided tags list/,
       );
     });

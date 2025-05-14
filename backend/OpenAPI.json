@@ -1130,6 +1130,55 @@
         ]
       }
     },
+    "/admin/supervisors/bulk-import": {
+      "post": {
+        "operationId": "AdminController_supervisorsBulkImport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "New Supervisors for the application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupervisorsBulkImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supervisors successfully imported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Supervisors successfully imported"
+                    },
+                    "supervisorsImported": {
+                      "type": "number",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid datas"
+          }
+        },
+        "summary": "Bulk import Supervisors and their profiles",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/match/{userId}": {
       "get": {
         "description": "Calculate and retrieve a list of all supervisors with their compatibility scores for a specific student",
@@ -1895,6 +1944,21 @@
         "required": [
           "tags",
           "similarities"
+        ]
+      },
+      "SupervisorsBulkImportDto": {
+        "type": "object",
+        "properties": {
+          "supervisors": {
+            "description": "Array of supervisor data to import",
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "supervisors"
         ]
       },
       "Match": {

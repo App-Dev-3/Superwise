@@ -5,12 +5,14 @@ import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
 import { TagsBulkImportSuccessDto } from './dto/tagsBulk-import-success.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { SupervisorsBulkImportDto } from './dto/SupervisorsBulk-import.dto';
+import { SupervisorsBulkImportSuccessDto } from './dto/SupervisorsBulk-import-success.dto';
 
 @ApiTags('admin')
 @Controller('admin')
 @Roles(Role.ADMIN)
 export class AdminController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AdminService) { }
 
   @Post('tags/bulk-import')
   @ApiOperation({ summary: 'Bulk import tags and their similarities' })
@@ -35,6 +37,39 @@ export class AdminController {
     description: 'Bad Request - Invalid data or inconsistent tags and similarities',
   })
   async tagsBulkImport(@Body() dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
-    return this.adminService.bulkImport(dto);
+    return this.adminService.tagsBulkImport(dto);
+  }
+
+  @Post('supervisors/bulk-import')
+  @ApiOperation({ summary: 'Bulk import Supervisors and their profiles' })
+  @ApiBody({
+    type: SupervisorsBulkImportDto,
+    description: 'New Supervisors for the application',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Supervisors successfully imported',
+    schema: {
+      properties: {
+        success: { type: 'boolean', example: true },
+        message: { type: 'string', example: 'Supervisors successfully imported' },
+        supervisorsImported: { type: 'number', example: 10 },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid datas',
+  })
+  async supervisorsBulkImport(
+    @Body() dto: SupervisorsBulkImportDto,
+  ): Promise<SupervisorsBulkImportSuccessDto> {
+
+    return {
+      success: true,
+      message: "good",
+      supervisorsImported: 2
+    }
+    //return this.adminService.supervisorsBulkImport(dto);
   }
 }

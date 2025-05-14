@@ -58,7 +58,7 @@ describe('AdminController', () => {
       };
 
       // Setup mock
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockResolvedValue(mockResponse);
 
       // Execute
       const result = await controller.tagsBulkImport(mockDto);
@@ -80,7 +80,7 @@ describe('AdminController', () => {
       );
 
       // Setup mock to throw error
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockRejectedValue(mockError);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockRejectedValue(mockError);
 
       // Execute & assert
       await expect(controller.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
@@ -104,7 +104,7 @@ describe('AdminController', () => {
       };
 
       // Setup mock
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockResolvedValue(mockResponse);
 
       // Execute
       const result = await controller.tagsBulkImport(mockDto);

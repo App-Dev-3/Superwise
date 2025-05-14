@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 export class AdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async bulkImport(
+  async tagsBulkImport(
     tags: string[],
     similarities: Array<{ field1: string; field2: string; similarity_score: number }>,
   ): Promise<{

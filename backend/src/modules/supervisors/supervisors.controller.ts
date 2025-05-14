@@ -14,7 +14,7 @@ import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-// TODO dont forget the is_request
+
 @ApiTags('supervisors')
 @Controller('supervisors')
 export class SupervisorsController {
@@ -79,14 +79,10 @@ export class SupervisorsController {
     @Body() updateSupervisorDto: UpdateSupervisorDto,
     @CurrentUser() currentUser: User,
   ) {
-    // Get the supervisor to verify ownership
     const supervisor = await this.supervisorsService.findSupervisorById(id);
-
-    // Allow supervisor to update their own profile or admin to update any profile
     if (supervisor.user_id === currentUser.id || currentUser.role === Role.ADMIN) {
       return this.supervisorsService.updateSupervisorProfile(id, updateSupervisorDto);
     }
-
     throw new UnauthorizedException('You do not have permission to update this supervisor profile');
   }
 }

@@ -97,18 +97,23 @@ export class AdminRepository {
   }> {
     return this.prisma.$transaction(
       async tx => {
-        let importedCount = 0;
-        let updatedCount = 0;
+        let newSupervisorsCount = 0;
+        let updatedSupervisorsCount = 0;
 
         for (const supervisor of supervisors) {
+          // Validate mandatory email field
           if (!supervisor.email) {
-            throw new BadRequestException(`Email is required for : ${supervisor.last_name}`);
+            throw new BadRequestException(
+              `Email is required for supervisor${supervisor.last_name ? ': ' + supervisor.last_name : ''}`,
+            );
           }
 
+          // Find existing user by email
           let user = await tx.user.findUnique({
             where: { email: supervisor.email },
           });
 
+          // Create new user if it doesn't exist
           if (!user) {
             if (!supervisor.first_name || !supervisor.last_name) {
               throw new BadRequestException(
@@ -123,44 +128,66 @@ export class AdminRepository {
                 last_name: supervisor.last_name,
                 profile_image: supervisor.profile_image || null,
                 role: 'SUPERVISOR',
+                is_registered: false, // New supervisors are not registered yet
               },
             });
 
-            importedCount++;
+            newSupervisorsCount++;
           }
 
-          const existingProfile = await tx.supervisor.findFirst({
+          // Check for existing supervisor profile using transaction object
+          const existingProfile = await tx.supervisor.findUnique({
             where: { user_id: user.id },
           });
 
           if (existingProfile) {
+            // Update existing supervisor profile
             await tx.supervisor.update({
               where: { id: existingProfile.id },
               data: {
                 bio: supervisor.bio || existingProfile.bio,
                 total_spots: supervisor.total_spots || existingProfile.total_spots,
-                available_spots: supervisor.total_spots || 0,
+                available_spots:
+                  supervisor.available_spots !== undefined
+                    ? supervisor.available_spots
+                    : supervisor.total_spots || existingProfile.available_spots,
               },
             });
 
-            updatedCount++;
+            updatedSupervisorsCount++;
           } else {
+            // Create new supervisor profile
             await tx.supervisor.create({
               data: {
                 user_id: user.id,
                 bio: supervisor.bio || '',
                 total_spots: supervisor.total_spots || 0,
-                available_spots: supervisor.total_spots || 0,
+                available_spots:
+                  supervisor.available_spots !== undefined
+                    ? supervisor.available_spots
+                    : supervisor.total_spots || 0,
               },
             });
           }
         }
 
+        // Create a more descriptive success message
+        let message = '';
+        if (newSupervisorsCount > 0 && updatedSupervisorsCount > 0) {
+          message = `${newSupervisorsCount} new supervisors successfully imported and ${updatedSupervisorsCount} existing supervisors updated`;
+        } else if (newSupervisorsCount > 0) {
+          message = `${newSupervisorsCount} new supervisors successfully imported`;
+        } else if (updatedSupervisorsCount > 0) {
+          message = `${updatedSupervisorsCount} existing supervisors successfully updated`;
+        } else {
+          message = `No supervisors imported or updated`;
+        }
+
         return {
           success: true,
-          message: `${importedCount} supervisors successfully imported`,
-          supervisorsImported: importedCount,
-          supervisorsUpdated: updatedCount,
+          message,
+          supervisorsImported: newSupervisorsCount,
+          supervisorsUpdated: updatedSupervisorsCount,
         };
       },
       {

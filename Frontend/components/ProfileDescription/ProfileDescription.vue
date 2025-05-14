@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMediaQuery } from '@vueuse/core'
+import { computed, ref } from 'vue';
 
     interface Props {
         headline: string;

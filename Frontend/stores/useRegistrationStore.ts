@@ -1,3 +1,5 @@
+import type { UserRegistrationData } from "~/shared/types/userInterfaces";
+
 const { getUserRegistrationStatus} = useUserApi();
 
 export const useRegistrationStore = defineStore('registration', {
@@ -13,7 +15,6 @@ export const useRegistrationStore = defineStore('registration', {
         this.status = res;
       } catch (e) {
         console.error('Failed to fetch onboarding status:', e)
-        this.onboardingComplete = false
       }
     }
   }

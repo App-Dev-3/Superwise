@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { until } from "@vueuse/core";
 import { onMounted } from "vue";
-import type { UserData } from "~/shared/types/userInterfaces";
 
-const { getUserByEmail, getMatches} = useUserApi();
 
+const { getUserRegistrationStatus} = useUserApi();
+const { isLoaded, isSignedIn, user } = useUser();
+const registrationStore = useRegistrationStore();
 
 onMounted(async() => {
-  const { isLoaded, isSignedIn, user } = useUser();
   
   await until(isLoaded).toBe(true);
 
@@ -16,9 +16,9 @@ onMounted(async() => {
   console.log("issue occuring form here" );
   if (!userEmail) return; 
   try {
-    const res = await getUserByEmail( userEmail ) as UserData;
-    role = res.role;
-    console.log("redirecting to onboarding page");
+    await registrationStore.fetchRegistrationStatus(userEmail)
+
+    role = determineRole(registrationStore.status?.exists)
     
   } catch (error) {
     console.error("Error getting user role:", error);
@@ -26,6 +26,16 @@ onMounted(async() => {
   navigateTo(`/onboarding/${role}`);
 });
 
+
+function  determineRole(exists: boolean) {
+  /**Rule for app -> if user exists but isnt registered 
+  then its a supervisor provided by admin**/
+  if (exists) {
+    return 'supervisor';
+  } else {
+    return 'student';
+  }
+}
 </script>
 
 <template>

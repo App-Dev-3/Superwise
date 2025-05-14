@@ -47,5 +47,5 @@ export class CreateSupervisorDto {
   @IsUUID()
   user_id: string;
   // should the user_id be passed separately or stay here.
-  // Should the user_id be part of supervisor dto or should be handled separately?
+  // Should the user_id be part of supervisor dto or should be handled separately? no use
 }

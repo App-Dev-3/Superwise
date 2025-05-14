@@ -76,13 +76,6 @@ export class SupervisorDto {
   @Min(0)
   total_spots?: number;
 
-  @ApiProperty({
-    description: 'ID of the user associated with this supervisor profile',
-    example: '123e4567-e89b-12d3-a456-426614174000',
-  })
-  @IsNotEmpty()
-  @IsUUID()
-  user_id: string;
 }
 
 export class SupervisorsBulkImportDto {

@@ -16,7 +16,7 @@ import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-
+// TODO dont forget the is_request 
 @ApiTags('supervisors')
 @Controller('supervisors')
 export class SupervisorsController {

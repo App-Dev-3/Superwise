@@ -41,7 +41,7 @@ export class SupervisorsRepository {
     bio?: string;
     available_spots?: number;
     total_spots?: number;
-    user_id: string;
+    user_id: string; // using email because no id yet when admin bulks import
   }): Promise<Supervisor> {
     return this.prisma.supervisor.create({
       data,
@@ -54,6 +54,8 @@ export class SupervisorsRepository {
       bio?: string;
       available_spots?: number;
       total_spots?: number;
+      first_name?: string;
+      last_name?: string;
     },
   ): Promise<Supervisor> {
     return this.prisma.supervisor.update({

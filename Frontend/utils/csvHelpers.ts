@@ -1,13 +1,24 @@
 import Papa from 'papaparse';
 
-type AcceptedData = string | number;
+type AcceptedData = string ;
 
-interface CsvRecord {
-    [key: string]: AcceptedData;
+export interface csvMatchExportRow {
+    'Supervisor Last Name': AcceptedData;
+    'Supervisor First Name': AcceptedData;
+    'Supervisor Email': AcceptedData;
+    'Student Last Name': AcceptedData;
+    'Student First Name': AcceptedData;
+    'Student Email': AcceptedData;
 }
 
-export function exportCsv(data: CsvRecord[], filename = 'export.csv'): void {
-    const csv = Papa.unparse(data);
+// The default delimiter for German/Austrian locale is semicolon. If opened in a german excel, it will be formatted correctly
+export function exportCsv(data: csvMatchExportRow[], filename = 'export.csv', delimiter = ';'): void {
+    const config = {
+        columns: ['Supervisor Last Name', 'Supervisor First Name', 'Supervisor Email', 'Student Last Name', 'Student First Name', 'Student Email',],
+        delimiter: delimiter,
+    }
+
+    const csv = Papa.unparse(data, config);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
 

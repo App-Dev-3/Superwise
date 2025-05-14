@@ -2,29 +2,47 @@ import { until } from "@vueuse/core";
 import type { UserData } from "~/shared/types/userInterfaces";
 
 
-export default defineNuxtRouteMiddleware(async (to, from) => {
+export default defineNuxtRouteMiddleware(async (to) => {
   if (process.server) return
 
-  const { user, isLoaded, isSignedIn } = useUser();
-  const { getUserByEmail } = useUserApi();
+  const { user, isLoaded, isSignedIn } = useUser()
+  const registrationStore = useRegistrationStore()
 
+
+  // Wait until user is loaded
+  if (!isLoaded.value) await until(isLoaded).toBe(true)
+
+  // Allow public access to root and login
+  const publicPaths = ['/']
+
+  if (!isSignedIn.value) {
+    if (!publicPaths.includes(to.path)) {
+      console.log('user not signed in, redirecting to /')
+      return navigateTo('/')
+    }
+    // If signed out and on a public page, skip the rest of the logic
+    return
+  }
+
+  // Onboarding check
+  const userEmail = user.value?.primaryEmailAddress?.emailAddress;
+  await registrationStore.fetchRegistrationStatus(userEmail)
   
-  if (!isLoaded.value) await until(isLoaded).toBe(true);
+  const onboardingComplete = registrationStore.status?.is_registered
+  console.log('onboardingComplete', onboardingComplete)
 
-  if (!isSignedIn.value && to.path !== '/') {
-    console.log('user not signed in', isSignedIn.value)
-    return navigateTo('/')
-  } else if (isSignedIn.value && to.path === '/') {
+  if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
+    console.log('user needs onboarding')
+    return navigateTo('/onboarding/onboarding')
+  }
+
+  if (onboardingComplete && to.path.startsWith('/onboarding')) {
     return navigateTo('/dashboard')
   }
 
-  const onboardingComplete = user.value?.unsafeMetadata.onboardingCompleted;
-  
-  if (!onboardingComplete && !to.path.startsWith('/onboarding/')) {
-    console.log('onboarding not complete', onboardingComplete)
-    return navigateTo('onboarding/onboarding');
-  } else if (onboardingComplete && to.path.startsWith('/onboarding/')) {
-    return navigateTo('/dashboard');
+  // Redirect signed-in users away from root
+  if (to.path === '/') {
+    return navigateTo('/dashboard')
   }
-
 })
+

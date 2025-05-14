@@ -1,13 +1,14 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
-import { TagsBulkImportDto } from './dto/TagsBulk-import.dto';
-import { TagsBulkImportSuccessDto } from './dto/TagsBulk-import-success.dto';
+import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
+import { TagsBulkImportSuccessDto } from './dto/tags-bulk-import-success.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
-import { SupervisorsBulkImportDto } from './dto/SupervisorsBulk-import.dto';
-import { SupervisorsBulkImportSuccessDto } from './dto/SupervisorsBulk-import-success.dto';
+import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
+import { SupervisorsBulkImportSuccessDto } from './dto/supervisors-bulk-import-success.dto';
 //import { Public } from '../../common/decorators/public.decorator';
+
 @ApiTags('admin')
 @Controller('admin')
 @Roles(Role.ADMIN)

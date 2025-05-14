@@ -3,8 +3,8 @@ import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
-import { TagsBulkImportDto } from './dto/TagsBulk-import.dto';
-import { SupervisorsBulkImportDto } from './dto/SupervisorsBulk-import.dto';
+import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
+import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
 import { AdminRepository } from './admin.repository';
 import { SupervisorsRepository } from '../supervisors/supervisors.repository';
 

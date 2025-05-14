@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-import { SupervisorDto } from './dto/SupervisorsBulk-import.dto';
+import { SupervisorDto } from './dto/supervisors-bulk-import.dto';
 
 @Injectable()
 export class AdminRepository {
@@ -101,19 +101,19 @@ export class AdminRepository {
         let updatedSupervisorsCount = 0;
 
         for (const supervisor of supervisors) {
-          // Validate mandatory email field
+          
           if (!supervisor.email) {
             throw new BadRequestException(
               `Email is required for supervisor${supervisor.last_name ? ': ' + supervisor.last_name : ''}`,
             );
           }
 
-          // Find existing user by email
+     
           let user = await tx.user.findUnique({
             where: { email: supervisor.email },
           });
 
-          // Create new user if it doesn't exist
+      
           if (!user) {
             if (!supervisor.first_name || !supervisor.last_name) {
               throw new BadRequestException(
@@ -128,20 +128,20 @@ export class AdminRepository {
                 last_name: supervisor.last_name,
                 profile_image: supervisor.profile_image || null,
                 role: 'SUPERVISOR',
-                is_registered: false, // New supervisors are not registered yet
+                is_registered: false, 
               },
             });
 
             newSupervisorsCount++;
           }
 
-          // Check for existing supervisor profile using transaction object
+        
           const existingProfile = await tx.supervisor.findUnique({
             where: { user_id: user.id },
           });
 
           if (existingProfile) {
-            // Update existing supervisor profile
+          
             await tx.supervisor.update({
               where: { id: existingProfile.id },
               data: {
@@ -156,7 +156,7 @@ export class AdminRepository {
 
             updatedSupervisorsCount++;
           } else {
-            // Create new supervisor profile
+    
             await tx.supervisor.create({
               data: {
                 user_id: user.id,
@@ -171,7 +171,7 @@ export class AdminRepository {
           }
         }
 
-        // Create a more descriptive success message
+
         let message = '';
         if (newSupervisorsCount > 0 && updatedSupervisorsCount > 0) {
           message = `${newSupervisorsCount} new supervisors successfully imported and ${updatedSupervisorsCount} existing supervisors updated`;

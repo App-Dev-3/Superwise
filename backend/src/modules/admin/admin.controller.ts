@@ -1,8 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
-import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
-import { TagsBulkImportSuccessDto } from './dto/tagsBulk-import-success.dto';
+import { TagsBulkImportDto } from './dto/TagsBulk-import.dto';
+import { TagsBulkImportSuccessDto } from './dto/TagsBulk-import-success.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { SupervisorsBulkImportDto } from './dto/SupervisorsBulk-import.dto';
@@ -65,11 +65,6 @@ export class AdminController {
     @Body() dto: SupervisorsBulkImportDto,
   ): Promise<SupervisorsBulkImportSuccessDto> {
 
-    return {
-      success: true,
-      message: "good",
-      supervisorsImported: 2
-    }
-    //return this.adminService.supervisorsBulkImport(dto);
+    return this.adminService.supervisorsBulkImport(dto);
   }
 }

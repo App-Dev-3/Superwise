@@ -1,10 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { SupervisorDto } from './dto/SupervisorsBulk-import.dto';
+import { SupervisorsRepository } from '../supervisors/supervisors.repository';
 
 @Injectable()
 export class AdminRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly supervisorsRepository: SupervisorsRepository,
+  ) {}
 
   async tagsBulkImport(
     tags: string[],
@@ -87,4 +92,80 @@ export class AdminRepository {
       },
     );
   }
+
+  async supervisorsBulkImport(
+    supervisors: SupervisorDto[],
+  ): Promise<{
+    success: boolean;
+    message: string;
+    supervisorsImported: number;
+  }> {
+    return this.prisma.$transaction(
+      async tx => {
+        let importedCount = 0;
+        
+        for (const supervisor of supervisors) {
+    
+          let user = await tx.user.findUnique({
+            where: { email: supervisor.email },
+          });
+          
+          if (!user) {
+            if (!supervisor.first_name || !supervisor.last_name) {
+              throw new BadRequestException(
+                `First name and last name are required when creating a new supervisor with email: ${supervisor.email}`,
+              );
+            }
+            
+            user = await tx.user.create({
+              data: {
+                email: supervisor.email,
+                first_name: supervisor.first_name,
+                last_name: supervisor.last_name,
+                profile_image: supervisor.profile_image || null,
+                role: 'SUPERVISOR', 
+              },
+            });
+          }
+          
+      
+          const existingProfile = await this.supervisorsRepository.findSupervisorByUserId(user.id);
+          
+          if (existingProfile) {
+        
+            await this.supervisorsRepository.updateSupervisorProfile(
+              existingProfile.id,
+              {
+                bio: supervisor.bio,
+                total_spots: supervisor.total_spots,
+                //  not gonna set available_spots
+              }
+            );
+          } else {
+          
+            await this.supervisorsRepository.createSupervisorProfile({
+              user_id: user.id,
+              bio: supervisor.bio || '',
+              total_spots: supervisor.total_spots || 0,
+              available_spots: supervisor.total_spots || 0,
+            });
+          }
+          
+          importedCount++;
+        }
+        
+        return {
+          success: true,
+          message: `${importedCount} supervisors successfully imported`,
+          supervisorsImported: importedCount,
+        };
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        maxWait: 5000,
+        timeout: 10000,
+      },
+    );
+  }
 }
+

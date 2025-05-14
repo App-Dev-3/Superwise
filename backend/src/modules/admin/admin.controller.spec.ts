@@ -5,7 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AdminRepository } from './admin.repository';
 import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
-import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
+import { TagsBulkImportDto } from './dto/TagsBulk-import.dto';
 
 describe('AdminController', () => {
   let controller: AdminController;

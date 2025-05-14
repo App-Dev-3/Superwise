@@ -15,4 +15,9 @@ export interface UserData extends Record<string, unknown> {
     is_deleted: boolean;
     created_at: string;
     updated_at: string;
-  }
+}
+
+export interface UserRegistrationData extends Record<string, unknown> {
+    exists: boolean;
+    is_registered: boolean;
+}

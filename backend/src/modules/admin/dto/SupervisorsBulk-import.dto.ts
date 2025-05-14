@@ -6,7 +6,6 @@ import {
   ValidateNested,
   IsNotEmpty,
   IsOptional,
-  IsUUID,
   MaxLength,
   Min,
   IsArray,
@@ -75,7 +74,6 @@ export class SupervisorDto {
   @IsNumber()
   @Min(0)
   total_spots?: number;
-
 }
 
 export class SupervisorsBulkImportDto {

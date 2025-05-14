@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisorsController } from './supervisors.controller';
 import { SupervisorsService } from './supervisors.service';
-import { CreateSupervisorDto } from './dto/create-supervisor.dto';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Role } from '@prisma/client';
 
@@ -100,26 +99,6 @@ describe('SupervisorsController', () => {
       expect(result).toEqual(mockSupervisor);
 
       expect(service.findSupervisorById).toHaveBeenCalledWith(SUPERVISOR_ID);
-    });
-  });
-
-  describe('createSupervisorProfile', () => {
-    it('should create and return a supervisor profile', async () => {
-      const createDto: CreateSupervisorDto = {
-        user_id: USER_ID,
-        bio: 'New supervisor',
-        available_spots: 3,
-        total_spots: 5,
-      };
-
-      service.createSupervisorProfile.mockResolvedValue(mockSupervisor);
-
-      const result = await controller.createSupervisorProfile(createDto);
-
-      expect(result).toEqual(mockSupervisor);
-
-      // Use type assertion to verify the method was called with the right parameters
-      expect(service.createSupervisorProfile).toHaveBeenCalledWith(createDto);
     });
   });
 

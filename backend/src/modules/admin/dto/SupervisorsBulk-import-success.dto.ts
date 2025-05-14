@@ -18,4 +18,10 @@ export class SupervisorsBulkImportSuccessDto {
     example: 10,
   })
   supervisorsImported: number;
+
+  @ApiProperty({
+    description: 'Number of Supervisors Updated',
+    example: 10,
+  })
+  supervisorsUpdated: number;
 }

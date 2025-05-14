@@ -18,11 +18,6 @@ export class SupervisorsRepository {
     });
   }
 
-  // get all supervisors with filtering options based on what the frontend needs.
-  // we can for example select 5 (using take) supervisors that are available for supervision.
-  // here separate the logic for filtering and calling.
-  // the soulution would be relations entity in a findsupervisorwithrelatons.
-  // (do i actully need this? where does the supervisor need such information about other supervisors?)
   async findAllSupervisors(params: {
     take?: number;
     where?: Prisma.SupervisorWhereInput;
@@ -34,17 +29,6 @@ export class SupervisorsRepository {
       take,
       where,
       orderBy,
-    });
-  }
-
-  async createSupervisorProfile(data: {
-    bio?: string;
-    available_spots?: number;
-    total_spots?: number;
-    user_id: string; // using email because no id yet when admin bulks import
-  }): Promise<Supervisor> {
-    return this.prisma.supervisor.create({
-      data,
     });
   }
 

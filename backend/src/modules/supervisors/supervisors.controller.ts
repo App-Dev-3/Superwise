@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Param,
-  Post,
   Patch,
   Query,
   UnauthorizedException,
@@ -11,12 +10,11 @@ import {
 } from '@nestjs/common';
 import { SupervisorsService } from './supervisors.service';
 import { ApiOperation, ApiTags, ApiQuery, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { CreateSupervisorDto } from './dto/create-supervisor.dto';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-// TODO dont forget the is_request 
+// TODO dont forget the is_request
 @ApiTags('supervisors')
 @Controller('supervisors')
 export class SupervisorsController {
@@ -65,17 +63,6 @@ export class SupervisorsController {
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
   async findSupervisorById(@Param('id', ParseUUIDPipe) id: string) {
     return this.supervisorsService.findSupervisorById(id);
-  }
-
-  @Post()
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Create a new supervisor profile' })
-  @ApiResponse({
-    status: 201,
-    description: 'Supervisor profile created successfully',
-  })
-  async createSupervisorProfile(@Body() createSupervisorDto: CreateSupervisorDto) {
-    return this.supervisorsService.createSupervisorProfile(createSupervisorDto);
   }
 
   @Patch(':id')

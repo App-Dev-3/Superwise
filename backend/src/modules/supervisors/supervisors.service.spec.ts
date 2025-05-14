@@ -75,25 +75,6 @@ describe('SupervisorsService', () => {
     });
   });
 
-  describe('createSupervisorProfile', () => {
-    it('should create and return a supervisor profile', async () => {
-      const createDto = {
-        user_id: 'user-id-1',
-        bio: 'New supervisor',
-        available_spots: 3,
-        total_spots: 5,
-      };
-
-      repository.createSupervisorProfile.mockResolvedValue(mockSupervisor);
-
-      const result = await service.createSupervisorProfile(createDto);
-
-      expect(result).toEqual(mockSupervisor);
-
-      expect(repository.createSupervisorProfile).toHaveBeenCalledWith(createDto);
-    });
-  });
-
   describe('updateSupervisorProfile', () => {
     it('should update and return supervisor profile', async () => {
       const updateDto = {

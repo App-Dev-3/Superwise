@@ -735,29 +735,6 @@
         "tags": [
           "supervisors"
         ]
-      },
-      "post": {
-        "operationId": "SupervisorsController_createSupervisorProfile",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSupervisorDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Supervisor profile created successfully"
-          }
-        },
-        "summary": "Create a new supervisor profile",
-        "tags": [
-          "supervisors"
-        ]
       }
     },
     "/supervisors/user/{userId}": {
@@ -1727,34 +1704,6 @@
         "required": [
           "tag",
           "similarity"
-        ]
-      },
-      "CreateSupervisorDto": {
-        "type": "object",
-        "properties": {
-          "bio": {
-            "type": "string",
-            "description": "The supervisor bio",
-            "example": "Professor specializing in artificial intelligence and machine learning"
-          },
-          "available_spots": {
-            "type": "number",
-            "description": "Number of available spots for supervision",
-            "example": 3
-          },
-          "total_spots": {
-            "type": "number",
-            "description": "Total spots for supervision",
-            "example": 5
-          },
-          "user_id": {
-            "type": "string",
-            "description": "ID of the user associated with this supervisor profile",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        },
-        "required": [
-          "user_id"
         ]
       },
       "UpdateSupervisorDto": {

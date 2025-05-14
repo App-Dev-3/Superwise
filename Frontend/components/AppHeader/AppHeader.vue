@@ -29,14 +29,10 @@ const props = defineProps({
   },
   firstName: {
     type: String,
-    default: "Lena",
-
     required: true,
   },
   lastName: {
     type: String,
-    default: "Stad",
-
     required: true,
   },
 });
@@ -70,7 +66,7 @@ const goBack = () => {
 
         <div v-if="props.showUser">
           <div class="drawer">
-            <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+            <input id="my-drawer" type="checkbox" class="drawer-toggle" >
             <div class="drawer-content">
               <!-- Page content here -->
               <label for="my-drawer" class="drawer-button"
@@ -82,7 +78,7 @@ const goBack = () => {
                         getPlaceholderImage(props.firstName, props.lastName)
                       "
                       alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-                    />
+                    >
                   </div></div
               ></label>
             </div>
@@ -91,7 +87,7 @@ const goBack = () => {
                 for="my-drawer"
                 aria-label="close sidebar"
                 class="drawer-overlay"
-              ></label>
+              />
               <div
                 class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
               >
@@ -104,7 +100,7 @@ const goBack = () => {
                   "
                   alt="Logo"
                   class="h-6 mb-8"
-                />
+                >
 
                 <!-- menu items -->
                 <ul class="space-y-3 flex-grow">
@@ -161,7 +157,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          />
+          >
         </div>
       </ClientOnly>
 

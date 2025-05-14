@@ -115,17 +115,15 @@ describe('SupervisorsController', () => {
         available_spots: 2,
       };
 
-      // Mock the findSupervisorById call that happens inside updateSupervisorProfile
-      service.findSupervisorById.mockResolvedValue(mockSupervisor);
+      // Mock the service methods
+      service.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
       service.updateSupervisorProfile.mockResolvedValue(updatedSupervisor);
 
-      const result = await controller.updateSupervisorProfile(SUPERVISOR_ID, updateDto, mockUser);
+      // Call with the correct signature
+      const result = await controller.updateSupervisorProfile(updateDto, mockUser);
 
       expect(result).toEqual(updatedSupervisor);
-      // Verify findSupervisorById was called first
-      expect(service.findSupervisorById).toHaveBeenCalledWith(SUPERVISOR_ID);
-
-      // Use type assertion to verify the method was called with the right parameters
+      expect(service.findSupervisorByUserId).toHaveBeenCalledWith(mockUser.id);
       expect(service.updateSupervisorProfile).toHaveBeenCalledWith(SUPERVISOR_ID, updateDto);
     });
   });

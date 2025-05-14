@@ -7,14 +7,14 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
 import { SupervisorsBulkImportSuccessDto } from './dto/supervisors-bulk-import-success.dto';
-//import { Public } from '../../common/decorators/public.decorator';
+
 
 @ApiTags('admin')
 @Controller('admin')
 @Roles(Role.ADMIN)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
-  //@Public()
+
   @Post('tags/bulk-import')
   @ApiOperation({ summary: 'Bulk import tags and their similarities' })
   @ApiBody({
@@ -40,7 +40,7 @@ export class AdminController {
   async tagsBulkImport(@Body() dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
     return this.adminService.tagsBulkImport(dto);
   }
-  //@Public()
+ 
   @Post('supervisors/bulk-import')
   @ApiOperation({ summary: 'Bulk import Supervisors and their profiles' })
   @ApiBody({
@@ -60,7 +60,7 @@ export class AdminController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad Request - Invalid datas',
+    description: 'Bad Request - Invalid data',
   })
   async supervisorsBulkImport(
     @Body() dto: SupervisorsBulkImportDto,

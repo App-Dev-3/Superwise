@@ -800,9 +800,7 @@
             "required": true,
             "in": "path",
             "description": "Supervisor ID",
-            "schema": {
-              "type": "string"
-            }
+            "schema": {}
           }
         ],
         "requestBody": {
@@ -1147,7 +1145,7 @@
             }
           },
           "400": {
-            "description": "Bad Request - Invalid datas"
+            "description": "Bad Request - Invalid data"
           }
         },
         "summary": "Bulk import Supervisors and their profiles",

@@ -66,7 +66,7 @@ export class SupervisorsController {
   }
 
   @Patch(':id')
-  @Roles(Role.SUPERVISOR, Role.ADMIN)
+  @Roles(Role.SUPERVISOR)
   @ApiOperation({ summary: 'Partially update a supervisor profile' })
   @ApiParam({ name: 'id', description: 'Supervisor ID' })
   @ApiResponse({
@@ -75,13 +75,15 @@ export class SupervisorsController {
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
   async updateSupervisorProfile(
-    @Param('id', ParseUUIDPipe) id: string,
+  
     @Body() updateSupervisorDto: UpdateSupervisorDto,
     @CurrentUser() currentUser: User,
   ) {
-    const supervisor = await this.supervisorsService.findSupervisorById(id);
-    if (supervisor.user_id === currentUser.id || currentUser.role === Role.ADMIN) {
-      return this.supervisorsService.updateSupervisorProfile(id, updateSupervisorDto);
+
+    // check it later 
+    const supervisor = await this.supervisorsService.findSupervisorByUserId(currentUser.id);
+    if (supervisor.id ) {
+      return this.supervisorsService.updateSupervisorProfile(supervisor.id , updateSupervisorDto);
     }
     throw new UnauthorizedException('You do not have permission to update this supervisor profile');
   }

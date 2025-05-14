@@ -29,7 +29,7 @@ export class SimilarityItemDto {
   similarity_score: number;
 }
 
-export class BulkImportDto {
+export class TagsBulkImportDto {
   @ApiProperty({
     description: 'List of all tag names to be imported',
     isArray: true,

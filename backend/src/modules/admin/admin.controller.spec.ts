@@ -5,7 +5,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AdminRepository } from './admin.repository';
 import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
-import { BulkImportDto } from './dto/bulk-import.dto';
+import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -43,7 +43,7 @@ describe('AdminController', () => {
   describe('bulkImport', () => {
     it('should call the service method with the provided DTO', async () => {
       // Mock data
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python', 'react'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
@@ -61,7 +61,7 @@ describe('AdminController', () => {
       const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
 
       // Execute
-      const result = await controller.bulkImport(mockDto);
+      const result = await controller.tagsBulkImport(mockDto);
 
       // Assertions
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
@@ -70,7 +70,7 @@ describe('AdminController', () => {
 
     it('should propagate errors from the service', async () => {
       // Mock data
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
@@ -83,13 +83,13 @@ describe('AdminController', () => {
       const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockRejectedValue(mockError);
 
       // Execute & assert
-      await expect(controller.bulkImport(mockDto)).rejects.toThrow(BadRequestException);
+      await expect(controller.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
     });
 
     it('should handle empty tags and similarities', async () => {
       // Mock data with empty arrays
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: [],
         similarities: [],
       };
@@ -107,7 +107,7 @@ describe('AdminController', () => {
       const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
 
       // Execute
-      const result = await controller.bulkImport(mockDto);
+      const result = await controller.tagsBulkImport(mockDto);
 
       // Assertions
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);

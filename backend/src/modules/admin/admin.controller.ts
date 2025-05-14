@@ -1,8 +1,8 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
-import { BulkImportDto } from './dto/bulk-import.dto';
-import { BulkImportSuccessDto } from './dto/bulk-import-success.dto';
+import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
+import { TagsBulkImportSuccessDto } from './dto/tagsBulk-import-success.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 
@@ -15,7 +15,7 @@ export class AdminController {
   @Post('tags/bulk-import')
   @ApiOperation({ summary: 'Bulk import tags and their similarities' })
   @ApiBody({
-    type: BulkImportDto,
+    type: TagsBulkImportDto,
     description: 'New Tags and similarities for the application',
   })
   @ApiResponse({
@@ -34,7 +34,7 @@ export class AdminController {
     status: 400,
     description: 'Bad Request - Invalid data or inconsistent tags and similarities',
   })
-  async bulkImport(@Body() dto: BulkImportDto): Promise<BulkImportSuccessDto> {
+  async tagsBulkImport(@Body() dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
     return this.adminService.bulkImport(dto);
   }
 }

@@ -1079,7 +1079,7 @@
     },
     "/admin/tags/bulk-import": {
       "post": {
-        "operationId": "AdminController_bulkImport",
+        "operationId": "AdminController_tagsBulkImport",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1087,7 +1087,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BulkImportDto"
+                "$ref": "#/components/schemas/TagsBulkImportDto"
               }
             }
           }
@@ -1856,7 +1856,7 @@
           }
         }
       },
-      "BulkImportDto": {
+      "TagsBulkImportDto": {
         "type": "object",
         "properties": {
           "tags": {

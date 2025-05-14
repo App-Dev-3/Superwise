@@ -4,7 +4,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AdminRepository } from './admin.repository';
 import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
-import { BulkImportDto } from './dto/bulk-import.dto';
+import { TagsBulkImportDto } from './dto/tagsBulk-import.dto';
 import { Tag } from '@prisma/client';
 
 describe('AdminService', () => {
@@ -48,7 +48,7 @@ describe('AdminService', () => {
   describe('bulkImport', () => {
     it('should successfully import tags and similarities', async () => {
       // Mock data
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python', 'react'],
         similarities: [
           { field1: 'javascript', field2: 'react', similarity_score: 0.8 },
@@ -83,7 +83,7 @@ describe('AdminService', () => {
 
     it('should handle duplicates with formatting inconsistencies', async () => {
       // Mock data with case and whitespace inconsistencies
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['JavaScript', 'javascript', ' python ', 'Python', 'react'],
         similarities: [
           { field1: 'JavaScript', field2: 'react', similarity_score: 0.8 },
@@ -120,7 +120,7 @@ describe('AdminService', () => {
 
     it('should throw BadRequestException when tag from similarities not found in tags list (field1)', async () => {
       // Mock data with mismatched tags
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['python', 'react'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
@@ -139,7 +139,7 @@ describe('AdminService', () => {
 
     it('should throw BadRequestException when tag from similarities not found in tags list (field2)', async () => {
       // Mock data with mismatched tags
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };

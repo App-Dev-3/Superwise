@@ -87,9 +87,9 @@ export class SupervisionRequestsService {
       if (
         (latestRequest.request_state === RequestState.REJECTED ||
           latestRequest.request_state === RequestState.WITHDRAWN) &&
-        this.isWithinWaitPeriod(latestRequest.updated_at, 2)
+        this.isWithinWaitPeriod(latestRequest.updated_at, this.getCooldownDays())
       ) {
-        throw new SupervisionRequestTooEarlyException(2);
+        throw new SupervisionRequestTooEarlyException(this.getCooldownDays());
       }
     }
 
@@ -296,6 +296,14 @@ export class SupervisionRequestsService {
   private isWithinWaitPeriod(date: Date, days: number): boolean {
     const waitPeriodMs = days * 24 * 60 * 60 * 1000; // Convert days to milliseconds
     return Date.now() - date.getTime() < waitPeriodMs;
+  }
+
+  /**
+   * Get the cooldown period in days from environment variable or default to 2
+   */
+  private getCooldownDays(): number {
+    const envValue = process.env.SUPERVISION_REQUEST_COOLDOWN_DAYS;
+    return envValue ? parseInt(envValue, 10) : 2;
   }
 
   /**

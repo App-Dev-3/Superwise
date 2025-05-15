@@ -38,7 +38,7 @@ definePageMeta({
   layout: "authenticated",
 });
 console.log('Onboarding supervisor page loaded');
-const { isLoaded, user } = useUser();
+const { user } = useUser();
 const { createUser, addUserTag } = useUserApi();
 const  { getTags } = useTagApi();
 const userStore = useUserStore();

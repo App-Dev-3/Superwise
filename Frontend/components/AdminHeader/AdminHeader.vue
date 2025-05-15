@@ -5,13 +5,12 @@ import {computed} from "vue";
 const router = useRouter();
 
 interface Props {
-    variant?: "default" | "upload" | "download" | "delete";
-    headerText?: string;
+  variant?: "default" | "upload" | "download" | "delete";
+  headerText: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    variant: "default",
-    headerText: "",
+  variant: "default",
 });
 
 

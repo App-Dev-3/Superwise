@@ -5,7 +5,7 @@
       <div class="w-3/4 max-w-md">
         <multi-step-form
           :total-steps=3
-          @submit="handleSubmit()"
+          @submit="handleSubmit"
           @step-changed="handleStepChange"
         >
           <template #step1>
@@ -47,11 +47,14 @@ import { ref } from 'vue';
 import type { UserCreateData, UserData } from '~/shared/types/userInterfaces';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import { useUserStore } from '~/stores/useUserStore'
+import { useRegistrationStore } from '~/stores/useRegistrationStore';
 
 const { isLoaded, isSignedIn, user } = useUser();
 const  { getTags } = useTagApi();
 const { createUser, addUserTag } = useUserApi();
 const userStore = useUserStore();
+const registrationStore = useRegistrationStore()
+
 
 const userFormData = ref({} as UserCreateData);
 
@@ -70,9 +73,9 @@ async function handleStepChange(step: number): Promise<void> {
     } catch (error: any) {
       console.error('Error creating user:', error);
 
-      if (error.statusCode === 409 && error.message.includes('Unique constraint violation')) {
+      if (error.statusCode === 400 && error.message.includes('Unique constraint violation')) {
         console.warn('User already registered. Skipping registration.');
-        finishOnboarding();
+        return navigateTo(`/dashboard`);
       } else {
         console.error('Unexpected error:', error);
         await navigateTo('/');
@@ -83,23 +86,14 @@ async function handleStepChange(step: number): Promise<void> {
 }
 
 async function handleSubmit() {
+  if (!userStore.user) {
+    return;
+  }
   addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
-  await finishOnboarding();
+  await registrationStore.fetchRegistrationStatus(userStore.user?.email)
+  return navigateTo(`/dashboard`);
 }
 
-
-const finishOnboarding = async () => {
-  if (!isLoaded.value || !isSignedIn.value || !user.value) return;
-
-  try {
-    await user.value.update({ unsafeMetadata: { onboardingCompleted: true } });
-
-    console.log("Onboarding completed");
-    return navigateTo(`/dashboard`);
-  } catch (err) {
-    console.error("Onboarding error:", err);
-  }
-};
 
 const fetchAlldata = async () =>{ 
   DbTags.value = await getTags();

@@ -2,6 +2,14 @@
 import { usePointerSwipe } from '@vueuse/core'
 import { computed, shallowRef } from 'vue'
 
+interface Props {
+    swipeThreshold?: number
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    swipeThreshold: 40,
+})
+
 const emit = defineEmits(['swipeRight', 'swipeLeft'])
 
 defineExpose({
@@ -16,8 +24,6 @@ const containerWidth = computed(() => container.value?.offsetWidth || 0)
 const left = shallowRef('0')
 const opacity = shallowRef(1)
 
-
-const swipeThreshold = ref(30) // Minimum distance to trigger a swipe
 const cardIsAtStartPosition = ref(false)
 
 function reset() {
@@ -28,7 +34,7 @@ function reset() {
 
 const { distanceX, isSwiping } = usePointerSwipe(target, {
     disableTextSelect: true,
-    threshold: swipeThreshold.value,
+    threshold: props.swipeThreshold,
     onSwipe() {
         cardIsAtStartPosition.value = false
         if (containerWidth.value) {
@@ -80,8 +86,8 @@ const { distanceX, isSwiping } = usePointerSwipe(target, {
 const backgroundColorClasses = computed(() => {
     return {
         'bg-base-100': cardIsAtStartPosition.value,
-        'bg-success': distanceX.value < -swipeThreshold.value/10,
-        'bg-error':  distanceX.value > swipeThreshold.value/10,
+        'bg-success': distanceX.value < -props.swipeThreshold/10,
+        'bg-error':  distanceX.value > props.swipeThreshold/10,
     }
 })
 

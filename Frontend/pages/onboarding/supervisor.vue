@@ -1,35 +1,72 @@
 <template>
-  <div class="flex flex-col items-center justify-center h-screen p-4">
-    <h1 class="text-2xl font-semibold mb-6">
-      Welcome to supervisor onboarding
-    </h1>
-    <span v-if="!isLoaded">Loading...</span>
+  <div class="min-h-screen flex flex-col">
+    <app-header :show-user="true" />
+    <div class="flex-1 flex items-center justify-center ">
+      <div class="w-3/4 max-w-md">
+        <multi-step-form
+          :total-steps=2
+          @submit="handleSubmit()"
+        >
+          <template #step1>
+            <tag-selector
+              :all-tags="DbTags"
+              :max-selection=10
+              @update:selected-tags="tags = $event"
+            />
+          </template>
 
-    <button
-      v-else
-      class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-      :disabled="!isLoaded"
-      @click="finishOnboarding"
-    >
-      <span>Finish onboarding</span>
-    </button>
-  </div>
+          <template #step2>
+            <TagPriority
+              :tags="tags"
+              @update:tags="tags = $event"
+            />
+          </template>
+        </multi-step-form>
+      </div>
+    </div>
+  </div> 
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useUser } from "@clerk/nuxt/composables";
+import type { tagData } from "~/shared/types/tagInterfaces";
+import type { UserCreateData, UserData } from "~/shared/types/userInterfaces";
 
-const { isLoaded, isSignedIn, user } = useUser();
 
-const finishOnboarding = async () => {
-  if (!isLoaded.value || !isSignedIn.value || !user.value) return;
+definePageMeta({
+  layout: "authenticated",
+});
+console.log('Onboarding supervisor page loaded');
+const { isLoaded, user } = useUser();
+const { createUser, addUserTag } = useUserApi();
+const  { getTags } = useTagApi();
+const userStore = useUserStore();
 
+const DbTags = ref([] as tagData[]);
+const tags = ref([] as tagData[]);
+
+
+onMounted(async () => {
+  if (!user.value) return navigateTo("/");
+  
   try {
-    await user.value.update({ unsafeMetadata: { onboardingCompleted: true } });
-
-    return navigateTo(`/dashboard`);
-  } catch (err) {
-    console.error("Onboarding error:", err);
+    const res = await createUser({
+      email: user.value.primaryEmailAddress?.emailAddress
+    } as UserCreateData) as UserData;
+    userStore.setUser(res);
+    
+    DbTags.value = await getTags() as tagData[];
+  } catch (error) {
+    console.error('Error fetching data:', error); 
   }
-};
+  
+});
+
+const handleSubmit = () => {
+  addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
+  navigateTo("/dashboard");
+}
+
+
 </script>

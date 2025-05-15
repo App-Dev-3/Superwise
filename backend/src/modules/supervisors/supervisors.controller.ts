@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Param,
-  Post,
   Patch,
   Query,
   UnauthorizedException,
@@ -11,7 +10,6 @@ import {
 } from '@nestjs/common';
 import { SupervisorsService } from './supervisors.service';
 import { ApiOperation, ApiTags, ApiQuery, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { CreateSupervisorDto } from './dto/create-supervisor.dto';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
@@ -67,19 +65,8 @@ export class SupervisorsController {
     return this.supervisorsService.findSupervisorById(id);
   }
 
-  @Post()
-  @Roles(Role.ADMIN)
-  @ApiOperation({ summary: 'Create a new supervisor profile' })
-  @ApiResponse({
-    status: 201,
-    description: 'Supervisor profile created successfully',
-  })
-  async createSupervisorProfile(@Body() createSupervisorDto: CreateSupervisorDto) {
-    return this.supervisorsService.createSupervisorProfile(createSupervisorDto);
-  }
-
   @Patch(':id')
-  @Roles(Role.SUPERVISOR, Role.ADMIN)
+  @Roles(Role.SUPERVISOR)
   @ApiOperation({ summary: 'Partially update a supervisor profile' })
   @ApiParam({ name: 'id', description: 'Supervisor ID' })
   @ApiResponse({
@@ -88,18 +75,14 @@ export class SupervisorsController {
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
   async updateSupervisorProfile(
-    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSupervisorDto: UpdateSupervisorDto,
     @CurrentUser() currentUser: User,
   ) {
-    // Get the supervisor to verify ownership
-    const supervisor = await this.supervisorsService.findSupervisorById(id);
-
-    // Allow supervisor to update their own profile or admin to update any profile
-    if (supervisor.user_id === currentUser.id || currentUser.role === Role.ADMIN) {
-      return this.supervisorsService.updateSupervisorProfile(id, updateSupervisorDto);
+    // check it later
+    const supervisor = await this.supervisorsService.findSupervisorByUserId(currentUser.id);
+    if (supervisor.id) {
+      return this.supervisorsService.updateSupervisorProfile(supervisor.id, updateSupervisorDto);
     }
-
     throw new UnauthorizedException('You do not have permission to update this supervisor profile');
   }
 }

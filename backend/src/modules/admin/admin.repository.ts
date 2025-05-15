@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { SupervisorDto } from './dto/supervisors-bulk-import.dto';
 
 @Injectable()
 export class AdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async bulkImport(
+  async tagsBulkImport(
     tags: string[],
     similarities: Array<{ field1: string; field2: string; similarity_score: number }>,
   ): Promise<{
@@ -78,6 +79,111 @@ export class AdminRepository {
           similaritiesReplaced: replacedCount,
           duplicateTagsSkipped: tags.length - new Set(tags).size,
           duplicateSimsSkipped: similarities.length - replacedCount,
+        };
+      },
+      {
+        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        maxWait: 5000,
+        timeout: 10000,
+      },
+    );
+  }
+
+  async supervisorsBulkImport(supervisors: SupervisorDto[]): Promise<{
+    success: boolean;
+    message: string;
+    supervisorsImported: number;
+    supervisorsUpdated: number;
+  }> {
+    return this.prisma.$transaction(
+      async tx => {
+        let newSupervisorsCount = 0;
+        let updatedSupervisorsCount = 0;
+
+        for (const supervisor of supervisors) {
+          if (!supervisor.email) {
+            throw new BadRequestException(
+              `Email is required for supervisor${supervisor.last_name ? ': ' + supervisor.last_name : ''}`,
+            );
+          }
+
+          let user = await tx.user.findUnique({
+            where: { email: supervisor.email },
+          });
+
+          if (!user) {
+            if (!supervisor.first_name || !supervisor.last_name) {
+              throw new BadRequestException(
+                `First name and last name are required when creating a new supervisor with email: ${supervisor.email}`,
+              );
+            }
+
+            user = await tx.user.create({
+              data: {
+                email: supervisor.email,
+                first_name: supervisor.first_name,
+                last_name: supervisor.last_name,
+                profile_image: supervisor.profile_image || null,
+                role: 'SUPERVISOR',
+                is_registered: false,
+              },
+            });
+
+            newSupervisorsCount++;
+          }
+
+          const existingProfile = await tx.supervisor.findUnique({
+            where: { user_id: user.id },
+          });
+
+          if (existingProfile) {
+            await tx.supervisor.update({
+              where: { id: existingProfile.id },
+              data: {
+                bio: supervisor.bio || existingProfile.bio,
+                total_spots: supervisor.total_spots !== undefined
+                  ? supervisor.total_spots
+                  : existingProfile.total_spots,
+                available_spots: supervisor.available_spots !== undefined
+                  ? supervisor.available_spots
+                  : (supervisor.total_spots !== undefined
+                      ? supervisor.total_spots
+                      : existingProfile.available_spots),
+              },
+            });
+
+            updatedSupervisorsCount++;
+          } else {
+            await tx.supervisor.create({
+              data: {
+                user_id: user.id,
+                bio: supervisor.bio || '',
+                total_spots: supervisor.total_spots || 0,
+                available_spots:
+                  supervisor.available_spots !== undefined
+                    ? supervisor.available_spots
+                    : supervisor.total_spots || 0,
+              },
+            });
+          }
+        }
+
+        let message = '';
+        if (newSupervisorsCount > 0 && updatedSupervisorsCount > 0) {
+          message = `${newSupervisorsCount} new supervisors successfully imported and ${updatedSupervisorsCount} existing supervisors updated`;
+        } else if (newSupervisorsCount > 0) {
+          message = `${newSupervisorsCount} new supervisors successfully imported`;
+        } else if (updatedSupervisorsCount > 0) {
+          message = `${updatedSupervisorsCount} existing supervisors successfully updated`;
+        } else {
+          message = `No supervisors imported or updated`;
+        }
+
+        return {
+          success: true,
+          message,
+          supervisorsImported: newSupervisorsCount,
+          supervisorsUpdated: updatedSupervisorsCount,
         };
       },
       {

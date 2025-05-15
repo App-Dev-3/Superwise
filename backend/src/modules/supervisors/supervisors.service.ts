@@ -31,17 +31,6 @@ export class SupervisorsService {
   }) {
     return this.supervisorsRepository.findAllSupervisors(params);
   }
-  async createSupervisorProfile(data: {
-    bio?: string;
-    available_spots?: number;
-    total_spots?: number;
-    user_id: string;
-  }): Promise<Supervisor> {
-    if (data.available_spots && data.total_spots && data.available_spots > data.total_spots) {
-      data.available_spots = data.total_spots;
-    }
-    return this.supervisorsRepository.createSupervisorProfile(data);
-  }
 
   async updateSupervisorProfile(
     id: string,

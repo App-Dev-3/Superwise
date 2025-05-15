@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BulkImportSuccessDto {
+export class TagsBulkImportSuccessDto {
   @ApiProperty({
     description: 'Success flag',
     example: true,

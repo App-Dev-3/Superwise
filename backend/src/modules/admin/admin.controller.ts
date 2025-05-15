@@ -1,10 +1,12 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
-import { BulkImportDto } from './dto/bulk-import.dto';
-import { BulkImportSuccessDto } from './dto/bulk-import-success.dto';
+import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
+import { TagsBulkImportSuccessDto } from './dto/tags-bulk-import-success.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
+import { SupervisorsBulkImportSuccessDto } from './dto/supervisors-bulk-import-success.dto';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -15,7 +17,7 @@ export class AdminController {
   @Post('tags/bulk-import')
   @ApiOperation({ summary: 'Bulk import tags and their similarities' })
   @ApiBody({
-    type: BulkImportDto,
+    type: TagsBulkImportDto,
     description: 'New Tags and similarities for the application',
   })
   @ApiResponse({
@@ -34,7 +36,34 @@ export class AdminController {
     status: 400,
     description: 'Bad Request - Invalid data or inconsistent tags and similarities',
   })
-  async bulkImport(@Body() dto: BulkImportDto): Promise<BulkImportSuccessDto> {
-    return this.adminService.bulkImport(dto);
+  async tagsBulkImport(@Body() dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
+    return this.adminService.tagsBulkImport(dto);
+  }
+
+  @Post('supervisors/bulk-import')
+  @ApiOperation({ summary: 'Bulk import Supervisors and their profiles' })
+  @ApiBody({
+    type: SupervisorsBulkImportDto,
+    description: 'New Supervisors for the application',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Supervisors successfully imported',
+    schema: {
+      properties: {
+        success: { type: 'boolean', example: true },
+        message: { type: 'string', example: 'Supervisors successfully imported' },
+        supervisorsImported: { type: 'number', example: 10 },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid data',
+  })
+  async supervisorsBulkImport(
+    @Body() dto: SupervisorsBulkImportDto,
+  ): Promise<SupervisorsBulkImportSuccessDto> {
+    return this.adminService.supervisorsBulkImport(dto);
   }
 }

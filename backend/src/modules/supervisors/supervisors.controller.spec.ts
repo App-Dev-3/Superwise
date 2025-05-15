@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisorsController } from './supervisors.controller';
 import { SupervisorsService } from './supervisors.service';
-import { CreateSupervisorDto } from './dto/create-supervisor.dto';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
 import { Role } from '@prisma/client';
 
@@ -103,26 +102,6 @@ describe('SupervisorsController', () => {
     });
   });
 
-  describe('createSupervisorProfile', () => {
-    it('should create and return a supervisor profile', async () => {
-      const createDto: CreateSupervisorDto = {
-        user_id: USER_ID,
-        bio: 'New supervisor',
-        available_spots: 3,
-        total_spots: 5,
-      };
-
-      service.createSupervisorProfile.mockResolvedValue(mockSupervisor);
-
-      const result = await controller.createSupervisorProfile(createDto);
-
-      expect(result).toEqual(mockSupervisor);
-
-      // Use type assertion to verify the method was called with the right parameters
-      expect(service.createSupervisorProfile).toHaveBeenCalledWith(createDto);
-    });
-  });
-
   describe('updateSupervisorProfile', () => {
     it('should update and return supervisor profile', async () => {
       const updateDto: UpdateSupervisorDto = {
@@ -136,17 +115,15 @@ describe('SupervisorsController', () => {
         available_spots: 2,
       };
 
-      // Mock the findSupervisorById call that happens inside updateSupervisorProfile
-      service.findSupervisorById.mockResolvedValue(mockSupervisor);
+      // Mock the service methods
+      service.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
       service.updateSupervisorProfile.mockResolvedValue(updatedSupervisor);
 
-      const result = await controller.updateSupervisorProfile(SUPERVISOR_ID, updateDto, mockUser);
+      // Call with the correct signature
+      const result = await controller.updateSupervisorProfile(updateDto, mockUser);
 
       expect(result).toEqual(updatedSupervisor);
-      // Verify findSupervisorById was called first
-      expect(service.findSupervisorById).toHaveBeenCalledWith(SUPERVISOR_ID);
-
-      // Use type assertion to verify the method was called with the right parameters
+      expect(service.findSupervisorByUserId).toHaveBeenCalledWith(mockUser.id);
       expect(service.updateSupervisorProfile).toHaveBeenCalledWith(SUPERVISOR_ID, updateDto);
     });
   });

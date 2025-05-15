@@ -6,6 +6,7 @@ export interface UserCreateData extends Record<string, unknown> {
 
 export interface UserData extends Record<string, unknown> {
     id: string;
+    clerk_id: string;
     email: string;
     first_name: string;
     last_name: string;

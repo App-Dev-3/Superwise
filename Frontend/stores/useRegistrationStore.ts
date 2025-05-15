@@ -8,9 +8,7 @@ export const useRegistrationStore = defineStore('registration', {
   }),
   actions: {
     async fetchRegistrationStatus(userEmail: string) {
-      if (this.status !== null) return
-
-      try {
+        try {
         const res = await getUserRegistrationStatus( userEmail );
         this.status = res;
       } catch (e) {

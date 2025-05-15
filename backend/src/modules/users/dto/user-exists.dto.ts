@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Role } from '@prisma/client';
 
 /**
  * DTO for the minimal user existence check response
@@ -17,4 +18,12 @@ export class UserExistsDto {
     example: false,
   })
   is_registered: boolean;
+
+  @ApiPropertyOptional({
+    description: 'The role of the user in the system (student, supervisor, or admin)',
+    enum: Role,
+    example: Role.STUDENT,
+    required: false,
+  })
+  role?: Role;
 }

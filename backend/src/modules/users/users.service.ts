@@ -30,7 +30,32 @@ export class UsersService {
     const verifiedUserEmail = authUser.email;
     const existingUser = await this.usersRepository.findUserByEmail(verifiedUserEmail);
 
-    if (existingUser) {
+    // Scenario 1: No existing user - create a new one (defaults to STUDENT)
+    if (!existingUser) {
+      this.logger.debug(
+        `No existing user for email ${verifiedUserEmail}. Creating new student user with clerk_id: ${authUser.clerk_id}`,
+        'UsersService',
+      );
+
+      // For new student creation, first_name and last_name are mandatory
+      if (!createUserDto.first_name || !createUserDto.last_name) {
+        throw new BadRequestException(
+          'First name and last name are required to create a new student account.',
+        );
+      }
+
+      const studentData = {
+        email: verifiedUserEmail, // Using verified email from JWT
+        clerk_id: authUser.clerk_id, // clerk_id from authenticated session
+        first_name: createUserDto.first_name,
+        last_name: createUserDto.last_name,
+        role: Role.STUDENT,
+        profile_image: createUserDto.profile_image,
+        is_registered: true,
+      };
+      return this.usersRepository.createUser(studentData);
+    } else {
+      // Existing user scenarios
       this.logger.debug(
         `Existing user found for email ${verifiedUserEmail}: id=${existingUser.id}, role=${existingUser.role}, is_registered=${existingUser.is_registered}, clerk_id=${existingUser.clerk_id}`,
         'UsersService',
@@ -69,39 +94,34 @@ export class UsersService {
         });
       }
 
-      // Scenario 2.3: Existing user is NOT a supervisor and not registered (e.g. pre-created student, admin)
-      // This is a conflict because a non-supervisor account exists and they are trying to use the registration flow
+      // Scenario 2.3: Existing user is a STUDENT and not yet registered
+      // This is for students created by supervisors who are now registering themselves
+      if (existingUser.role === Role.STUDENT) {
+        this.logger.debug(
+          `Linking existing student account (email: ${verifiedUserEmail}, id: ${existingUser.id}) to clerk_id: ${authUser.clerk_id}`,
+          'UsersService',
+        );
+        return this.usersRepository.updateUser(existingUser.id, {
+          clerk_id: authUser.clerk_id,
+          is_registered: true,
+          // Update profile details if provided in DTO, otherwise keep existing
+          first_name: createUserDto.first_name || existingUser.first_name,
+          last_name: createUserDto.last_name || existingUser.last_name,
+          profile_image:
+            createUserDto.profile_image !== undefined
+              ? createUserDto.profile_image
+              : existingUser.profile_image,
+        });
+      }
+
+      // Scenario 2.4: Existing user is not a SUPERVISOR or STUDENT (e.g., ADMIN) and not registered
       this.logger.warn(
-        `Attempt to register with email ${verifiedUserEmail} which exists but is not a supervisor (role: ${existingUser.role}).`,
+        `Attempt to register with email ${verifiedUserEmail} which exists but is not a supervisor or student (role: ${existingUser.role}).`,
         'UsersService',
       );
       throw new BadRequestException(
-        'An account with this email already exists and is not an unlinked supervisor. Please contact support if you believe this is an error.',
+        'An account with this email already exists and is not an unlinked supervisor or student. Please contact support if you believe this is an error.',
       );
-    } else {
-      // Scenario 1: No existing user - create a new one (defaults to STUDENT)
-      this.logger.debug(
-        `No existing user for email ${verifiedUserEmail}. Creating new student user with clerk_id: ${authUser.clerk_id}`,
-        'UsersService',
-      );
-
-      // For new student creation, first_name and last_name are mandatory
-      if (!createUserDto.first_name || !createUserDto.last_name) {
-        throw new BadRequestException(
-          'First name and last name are required to create a new student account.',
-        );
-      }
-
-      const studentData = {
-        email: verifiedUserEmail, // Using verified email from JWT
-        first_name: createUserDto.first_name,
-        last_name: createUserDto.last_name,
-        role: Role.STUDENT,
-        profile_image: createUserDto.profile_image,
-        clerk_id: authUser.clerk_id, // clerk_id from authenticated session
-        is_registered: true,
-      };
-      return this.usersRepository.createUser(studentData);
     }
   }
 

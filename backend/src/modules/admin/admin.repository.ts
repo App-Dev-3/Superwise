@@ -141,14 +141,16 @@ export class AdminRepository {
               where: { id: existingProfile.id },
               data: {
                 bio: supervisor.bio || existingProfile.bio,
-                total_spots: supervisor.total_spots !== undefined
-                  ? supervisor.total_spots
-                  : existingProfile.total_spots,
-                available_spots: supervisor.available_spots !== undefined
-                  ? supervisor.available_spots
-                  : (supervisor.total_spots !== undefined
+                total_spots:
+                  supervisor.total_spots !== undefined
+                    ? supervisor.total_spots
+                    : existingProfile.total_spots,
+                available_spots:
+                  supervisor.available_spots !== undefined
+                    ? supervisor.available_spots
+                    : supervisor.total_spots !== undefined
                       ? supervisor.total_spots
-                      : existingProfile.available_spots),
+                      : existingProfile.available_spots,
               },
             });
 

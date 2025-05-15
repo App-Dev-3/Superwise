@@ -3,7 +3,7 @@ import type { UserData } from "~/shared/types/userInterfaces";
 
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  if (process.server) return
+  if (import.meta.server) return
 
   const { user, isLoaded, isSignedIn } = useUser()
   const registrationStore = useRegistrationStore()
@@ -17,7 +17,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!isSignedIn.value) {
     if (!publicPaths.includes(to.path)) {
-      console.log('user not signed in, redirecting to /')
       return navigateTo('/')
     }
     // If signed out and on a public page, skip the rest of the logic
@@ -29,10 +28,8 @@ export default defineNuxtRouteMiddleware(async (to) => {
   await registrationStore.fetchRegistrationStatus(userEmail)
   
   const onboardingComplete = registrationStore.status?.is_registered
-  console.log('onboardingComplete', onboardingComplete)
 
   if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
-    console.log('user needs onboarding')
     return navigateTo('/onboarding/onboarding')
   }
 

@@ -49,7 +49,7 @@ import type { tagData } from '~/shared/types/tagInterfaces';
 import { useUserStore } from '~/stores/useUserStore'
 import { useRegistrationStore } from '~/stores/useRegistrationStore';
 
-const { isLoaded, isSignedIn, user } = useUser();
+const { user } = useUser();
 const  { getTags } = useTagApi();
 const { createUser, addUserTag } = useUserApi();
 const userStore = useUserStore();
@@ -66,7 +66,6 @@ async function handleStepChange(step: number): Promise<void> {
     userFormData.value.email = user.value.primaryEmailAddress.emailAddress; 
     try {
       const res = await createUser(userFormData.value) as UserData;
-      userFormData.value = res;
       userStore.setUser(res);
       await fetchAlldata();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +88,7 @@ async function handleSubmit() {
   if (!userStore.user) {
     return;
   }
-  addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
+  addUserTag({id: userStore.user.id, tags: tags.value as tagData[]});
   await registrationStore.fetchRegistrationStatus(userStore.user?.email)
   return navigateTo(`/dashboard`);
 }

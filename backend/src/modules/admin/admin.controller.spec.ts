@@ -138,7 +138,6 @@ describe('AdminController', () => {
             email: 'supervisor1@example.com',
             first_name: 'John',
             last_name: 'Doe',
-            bio: 'Experienced supervisor',
             total_spots: 5,
             available_spots: 3,
           },

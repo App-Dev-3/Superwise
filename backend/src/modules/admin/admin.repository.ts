@@ -123,7 +123,6 @@ export class AdminRepository {
                 email: supervisor.email,
                 first_name: supervisor.first_name,
                 last_name: supervisor.last_name,
-                profile_image: supervisor.profile_image || null,
                 role: 'SUPERVISOR',
                 is_registered: false,
               },
@@ -140,7 +139,6 @@ export class AdminRepository {
             await tx.supervisor.update({
               where: { id: existingProfile.id },
               data: {
-                bio: supervisor.bio || existingProfile.bio,
                 total_spots:
                   supervisor.total_spots !== undefined
                     ? supervisor.total_spots
@@ -159,7 +157,6 @@ export class AdminRepository {
             await tx.supervisor.create({
               data: {
                 user_id: user.id,
-                bio: supervisor.bio || '',
                 total_spots: supervisor.total_spots || 0,
                 available_spots:
                   supervisor.available_spots !== undefined

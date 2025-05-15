@@ -30,9 +30,9 @@
                 :message="toast.message"
                 :duration="3000"
                 button-text="undo"
-                @buttonClick="handleButtonClick()"
+                @button-click="handleButtonClick()"
                 @close="toast.visible = false"
-              > </Toast>
+              />
             </SwipeContainer>
           </div>
           
@@ -57,8 +57,6 @@ import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 
-console.log('userStore', userStore.user);
-console.log('supervisorStore', supervisorStore.supervisors);
 const removedSupervisor = ref(null);
 const toast = ref({
     visible: false,
@@ -67,7 +65,6 @@ const toast = ref({
 });
 
 const handleSwipeLeft = (supervisor: SupervisorData) => {
-    console.log("Swiped left!");
     toast.value = {
         visible: true,
         type: "error",
@@ -75,13 +72,11 @@ const handleSwipeLeft = (supervisor: SupervisorData) => {
     };
     removedSupervisor.value = supervisor;
     supervisorStore.removeSupervisor(supervisor.supervisor_userId);
-    console.log("removed: ", supervisorStore.supervisors);
 
 
     // Handle the left swipe action here
 };
 const handleSwipeRight = (supervisor: SupervisorData) => {
-    console.log("Swiped right!");
     toast.value = {
         visible: true,
         type: "success",
@@ -102,7 +97,6 @@ const handleButtonClick = () => {
 function navigate(route: string) {
     dummyRoute.value = route;
     navigateTo(route);
-    console.log("Navigating to:", route);
 }
 
 const dummyRoute = ref("/");

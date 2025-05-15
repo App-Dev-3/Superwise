@@ -62,13 +62,11 @@ if (userStore.user !== null) {
   const res = await getRecommendedSupervisors(userStore.user.id) as SupervisorData[];
   supervisorStore.setSupervisors(res);
   matches.value = res;
-  console.log('matches', matches.value);
 }
 
 function navigate(route: string) {
     dummyRoute.value = route;
     navigateTo(route);
-    console.log("Navigating to:", route);
 }
 
 const dummyRoute = ref("/");

@@ -3,8 +3,7 @@ import { until } from "@vueuse/core";
 import { onMounted } from "vue";
 
 
-const { getUserRegistrationStatus} = useUserApi();
-const { isLoaded, isSignedIn, user } = useUser();
+const { isLoaded, user } = useUser();
 const registrationStore = useRegistrationStore();
 
 onMounted(async() => {
@@ -13,12 +12,12 @@ onMounted(async() => {
 
   const userEmail = user.value?.primaryEmailAddress?.emailAddress;
   let role = "student"; // default to student
-  console.log("issue occuring form here" );
   if (!userEmail) return; 
   try {
     await registrationStore.fetchRegistrationStatus(userEmail)
-
-    role = determineRole(registrationStore.status?.exists)
+    if (registrationStore.status?.exists){
+      role = determineRole(registrationStore.status?.exists)
+    }
     
   } catch (error) {
     console.error("Error getting user role:", error);

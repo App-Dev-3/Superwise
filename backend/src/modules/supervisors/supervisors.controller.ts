@@ -75,15 +75,13 @@ export class SupervisorsController {
   })
   @ApiResponse({ status: 404, description: 'Supervisor not found' })
   async updateSupervisorProfile(
-  
     @Body() updateSupervisorDto: UpdateSupervisorDto,
     @CurrentUser() currentUser: User,
   ) {
-
-    // check it later 
+    // check it later
     const supervisor = await this.supervisorsService.findSupervisorByUserId(currentUser.id);
-    if (supervisor.id ) {
-      return this.supervisorsService.updateSupervisorProfile(supervisor.id , updateSupervisorDto);
+    if (supervisor.id) {
+      return this.supervisorsService.updateSupervisorProfile(supervisor.id, updateSupervisorDto);
     }
     throw new UnauthorizedException('You do not have permission to update this supervisor profile');
   }

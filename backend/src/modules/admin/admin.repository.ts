@@ -101,19 +101,16 @@ export class AdminRepository {
         let updatedSupervisorsCount = 0;
 
         for (const supervisor of supervisors) {
-          
           if (!supervisor.email) {
             throw new BadRequestException(
               `Email is required for supervisor${supervisor.last_name ? ': ' + supervisor.last_name : ''}`,
             );
           }
 
-     
           let user = await tx.user.findUnique({
             where: { email: supervisor.email },
           });
 
-      
           if (!user) {
             if (!supervisor.first_name || !supervisor.last_name) {
               throw new BadRequestException(
@@ -128,20 +125,18 @@ export class AdminRepository {
                 last_name: supervisor.last_name,
                 profile_image: supervisor.profile_image || null,
                 role: 'SUPERVISOR',
-                is_registered: false, 
+                is_registered: false,
               },
             });
 
             newSupervisorsCount++;
           }
 
-        
           const existingProfile = await tx.supervisor.findUnique({
             where: { user_id: user.id },
           });
 
           if (existingProfile) {
-          
             await tx.supervisor.update({
               where: { id: existingProfile.id },
               data: {
@@ -156,7 +151,6 @@ export class AdminRepository {
 
             updatedSupervisorsCount++;
           } else {
-    
             await tx.supervisor.create({
               data: {
                 user_id: user.id,
@@ -170,7 +164,6 @@ export class AdminRepository {
             });
           }
         }
-
 
         let message = '';
         if (newSupervisorsCount > 0 && updatedSupervisorsCount > 0) {

@@ -8,7 +8,6 @@ import { Role } from '@prisma/client';
 import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
 import { SupervisorsBulkImportSuccessDto } from './dto/supervisors-bulk-import-success.dto';
 
-
 @ApiTags('admin')
 @Controller('admin')
 @Roles(Role.ADMIN)
@@ -40,7 +39,7 @@ export class AdminController {
   async tagsBulkImport(@Body() dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
     return this.adminService.tagsBulkImport(dto);
   }
- 
+
   @Post('supervisors/bulk-import')
   @ApiOperation({ summary: 'Bulk import Supervisors and their profiles' })
   @ApiBody({

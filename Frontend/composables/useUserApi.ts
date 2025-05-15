@@ -37,7 +37,7 @@ export const useUserApi = () => {
     getUserByEmail,
     getUserById,
     addUserTag,
-    getRecommendedSupervisors
+    getRecommendedSupervisors,
   }
 
 }

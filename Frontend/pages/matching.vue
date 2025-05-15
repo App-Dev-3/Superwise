@@ -49,12 +49,10 @@
 
 <script setup lang="ts">
 
-import { useUserStore } from '~/stores/useUserStore'
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { ref } from 'vue';
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
 
-const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 
 const removedSupervisor = ref(null);

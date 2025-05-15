@@ -1,6 +1,4 @@
 import { until } from "@vueuse/core";
-import type { UserData } from "~/shared/types/userInterfaces";
-
 
 export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return

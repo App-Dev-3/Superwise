@@ -23,7 +23,6 @@ export const useUserApi = () => {
   }
   
   const addUserTag = async (data: Record<string, unknown>) => {
-    console.log('addUserTag', data.tags)
     return await makeRequest(`users/${data.id}/tags`, 'PUT', {tags: data.tags})
   }
 

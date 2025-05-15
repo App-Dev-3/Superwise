@@ -6,7 +6,6 @@ import {
   ValidateNested,
   IsNotEmpty,
   IsOptional,
-  MaxLength,
   Min,
   IsArray,
 } from 'class-validator';
@@ -37,25 +36,6 @@ export class SupervisorDto {
   @IsString()
   @IsOptional()
   last_name?: string;
-
-  @ApiPropertyOptional({
-    description: 'URL to user profile image',
-    example: 'https://example.com/images/profile.jpg',
-  })
-  @IsString()
-  @IsOptional()
-  profile_image?: string;
-
-  @ApiPropertyOptional({
-    description: 'The supervisor bio',
-    example: 'Professor specializing in artificial intelligence and machine learning',
-  })
-  @MaxLength(2000, {
-    message: 'Bio cannot be longer than 2000 characters',
-  })
-  @IsOptional()
-  @IsString()
-  bio?: string;
 
   @ApiPropertyOptional({
     description: 'Number of available spots for supervision',

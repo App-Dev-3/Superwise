@@ -1,5 +1,6 @@
 import { makeRequest } from './useApi'
 import type {UserCreateData, UserRegistrationData} from "~/shared/types/userInterfaces";
+import type {UserCreateData, UserRegistrationData} from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {
 
@@ -27,15 +28,18 @@ export const useUserApi = () => {
   }
 
   const getRecommendedSupervisors = async (data: string) => {
+  const getRecommendedSupervisors = async (data: string) => {
     return await makeRequest(`match/${data}`, 'GET');
   }
 
   return {
     getUserRegistrationStatus,
+    getUserRegistrationStatus,
     createUser,
     getUserByEmail,
     getUserById,
     addUserTag,
+    getRecommendedSupervisors,
     getRecommendedSupervisors,
   }
 

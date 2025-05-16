@@ -29,7 +29,7 @@ export class ClerkJwtStrategy extends PassportStrategy(Strategy, 'clerk-jwt') {
     private readonly logger: WinstonLoggerService,
   ) {
     // Create a JWKS client to fetch the public key
-    const jwksUri = 'https://heroic-python-12.clerk.accounts.dev/.well-known/jwks.json';
+    const jwksUri = 'https://vital-pelican-84.clerk.accounts.dev/.well-known/jwks.json';
 
     // Create JWKS client for key retrieval
     const client = jwksClient({

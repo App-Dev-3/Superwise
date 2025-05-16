@@ -54,22 +54,34 @@ const goBack = () => {
 
         <UserButton v-if="props.showUser" />
 
-        <AppThemeToggle class="ml-5"/>
+        <AppThemeToggle class="ml-5" />
       </div>
 
       <ClientOnly>
         <div class="navbar-center">
-          <img 
-            :src="colorMode.value === 'dark' ? 
-              '../images/appHeader_logo_dark.svg' 
-              : '../images/appHeader_logo_light.svg'"
-            alt="Logo image" 
-            class="h-6" >
+          <img
+            :src="
+              colorMode.value === 'dark'
+                ? '../images/appHeader_logo_dark.svg'
+                : '../images/appHeader_logo_light.svg'
+            "
+            alt="Logo image"
+            class="h-6"
+          />
         </div>
       </ClientOnly>
 
       <div class="navbar-end">
-        <button
+        <SearchBar
+          :show-search="props.showSearch"
+          :clearable="true"
+          right-icon="xmark"
+          placeholder="Search..."
+          :auto-focus="true"
+        />
+      </div>
+    </div>
+    <!-- <button
           v-if="props.showSearch"
           class="btn btn-ghost btn-circle"
           data-test="search-button"
@@ -95,7 +107,7 @@ const goBack = () => {
           @update:model-value="handleInput"
         />
       </div>
-    </transition>
+    </transition> -->
   </div>
 </template>
 

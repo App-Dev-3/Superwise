@@ -2,7 +2,6 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 interface ValidatedMailInput {
-  errorMessage: string;
   placeholder: string;
   modelValue: string;
   domain: string;
@@ -10,17 +9,21 @@ interface ValidatedMailInput {
 
 const props = withDefaults(defineProps<ValidatedMailInput>(), {});
 
-const emit = defineEmits(['update:modelValue', 'blur']);
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+  (e: 'blur', event: FocusEvent): void
+}>();
 
-function handleInput(event) {
-  const trimmed = event.target.value.trim();
+function handleInput(event: Event): void {
+  const target = event.target as HTMLInputElement;
+  const trimmed = target.value.trim();
   if (trimmed !== '') {
-    event.target.value = trimmed.replace(/[^a-zA-Z0-9._%+-]/g, '');
+    target.value = trimmed.replace(/[^a-zA-Z0-9._%+-]/g, '');
   }
-  emit('update:modelValue', event.target.value);
+  emit('update:modelValue', target.value);
 }
 
-function handleBlur(event) {
+function handleBlur(event: FocusEvent): void {
   emit('blur', event);
 }
 </script>

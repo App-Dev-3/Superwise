@@ -4,7 +4,7 @@ import type {UserCreateData, UserRegistrationData} from "~/shared/types/userInte
 export const useUserApi = () => {
 
   const getUserRegistrationStatus = async (data: string) => {
-    return await makeRequest('/users/check-registration', 'GET', {
+    return await makeRequest('users/check-registration', 'GET', {
       email: data
     }) as UserRegistrationData
   }

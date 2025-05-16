@@ -1,6 +1,5 @@
 <script setup>
 import { useRouter } from "vue-router";
-import { ref } from "vue";
 import { useColorMode } from "#imports";
 
 const router = useRouter();
@@ -24,14 +23,6 @@ const props = defineProps({
     default: "",
   },
 });
-
-const isSearching = ref(false);
-
-const emit = defineEmits(["update:modelValue"]);
-
-function handleInput(value) {
-  emit("update:modelValue", value);
-}
 
 const goBack = () => {
   router.back();
@@ -67,57 +58,19 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          />
+          >
         </div>
       </ClientOnly>
 
-      <div class="navbar-end">
+      <div v-if="props.showSearch" class="navbar-end">
         <SearchBar
-          :show-search="props.showSearch"
-          :clearable="true"
           right-icon="xmark"
           placeholder="Search..."
-          :auto-focus="true"
-        />
-      </div>
-    </div>
-    <!-- <button
-          v-if="props.showSearch"
-          class="btn btn-ghost btn-circle"
-          data-test="search-button"
-          @click="isSearching = !isSearching"
-        >
-          <FontAwesomeIcon icon="search" class="text-xl" />
-        </button>
-      </div>
-    </div>
-
-    <transition name="fade">
-      <div
-        v-if="isSearching"
-        class="bg-base-100 px-4 pt-3 pb-4 border-t border-base-300"
-      >
-        <InputField
-          :auto-focus="isSearching"
           :model-value="props.modelValue"
-          placeholder="Search..."
-          label="Search Field"
-          note=""
-          right-icon="xmark"
-          @update:model-value="handleInput"
         />
       </div>
-    </transition> -->
+    </div>
   </div>
 </template>
 
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
+<style scoped></style>

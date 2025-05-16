@@ -45,8 +45,6 @@ onMounted(() => {
   }
 });
 
-const searchInput = ref(props.modelValue || "");
-
 const inputFieldRef = ref(null);
 
 const emit = defineEmits(["update:modelValue", "blur"]);
@@ -103,7 +101,7 @@ function handleRightIconClick() {
         :value="modelValue"
         @input="handleInput"
         @blur="handleBlur"
-      />
+      >
       <FontAwesomeIcon
         v-if="rightIcon"
         :icon="rightIcon"

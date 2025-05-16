@@ -2,34 +2,40 @@
 import { onMounted, onBeforeUnmount, ref } from "vue";
 
 const props = defineProps({
-  autoFocus: { type: Boolean, default: false },
   modelValue: { type: String, default: "" },
-  placeholder: { type: String, default: "" },
   rightIcon: { type: String, default: "" },
-  clearable: { type: Boolean, default: false },
+  placeholder: { type: String, default: "" },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 const { getUserByEmail, getUserByFirstName, getUserByLastName } = useUserApi();
 
-const isSearching = ref(false);
 const searchQuery = ref(props.modelValue || "");
 const searchRef = ref(null);
 const inputRef = ref(null);
+const isSearching = ref(false);
+const isExpanded = ref(false);
 const searchResults = ref([]);
 let debounceTimeout = null;
-
-const clearSearch = () => {
-  searchQuery.value = "";
-};
 
 const handleClickOutside = (event) => {
   if (searchRef.value && !searchRef.value.contains(event.target)) {
     isSearching.value = false;
+    isExpanded.value = false;
   }
 };
 
-const containsWhitespace = (str) => /\s/.test(str);
+const expandSearch = () => {
+  isExpanded.value = true;
+  isSearching.value = true;
+  nextTick(() => {
+    inputRef.value?.focus();
+  });
+};
+
+const clearSearch = () => {
+  searchQuery.value = "";
+};
 
 function hasExactlyOneSpace(str) {
   return /^[^\s]+\s[^\s]+$/.test(str);
@@ -40,7 +46,7 @@ const handleInput = () => {
   debounceTimeout = setTimeout(() => {
     emit("update:modelValue", searchQuery.value);
     getUsers(searchQuery.value);
-  }, 300); // Adjust debounce time as needed
+  }, 300);
 };
 
 async function getUsers(query) {
@@ -60,15 +66,7 @@ async function getUsers(query) {
       lastNameUsers.some((lu) => fu.id === lu.id)
     );
 
-    console.log(found);
-
-    if (found) {
-      console.log("same");
-      results = firstNameUsers;
-    } else {
-      console.log("different");
-      results = [...firstNameUsers, ...lastNameUsers];
-    }
+    results = found ? firstNameUsers : [...firstNameUsers, ...lastNameUsers];
   } else {
     const [firstNameUsers, lastNameUsers] = await Promise.all([
       getUserByFirstName(query),
@@ -77,15 +75,8 @@ async function getUsers(query) {
     results = [...firstNameUsers, ...lastNameUsers];
   }
 
-  console.log("Search results:", results);
   searchResults.value = results;
 }
-
-const selectUser = (user) => {
-  searchQuery.value = user.name || user.email;
-  emit("update:modelValue", searchQuery.value);
-  isSearching.value = false;
-};
 
 onMounted(() => {
   document.addEventListener("click", handleClickOutside);
@@ -98,33 +89,39 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="input-container w-70" ref="searchRef">
-    <input
-      ref="inputRef"
-      type="text"
-      v-model="searchQuery"
-      class="input input-bordered w-full rounded-full input-container__input--right"
-      :placeholder="placeholder"
-      @input="handleInput"
-      @focus="isSearching = true"
-    />
-    <FontAwesomeIcon
-      v-if="rightIcon"
-      :icon="rightIcon"
-      class="input-container__rightIcon"
-      @click="clearSearch"
-    />
-
-    <!-- Dropdown results -->
-    <ul v-if="isSearching && searchResults.length" class="dropdown">
-      <NuxtLink
-        v-for="user in searchResults"
-        :key="user.id"
-        class="dropdown__item"
-        to="/profiles/user.id"
+  <div ref="searchRef" class="input-container w-70">
+    <div
+      class="search-wrapper"
+      :class="{ expanded: isExpanded }"
+      @click="!isExpanded && expandSearch()"
+    >
+      <FontAwesomeIcon
+        icon="fa-solid fa-magnifying-glass"
+        class="search-icon"
+      />
+      <input
+        ref="inputRef"
+        v-model="searchQuery"
+        :placeholder="placeholder"
+        class="search-input"
+        type="text"
+        @input="handleInput"
+        @focus="isSearching = true"
       >
-        {{ user.first_name + " " + user.last_name || "Unknown User" }}
-      </NuxtLink>
+      <FontAwesomeIcon
+        v-if="rightIcon && isSearching"
+        :icon="rightIcon"
+        class="clear-icon"
+        @click="clearSearch"
+      />
+    </div>
+
+    <ul v-if="isSearching && searchResults.length" class="dropdown bg-base-100">
+      <li v-for="user in searchResults" :key="user.id" class="dropdown__item">
+        <NuxtLink :to="`/profiles/${user.id}`">
+          {{ user.first_name + " " + user.last_name || "Unknown User" }}
+        </NuxtLink>
+      </li>
     </ul>
 
     <div
@@ -139,15 +136,62 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .input-container {
   position: relative;
+  height: 2.5rem;
+}
 
-  &__rightIcon {
+.search-wrapper {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #ccc;
+  border-radius: 9999px;
+  overflow: hidden;
+  cursor: pointer;
+
+  transition: width 0.4s ease;
+
+  &.expanded {
+    width: 15rem;
+  }
+
+  .search-icon {
+    font-size: 1.2rem;
+    margin-left: 0.5rem;
+  }
+
+  .search-input {
+    flex: 1;
+    margin-left: 0.5rem;
+    border: none;
+    outline: none;
+
+    opacity: 0;
+    transition: opacity 0.3s ease 0.2s;
+  }
+
+  &.expanded .search-input {
+    opacity: 1;
+  }
+
+  .clear-icon {
     position: absolute;
-    right: 1rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 10;
-    color: #888;
     cursor: pointer;
+
+    opacity: 0;
+    transition: opacity 0.2s ease 0.4s;
+  }
+
+  &.expanded .clear-icon {
+    opacity: 1;
   }
 }
 
@@ -156,7 +200,7 @@ onBeforeUnmount(() => {
   top: 100%;
   left: 0;
   width: 100%;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 0.5rem;
   max-height: 200px;
   overflow-y: auto;
@@ -167,6 +211,10 @@ onBeforeUnmount(() => {
   &__item {
     padding: 0.5rem 1rem;
     cursor: pointer;
+
+    &:hover {
+      background-color: oklch(0.54 0.245 262.881);
+    }
   }
 
   &__no-results {

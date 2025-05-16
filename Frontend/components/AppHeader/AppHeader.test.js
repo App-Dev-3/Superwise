@@ -1,72 +1,60 @@
-import { mount } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
-import AppHeader from './AppHeader.vue'
+import { shallowMount } from "@vue/test-utils";
+import { describe, it, expect, vi } from "vitest";
+import AppHeader from "./AppHeader.vue";
 
-const mockBack = vi.fn()
+vi.mock("#imports", () => ({
+  useColorMode: () => ({ preference: "light", value: "light" }),
+}));
 
-vi.mock('#imports', () => ({
-  useColorMode: () => ({
-    preference: 'light',
-    value: 'light',
-  })
-}))
+const mockBack = vi.fn();
+vi.mock("vue-router", () => ({ useRouter: () => ({ back: mockBack }) }));
 
-//mock the router
-vi.mock('vue-router', () => ({
-    useRouter: () => ({
-      back: mockBack
-    })
-  }
-))
+const FontAwesomeIconStub = {
+  name: "FontAwesomeIcon",
+  inheritAttrs: false,
+  props: ["icon"],
+  template: '<button v-bind="$attrs"></button>',
+};
 
-// Basic stub for InputField
-const InputFieldStub = {
-  template: '<input @blur="$emit(\'blur\')" @input="$emit(\'update:modelValue\', $event.target.value)" />',
-  props: ['modelValue']
-}
+const SearchBarStub = {
+  name: "SearchBar",
+  inheritAttrs: false,
+  props: ["rightIcon", "placeholder", "modelValue"],
+  emits: ["update:modelValue"],
+  template: `
+    <div>
+      <button data-test="search-button" @click="$emit('update:modelValue', 'hello')"></button>
+    </div>
+  `,
+};
 
-describe('AppHeader.vue', () => {
-  it('renders the search field when the icon is clicked', async () => {
-    const wrapper = mount(AppHeader, {
+describe("AppHeader.vue", () => {
+  const globalConfig = {
+    global: {
+      stubs: {
+        FontAwesomeIcon: FontAwesomeIconStub,
+        UserButton: true,
+        AppThemeToggle: true,
+        ClientOnly: true,
+        SearchBar: SearchBarStub,
+      },
+    },
+  };
+
+  it("renders the SearchBar when showSearch is true", () => {
+    const wrapper = shallowMount(AppHeader, {
+      ...globalConfig,
       props: { showSearch: true },
-      global: {
-        stubs: { InputField: InputFieldStub }
-      }
-    })
+    });
+    expect(wrapper.findComponent(SearchBarStub).exists()).toBe(true);
+  });
 
-    expect(wrapper.findComponent(InputFieldStub).exists()).toBe(false)
-
-    await wrapper.find('[data-test="search-button"]').trigger('click')
-
-    expect(wrapper.findComponent(InputFieldStub).exists()).toBe(true)
-  })
-
-  it('emits update:modelValue when the text field is updated', async () => {
-    const wrapper = mount(AppHeader, {
-      props: { showSearch: true },
-      global: {
-        stubs: { InputField: InputFieldStub }
-      }
-    })
-
-    await wrapper.find('[data-test="search-button"]').trigger('click')
-
-    const input = wrapper.findComponent(InputFieldStub)
-    await input.vm.$emit('update:modelValue', 'hello')
-
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
-    expect(wrapper.emitted('update:modelValue')[0]).toEqual(['hello'])
-  })
-
-  it('goes back when the back button is clicked', async () => {
-    const wrapper = mount(AppHeader, {
+  it("goes back when the back button is clicked", async () => {
+    const wrapper = shallowMount(AppHeader, {
+      ...globalConfig,
       props: { showBack: true },
-      global: {
-        stubs: { InputField: InputFieldStub }
-      }
-    })
-
-    await wrapper.find('[data-test="back-button"]').trigger('click')
-    expect(mockBack).toHaveBeenCalled()
-  })
-})
+    });
+    await wrapper.find('[data-test="back-button"]').trigger("click");
+    expect(mockBack).toHaveBeenCalled();
+  });
+});

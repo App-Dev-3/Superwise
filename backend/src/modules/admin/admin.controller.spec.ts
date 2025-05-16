@@ -2,10 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { AdminRepository } from './admin.repository';
-import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
-import { BulkImportDto } from './dto/bulk-import.dto';
+import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
+import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
+import { AdminRepository } from './admin.repository';
+import { SupervisorsRepository } from '../supervisors/supervisors.repository';
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -18,11 +19,24 @@ describe('AdminController', () => {
         {
           provide: AdminService,
           useValue: {
-            bulkImport: jest.fn(),
+            tagsBulkImport: jest.fn(),
+            supervisorsBulkImport: jest.fn(),
           },
         },
-        AdminRepository,
-        TagsRepository,
+        {
+          provide: AdminRepository,
+          useValue: {
+            tagsBulkImport: jest.fn(),
+            supervisorsBulkImport: jest.fn(),
+          },
+        },
+        {
+          provide: SupervisorsRepository,
+          useValue: {
+            findSupervisorByUserId: jest.fn(),
+            findAllSupervisors: jest.fn(),
+          },
+        },
         {
           provide: PrismaService,
           useValue: {
@@ -40,10 +54,10 @@ describe('AdminController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('bulkImport', () => {
+  describe('tagsBulkImport', () => {
     it('should call the service method with the provided DTO', async () => {
       // Mock data
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python', 'react'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
@@ -58,10 +72,10 @@ describe('AdminController', () => {
       };
 
       // Setup mock
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockResolvedValue(mockResponse);
 
       // Execute
-      const result = await controller.bulkImport(mockDto);
+      const result = await controller.tagsBulkImport(mockDto);
 
       // Assertions
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
@@ -70,7 +84,7 @@ describe('AdminController', () => {
 
     it('should propagate errors from the service', async () => {
       // Mock data
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
@@ -80,16 +94,16 @@ describe('AdminController', () => {
       );
 
       // Setup mock to throw error
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockRejectedValue(mockError);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockRejectedValue(mockError);
 
       // Execute & assert
-      await expect(controller.bulkImport(mockDto)).rejects.toThrow(BadRequestException);
+      await expect(controller.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
     });
 
     it('should handle empty tags and similarities', async () => {
       // Mock data with empty arrays
-      const mockDto: BulkImportDto = {
+      const mockDto: TagsBulkImportDto = {
         tags: [],
         similarities: [],
       };
@@ -104,10 +118,98 @@ describe('AdminController', () => {
       };
 
       // Setup mock
-      const bulkImportSpy = jest.spyOn(service, 'bulkImport').mockResolvedValue(mockResponse);
+      const bulkImportSpy = jest.spyOn(service, 'tagsBulkImport').mockResolvedValue(mockResponse);
 
       // Execute
-      const result = await controller.bulkImport(mockDto);
+      const result = await controller.tagsBulkImport(mockDto);
+
+      // Assertions
+      expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
+      expect(result).toEqual(mockResponse);
+    });
+  });
+
+  describe('supervisorsBulkImport', () => {
+    it('should call the service method with the provided DTO', async () => {
+      // Mock data
+      const mockDto: SupervisorsBulkImportDto = {
+        supervisors: [
+          {
+            email: 'supervisor1@example.com',
+            first_name: 'John',
+            last_name: 'Doe',
+            bio: 'Experienced supervisor',
+            total_spots: 5,
+            available_spots: 3,
+          },
+        ],
+      };
+
+      const mockResponse = {
+        success: true,
+        message: '1 new supervisors successfully imported',
+        supervisorsImported: 1,
+        supervisorsUpdated: 0,
+      };
+
+      // Setup mock
+      const bulkImportSpy = jest
+        .spyOn(service, 'supervisorsBulkImport')
+        .mockResolvedValue(mockResponse);
+
+      // Execute
+      const result = await controller.supervisorsBulkImport(mockDto);
+
+      // Assertions
+      expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
+      expect(result).toEqual(mockResponse);
+    });
+
+    it('should propagate errors from the service', async () => {
+      // Mock data with missing required fields
+      const mockDto: SupervisorsBulkImportDto = {
+        supervisors: [
+          {
+            email: 'supervisor1@example.com',
+            // Missing first_name and last_name
+          },
+        ],
+      };
+
+      const mockError = new BadRequestException(
+        'First name and last name are required when creating a new supervisor with email: supervisor1@example.com',
+      );
+
+      // Setup mock to throw error
+      const bulkImportSpy = jest
+        .spyOn(service, 'supervisorsBulkImport')
+        .mockRejectedValue(mockError);
+
+      // Execute & assert
+      await expect(controller.supervisorsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
+      expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);
+    });
+
+    it('should handle empty supervisors array', async () => {
+      // Mock data with empty array
+      const mockDto: SupervisorsBulkImportDto = {
+        supervisors: [],
+      };
+
+      const mockResponse = {
+        success: true,
+        message: 'No supervisors imported or updated',
+        supervisorsImported: 0,
+        supervisorsUpdated: 0,
+      };
+
+      // Setup mock
+      const bulkImportSpy = jest
+        .spyOn(service, 'supervisorsBulkImport')
+        .mockResolvedValue(mockResponse);
+
+      // Execute
+      const result = await controller.supervisorsBulkImport(mockDto);
 
       // Assertions
       expect(bulkImportSpy).toHaveBeenCalledWith(mockDto);

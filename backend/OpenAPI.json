@@ -735,29 +735,6 @@
         "tags": [
           "supervisors"
         ]
-      },
-      "post": {
-        "operationId": "SupervisorsController_createSupervisorProfile",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateSupervisorDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Supervisor profile created successfully"
-          }
-        },
-        "summary": "Create a new supervisor profile",
-        "tags": [
-          "supervisors"
-        ]
       }
     },
     "/supervisors/user/{userId}": {
@@ -823,9 +800,7 @@
             "required": true,
             "in": "path",
             "description": "Supervisor ID",
-            "schema": {
-              "type": "string"
-            }
+            "schema": {}
           }
         ],
         "requestBody": {
@@ -1079,7 +1054,7 @@
     },
     "/admin/tags/bulk-import": {
       "post": {
-        "operationId": "AdminController_bulkImport",
+        "operationId": "AdminController_tagsBulkImport",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1087,7 +1062,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BulkImportDto"
+                "$ref": "#/components/schemas/TagsBulkImportDto"
               }
             }
           }
@@ -1125,6 +1100,55 @@
           }
         },
         "summary": "Bulk import tags and their similarities",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/admin/supervisors/bulk-import": {
+      "post": {
+        "operationId": "AdminController_supervisorsBulkImport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "New Supervisors for the application",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupervisorsBulkImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supervisors successfully imported",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Supervisors successfully imported"
+                    },
+                    "supervisorsImported": {
+                      "type": "number",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid data"
+          }
+        },
+        "summary": "Bulk import Supervisors and their profiles",
         "tags": [
           "admin"
         ]
@@ -1680,34 +1704,6 @@
           "similarity"
         ]
       },
-      "CreateSupervisorDto": {
-        "type": "object",
-        "properties": {
-          "bio": {
-            "type": "string",
-            "description": "The supervisor bio",
-            "example": "Professor specializing in artificial intelligence and machine learning"
-          },
-          "available_spots": {
-            "type": "number",
-            "description": "Number of available spots for supervision",
-            "example": 3
-          },
-          "total_spots": {
-            "type": "number",
-            "description": "Total spots for supervision",
-            "example": 5
-          },
-          "user_id": {
-            "type": "string",
-            "description": "ID of the user associated with this supervisor profile",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
-          }
-        },
-        "required": [
-          "user_id"
-        ]
-      },
       "UpdateSupervisorDto": {
         "type": "object",
         "properties": {
@@ -1856,7 +1852,7 @@
           }
         }
       },
-      "BulkImportDto": {
+      "TagsBulkImportDto": {
         "type": "object",
         "properties": {
           "tags": {
@@ -1895,6 +1891,21 @@
         "required": [
           "tags",
           "similarities"
+        ]
+      },
+      "SupervisorsBulkImportDto": {
+        "type": "object",
+        "properties": {
+          "supervisors": {
+            "description": "Array of supervisor data to import",
+            "items": {
+              "type": "array"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "supervisors"
         ]
       },
       "Match": {

@@ -36,19 +36,19 @@ const goBack = () => {
 <template>
 
   <div
-      :class="headerBG"
-      class="w-full flex items-center p-4 gap-4 shadow z-10"
+    :class="headerBG"
+    class="w-full flex items-center p-4 gap-4 shadow z-10"
   >
     <CustomButton
-        :class="colorText"
-        color="default"
-        left-icon="fa-solid fa-arrow-left"
-        text=""
-        variant="ghost"
-        @click="goBack()"
+      :class="colorText"
+      color="default"
+      left-icon="fa-solid fa-arrow-left"
+      text=""
+      variant="ghost"
+      @click="goBack()"
     />
     <span
-        :class="colorText"
-        class="text-head bg-info-soft">{{ props.headerText }}</span>
+      :class="colorText"
+      class="text-header bg-info-soft">{{props.headerText}}</span>
   </div>
 </template>

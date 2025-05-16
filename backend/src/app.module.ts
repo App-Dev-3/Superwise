@@ -11,6 +11,7 @@ import { SupervisorsModule } from './modules/supervisors/supervisors.module';
 import { StudentsModule } from './modules/students/students.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { RequestsModule } from './modules/requests/requests.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ClerkAuthGuard } from './common/guards/clerk-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
@@ -26,6 +27,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     AdminModule,
     MatchingModule,
     AuthModule,
+    RequestsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

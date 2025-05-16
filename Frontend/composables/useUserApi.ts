@@ -51,5 +51,4 @@ export const useUserApi = () => {
     addUserTag,
     getMatches,
   }
-
 }

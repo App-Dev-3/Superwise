@@ -9,8 +9,9 @@ import {
   faCloudArrowUp,
   faEdit,
   faEnvelope,
+  faEye,
+  faEyeSlash,
   faFileDownload,
-  faEnvelope, faEye, faEyeSlash, faFileDownload,
   faHandshakeSimple,
   faHourglass,
   faHouse,
@@ -53,7 +54,7 @@ library.add(
     faEdit,
     faPlus,
     faMinus,
-faEye,
+    faEye,
     faEyeSlash
 )
 

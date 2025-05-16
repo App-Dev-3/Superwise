@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {ref, watchEffect} from 'vue';
 
 interface ValidatedMailInput {
   placeholder: string;
-  modelValue: string;
   domain: string;
+  clearInput: boolean;
 }
 
 const props = withDefaults(defineProps<ValidatedMailInput>(), {});
@@ -12,15 +13,27 @@ const props = withDefaults(defineProps<ValidatedMailInput>(), {});
 const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void
   (e: 'blur', event: FocusEvent): void
+  (e: 'update:inputCleared'): void
 }>();
+
+const value = ref<string>('');
+
+watchEffect(() => {
+  if (props.clearInput) {
+    value.value = '';
+    console.log('input cleared');
+    emit('update:inputCleared')
+  }
+})
+
 
 function handleInput(event: Event): void {
   const target = event.target as HTMLInputElement;
   const trimmed = target.value.trim();
   if (trimmed !== '') {
-    target.value = trimmed.replace(/[^a-zA-Z0-9._%+-]/g, '');
+    value.value = trimmed.replace(/[^a-zA-Z0-9._%-]/g, '');
   }
-  emit('update:modelValue', target.value);
+  emit('update:modelValue', value.value?.concat('@').concat(props.domain));
 }
 
 function handleBlur(event: FocusEvent): void {
@@ -36,8 +49,8 @@ function handleBlur(event: FocusEvent): void {
           icon="envelope"
       />
       <input
+          v-model="value"
           :placeholder="props.placeholder"
-          :value="props.modelValue"
           class="w-full"
           type="text"
           @blur="handleBlur"

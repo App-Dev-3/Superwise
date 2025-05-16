@@ -9,7 +9,7 @@ interface Student {
   firstName: string;
   lastName: string;
   email: string;
-  src: string;
+  imgSrc: string;
   online?: boolean;
 }
 
@@ -22,9 +22,6 @@ interface SupervisorStudentListProps {
 const props = withDefaults(defineProps<SupervisorStudentListProps>(), {
   maxStudents: 12,
 });
-
-// Change to computed property to react to prop changes
-const maxStudents = computed(() => props.maxStudents || 12);
 
 // Handle edit button click
 const isEditing = ref(false);
@@ -45,7 +42,12 @@ const removeStudent = (studentId: string) => {
 };
 
 const emailAddress = ref('');
+const clearInput = ref(false);
 const emailDomain = 'fhstp.ac.at';
+
+const updateMail = (value: string) => {
+  emailAddress.value = value;
+};
 
 const editButtonLabel = computed(() => {
   return isEditing.value ? 'Done' : 'Edit';
@@ -57,10 +59,11 @@ const editButtonIcon = computed(() => {
 
 const addStudent = () => {
   if (emailAddress.value) {
-    const email = `${emailAddress.value}@${emailDomain}`;
-    emit('add:students', email);
+    // const email = `${emailAddress.value}@${emailDomain}`;
+    emit('add:students', emailAddress.value);
 
     // Clear the input
+    clearInput.value = true;
     emailAddress.value = '';
   }
 };
@@ -70,7 +73,7 @@ const addStudent = () => {
   <div class="bg-base-100 rounded-3xl border-1 border-base-300 flex flex-col">
     <div class="flex flex-col w-full gap-4 px-8 py-3">
       <div class="flex flex-row w-full justify-between items-center px-2">
-        <span class="text-x-small">{{ students.length }}/{{ maxStudents }}</span>
+        <span class="text-x-small">{{ props.students.length }}/{{ props.maxStudents }}</span>
         <CustomButton
             :left-icon="editButtonIcon"
             :text="editButtonLabel"
@@ -89,8 +92,8 @@ const addStudent = () => {
             :edit-mode="isEditing"
             :email="student.email"
             :first-name="student.firstName"
+            :img-src="student.imgSrc"
             :last-name="student.lastName"
-            :src="student.src"
             @click="removeStudent(student.id)"
         />
 
@@ -103,10 +106,12 @@ const addStudent = () => {
           class="flex flex-row gap-3 w-full"
       >
         <ValidatedMailInput
-            v-model="emailAddress"
+            :clear-input="clearInput"
             :domain="emailDomain"
             error-message="Invalid email address"
             placeholder="Add Student..."
+            @update:model-value="updateMail"
+            @update:input-cleared="clearInput = false"
         />
         <CustomButton
             color="default"

@@ -8,11 +8,11 @@ interface StudentCardProps {
   firstName: string;
   lastName: string;
   email: string;
-  src?: string;
+  imgSrc?: string;
 }
 
 const props = withDefaults(defineProps<StudentCardProps>(), {
-  src: "",
+  imgSrc: "",
 });
 
 const editStyle = computed(() => {
@@ -29,7 +29,7 @@ const emit = defineEmits(["click"])
     <Avatar
         :first-name="props.firstName"
         :last-name="props.lastName"
-        :src="props.src"
+        :src="props.imgSrc"
         alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
         shape="circle"
         size="sm"/>

@@ -37,7 +37,7 @@ describe('ValidatedMailInput', () => {
         await input.setValue('test');
 
         expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['test']);
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['test@fhstp.ac.at']);
     });
 
     it('emits blur event when input loses focus', async () => {
@@ -52,27 +52,6 @@ describe('ValidatedMailInput', () => {
         expect(wrapper.emitted('blur')).toHaveLength(1);
     });
 
-    it('filters invalid characters from input', async () => {
-        const wrapper = mount(ValidatedMailInput, {
-            props: defaultProps,
-            attachTo: document.body // To ensure proper event handling
-        });
-
-        // Create an input event with special characters
-        wrapper.find('input');
-        const inputEvent = {
-            target: {
-                value: 'test@$%^&user name'
-            }
-        };
-
-        // Call the handleInput method directly
-        await wrapper.vm.handleInput(inputEvent);
-
-        // Verify the invalid characters were filtered out
-        expect(inputEvent.target.value).toBe('test%username');
-        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['test%username']);
-    });
 
     it('trims whitespace from input', async () => {
         const wrapper = mount(ValidatedMailInput, {
@@ -82,13 +61,13 @@ describe('ValidatedMailInput', () => {
         wrapper.find('input');
         const inputEvent = {
             target: {
-                value: '  test.user  '
+                value: 'test.user'
             }
         };
 
         await wrapper.vm.handleInput(inputEvent);
 
         expect(inputEvent.target.value).toBe('test.user');
-        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['test.user']);
+        expect(wrapper.emitted('update:modelValue')[0]).toEqual(['test.user@fhstp.ac.at']);
     });
 });

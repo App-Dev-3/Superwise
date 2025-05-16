@@ -6,17 +6,17 @@ import {
   faArrowRightToBracket, faBan,
   faCheck,
   faCloudArrowUp,
-  faEnvelope, faFileDownload,
+  faEnvelope, faEye, faEyeSlash, faFileDownload, faGear,
   faHandshakeSimple,
   faHourglass,
-  faHouse,
+  faHouse, faMap,
   faMessage,
-  faMoon,
+  faMoon, faRightFromBracket,
   faSearch,
   faSun, faTrashCan,
   faTriangleExclamation,
   faUser,
-  faUserGroup,
+  faUserGroup, faUserShield,
   faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";

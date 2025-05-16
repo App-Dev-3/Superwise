@@ -36,7 +36,11 @@ describe('AdminHeader', () => {
     });
 
     it('renders with default variant correctly', () => {
-        const wrapper = mount(AdminHeader);
+        const wrapper = mount(AdminHeader, {
+            props: {
+                headerText: 'Default Header'
+            }
+        });
 
         // Check the default background class is applied
         expect(wrapper.find('div').classes()).toContain('bg-base-100');
@@ -48,7 +52,8 @@ describe('AdminHeader', () => {
     it('renders with upload variant correctly', () => {
         const wrapper = mount(AdminHeader, {
             props: {
-                variant: 'upload'
+                variant: 'upload',
+                headerText: 'Upload Header'
             }
         });
 
@@ -59,7 +64,8 @@ describe('AdminHeader', () => {
     it('renders with download variant correctly', () => {
         const wrapper = mount(AdminHeader, {
             props: {
-                variant: 'download'
+                variant: 'download',
+                headerText: 'Download Header'
             }
         });
 
@@ -70,7 +76,8 @@ describe('AdminHeader', () => {
     it('renders with delete variant correctly', () => {
         const wrapper = mount(AdminHeader, {
             props: {
-                variant: 'delete'
+                variant: 'delete',
+                headerText: 'Delete Header'
             }
         });
 
@@ -78,6 +85,18 @@ describe('AdminHeader', () => {
         expect(wrapper.find('span').classes()).toContain('text-error-content');
     });
 
+
+    it('displays the provided header text', () => {
+        const headerText = 'Test Header';
+        const wrapper = mount(AdminHeader, {
+            props: {
+                headerText
+            }
+        });
+
+        // Check if the text content matches what was provided
+        expect(wrapper.find('span').text()).toBe(headerText);
+    });
 
     it('displays no text in the header if no prop is passed', () => {
         const wrapper = mount(AdminHeader);
@@ -90,7 +109,8 @@ describe('AdminHeader', () => {
         // Create component with valid variant
         const validWrapper = mount(AdminHeader, {
             props: {
-                variant: 'upload'
+                variant: 'upload',
+                headerText: 'Test Header'
             }
         });
         expect(validWrapper.props().variant).toBe('upload');
@@ -101,10 +121,10 @@ describe('AdminHeader', () => {
         });
 
         // Valid variants should mount without warnings
-        mount(AdminHeader, {props: {variant: 'default'}});
-        mount(AdminHeader, {props: {variant: 'upload'}});
-        mount(AdminHeader, {props: {variant: 'download'}});
-        mount(AdminHeader, {props: {variant: 'delete'}});
+        mount(AdminHeader, {props: {variant: 'default', headerText: 'Test Header'}});
+        mount(AdminHeader, {props: {variant: 'upload', headerText: 'Test Header'}});
+        mount(AdminHeader, {props: {variant: 'download', headerText: 'Test Header'}});
+        mount(AdminHeader, {props: {variant: 'delete', headerText: 'Test Header'}});
 
         // We can't directly test the validator function, but we can check 
         // that Vue doesn't warn for valid variants

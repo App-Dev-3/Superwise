@@ -5,6 +5,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const { user, isLoaded, isSignedIn } = useUser()
   const registrationStore = useRegistrationStore()
+  const userStore = useUserStore()
 
 
   // Wait until user is loaded
@@ -19,6 +20,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
     // If signed out and on a public page, skip the rest of the logic
     return
+  }
+
+  if (userStore.user?.role !='admin' && to.path.startsWith('/admin')) {
+    // Redirect non-admin users away from admin pages
+    return navigateTo('/dashboard')
   }
 
   // Onboarding check

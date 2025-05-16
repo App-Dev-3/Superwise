@@ -17,6 +17,14 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: '20mb' });
   app.useBodyParser('urlencoded', { extended: true, limit: '20mb' });
 
+  // Check for required environment variables
+  if (!process.env.ALLOWED_EMAIL_DOMAINS) {
+    logger.error('ALLOWED_EMAIL_DOMAINS environment variable is required', undefined, 'Bootstrap');
+    process.exit(1);
+  } else {
+    logger.log(`Allowed email domains: ${process.env.ALLOWED_EMAIL_DOMAINS}`, 'Bootstrap');
+  }
+
   // Add validation pipe for all requests
   app.useGlobalPipes(
     new ValidationPipe({
@@ -50,7 +58,6 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    //todo: Figure out with FE how to manage config variables
     origin: process.env.FRONTEND_HOST,
     credentials: true,
   });

@@ -1197,6 +1197,175 @@
           "Matching"
         ]
       }
+    },
+    "/supervision-requests": {
+      "post": {
+        "description": "Creates a new supervision request. Behavior differs based on user role. When a supervisor creates a request for a student email that is not in the system, a new student account will be automatically created and the response will include a studentWasCreated flag.",
+        "operationId": "SupervisionRequestsController_createSupervisionRequest",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSupervisionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupervisionRequestEntity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid data or constraints violated"
+          }
+        },
+        "summary": "Create a supervision request",
+        "tags": [
+          "supervision-requests"
+        ]
+      },
+      "get": {
+        "description": "Retrieves all supervision requests with optional filtering by state",
+        "operationId": "SupervisionRequestsController_findAllSupervisionRequests",
+        "parameters": [
+          {
+            "name": "request_state",
+            "required": false,
+            "in": "query",
+            "description": "Filter by request state",
+            "schema": {
+              "enum": [
+                "PENDING",
+                "ACCEPTED",
+                "REJECTED",
+                "WITHDRAWN"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns all supervision requests matching query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SupervisionRequestWithUsersEntity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get all supervision requests",
+        "tags": [
+          "supervision-requests"
+        ]
+      }
+    },
+    "/supervision-requests/{id}": {
+      "get": {
+        "description": "Retrieves a specific supervision request",
+        "operationId": "SupervisionRequestsController_findSupervisionRequestById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervision request ID",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the supervision request with the given ID",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupervisionRequestWithUsersEntity"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to view this request"
+          },
+          "404": {
+            "description": "Supervision request not found"
+          }
+        },
+        "summary": "Get a supervision request by ID",
+        "tags": [
+          "supervision-requests"
+        ]
+      },
+      "patch": {
+        "description": "Updates the state of a supervision request",
+        "operationId": "SupervisionRequestsController_updateSupervisionRequestState",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Supervision request ID",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateSupervisionRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Returns the updated supervision request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupervisionRequestEntity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid state transition for the user role"
+          },
+          "403": {
+            "description": "Forbidden - User does not have permission to update this request"
+          },
+          "404": {
+            "description": "Supervision request not found"
+          }
+        },
+        "summary": "Update a supervision request state",
+        "tags": [
+          "supervision-requests"
+        ]
+      }
     }
   },
   "info": {
@@ -1238,6 +1407,16 @@
             "type": "boolean",
             "description": "Whether the user has completed registration. If exists=true and is_registered=true, go-to dashboard. If exists=true and is_registered=false, show registration form for supervisor. If exists=false, show registration form for student.",
             "example": false
+          },
+          "role": {
+            "type": "string",
+            "description": "The role of the user in the system (student, supervisor, or admin)",
+            "enum": [
+              "STUDENT",
+              "SUPERVISOR",
+              "ADMIN"
+            ],
+            "example": "STUDENT"
           }
         },
         "required": [
@@ -1975,6 +2154,259 @@
           "availableSpots",
           "totalSpots",
           "pendingRequests"
+        ]
+      },
+      "CreateSupervisionRequestDto": {
+        "type": "object",
+        "properties": {
+          "supervisor_id": {
+            "type": "string",
+            "description": "The supervisor ID (required for student requests)",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "student_email": {
+            "type": "string",
+            "description": "The student email (required for supervisor requests). If the student does not exist, a new account will be created.",
+            "example": "student@fhstp.ac.at"
+          }
+        }
+      },
+      "SupervisionRequestEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the supervision request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "request_state": {
+            "type": "string",
+            "description": "Current state of the supervision request",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "REJECTED",
+              "WITHDRAWN"
+            ],
+            "example": "PENDING"
+          },
+          "student_id": {
+            "type": "string",
+            "description": "ID of the student who sent the request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "supervisor_id": {
+            "type": "string",
+            "description": "ID of the supervisor who received the request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the request was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the request was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "studentWasCreated": {
+            "type": "boolean",
+            "description": "Indicates if a new student account was created during this request"
+          }
+        },
+        "required": [
+          "id",
+          "request_state",
+          "student_id",
+          "supervisor_id",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "UserBasicInfo": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "description": "User first name",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "User last name",
+            "example": "Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@fhstp.ac.at"
+          }
+        },
+        "required": [
+          "first_name",
+          "last_name",
+          "email"
+        ]
+      },
+      "StudentWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Student ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "User ID associated with the student",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "user": {
+            "description": "Basic user information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserBasicInfo"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "user"
+        ]
+      },
+      "SupervisorWithUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Supervisor ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "User ID associated with the supervisor",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "user": {
+            "description": "Basic user information",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserBasicInfo"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "user"
+        ]
+      },
+      "SupervisionRequestWithUsersEntity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the supervision request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "request_state": {
+            "type": "string",
+            "description": "Current state of the supervision request",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "REJECTED",
+              "WITHDRAWN"
+            ],
+            "example": "PENDING"
+          },
+          "student_id": {
+            "type": "string",
+            "description": "ID of the student who sent the request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "supervisor_id": {
+            "type": "string",
+            "description": "ID of the supervisor who received the request",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the request was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "When the request was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "studentWasCreated": {
+            "type": "boolean",
+            "description": "Indicates if a new student account was created during this request"
+          },
+          "student": {
+            "description": "Student who sent the request",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/StudentWithUser"
+              }
+            ]
+          },
+          "supervisor": {
+            "description": "Supervisor who received the request",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SupervisorWithUser"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "request_state",
+          "student_id",
+          "supervisor_id",
+          "created_at",
+          "updated_at",
+          "student",
+          "supervisor"
+        ]
+      },
+      "UpdateSupervisionRequestDto": {
+        "type": "object",
+        "properties": {
+          "request_state": {
+            "type": "string",
+            "description": "The new state of the request",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "REJECTED",
+              "WITHDRAWN"
+            ],
+            "example": "ACCEPTED"
+          }
+        },
+        "required": [
+          "request_state"
         ]
       }
     }

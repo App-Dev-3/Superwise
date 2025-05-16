@@ -78,6 +78,7 @@ export class UsersController {
       return {
         exists: true,
         is_registered: user.is_registered,
+        role: user.role,
       };
     } catch (error) {
       // If user not found, return exists: false with default values

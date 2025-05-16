@@ -99,6 +99,7 @@ const addStudent = () => {
 
 
       <div
+          v-if="isEditing"
           class="flex flex-row gap-3 w-full"
       >
         <ValidatedMailInput

@@ -849,6 +849,7 @@
             "name": "take",
             "required": false,
             "in": "query",
+            "description": "Limit the number of supervisors returned",
             "schema": {
               "type": "number"
             }
@@ -857,6 +858,7 @@
             "name": "availableOnly",
             "required": false,
             "in": "query",
+            "description": "Only return supervisors with available spots",
             "schema": {
               "type": "boolean"
             }
@@ -864,7 +866,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns an array of supervisor profiles"
+            "description": "Returns an array of supervisor profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Supervisor"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get all supervisors with optional filtering",
@@ -881,15 +893,23 @@
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "Unique identifier of the user",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a supervisor profile"
+            "description": "Returns a supervisor profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supervisor"
+                }
+              }
+            }
           },
           "404": {
             "description": "Supervisor not found"
@@ -911,13 +931,21 @@
             "in": "path",
             "description": "Supervisor ID",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a supervisor profile"
+            "description": "Returns a supervisor profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supervisor"
+                }
+              }
+            }
           },
           "404": {
             "description": "Supervisor not found"
@@ -2066,6 +2094,58 @@
         "required": [
           "tag",
           "similarity"
+        ]
+      },
+      "Supervisor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID associated with this supervisor",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "bio": {
+            "type": "object",
+            "description": "Supervisor bio or description",
+            "example": "Professor specializing in artificial intelligence and machine learning",
+            "nullable": true
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available supervision spots",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total number of supervision spots",
+            "example": 5
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the supervisor profile was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the supervisor profile was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "bio",
+          "available_spots",
+          "total_spots",
+          "created_at",
+          "updated_at"
         ]
       },
       "UpdateSupervisorDto": {

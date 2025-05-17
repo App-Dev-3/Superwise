@@ -7,7 +7,7 @@ import { Supervisor } from './entities/supervisor.entity';
 
 @Injectable()
 export class SupervisorsService {
-  constructor(private readonly supervisorsRepository: SupervisorsRepository) {}
+  constructor(private readonly supervisorsRepository: SupervisorsRepository) { }
   async findSupervisorById(id: string): Promise<Supervisor> {
     const supervisor = await this.supervisorsRepository.findSupervisorById(id);
 
@@ -38,6 +38,9 @@ export class SupervisorsService {
     updateSupervisorDto: UpdateSupervisorDto,
   ): Promise<Supervisor> {
     const supervisor = await this.findSupervisorById(id);
+    if (!supervisor) {
+      throw new NotFoundException(`Supervisor with ID ${id} not found`);
+    }
     const newTotalSpots = updateSupervisorDto.total_spots ?? supervisor.total_spots;
     const newAvailableSpots = updateSupervisorDto.available_spots ?? supervisor.available_spots;
     if (newAvailableSpots > newTotalSpots) {

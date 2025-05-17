@@ -4,7 +4,7 @@ import { SupervisorsService } from '../supervisors/supervisors.service';
 import { UsersService } from '../users/users.service';
 import { TagsService } from '../tags/tags.service';
 import { UserTag } from '../users/entities/user-tag.entity';
-import { Role } from '@prisma/client';
+import { Role, UserBlock } from '@prisma/client';
 
 describe('MatchingService', () => {
   let service: MatchingService;
@@ -36,6 +36,15 @@ describe('MatchingService', () => {
       bio: 'Test bio 2',
       available_spots: 2,
       total_spots: 4,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ];
+
+  const mockBlockedSupervisors: UserBlock[] = [
+    {
+      blocker_id: STUDENT_UUID,
+      blocked_id: USER_UUID_1, // Student has blocked the first supervisor
       created_at: new Date(),
       updated_at: new Date(),
     },
@@ -167,6 +176,7 @@ describe('MatchingService', () => {
     const usersServiceMock = {
       findUserTagsByUserId: jest.fn(),
       findUserById: jest.fn(),
+      findBlockedSupervisorsByStudentUserId: jest.fn(),
     };
 
     const tagsServiceMock = {
@@ -200,6 +210,7 @@ describe('MatchingService', () => {
     it('should return an array of matches with compatibility scores and supervisor details', async () => {
       // Set up mocks
       supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
+      usersService.findBlockedSupervisorsByStudentUserId.mockResolvedValue([]);
       usersService.findUserTagsByUserId.mockImplementation(userId => {
         if (userId === STUDENT_UUID) return Promise.resolve(mockStudentTags);
         if (userId === USER_UUID_1 || userId === USER_UUID_2)
@@ -286,6 +297,90 @@ describe('MatchingService', () => {
       expect(result[1].totalSpots).toEqual(4);
       expect(result[1].pendingRequests).toEqual(0);
       expect(result[1].tags).toEqual(['Machine Learning', 'Data Science']);
+    });
+
+    it('should filter out blocked supervisors from the results', async () => {
+      // Set up mocks
+      supervisorsService.findAllSupervisors.mockResolvedValue(mockSupervisors);
+      usersService.findBlockedSupervisorsByStudentUserId.mockResolvedValue(mockBlockedSupervisors);
+      usersService.findUserTagsByUserId.mockImplementation(userId => {
+        if (userId === STUDENT_UUID) return Promise.resolve(mockStudentTags);
+        if (userId === USER_UUID_1 || userId === USER_UUID_2)
+          return Promise.resolve(mockSupervisorTags);
+        return Promise.resolve([]);
+      });
+
+      usersService.findUserById.mockImplementation(userId => {
+        if (userId === USER_UUID_1) return Promise.resolve(mockUsers[0]);
+        if (userId === USER_UUID_2) return Promise.resolve(mockUsers[1]);
+        // Return default user instead of null to match expected User type
+        return Promise.resolve({
+          id: 'unknown-id',
+          email: 'unknown@example.com',
+          first_name: 'Unknown',
+          last_name: 'User',
+          role: Role.SUPERVISOR,
+          profile_image: null,
+          clerk_id: null,
+          is_registered: true,
+          is_deleted: false,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+      });
+
+      tagsService.findSimilarTagsByTagId.mockImplementation(tagId => {
+        if (tagId === TAG_UUID_1) return Promise.resolve(mockTagSimilarities);
+        return Promise.resolve([]);
+      });
+
+      tagsService.findTagById.mockImplementation(tagId => {
+        const now = new Date();
+        if (tagId === TAG_UUID_1)
+          return Promise.resolve({
+            id: TAG_UUID_1,
+            tag_name: 'Machine Learning',
+            created_at: now,
+            updated_at: now,
+          });
+        if (tagId === TAG_UUID_2)
+          return Promise.resolve({
+            id: TAG_UUID_2,
+            tag_name: 'Web Development',
+            created_at: now,
+            updated_at: now,
+          });
+        if (tagId === TAG_UUID_3)
+          return Promise.resolve({
+            id: TAG_UUID_3,
+            tag_name: 'Data Science',
+            created_at: now,
+            updated_at: now,
+          });
+        return Promise.resolve({
+          id: tagId,
+          tag_name: 'Unknown',
+          created_at: now,
+          updated_at: now,
+        });
+      });
+
+      // Execute
+      const result = await service.calculateAllMatchesForUserId(STUDENT_UUID);
+
+      // Assertions
+      expect(result).toHaveLength(1); // Only the non-blocked supervisor should be returned
+      expect(result[0].supervisor_userId).toEqual(USER_UUID_2); // Should only contain supervisor 2
+
+      // Verify the blocked supervisors call was made
+      expect(usersService.findBlockedSupervisorsByStudentUserId).toHaveBeenCalledWith(STUDENT_UUID);
+
+      // Verify that the blocked supervisor was properly filtered out
+      const blockedSupervisorUserIds = new Set(
+        mockBlockedSupervisors.map(block => block.blocked_id),
+      );
+      expect(blockedSupervisorUserIds.has(USER_UUID_1)).toBeTruthy();
+      expect(result.some(match => match.supervisor_userId === USER_UUID_1)).toBeFalsy();
     });
   });
 });

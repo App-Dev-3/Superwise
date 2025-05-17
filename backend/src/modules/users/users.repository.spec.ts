@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersRepository } from './users.repository';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Role, UserTag } from '@prisma/client';
+import { Role, UserTag, UserBlock } from '@prisma/client';
 
 describe('UsersRepository', () => {
   let repository: UsersRepository;
@@ -22,6 +22,12 @@ describe('UsersRepository', () => {
       delete: jest.fn(),
       deleteMany: jest.fn(),
       createMany: jest.fn(),
+    },
+    userBlock: {
+      findMany: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+      findUnique: jest.fn(),
     },
   };
 
@@ -49,6 +55,13 @@ describe('UsersRepository', () => {
     user_id: USER_UUID,
     tag_id: TAG_UUID_1,
     priority: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const mockUserBlock: UserBlock = {
+    blocker_id: USER_UUID, // Student
+    blocked_id: USER_UUID_2, // Supervisor
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -637,6 +650,131 @@ describe('UsersRepository', () => {
       expect(mockPrismaService.userTag.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ where: { user_id: userId } }),
       );
+    });
+  });
+
+  // --- User Block Operations ---
+  describe('findBlockedSupervisorsByStudentUserId', () => {
+    it('should return all supervisors blocked by the student', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const blockedSupervisors = [mockUserBlock];
+      mockPrismaService.userBlock.findMany.mockResolvedValue(blockedSupervisors);
+
+      // Act
+      const result = await repository.findBlockedSupervisorsByStudentUserId(studentUserId);
+
+      // Assert
+      expect(result).toEqual(blockedSupervisors);
+      expect(mockPrismaService.userBlock.findMany).toHaveBeenCalledWith({
+        where: {
+          blocker_id: studentUserId,
+        },
+      });
+    });
+
+    it('should return an empty array when student has not blocked any supervisors', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      mockPrismaService.userBlock.findMany.mockResolvedValue([]);
+
+      // Act
+      const result = await repository.findBlockedSupervisorsByStudentUserId(studentUserId);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockPrismaService.userBlock.findMany).toHaveBeenCalledWith({
+        where: {
+          blocker_id: studentUserId,
+        },
+      });
+    });
+  });
+
+  describe('createUserBlock', () => {
+    it('should create a block relationship between a student and supervisor', async () => {
+      // Arrange
+      const blockerUserId = USER_UUID; // Student
+      const blockedUserId = USER_UUID_2; // Supervisor
+      mockPrismaService.userBlock.create.mockResolvedValue(mockUserBlock);
+
+      // Act
+      const result = await repository.createUserBlock(blockerUserId, blockedUserId);
+
+      // Assert
+      expect(result).toEqual(mockUserBlock);
+      expect(mockPrismaService.userBlock.create).toHaveBeenCalledWith({
+        data: {
+          blocker_id: blockerUserId,
+          blocked_id: blockedUserId,
+        },
+      });
+    });
+  });
+
+  describe('deleteUserBlock', () => {
+    it('should delete a block relationship between a student and supervisor', async () => {
+      // Arrange
+      const blockerUserId = USER_UUID; // Student
+      const blockedUserId = USER_UUID_2; // Supervisor
+      mockPrismaService.userBlock.delete.mockResolvedValue(mockUserBlock);
+
+      // Act
+      await repository.deleteUserBlock(blockerUserId, blockedUserId);
+
+      // Assert
+      expect(mockPrismaService.userBlock.delete).toHaveBeenCalledWith({
+        where: {
+          blocker_id_blocked_id: {
+            blocker_id: blockerUserId,
+            blocked_id: blockedUserId,
+          },
+        },
+      });
+    });
+  });
+
+  describe('findUserBlockByIds', () => {
+    it('should find a block relationship when it exists', async () => {
+      // Arrange
+      const blockerUserId = USER_UUID; // Student
+      const blockedUserId = USER_UUID_2; // Supervisor
+      mockPrismaService.userBlock.findUnique.mockResolvedValue(mockUserBlock);
+
+      // Act
+      const result = await repository.findUserBlockByIds(blockerUserId, blockedUserId);
+
+      // Assert
+      expect(result).toEqual(mockUserBlock);
+      expect(mockPrismaService.userBlock.findUnique).toHaveBeenCalledWith({
+        where: {
+          blocker_id_blocked_id: {
+            blocker_id: blockerUserId,
+            blocked_id: blockedUserId,
+          },
+        },
+      });
+    });
+
+    it('should return null when a block relationship does not exist', async () => {
+      // Arrange
+      const blockerUserId = USER_UUID; // Student
+      const blockedUserId = USER_UUID_2; // Supervisor
+      mockPrismaService.userBlock.findUnique.mockResolvedValue(null);
+
+      // Act
+      const result = await repository.findUserBlockByIds(blockerUserId, blockedUserId);
+
+      // Assert
+      expect(result).toBeNull();
+      expect(mockPrismaService.userBlock.findUnique).toHaveBeenCalledWith({
+        where: {
+          blocker_id_blocked_id: {
+            blocker_id: blockerUserId,
+            blocked_id: blockedUserId,
+          },
+        },
+      });
     });
   });
 });

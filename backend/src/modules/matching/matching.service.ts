@@ -19,7 +19,7 @@ export class MatchingService {
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
   ) {}
-  async calculateAllMatchesForUserId(studentId: string): Promise<Match[]> {
+  async calculateAllMatchesForUserId(studentUserId: string): Promise<Match[]> {
     this.checkCacheExpiration();
     const matches: Match[] = [];
 
@@ -31,9 +31,19 @@ export class MatchingService {
       },
     });
 
-    const studentTags = await this.usersService.findUserTagsByUserId(studentId);
+    // Get list of supervisors blocked by this student
+    const blockedSupervisors =
+      await this.usersService.findBlockedSupervisorsByStudentUserId(studentUserId);
+    const blockedSupervisorUserIds = new Set(blockedSupervisors.map(block => block.blocked_id));
+
+    const studentTags = await this.usersService.findUserTagsByUserId(studentUserId);
 
     for (const supervisor of availableSupervisors) {
+      // Skip blocked supervisors
+      if (blockedSupervisorUserIds.has(supervisor.user_id)) {
+        continue;
+      }
+
       const supervisorUserData = await this.usersService.findUserById(supervisor.user_id);
       const supervisorTags = await this.usersService.findUserTagsByUserId(supervisor.user_id);
 

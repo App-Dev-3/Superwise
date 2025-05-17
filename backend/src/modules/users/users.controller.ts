@@ -38,6 +38,8 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Public } from '../../common/decorators/public.decorator';
 import { ClerkRegistrationGuard } from '../../common/guards/clerk-registration.guard';
 import { UserExistsDto } from './dto/user-exists.dto';
+import { CreateUserBlockDto } from './dto/create-user-block.dto';
+import { UserBlock } from './entities/user-block.entity';
 
 @ApiTags('Users')
 @Controller('users')
@@ -464,5 +466,122 @@ export class UsersController {
       return await this.usersService.setUserTagsByUserId(userId, setUserTagsDto);
     }
     throw new UnauthorizedException("You do not have permission to update this user's tags");
+  }
+
+  /**
+   * User Block endpoints
+   */
+  @Get(':userId/blocks')
+  @ApiOperation({
+    summary: 'Get all supervisors blocked by a student',
+    description:
+      'Retrieves a list of all supervisors that have been blocked by the specified student.',
+  })
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Student unique identifier (UUID)',
+    required: true,
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of blocked supervisors',
+    type: [UserBlock],
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @ApiResponse({ status: 400, description: 'Bad request - User is not a student' })
+  findBlockedSupervisorsByStudentUserId(
+    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<UserBlock[]> {
+    // Allow access only to the user themselves or admins
+    if (currentUser.id === studentUserId || currentUser.role === Role.ADMIN) {
+      return this.usersService.findBlockedSupervisorsByStudentUserId(studentUserId);
+    }
+    throw new UnauthorizedException(
+      "You do not have permission to view this user's blocked supervisors",
+    );
+  }
+
+  @Post(':userId/blocks')
+  @ApiOperation({
+    summary: 'Block a supervisor',
+    description:
+      'Allows a student to block a supervisor, preventing them from appearing in recommendations.',
+  })
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Student unique identifier (UUID)',
+    required: true,
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiBody({
+    type: CreateUserBlockDto,
+    description: 'The ID of the supervisor to block',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Supervisor has been successfully blocked',
+    type: UserBlock,
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid input or validation error' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  @HttpCode(HttpStatus.CREATED)
+  createUserBlock(
+    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @Body() createUserBlockDto: CreateUserBlockDto,
+    @CurrentUser() currentUser: User,
+  ): Promise<UserBlock> {
+    // Allow only the user themselves or admins to create blocks
+    if (currentUser.id === studentUserId || currentUser.role === Role.ADMIN) {
+      return this.usersService.createUserBlock(studentUserId, createUserBlockDto.blocked_id);
+    }
+    throw new UnauthorizedException(
+      'You do not have permission to block supervisors for this user',
+    );
+  }
+
+  @Delete(':userId/blocks/:blockedId')
+  @ApiOperation({
+    summary: 'Unblock a supervisor',
+    description:
+      'Removes a block from a supervisor, allowing them to appear in recommendations again.',
+  })
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Student unique identifier (UUID)',
+    required: true,
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiParam({
+    name: 'blockedId',
+    type: 'string',
+    format: 'uuid',
+    description: 'Supervisor unique identifier (UUID) to unblock',
+    required: true,
+    example: '123e4567-e89b-12d3-a456-426614174001',
+  })
+  @ApiResponse({ status: 204, description: 'Supervisor has been successfully unblocked' })
+  @ApiResponse({ status: 404, description: 'User or block relationship not found' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeUserBlock(
+    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @Param('blockedId', ParseUUIDPipe) supervisorUserId: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<void> {
+    // Allow only the user themselves or admins to remove blocks
+    if (currentUser.id === studentUserId || currentUser.role === Role.ADMIN) {
+      await this.usersService.deleteUserBlock(studentUserId, supervisorUserId);
+    } else {
+      throw new UnauthorizedException(
+        'You do not have permission to unblock supervisors for this user',
+      );
+    }
   }
 }

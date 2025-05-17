@@ -3,28 +3,20 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 import {
   faArrowLeft,
   faArrowRight,
-  faArrowRightToBracket,
-  faBan,
+  faArrowRightToBracket, faBan,
   faCheck,
   faCloudArrowUp,
-  faEdit,
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faFileDownload,
+  faEnvelope, faEye, faEyeSlash, faFileDownload, faGear,
   faHandshakeSimple,
   faHourglass,
-  faHouse,
+  faHouse, faMap,
   faMessage,
-  faMinus,
-  faMoon,
-  faPlus,
+  faMoon, faRightFromBracket,
   faSearch,
-  faSun,
-  faTrashCan,
+  faSun, faTrashCan,
   faTriangleExclamation,
   faUser,
-  faUserGroup,
+  faUserGroup, faUserShield,
   faXmark
 } from '@fortawesome/free-solid-svg-icons'
 import {defineNuxtPlugin} from "nuxt/app";
@@ -51,13 +43,14 @@ library.add(
     faFileDownload,
     faTrashCan,
     faBan,
-    faEdit,
-    faPlus,
-    faMinus,
     faEye,
-    faEyeSlash
+    faEyeSlash,
+    faGear,
+    faUserShield,
+    faMap,
+    faRightFromBracket
 )
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
+  nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
 })

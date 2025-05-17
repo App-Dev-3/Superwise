@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupervisorsRepository } from './supervisors.repository';
-import { Prisma, Supervisor } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { SupervisorCapacityException } from '../../common/exceptions/custom-exceptions/supervisor-capacity.exception';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
+import { Supervisor } from './entities/supervisor.entity';
 
 @Injectable()
 export class SupervisorsService {

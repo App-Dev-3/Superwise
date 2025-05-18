@@ -7,7 +7,7 @@ import { Supervisor } from './entities/supervisor.entity';
 
 @Injectable()
 export class SupervisorsService {
-  constructor(private readonly supervisorsRepository: SupervisorsRepository) { }
+  constructor(private readonly supervisorsRepository: SupervisorsRepository) {}
   async findSupervisorById(id: string): Promise<Supervisor> {
     const supervisor = await this.supervisorsRepository.findSupervisorById(id);
 

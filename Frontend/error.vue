@@ -18,8 +18,8 @@
 
             <div class="flex justify-center">
                 <button
-                    @click="handleError"
                     class="btn btn-primary"
+                    @click="handleError"
                 >
                     Back to Home
                 </button>
@@ -30,7 +30,13 @@
 
 <script setup>
 const props = defineProps({
-    error: Object
+    error: {
+        type: Object,
+        default: () => ({
+            statusCode: 500,
+            statusMessage: 'Internal Server Error',
+        }),
+    }
 })
 
 const errorDescription = computed(() => {

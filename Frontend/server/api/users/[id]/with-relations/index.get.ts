@@ -1,10 +1,7 @@
-import {getAuth} from "@clerk/nuxt/server";
-
 export default defineEventHandler ( async (event) => {
     // standard setup for every endpoint
-    const { getToken } = getAuth(event)
-    const token = await getToken({ template: 'SuperwiseJWT' })
-    const targetPath = getRequestURL(event).pathname.split('/api')[1] || ''
+    const token = await getBearerToken(event)
+    const targetPath = getTargetPath(event)
 
     // Send request to Nest API
     return await fetchNest(targetPath, {

@@ -1,4 +1,4 @@
-import {similaritySchema} from "#shared/validationSchemas/validationSchemas";
+import {similarityThresholdSchema} from "#shared/validationSchemas/validationSchemas";
 import {ZodError} from "zod";
 
 export default defineEventHandler ( async (event) => {
@@ -8,7 +8,7 @@ export default defineEventHandler ( async (event) => {
         statusCode: 400, statusMessage: 'minSimilarity is required'
     }))
     try {
-        similaritySchema.parse(minSimilarity)
+        similarityThresholdSchema.parse(minSimilarity)
     } catch (e) {
         if (e instanceof ZodError) {
             const errorMessage = e.errors.map(err => err.message).join(', ')

@@ -17,8 +17,6 @@ export default defineEventHandler(async (event) => {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
   };
-  console.log("Bearer token");
-  console.log(token);
 
   let body;
   if (method === 'GET' && data) {

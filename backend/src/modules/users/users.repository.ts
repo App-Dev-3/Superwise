@@ -104,8 +104,6 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async findUsersByFirstName(firstName: string): Promise<User[]> {
-    console.log(firstName);
-
     let result = this.prisma.user.findMany({
       where: {
         is_deleted: false,
@@ -115,9 +113,6 @@ export class UsersRepository implements IUsersRepository {
         },
       },
     });
-    console.log("RESULT");
-    result.then(x => console.log(x));
-    // console.log(result);
 
     return result;
   }

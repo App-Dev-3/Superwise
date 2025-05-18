@@ -1,10 +1,15 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref } from "vue";
+import { onMounted, onBeforeUnmount, ref, nextTick } from "vue";
 
 const props = defineProps({
   modelValue: { type: String, default: "" },
   rightIcon: { type: String, default: "" },
   placeholder: { type: String, default: "" },
+  searchFor: {
+    type: String,
+    default: "all", // "supervisors" | "students" | "all"
+    validator: (v) => ["all", "supervisors", "students"].includes(v),
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -72,8 +77,32 @@ async function getUsers(query) {
       getUserByFirstName(query),
       getUserByLastName(query),
     ]);
+
+    let first = await getUserByFirstName(query);
+    let last = await getUserByLastName(query);
+    console.log("first");
+    console.log(first);
+    console.log("last");
+    console.log(last);
+
     results = [...firstNameUsers, ...lastNameUsers];
   }
+
+  console.log(props.searchFor);
+  console.log(results);
+
+  if (props.searchFor !== "all") {
+    const wantedRole =
+      props.searchFor === "students" ? "STUDENT" : "SUPERVISOR";
+    console.log("one");
+
+    console.log(results);
+
+    results = results.filter((user) => user.role === wantedRole);
+    console.log("two");
+    console.log(results);
+  }
+  console.log(results);
 
   searchResults.value = results;
 }
@@ -107,7 +136,7 @@ onBeforeUnmount(() => {
         type="text"
         @input="handleInput"
         @focus="isSearching = true"
-      >
+      />
       <FontAwesomeIcon
         v-if="rightIcon && isSearching"
         :icon="rightIcon"

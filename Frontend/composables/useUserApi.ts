@@ -1,11 +1,13 @@
 import { makeRequest } from './useApi'
-import type { UserCreateData } from "~/shared/types/userInterfaces";
+import type { UserCreateData, UserRegistrationData } from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {
-  const getUserRole = async (data: { email: string }) => {
-    return await makeRequest('user/role', 'POST', data)
-  }
 
+  const getUserRegistrationStatus = async (data: string) => {
+    return await makeRequest('users/check-registration', 'GET', {
+      email: data
+    }) as UserRegistrationData
+  }
   const createUser = async (data: UserCreateData) => {
     return await makeRequest('users', 'POST', data)
   }
@@ -14,10 +16,6 @@ export const useUserApi = () => {
     return await makeRequest('users/search/by-email', 'GET', {
       email: data
     })
-  }
-
-  const getUserById = async (data: string) => {
-    return await makeRequest(`users/${data}`, 'GET')
   }
 
   const getUserByFirstName = async (data: string) => {
@@ -32,23 +30,27 @@ export const useUserApi = () => {
     })
   }
 
-  //TODO: upload tags to use this endpoint
+  const getUserById = async (data: string) => {
+    return await makeRequest(`users/${data}`, 'GET')
+  }
+
   const addUserTag = async (data: Record<string, unknown>) => {
     return await makeRequest(`users/${data.id}/tags`, 'PUT', { tags: data.tags })
   }
 
-  const getMatches = async (data: string) => {
+  const getRecommendedSupervisors = async (data: string) => {
     return await makeRequest(`match/${data}`, 'GET');
   }
 
   return {
-    getUserRole,
+    getUserRegistrationStatus,
     createUser,
     getUserByEmail,
-    getUserById,
     getUserByFirstName,
     getUserByLastName,
+    getUserById,
     addUserTag,
-    getMatches,
+    getRecommendedSupervisors,
   }
+
 }

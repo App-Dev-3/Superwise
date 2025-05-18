@@ -58,15 +58,16 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          >
+          />
         </div>
       </ClientOnly>
 
-      <div v-if="props.showSearch" class="navbar-end">
+      <div class="navbar-end">
         <SearchBar
           right-icon="xmark"
           placeholder="Search..."
           :model-value="props.modelValue"
+          search-for="supervisors"
         />
       </div>
     </div>

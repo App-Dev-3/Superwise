@@ -65,83 +65,7 @@ const goBack = () => {
         </button>
 
         <div v-if="props.showUser">
-          <div class="drawer">
-            <input id="my-drawer" type="checkbox" class="drawer-toggle" >
-            <div class="drawer-content">
-              <!-- Page content here -->
-              <label for="my-drawer" class="drawer-button"
-                ><div class="avatar">
-                  <div class="mask mask-squircle w-8 rounded-full">
-                    <img
-                      :src="
-                        props.image ||
-                        getPlaceholderImage(props.firstName, props.lastName)
-                      "
-                      alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-                    >
-                  </div></div
-              ></label>
-            </div>
-            <div class="drawer-side z-40">
-              <label
-                for="my-drawer"
-                aria-label="close sidebar"
-                class="drawer-overlay"
-              />
-              <div
-                class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
-              >
-                <!-- logo -->
-                <img
-                  :src="
-                    colorMode.value === 'dark'
-                      ? '../images/appHeader_logo_dark.svg'
-                      : '../images/appHeader_logo_light.svg'
-                  "
-                  alt="Logo"
-                  class="h-6 mb-8"
-                >
-
-                <!-- menu items -->
-                <ul class="space-y-3 flex-grow">
-                  <li>
-                    <NuxtLink to="/profile">
-                      <FontAwesomeIcon icon="user" class="text-xl mr-3" />
-                      Profile
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink to="/settings">
-                      <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
-                      Settings
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink to="/tour">
-                      <FontAwesomeIcon icon="map" class="text-xl mr-3" />
-                      App Tour
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink to="/data-protection">
-                      <FontAwesomeIcon
-                        icon="user-shield"
-                        class="text-xl mr-3"
-                      />
-                      Data Protection
-                    </NuxtLink>
-                  </li>
-                </ul>
-                <!-- logout at bottom -->
-                <li>
-                  <NuxtLink to="/logout">
-                    <FontAwesomeIcon icon="fa-right-from-bracket" class="" />
-                    Logout
-                  </NuxtLink>
-                </li>
-              </div>
-            </div>
-          </div>
+          <SideDrawer :image="props.image" first-name="Le" last-name="Stad" />
         </div>
 
         <AppThemeToggle class="ml-5" />
@@ -157,7 +81,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          >
+          />
         </div>
       </ClientOnly>
 

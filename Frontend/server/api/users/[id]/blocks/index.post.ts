@@ -1,4 +1,3 @@
-import {getAuth} from "@clerk/nuxt/server";
 import {blockUserSchema} from "#shared/validationSchemas/validationSchemas";
 
 export default defineEventHandler ( async (event) => {
@@ -6,9 +5,8 @@ export default defineEventHandler ( async (event) => {
     const body = await readValidatedBody(event, body => blockUserSchema.parse(body))
 
     // standard setup for every endpoint
-    const { getToken } = getAuth(event)
-    const token = await getToken({ template: 'SuperwiseJWT' })
-    const targetPath = getRequestURL(event).pathname.split('/api')[1] || ''
+    const token = await getBearerToken(event)
+    const targetPath = getTargetPath(event)
 
     // Send request to Nest API
     return await fetchNest(targetPath, {

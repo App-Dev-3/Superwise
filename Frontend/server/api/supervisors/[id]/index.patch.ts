@@ -1,4 +1,9 @@
+import {updateSupervisorProfileSchema} from "#shared/validationSchemas/validationSchemas";
+
 export default defineEventHandler ( async (event) => {
+    // specific checks for this endpoint
+    const body = await readValidatedBody(event, body => updateSupervisorProfileSchema.parse(body))
+
     // standard setup for every endpoint
     const token = await getBearerToken(event)
     const targetPath = getTargetPath(event)
@@ -8,8 +13,8 @@ export default defineEventHandler ( async (event) => {
         method: event.method,
         headers: {
             Authorization: `Bearer ${token}`,
-            accept: 'application/json',
         },
+        body: body,
     }).catch((error) => {
         throw createError({
             statusCode: error.statusCode || 500,

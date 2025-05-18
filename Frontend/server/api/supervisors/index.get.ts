@@ -1,25 +1,28 @@
-import {nameSchema} from "#shared/validationSchemas/validationSchemas";
+import {takeSchema, availableOnlySchema} from "#shared/validationSchemas/validationSchemas";
 import {ZodError} from "zod";
 
-export default defineEventHandler(async (event) => {
+
+export default defineEventHandler ( async (event) => {
     // specific checks for this endpoint
-    const lastName = getQuery(event).lastName
-    if (!lastName) return sendError(event, createError({
-        statusCode: 400, statusMessage: 'lastName is required'
-    }))
+    const take = getQuery(event).take;
+    const availableOnly = getQuery(event).availableOnly;
+
+    let parsedTake: number;
+    let parsedAvailableOnly: boolean;
     try {
-        nameSchema.parse(lastName)
+        parsedTake = takeSchema.parse(take);
+        parsedAvailableOnly = availableOnlySchema.parse(availableOnly);
     } catch (e) {
         if (e instanceof ZodError) {
             const errorMessage = e.errors.map(err => err.message).join(', ')
             return sendError(event, createError({
                 statusCode: 400,
-                statusMessage: errorMessage
+                statusMessage: `Invalid QueryParameter: ${errorMessage}`
             }))
         }
         return sendError(event, createError({
             statusCode: 400,
-            statusMessage: 'Invalid Name'
+            statusMessage: 'Invalid QueryParameter'
         }))
     }
 
@@ -28,16 +31,16 @@ export default defineEventHandler(async (event) => {
     const targetPath = getTargetPath(event)
 
     // Send request to Nest API
-
     return await fetchNest(targetPath, {
         method: event.method,
-        query: {
-            lastName: lastName as string,
-        },
         headers: {
             Authorization: `Bearer ${token}`,
             accept: 'application/json',
         },
+        query: {
+            take: parsedTake,
+            availableOnly: parsedAvailableOnly
+        }
     }).catch((error) => {
         throw createError({
             statusCode: error.statusCode || 500,

@@ -148,14 +148,19 @@ export class UsersController {
   }
 
   @Get()
+  @Roles(Role.ADMIN)
   @ApiOperation({
     summary: 'Get all users',
-    description: 'Retrieves all users.',
+    description: 'Retrieves all users. Restricted to administrators only.',
   })
   @ApiResponse({
     status: 200,
     description: 'Return all active users.',
     type: [User],
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Not authorized to access this endpoint',
   })
   findAllUsers(): Promise<User[]> {
     return this.usersService.findAllUsers();

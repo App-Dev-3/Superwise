@@ -60,6 +60,7 @@ export class MatchingService {
       );
 
       matches.push({
+        supervisorId: supervisor.id,
         supervisor_userId: supervisor.user_id,
         firstName: supervisorUserData?.first_name || '',
         lastName: supervisorUserData?.last_name || '',

@@ -58,7 +58,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          />
+          >
         </div>
       </ClientOnly>
 

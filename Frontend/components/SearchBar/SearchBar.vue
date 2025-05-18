@@ -78,8 +78,8 @@ async function getUsers(query) {
       getUserByLastName(query),
     ]);
 
-    let first = await getUserByFirstName(query);
-    let last = await getUserByLastName(query);
+    const first = await getUserByFirstName(query);
+    const last = await getUserByLastName(query);
     console.log("first");
     console.log(first);
     console.log("last");
@@ -136,7 +136,7 @@ onBeforeUnmount(() => {
         type="text"
         @input="handleInput"
         @focus="isSearching = true"
-      />
+      >
       <FontAwesomeIcon
         v-if="rightIcon && isSearching"
         :icon="rightIcon"

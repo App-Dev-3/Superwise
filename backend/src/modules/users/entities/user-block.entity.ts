@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User } from './user.entity'; // Assuming user.entity.ts exists
 
 export class UserBlock {
   @ApiProperty({
@@ -15,18 +14,6 @@ export class UserBlock {
     format: 'uuid',
   })
   blocked_id: string;
-
-  @ApiProperty({
-    description: 'Full user object of the user who initiated the block',
-    type: () => User,
-  })
-  blocker: User;
-
-  @ApiProperty({
-    description: 'Full user object of the user who is being blocked',
-    type: () => User,
-  })
-  blocked: User;
 
   @ApiProperty({
     description: 'Timestamp when the block was created',

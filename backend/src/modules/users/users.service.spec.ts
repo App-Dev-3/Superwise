@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { Role, UserTag, User } from '@prisma/client';
+import { Role, UserTag, User, UserBlock } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
@@ -28,6 +28,11 @@ describe('UsersService', () => {
     // User Tag methods
     findUserTagsByUserId: jest.fn(),
     setUserTagsByUserId: jest.fn(),
+    // User Block methods
+    findBlockedSupervisorsByStudentUserId: jest.fn(),
+    createUserBlock: jest.fn(),
+    deleteUserBlock: jest.fn(),
+    findUserBlockByIds: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -43,7 +48,7 @@ describe('UsersService', () => {
   const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
   const CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
 
-  const mockUser = {
+  const mockStudent = {
     id: USER_UUID,
     email: 'exampleStudent1@fhstp.ac.at',
     first_name: 'Max',
@@ -56,6 +61,22 @@ describe('UsersService', () => {
     created_at: new Date('2023-01-15T10:30:00Z'),
     updated_at: new Date('2023-01-15T10:30:00Z'),
   };
+
+  const mockSupervisor = {
+    id: USER_UUID_2,
+    email: 'exampleSupervisor@fhstp.ac.at',
+    first_name: 'Supervisor',
+    last_name: 'Example',
+    role: Role.SUPERVISOR,
+    profile_image: null,
+    is_registered: true,
+    is_deleted: false,
+    clerk_id: 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJZ',
+    created_at: new Date('2023-02-20T14:45:00Z'),
+    updated_at: new Date('2023-02-20T14:45:00Z'),
+  };
+
+  const mockUser = mockStudent;
 
   const expectedUsers = [
     mockUser,
@@ -78,6 +99,13 @@ describe('UsersService', () => {
     user_id: USER_UUID,
     tag_id: TAG_UUID_1,
     priority: 1,
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  const mockUserBlock: UserBlock = {
+    blocker_id: USER_UUID, // Student
+    blocked_id: USER_UUID_2, // Supervisor
     created_at: new Date(),
     updated_at: new Date(),
   };
@@ -438,6 +466,263 @@ describe('UsersService', () => {
       // Assert
       expect(result).toEqual([]); // Verify empty array returned
       expect(mockUsersRepository.setUserTagsByUserId).toHaveBeenCalledWith(userId, []);
+    });
+  });
+
+  // --- User Block Operations ---
+  describe('findBlockedSupervisorsByStudentUserId', () => {
+    it('should find blocked supervisors for a valid student', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const expectedBlocks = [mockUserBlock];
+      mockUsersRepository.findUserById.mockResolvedValue(mockStudent);
+      mockUsersRepository.findBlockedSupervisorsByStudentUserId.mockResolvedValue(expectedBlocks);
+
+      // Act
+      const result = await service.findBlockedSupervisorsByStudentUserId(studentUserId);
+
+      // Assert
+      expect(result).toEqual(expectedBlocks);
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(studentUserId);
+      expect(mockUsersRepository.findBlockedSupervisorsByStudentUserId).toHaveBeenCalledWith(
+        studentUserId,
+      );
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.findBlockedSupervisorsByStudentUserId(nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.findBlockedSupervisorsByStudentUserId).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException if user is not a student', async () => {
+      // Arrange
+      const supervisorId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockResolvedValue(mockSupervisor);
+
+      // Act & Assert
+      await expect(service.findBlockedSupervisorsByStudentUserId(supervisorId)).rejects.toThrow(
+        new BadRequestException('Only students can have blocked supervisors'),
+      );
+      expect(mockUsersRepository.findBlockedSupervisorsByStudentUserId).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('createUserBlock', () => {
+    it('should create a block between a student and a supervisor', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === supervisorUserId) return Promise.resolve(mockSupervisor);
+        return Promise.resolve(null);
+      });
+      mockUsersRepository.findUserBlockByIds.mockResolvedValue(null);
+      mockUsersRepository.createUserBlock.mockResolvedValue(mockUserBlock);
+
+      // Act
+      const result = await service.createUserBlock(studentUserId, supervisorUserId);
+
+      // Assert
+      expect(result).toEqual(mockUserBlock);
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(studentUserId);
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(supervisorUserId);
+      expect(mockUsersRepository.findUserBlockByIds).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+      expect(mockUsersRepository.createUserBlock).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+    });
+
+    it('should throw BadRequestException if user tries to block themselves', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      mockUsersRepository.findUserById.mockResolvedValue(mockStudent);
+
+      // Act & Assert
+      await expect(service.createUserBlock(studentUserId, studentUserId)).rejects.toThrow(
+        new BadRequestException('Users cannot block themselves'),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException if blocker is not a student', async () => {
+      // Arrange
+      const supervisorId = USER_UUID_2;
+      const studentId = USER_UUID;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === supervisorId) return Promise.resolve(mockSupervisor);
+        if (id === studentId) return Promise.resolve(mockStudent);
+        return Promise.resolve(null);
+      });
+
+      // Act & Assert
+      await expect(service.createUserBlock(supervisorId, studentId)).rejects.toThrow(
+        new BadRequestException('Only students can block supervisors'),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException if blocked user is not a supervisor', async () => {
+      // Arrange
+      const studentId1 = USER_UUID;
+      const studentId2 = USER_UUID_2;
+
+      const anotherStudent = { ...mockStudent, id: studentId2, email: 'another@example.com' };
+
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentId1) return Promise.resolve(mockStudent);
+        if (id === studentId2) return Promise.resolve(anotherStudent);
+        return Promise.resolve(null);
+      });
+
+      // Act & Assert
+      await expect(service.createUserBlock(studentId1, studentId2)).rejects.toThrow(
+        new BadRequestException('Students can only block supervisors'),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw BadRequestException if block already exists', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === supervisorUserId) return Promise.resolve(mockSupervisor);
+        return Promise.resolve(null);
+      });
+      mockUsersRepository.findUserBlockByIds.mockResolvedValue(mockUserBlock);
+
+      // Act & Assert
+      await expect(service.createUserBlock(studentUserId, supervisorUserId)).rejects.toThrow(
+        new BadRequestException('This supervisor is already blocked'),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if student does not exist', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === nonExistentId) return Promise.resolve(null);
+        if (id === supervisorUserId) return Promise.resolve(mockSupervisor);
+        return Promise.resolve(null);
+      });
+
+      // Act & Assert
+      await expect(service.createUserBlock(nonExistentId, supervisorUserId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if supervisor does not exist', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === nonExistentId) return Promise.resolve(null);
+        return Promise.resolve(null);
+      });
+
+      // Act & Assert
+      await expect(service.createUserBlock(studentUserId, nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.createUserBlock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteUserBlock', () => {
+    it('should delete a block between a student and a supervisor', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === supervisorUserId) return Promise.resolve(mockSupervisor);
+        return Promise.resolve(null);
+      });
+      mockUsersRepository.findUserBlockByIds.mockResolvedValue(mockUserBlock);
+
+      // Act
+      await service.deleteUserBlock(studentUserId, supervisorUserId);
+
+      // Assert
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(studentUserId);
+      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(supervisorUserId);
+      expect(mockUsersRepository.findUserBlockByIds).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+      expect(mockUsersRepository.deleteUserBlock).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+    });
+
+    it('should throw NotFoundException if student does not exist', async () => {
+      // Arrange
+      const nonExistentId = 'non-existent';
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === nonExistentId) return Promise.resolve(null);
+        return Promise.resolve(mockSupervisor);
+      });
+
+      // Act & Assert
+      await expect(service.deleteUserBlock(nonExistentId, supervisorUserId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.deleteUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if supervisor does not exist', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const nonExistentId = 'non-existent';
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === nonExistentId) return Promise.resolve(null);
+        return Promise.resolve(null);
+      });
+
+      // Act & Assert
+      await expect(service.deleteUserBlock(studentUserId, nonExistentId)).rejects.toThrow(
+        new NotFoundException(`User with ID ${nonExistentId} not found`),
+      );
+      expect(mockUsersRepository.deleteUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException if block relationship does not exist', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersRepository.findUserById.mockImplementation(id => {
+        if (id === studentUserId) return Promise.resolve(mockStudent);
+        if (id === supervisorUserId) return Promise.resolve(mockSupervisor);
+        return Promise.resolve(null);
+      });
+      mockUsersRepository.findUserBlockByIds.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.deleteUserBlock(studentUserId, supervisorUserId)).rejects.toThrow(
+        new NotFoundException('Block relationship not found'),
+      );
+      expect(mockUsersRepository.deleteUserBlock).not.toHaveBeenCalled();
     });
   });
 });

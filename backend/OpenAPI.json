@@ -590,6 +590,142 @@
         ]
       }
     },
+    "/users/{userId}/blocks": {
+      "get": {
+        "description": "Retrieves a list of all supervisors that have been blocked by the specified student.",
+        "operationId": "UsersController_findBlockedSupervisorsByStudentUserId",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "Student unique identifier (UUID)",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of blocked supervisors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserBlock"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - User is not a student"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get all supervisors blocked by a student",
+        "tags": [
+          "Users"
+        ]
+      },
+      "post": {
+        "description": "Allows a student to block a supervisor, preventing them from appearing in recommendations.",
+        "operationId": "UsersController_createUserBlock",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "Student unique identifier (UUID)",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "The ID of the supervisor to block",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserBlockDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supervisor has been successfully blocked",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserBlock"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid input or validation error"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Block a supervisor",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/{userId}/blocks/{blockedId}": {
+      "delete": {
+        "description": "Removes a block from a supervisor, allowing them to appear in recommendations again.",
+        "operationId": "UsersController_removeUserBlock",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "Student unique identifier (UUID)",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          },
+          {
+            "name": "blockedId",
+            "required": true,
+            "in": "path",
+            "description": "Supervisor unique identifier (UUID) to unblock",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174001",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Supervisor has been successfully unblocked"
+          },
+          "404": {
+            "description": "User or block relationship not found"
+          }
+        },
+        "summary": "Unblock a supervisor",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
     "/tags": {
       "get": {
         "description": "Retrieves a list of all available tags in the system that can be used for searching and filtering users.",
@@ -713,6 +849,7 @@
             "name": "take",
             "required": false,
             "in": "query",
+            "description": "Limit the number of supervisors returned",
             "schema": {
               "type": "number"
             }
@@ -721,6 +858,7 @@
             "name": "availableOnly",
             "required": false,
             "in": "query",
+            "description": "Only return supervisors with available spots",
             "schema": {
               "type": "boolean"
             }
@@ -728,7 +866,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns an array of supervisor profiles"
+            "description": "Returns an array of supervisor profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Supervisor"
+                  }
+                }
+              }
+            }
           }
         },
         "summary": "Get all supervisors with optional filtering",
@@ -745,15 +893,23 @@
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "User ID",
+            "description": "Unique identifier of the user",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a supervisor profile"
+            "description": "Returns a supervisor profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supervisor"
+                }
+              }
+            }
           },
           "404": {
             "description": "Supervisor not found"
@@ -775,13 +931,21 @@
             "in": "path",
             "description": "Supervisor ID",
             "schema": {
+              "format": "uuid",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns a supervisor profile"
+            "description": "Returns a supervisor profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supervisor"
+                }
+              }
+            }
           },
           "404": {
             "description": "Supervisor not found"
@@ -1853,6 +2017,55 @@
           "tags"
         ]
       },
+      "UserBlock": {
+        "type": "object",
+        "properties": {
+          "blocker_id": {
+            "type": "string",
+            "description": "ID of the user who initiated the block",
+            "example": "123e4567-e89b-12d3-a456-426614174000",
+            "format": "uuid"
+          },
+          "blocked_id": {
+            "type": "string",
+            "description": "ID of the user who is being blocked",
+            "example": "123e4567-e89b-12d3-a456-426614174001",
+            "format": "uuid"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the block was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the block was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "blocker_id",
+          "blocked_id",
+          "created_at",
+          "updated_at"
+        ]
+      },
+      "CreateUserBlockDto": {
+        "type": "object",
+        "properties": {
+          "blocked_id": {
+            "type": "string",
+            "description": "ID of the user to block",
+            "example": "123e4567-e89b-12d3-a456-426614174001",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "blocked_id"
+        ]
+      },
       "TagSimilarity": {
         "type": "object",
         "properties": {
@@ -1881,6 +2094,58 @@
         "required": [
           "tag",
           "similarity"
+        ]
+      },
+      "Supervisor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "The user ID associated with this supervisor",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "bio": {
+            "type": "object",
+            "description": "Supervisor bio or description",
+            "example": "Professor specializing in artificial intelligence and machine learning",
+            "nullable": true
+          },
+          "available_spots": {
+            "type": "number",
+            "description": "Number of available supervision spots",
+            "example": 3
+          },
+          "total_spots": {
+            "type": "number",
+            "description": "Total number of supervision spots",
+            "example": 5
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the supervisor profile was created",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Date when the supervisor profile was last updated",
+            "example": "2023-01-01T00:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "user_id",
+          "bio",
+          "available_spots",
+          "total_spots",
+          "created_at",
+          "updated_at"
         ]
       },
       "UpdateSupervisorDto": {

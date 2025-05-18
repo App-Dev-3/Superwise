@@ -43,12 +43,8 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { UserData } from "~/shared/types/userInterfaces";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 
-definePageMeta({
-    layout: "authenticated",
-});
-
 const { user } = useUser();
-const { getUserByEmail, getMatches} = useUserApi();
+const { getUserByEmail, getRecommendedSupervisors} = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 
@@ -63,16 +59,14 @@ if (!userStore.user && user.value?.primaryEmailAddress?.emailAddress) {
 }
 
 if (userStore.user !== null) {
-  const res = await getMatches(userStore.user.id) as SupervisorData[];
+  const res = await getRecommendedSupervisors(userStore.user.id) as SupervisorData[];
   supervisorStore.setSupervisors(res);
   matches.value = res;
-  console.log('matches', matches.value);
 }
 
 function navigate(route: string) {
     dummyRoute.value = route;
     navigateTo(route);
-    console.log("Navigating to:", route);
 }
 
 const dummyRoute = ref("/");

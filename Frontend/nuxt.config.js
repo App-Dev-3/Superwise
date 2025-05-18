@@ -21,6 +21,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     nestApiUrl: process.env.NEST_API_URL,
+    allowedEmailDomains: [process.env.ALLOWED_EMAIL_DOMAINS],
   },
 
   router: {
@@ -67,7 +68,7 @@ export default defineNuxtConfig({
       short_name: "SW",
       lang: "en",
       description:
-        "An application that allows studnets to find their perfect supervisor match",
+        "An application that allows students to find their perfect supervisor match",
       display: "standalone",
       start_url: "/",
       icons: [

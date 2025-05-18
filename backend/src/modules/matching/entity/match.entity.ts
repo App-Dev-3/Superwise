@@ -2,7 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class Match {
   @ApiProperty({
-    description: 'The unique identifier of the supervisor in this match',
+    description: 'The unique identifier of the supervisor record',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  supervisorId: string;
+
+  @ApiProperty({
+    description: 'The unique identifier of the supervisor user in this match',
     example: '15d2a5bc-c547-444d-91fb-b1c498ada33c',
   })
   supervisor_userId: string;

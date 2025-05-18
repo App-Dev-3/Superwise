@@ -1,65 +1,57 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { defineNuxtConfig } from "nuxt/config";
+import {defineNuxtConfig} from "nuxt/config";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
-  compatibilityDate: "2024-11-01",
-  devtools: { enabled: true },
+    compatibilityDate: "2024-11-01",
+    devtools: {enabled: true},
 
-  
 
-  buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
+    buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
 
-  modules: [
-    "@vite-pwa/nuxt",
-    "@nuxtjs/i18n",
-    "@pinia/nuxt",
-    "@clerk/nuxt",
-    "@nuxt/test-utils/module",
-    "@nuxtjs/color-mode",
-  ],
+    modules: [
+        "@vite-pwa/nuxt",
+        "@nuxtjs/i18n",
+        "@pinia/nuxt",
+        "@clerk/nuxt",
+        "@nuxt/test-utils/module",
+        "@nuxtjs/color-mode",
+    ],
 
   runtimeConfig: {
     nestApiUrl: process.env.NEST_API_URL,
     allowedEmailDomains: [process.env.ALLOWED_EMAIL_DOMAINS],
   },
 
-  router: {
-    base: "/",
-  },
-
-  vite: {
-    plugins: [tailwindcss()],
-  },
-
-  css: ["~/assets/css/app.css"],
-
-  colorMode: {
-    dataValue: "theme",
-  },
-
-  i18n: {
-    detectBrowserLanguage: false,
-    legacy: false,
-    lazy: true,
-    globalInjection: true,
-    strategy: "prefix_except_default",
-    locales: [
-      {
-        code: "en",
-        file: "en.js",
-      },
-      {
-        code: "de",
-        file: "de.js",
-      },
-    ],
-    defaultLocale: "en",
-    langDir: "locales",
-    bundle: {
-      optimizeTranslationDirective: false,
+    router: {
+        base: "/",
     },
-  },
+
+    vite: {
+        plugins: [tailwindcss()],
+    },
+
+    css: ["~/assets/css/app.css"],
+
+    colorMode: {
+        dataValue: "theme",
+    },
+
+    i18n: {
+        defaultLocale: "en",
+        locales: [
+            {
+                code: "en",
+                name: "english",
+                file: "en-GB.json",
+            },
+            {
+                code: "de",
+                name: "german",
+                file: "de-DE.json",
+            },
+        ]
+    },
 
   pwa: {
     manifest: {
@@ -108,13 +100,13 @@ export default defineNuxtConfig({
       ],
     },
 
-    workbox: {
-      navigateFallback: "/",
-      globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+        workbox: {
+            navigateFallback: "/",
+            globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
+        },
+        devOptions: {
+            enabled: false,
+            type: "module",
+        },
     },
-    devOptions: {
-      enabled: false,
-      type: "module",
-    },
-  },
 });

@@ -21,6 +21,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     nestApiUrl: process.env.NEST_API_URL,
+    allowedEmailDomains: [process.env.ALLOWED_EMAIL_DOMAINS],
   },
 
   router: {

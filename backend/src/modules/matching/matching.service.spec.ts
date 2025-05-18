@@ -280,6 +280,7 @@ describe('MatchingService', () => {
       // Assertions
       expect(result).toHaveLength(2); // Should match number of supervisors
 
+      expect(result[0].supervisorId).toEqual('supervisor-id-1');
       expect(result[0].supervisor_userId).toEqual(USER_UUID_1);
       expect(result[0].firstName).toEqual('John');
       expect(result[0].lastName).toEqual('Doe');
@@ -289,6 +290,7 @@ describe('MatchingService', () => {
       expect(result[0].pendingRequests).toEqual(0);
       expect(result[0].tags).toEqual(['Machine Learning', 'Data Science']);
 
+      expect(result[1].supervisorId).toEqual('supervisor-id-2');
       expect(result[1].supervisor_userId).toEqual(USER_UUID_2);
       expect(result[1].firstName).toEqual('Jane');
       expect(result[1].lastName).toEqual('Smith');
@@ -370,6 +372,7 @@ describe('MatchingService', () => {
 
       // Assertions
       expect(result).toHaveLength(1); // Only the non-blocked supervisor should be returned
+      expect(result[0].supervisorId).toEqual('supervisor-id-2'); // Should include the supervisor ID
       expect(result[0].supervisor_userId).toEqual(USER_UUID_2); // Should only contain supervisor 2
 
       // Verify the blocked supervisors call was made

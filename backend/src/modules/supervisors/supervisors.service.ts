@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupervisorsRepository } from './supervisors.repository';
-import { Prisma, Supervisor } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { SupervisorCapacityException } from '../../common/exceptions/custom-exceptions/supervisor-capacity.exception';
 import { UpdateSupervisorDto } from './dto/update-supervisor.dto';
+import { Supervisor } from './entities/supervisor.entity';
 
 @Injectable()
 export class SupervisorsService {
@@ -37,6 +38,9 @@ export class SupervisorsService {
     updateSupervisorDto: UpdateSupervisorDto,
   ): Promise<Supervisor> {
     const supervisor = await this.findSupervisorById(id);
+    if (!supervisor) {
+      throw new NotFoundException(`Supervisor with ID ${id} not found`);
+    }
     const newTotalSpots = updateSupervisorDto.total_spots ?? supervisor.total_spots;
     const newAvailableSpots = updateSupervisorDto.available_spots ?? supervisor.available_spots;
     if (newAvailableSpots > newTotalSpots) {

@@ -46,7 +46,7 @@ export interface IUsersRepository {
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async createUser(userData: {
     email: string;
@@ -104,7 +104,7 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async findUsersByFirstName(firstName: string): Promise<User[]> {
-    let result = this.prisma.user.findMany({
+    return this.prisma.user.findMany({
       where: {
         is_deleted: false,
         first_name: {
@@ -113,8 +113,6 @@ export class UsersRepository implements IUsersRepository {
         },
       },
     });
-
-    return result;
   }
 
   async findUsersByLastName(lastName: string): Promise<User[]> {

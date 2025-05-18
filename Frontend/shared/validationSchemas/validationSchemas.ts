@@ -115,3 +115,35 @@ export const supervisorBulkImportSchema = z.object({
     supervisors: z.array(createSupervisorSchema)
         .min(1, "At least one supervisor must be provided")
 });
+
+export const requestStateSchema = z.enum([
+    "PENDING",
+    "ACCEPTED",
+    "REJECTED",
+    "WITHDRAWN"
+]).optional();
+
+export const createSupervisionRequestSchema = z.object({
+    supervisor_id: z.string()
+        .uuid("Supervisor ID must be a valid UUID")
+        .optional()
+        .describe("The supervisor ID (required for student requests)"),
+
+    student_email: z.string()
+        .email("Student email must be a valid email address")
+        .optional()
+        .describe("The student email (required for supervisor requests)")
+}).refine(
+    (data) => {
+        // Either supervisor_id or student_email must be provided
+        return data.supervisor_id !== undefined || data.student_email !== undefined;
+    },
+    {
+        message: "Either supervisor_id or student_email must be provided",
+        path: ["_errors"], // This indicates it's a general error not tied to a specific field
+    }
+);
+
+export const updateSupervisionRequestStateScheme = z.object({
+    request_state: requestStateSchema
+})

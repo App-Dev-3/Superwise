@@ -1,8 +1,12 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faArrowLeft,
   faArrowRight,
+  faArrowRightToBracket,
+  faBan,
   faArrowRightToBracket,
   faBan,
   faCheck,
@@ -13,20 +17,15 @@ import {
   faFileDownload,
   faGear,
   faEdit,
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faFileDownload,
   faHandshakeSimple,
   faHourglass,
+  faHouse,
+  faMap,
   faHouse,
   faMap,
   faMessage,
   faMoon,
   faRightFromBracket,
-  faMinus,
-  faMoon,
-  faPlus,
   faSearch,
   faSun,
   faTrashCan,

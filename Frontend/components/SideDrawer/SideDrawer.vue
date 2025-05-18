@@ -21,11 +21,10 @@ const props = defineProps({
 
 <template>
   <div class="drawer">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" >
     <div class="drawer-content">
-      <!-- Page content here -->
-      <label for="my-drawer" class="drawer-button"
-        ><div class="avatar">
+      <label for="my-drawer" class="drawer-button">
+        <div class="avatar">
           <div class="mask mask-squircle w-8 rounded-full">
             <img
               :src="
@@ -33,9 +32,10 @@ const props = defineProps({
                 getPlaceholderImage(props.firstName, props.lastName)
               "
               alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-            />
-          </div></div
-      ></label>
+            >
+          </div>
+        </div>
+      </label>
     </div>
 
     <div class="drawer-side z-40">
@@ -47,18 +47,16 @@ const props = defineProps({
       <div
         class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
       >
-        <!-- logo -->
         <img
           :src="
-            colorMode.value === 'dark'
+            colorMode?.value === 'dark'
               ? '../images/appHeader_logo_dark.svg'
               : '../images/appHeader_logo_light.svg'
           "
           alt="Logo"
           class="h-6 mb-8"
-        />
+        >
 
-        <!-- menu items -->
         <ul class="space-y-3 flex-grow">
           <li>
             <NuxtLink to="/profile">
@@ -87,7 +85,7 @@ const props = defineProps({
         </ul>
 
         <li>
-          <SignOutButton>
+          <SignOutButton redirect-url="/">
             <span>
               <FontAwesomeIcon icon="fa-right-from-bracket" class="text-xl" />
               <span>Logout</span>

@@ -65,7 +65,11 @@ const goBack = () => {
         </button>
 
         <div v-if="props.showUser">
-          <SideDrawer :image="props.image" first-name="Le" last-name="Stad" />
+          <SideDrawer
+            :image="props.image"
+            :first-name="props.firstName"
+            :last-name="props.lastName"
+          />
         </div>
 
         <AppThemeToggle class="ml-5" />
@@ -81,7 +85,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          />
+          >
         </div>
       </ClientOnly>
 

@@ -77,3 +77,7 @@ export const updateSupervisorProfileSchema = z.object({
         message:"Total Spots need to be at least 0"
     }).optional(),
 })
+
+export const updateStudentProfileSchema = z.object({
+    "thesis_description": z.string().optional(),
+})

@@ -51,3 +51,8 @@ export const nameSchema = z.string().min(1, {
 })
 
 export const uuidSchema = z.string().uuid()
+
+export const similaritySchema = z.coerce
+    .number()
+    .min(0, { message: "Similarity threshold must be between 0 and 1" })
+    .max(1, { message: "Similarity threshold must be between 0 and 1" });

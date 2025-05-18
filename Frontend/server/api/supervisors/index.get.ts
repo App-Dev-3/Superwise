@@ -1,28 +1,30 @@
-import {similaritySchema} from "#shared/validationSchemas/validationSchemas";
+import {takeSchema, availableOnlySchema} from "#shared/validationSchemas/validationSchemas";
 import {ZodError} from "zod";
+
 
 export default defineEventHandler ( async (event) => {
     // specific checks for this endpoint
-    const minSimilarity = getQuery(event).minSimilarity
-    if (!minSimilarity) return sendError(event, createError({
-        statusCode: 400, statusMessage: 'minSimilarity is required'
-    }))
+    const take = getQuery(event).take;
+    const availableOnly = getQuery(event).availableOnly;
+
+    let parsedTake: number;
+    let parsedAvailableOnly: boolean;
     try {
-        similaritySchema.parse(minSimilarity)
+        parsedTake = takeSchema.parse(take);
+        parsedAvailableOnly = availableOnlySchema.parse(availableOnly);
     } catch (e) {
         if (e instanceof ZodError) {
             const errorMessage = e.errors.map(err => err.message).join(', ')
             return sendError(event, createError({
                 statusCode: 400,
-                statusMessage: `Invalid Similarity Threshold: ${errorMessage}`
+                statusMessage: `Invalid QueryParameter: ${errorMessage}`
             }))
         }
         return sendError(event, createError({
             statusCode: 400,
-            statusMessage: 'Invalid Similarity Threshold'
+            statusMessage: 'Invalid QueryParameter'
         }))
     }
-
     // standard setup for every endpoint
     const token = await getBearerToken(event)
     const targetPath = getTargetPath(event)
@@ -35,7 +37,8 @@ export default defineEventHandler ( async (event) => {
             accept: 'application/json',
         },
         query: {
-            minSimilarity: minSimilarity as number
+            take: parsedTake,
+            availableOnly: parsedAvailableOnly
         }
     }).catch((error) => {
         throw createError({

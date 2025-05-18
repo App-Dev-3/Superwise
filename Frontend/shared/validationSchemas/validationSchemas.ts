@@ -56,3 +56,24 @@ export const similaritySchema = z.coerce
     .number()
     .min(0, { message: "Similarity threshold must be between 0 and 1" })
     .max(1, { message: "Similarity threshold must be between 0 and 1" });
+
+export const takeSchema = z.coerce
+    .number()
+    .int()
+    .positive()
+    .default(10);
+
+export const availableOnlySchema = z.enum(['true', 'false'])
+    .optional()
+    .transform(val => val === 'true')
+    .default('false');
+
+export const updateSupervisorProfileSchema = z.object({
+    "bio": z.string().optional(),
+    "available_spots": z.number().int().min(0, {
+        message:"Available Spots need to be at least 0"
+    }).optional(),
+    "total_spots": z.number().int().min(0, {
+        message:"Total Spots need to be at least 0"
+    }).optional(),
+})

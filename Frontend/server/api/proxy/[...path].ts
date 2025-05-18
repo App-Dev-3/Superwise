@@ -2,6 +2,7 @@ import { joinURL } from 'ufo'
 import { getAuth } from '@clerk/nuxt/server'
 
 export default defineEventHandler(async (event) => {
+  console.warn(`[${new Date(Date.now())}]: Nuxt Proxy used for ${event.method} ${getRequestURL(event)} \nPlease use the appropriate Nuxt API endpoint instead of this proxy.`)
   const config = useRuntimeConfig()
   const path = getRouterParam(event, 'path') ?? ''
   let target = joinURL(config.nestApiUrl, path)

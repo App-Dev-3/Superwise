@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserTag, Role } from '@prisma/client';
+import { User, UserTag, Role, UserBlock } from '@prisma/client';
 import { UsersRepository } from './users.repository';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { UserWithRelations } from './entities/user-with-relations.entity';
@@ -228,5 +228,66 @@ export class UsersService {
 
     // Call Repository and return its result
     return await this.usersRepository.setUserTagsByUserId(userId, dto.tags);
+  }
+
+  // User Block operations
+  async findBlockedSupervisorsByStudentUserId(studentUserId: string): Promise<UserBlock[]> {
+    // Verify user exists and is a student
+    const user = await this.findUserById(studentUserId);
+    if (user.role !== Role.STUDENT) {
+      throw new BadRequestException('Only students can have blocked supervisors');
+    }
+
+    return this.usersRepository.findBlockedSupervisorsByStudentUserId(studentUserId);
+  }
+
+  async createUserBlock(studentUserId: string, supervisorUserId: string): Promise<UserBlock> {
+    // Validate that users exist and have correct roles
+    const student = await this.findUserById(studentUserId);
+    const supervisor = await this.findUserById(supervisorUserId);
+
+    // Check if blocker is trying to block themselves
+    if (studentUserId === supervisorUserId) {
+      throw new BadRequestException('Users cannot block themselves');
+    }
+
+    // Verify blocker is a student and blocked is a supervisor
+    if (student.role !== Role.STUDENT) {
+      throw new BadRequestException('Only students can block supervisors');
+    }
+
+    if (supervisor.role !== Role.SUPERVISOR) {
+      throw new BadRequestException('Students can only block supervisors');
+    }
+
+    // Check if block already exists
+    const existingBlock = await this.usersRepository.findUserBlockByIds(
+      studentUserId,
+      supervisorUserId,
+    );
+    if (existingBlock) {
+      throw new BadRequestException('This supervisor is already blocked');
+    }
+
+    // Create the block
+    return this.usersRepository.createUserBlock(studentUserId, supervisorUserId);
+  }
+
+  async deleteUserBlock(studentUserId: string, supervisorUserId: string): Promise<void> {
+    // Verify both users exist (will throw if not found)
+    await this.findUserById(studentUserId);
+    await this.findUserById(supervisorUserId);
+
+    // Check if block exists
+    const existingBlock = await this.usersRepository.findUserBlockByIds(
+      studentUserId,
+      supervisorUserId,
+    );
+    if (!existingBlock) {
+      throw new NotFoundException('Block relationship not found');
+    }
+
+    // Delete the block
+    await this.usersRepository.deleteUserBlock(studentUserId, supervisorUserId);
   }
 }

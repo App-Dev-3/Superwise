@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { Role, User, UserTag } from '@prisma/client';
+import { Role, User, UserTag, UserBlock } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { UserWithRelations } from './entities/user-with-relations.entity';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
+import { CreateUserBlockDto } from './dto/create-user-block.dto';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -26,6 +27,10 @@ describe('UsersController', () => {
     findUserTagsByUserId: jest.fn(),
     setUserTagsByUserId: jest.fn(),
     checkUserRegistration: jest.fn(),
+    // User Block methods
+    findBlockedSupervisorsByStudentUserId: jest.fn(),
+    createUserBlock: jest.fn(),
+    deleteUserBlock: jest.fn(),
   };
 
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -46,6 +51,20 @@ describe('UsersController', () => {
     clerk_id: CLERK_ID,
     created_at: new Date('2023-01-15T10:30:00Z'),
     updated_at: new Date('2023-01-15T10:30:00Z'),
+  };
+
+  const mockAdmin: User = {
+    ...mockUser,
+    id: 'admin-id',
+    email: 'admin@fhstp.ac.at',
+    role: Role.ADMIN,
+  };
+
+  const mockSupervisor: User = {
+    ...mockUser,
+    id: USER_UUID_2,
+    email: 'supervisor@fhstp.ac.at',
+    role: Role.SUPERVISOR,
   };
 
   const mockUsers = [
@@ -71,6 +90,13 @@ describe('UsersController', () => {
     updated_at: new Date(),
   };
   const mockUserTags = [mockUserTag];
+
+  const mockUserBlock: UserBlock = {
+    blocker_id: USER_UUID, // Student
+    blocked_id: USER_UUID_2, // Supervisor
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
 
   const mockAuthUser = {
     clerk_id: CLERK_ID,
@@ -268,6 +294,197 @@ describe('UsersController', () => {
       await expect(controller.setUserTagsByUserId(userId, dto, mockUser)).rejects.toThrow(
         expectedError,
       );
+    });
+  });
+
+  // --- User Block Operations ---
+  describe('findBlockedSupervisorsByStudentUserId', () => {
+    it('should find blocked supervisors for a student when called by the student', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const blockedSupervisors = [mockUserBlock];
+      mockUsersService.findBlockedSupervisorsByStudentUserId.mockResolvedValue(blockedSupervisors);
+
+      // Act
+      const result = await controller.findBlockedSupervisorsByStudentUserId(
+        studentUserId,
+        mockUser,
+      );
+
+      // Assert
+      expect(result).toEqual(blockedSupervisors);
+      expect(mockUsersService.findBlockedSupervisorsByStudentUserId).toHaveBeenCalledWith(
+        studentUserId,
+      );
+    });
+
+    it('should find blocked supervisors for a student when called by an admin', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const blockedSupervisors = [mockUserBlock];
+      mockUsersService.findBlockedSupervisorsByStudentUserId.mockResolvedValue(blockedSupervisors);
+
+      // Act
+      const result = await controller.findBlockedSupervisorsByStudentUserId(
+        studentUserId,
+        mockAdmin,
+      );
+
+      // Assert
+      expect(result).toEqual(blockedSupervisors);
+      expect(mockUsersService.findBlockedSupervisorsByStudentUserId).toHaveBeenCalledWith(
+        studentUserId,
+      );
+    });
+
+    it("should throw UnauthorizedException when a student tries to view another student's blocked supervisors", async () => {
+      // Arrange
+      const otherStudentId = 'other-student-id'; // This is different from mockUser.id (USER_UUID)
+      const currentUser = mockUser; // Student with id USER_UUID
+
+      try {
+        // Act
+        await controller.findBlockedSupervisorsByStudentUserId(otherStudentId, currentUser);
+        // If we get here, fail the test
+        fail('Expected an UnauthorizedException to be thrown');
+      } catch (error) {
+        // Assert
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(mockUsersService.findBlockedSupervisorsByStudentUserId).not.toHaveBeenCalled();
+      }
+    });
+
+    it('should propagate errors from the service', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const expectedError = new BadRequestException('User is not a student');
+      mockUsersService.findBlockedSupervisorsByStudentUserId.mockRejectedValue(expectedError);
+
+      // Act & Assert
+      await expect(
+        controller.findBlockedSupervisorsByStudentUserId(studentUserId, mockUser),
+      ).rejects.toThrow(expectedError);
+    });
+  });
+
+  describe('createUserBlock', () => {
+    it('should create a block when a student blocks a supervisor', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const dto: CreateUserBlockDto = { blocked_id: USER_UUID_2 };
+      mockUsersService.createUserBlock.mockResolvedValue(mockUserBlock);
+
+      // Act
+      const result = await controller.createUserBlock(studentUserId, dto, mockUser);
+
+      // Assert
+      expect(result).toEqual(mockUserBlock);
+      expect(mockUsersService.createUserBlock).toHaveBeenCalledWith(studentUserId, dto.blocked_id);
+    });
+
+    it('should create a block when an admin blocks a supervisor on behalf of a student', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const dto: CreateUserBlockDto = { blocked_id: USER_UUID_2 };
+      mockUsersService.createUserBlock.mockResolvedValue(mockUserBlock);
+
+      // Act
+      const result = await controller.createUserBlock(studentUserId, dto, mockAdmin);
+
+      // Assert
+      expect(result).toEqual(mockUserBlock);
+      expect(mockUsersService.createUserBlock).toHaveBeenCalledWith(studentUserId, dto.blocked_id);
+    });
+
+    it('should throw UnauthorizedException when a student tries to block a supervisor on behalf of another student', async () => {
+      // Arrange
+      const otherStudentId = 'other-student-id'; // This is different from mockUser.id (USER_UUID)
+      const dto: CreateUserBlockDto = { blocked_id: USER_UUID_2 };
+      const currentUser = mockUser; // Student with id USER_UUID
+
+      try {
+        // Act
+        await controller.createUserBlock(otherStudentId, dto, currentUser);
+        // If we get here, fail the test
+        fail('Expected an UnauthorizedException to be thrown');
+      } catch (error) {
+        // Assert
+        expect(error).toBeInstanceOf(UnauthorizedException);
+        expect(mockUsersService.createUserBlock).not.toHaveBeenCalled();
+      }
+    });
+
+    it('should propagate errors from the service', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const dto: CreateUserBlockDto = { blocked_id: USER_UUID_2 };
+      const expectedError = new BadRequestException('User cannot block themselves');
+      mockUsersService.createUserBlock.mockRejectedValue(expectedError);
+
+      // Act & Assert
+      await expect(controller.createUserBlock(studentUserId, dto, mockUser)).rejects.toThrow(
+        expectedError,
+      );
+    });
+  });
+
+  describe('removeUserBlock', () => {
+    it('should delete a block when a student unblocks a supervisor', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersService.deleteUserBlock.mockResolvedValue(undefined);
+
+      // Act
+      await controller.removeUserBlock(studentUserId, supervisorUserId, mockUser);
+
+      // Assert
+      expect(mockUsersService.deleteUserBlock).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+    });
+
+    it('should delete a block when an admin unblocks a supervisor on behalf of a student', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      mockUsersService.deleteUserBlock.mockResolvedValue(undefined);
+
+      // Act
+      await controller.removeUserBlock(studentUserId, supervisorUserId, mockAdmin);
+
+      // Assert
+      expect(mockUsersService.deleteUserBlock).toHaveBeenCalledWith(
+        studentUserId,
+        supervisorUserId,
+      );
+    });
+
+    it('should throw UnauthorizedException when a student tries to unblock a supervisor on behalf of another student', async () => {
+      // Arrange
+      const otherStudentId = 'other-student-id';
+      const supervisorUserId = USER_UUID_2;
+      const currentUser = mockUser; // Student
+
+      // Act & Assert
+      await expect(
+        controller.removeUserBlock(otherStudentId, supervisorUserId, currentUser),
+      ).rejects.toThrow(UnauthorizedException);
+      expect(mockUsersService.deleteUserBlock).not.toHaveBeenCalled();
+    });
+
+    it('should propagate errors from the service', async () => {
+      // Arrange
+      const studentUserId = USER_UUID;
+      const supervisorUserId = USER_UUID_2;
+      const expectedError = new NotFoundException('Block relationship not found');
+      mockUsersService.deleteUserBlock.mockRejectedValue(expectedError);
+
+      // Act & Assert
+      await expect(
+        controller.removeUserBlock(studentUserId, supervisorUserId, mockUser),
+      ).rejects.toThrow(expectedError);
     });
   });
 });

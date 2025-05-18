@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, User, UserTag, Role } from '@prisma/client';
+import { Prisma, User, UserTag, Role, UserBlock } from '@prisma/client';
 
 export interface IUsersRepository {
   createUser(userData: {
@@ -42,6 +42,12 @@ export interface IUsersRepository {
     userId: string,
     tags: Array<{ tag_id: string; priority: number }>,
   ): Promise<UserTag[]>;
+
+  // User Block operations
+  findBlockedSupervisorsByStudentUserId(studentUserId: string): Promise<UserBlock[]>;
+  createUserBlock(blockerUserId: string, blockedUserId: string): Promise<UserBlock>;
+  deleteUserBlock(blockerUserId: string, blockedUserId: string): Promise<void>;
+  findUserBlockByIds(blockerUserId: string, blockedUserId: string): Promise<UserBlock | null>;
 }
 
 @Injectable()
@@ -238,5 +244,48 @@ export class UsersRepository implements IUsersRepository {
 
     // Fetch and return the newly set tags (or empty array)
     return this.findUserTagsByUserId(userId);
+  }
+
+  // User Block operations
+  async findBlockedSupervisorsByStudentUserId(studentUserId: string): Promise<UserBlock[]> {
+    return this.prisma.userBlock.findMany({
+      where: {
+        blocker_id: studentUserId,
+      },
+    });
+  }
+
+  async createUserBlock(blockerUserId: string, blockedUserId: string): Promise<UserBlock> {
+    return this.prisma.userBlock.create({
+      data: {
+        blocker_id: blockerUserId,
+        blocked_id: blockedUserId,
+      },
+    });
+  }
+
+  async deleteUserBlock(blockerUserId: string, blockedUserId: string): Promise<void> {
+    await this.prisma.userBlock.delete({
+      where: {
+        blocker_id_blocked_id: {
+          blocker_id: blockerUserId,
+          blocked_id: blockedUserId,
+        },
+      },
+    });
+  }
+
+  async findUserBlockByIds(
+    blockerUserId: string,
+    blockedUserId: string,
+  ): Promise<UserBlock | null> {
+    return this.prisma.userBlock.findUnique({
+      where: {
+        blocker_id_blocked_id: {
+          blocker_id: blockerUserId,
+          blocked_id: blockedUserId,
+        },
+      },
+    });
   }
 }

@@ -13,5 +13,6 @@
   "data.protection.student.&.supervisor.data.deletion.subtitle": "🗑 Data Deletion",
   "data.protection.student.&.supervisor.data.deletion.text.1": "You have the right to request the deletion of your data at any time. When you do your profile and personal information will no longer be visible or accessible to other users. Some minimal data may be retained until the end of the supervision period, for functionality and record purposes. This includes:",
   "data.protection.student.&.supervisor.data.deletion.list": "Your email\nRecords of matches\nMessages sent to or received from others",
-  "data.protection.student.&.supervisor.data.deletion.text.2": "After the supervision period ends, this remaining data will be fully and irreversibly deleted."
+  "data.protection.student.&.supervisor.data.deletion.text.2": "After the supervision period ends, this remaining data will be fully and irreversibly deleted.",
+  "data.protection.generic.deleteMyData": "Delete my data"
 }

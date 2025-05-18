@@ -13,5 +13,6 @@
   "data.protection.student.&.supervisor.data.deletion.subtitle": "🗑 Datenlöschung",
   "data.protection.student.&.supervisor.data.deletion.text.1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
   "data.protection.student.&.supervisor.data.deletion.list": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten",
-  "data.protection.student.&.supervisor.data.deletion.text.2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
+  "data.protection.student.&.supervisor.data.deletion.text.2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht.",
+  "data.protection.generic.deleteMyData": "Meine Daten löschen"
 }

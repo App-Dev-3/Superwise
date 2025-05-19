@@ -1,6 +1,6 @@
 import type { UserRegistrationData } from "~/shared/types/userInterfaces";
 
-const { getUserRegistrationStatus} = useUserApi();
+const { getUserRegistrationStatus } = useUserApi();
 
 export const useRegistrationStore = defineStore('registration', {
   state: () => ({
@@ -8,8 +8,8 @@ export const useRegistrationStore = defineStore('registration', {
   }),
   actions: {
     async fetchRegistrationStatus(userEmail: string) {
-        try {
-        const res = await getUserRegistrationStatus( userEmail );
+      try {
+        const res = await getUserRegistrationStatus(userEmail);
         this.status = res;
       } catch (e) {
         console.error('Failed to fetch onboarding status:', e)

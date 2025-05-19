@@ -1,81 +1,92 @@
 <script setup>
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref } from "vue";
 
 const props = defineProps({
   autoFocus: {
     type: Boolean,
-    default: false
+    default: false,
   },
   label: {
     type: String,
-    default: ''
+    default: "",
   },
   leftIcon: {
     type: String,
-    default: ''
+    default: "",
   },
   modelValue: {
     type: String,
-    default: ''
+    default: "",
   },
   note: {
     type: String,
-    default: ''
+    default: "",
   },
   placeholder: {
     type: String,
-    default: ''
+    default: "",
   },
   rightIcon: {
     type: String,
-    default: ''
+    default: "",
   },
-})
-const isClearIcon = computed(() => props.rightIcon === 'xmark')
-
+  clearable: {
+    type: Boolean,
+    default: false,
+  },
+});
+const isClearIcon = computed(() => props.rightIcon === "xmark");
 
 onMounted(() => {
   if (props.autoFocus) {
     if (inputFieldRef.value) {
-      inputFieldRef.value.focus()
+      inputFieldRef.value.focus();
     }
   }
-})
+});
 
-const inputFieldRef = ref(null)
+const inputFieldRef = ref(null);
 
-const emit = defineEmits(['update:modelValue', 'blur'])
+const emit = defineEmits(["update:modelValue", "blur"]);
 
 function handleInput(event) {
-  const trimmed = event.target.value.trim()
-  if (trimmed !== '') {
-    emit('update:modelValue', event.target.value)
+  const trimmed = event.target.value.trim();
+  if (trimmed !== "") {
+    emit("update:modelValue", event.target.value);
   }
 }
 
 function handleBlur(event) {
-  emit('blur', event)
+  emit("blur", event);
 }
+
+const clearSearch = () => {
+  searchQuery.value = "";
+};
 
 function handleRightIconClick() {
   if (!isClearIcon.value) {
-    return
+    return;
   }
-  emit('update:modelValue', '')
-}
 
+  clearSearch();
+  emit("update:modelValue", "");
+}
 </script>
 
 <template>
-    <div class="fieldset">
-    <legend class="fieldset-legend text-sm font-semibold mb-1">
+  <div class="fieldset">
+    <legend
+      v-if="props.label.length > 0"
+      class="fieldset-legend text-sm font-semibold mb-1"
+    >
       {{ label }}
     </legend>
 
     <div class="input-container">
       <FontAwesomeIcon
         v-if="leftIcon"
-        :icon='leftIcon'
+        :icon="leftIcon"
         class="input-container__leftIcon"
       />
       <input
@@ -93,9 +104,9 @@ function handleRightIconClick() {
       >
       <FontAwesomeIcon
         v-if="rightIcon"
-        :icon='rightIcon'
+        :icon="rightIcon"
         class="input-container__rightIcon"
-        :class="{'input-container__rightIcon--clickable': isClearIcon}"
+        :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
         @click="handleRightIconClick"
       />
     </div>
@@ -103,7 +114,7 @@ function handleRightIconClick() {
     <p class="text-xs text-gray-500 mt-1">
       {{ note }}
     </p>
-</div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -121,10 +132,10 @@ function handleRightIconClick() {
   }
 
   &__input--left {
-    padding-left: 2.5rem; 
+    padding-left: 2.5rem;
   }
   &__input--right {
-    padding-right: 2.5rem; 
+    padding-right: 2.5rem;
   }
 
   &__rightIcon {
@@ -136,7 +147,7 @@ function handleRightIconClick() {
     z-index: 10;
     color: #888;
 
-    &--clickable{
+    &--clickable {
       pointer-events: auto;
     }
   }

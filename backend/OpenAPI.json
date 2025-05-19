@@ -136,63 +136,23 @@
     },
     "/users/search": {
       "get": {
-        "description": "Search for users by any combination of email, name, or tags.",
+        "description": "Search for users by email, first name, or last name with a single search string.",
         "operationId": "UsersController_searchUsers",
         "parameters": [
           {
-            "name": "email",
-            "required": false,
+            "name": "query",
+            "required": true,
             "in": "query",
-            "description": "Email address to search for (exact match)",
+            "description": "Search string to match against email, first name, or last name (case insensitive, partial match)",
             "schema": {
-              "example": "studentId@fhstp.ac.at",
-              "type": "string"
-            }
-          },
-          {
-            "name": "firstName",
-            "required": false,
-            "in": "query",
-            "description": "First name to search for (case insensitive, partial match)",
-            "schema": {
-              "example": "Max",
-              "type": "string"
-            }
-          },
-          {
-            "name": "lastName",
-            "required": false,
-            "in": "query",
-            "description": "Last name to search for (case insensitive, partial match)",
-            "schema": {
-              "example": "Mustermann",
-              "type": "string"
-            }
-          },
-          {
-            "name": "tagId",
-            "required": false,
-            "in": "query",
-            "description": "Single tag ID to search for (UUID)",
-            "schema": {
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
-              "type": "string"
-            }
-          },
-          {
-            "name": "tagIds",
-            "required": false,
-            "in": "query",
-            "description": "Comma-separated list of tag IDs (UUIDs)",
-            "schema": {
-              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479,e47ac10b-58cc-4372-a567-0e02b2c3d480",
+              "example": "john",
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns users matching the search criteria",
+            "description": "Returns users matching the search criteria (limited to 15 results)",
             "content": {
               "application/json": {
                 "schema": {
@@ -205,7 +165,7 @@
             }
           },
           "400": {
-            "description": "Bad request - Invalid parameters"
+            "description": "Bad request - Invalid parameter"
           }
         },
         "summary": "Unified search for users",

@@ -31,6 +31,7 @@ describe('UsersController', () => {
     findBlockedSupervisorsByStudentUserId: jest.fn(),
     createUserBlock: jest.fn(),
     deleteUserBlock: jest.fn(),
+    searchUsers: jest.fn(),
   };
 
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -485,6 +486,21 @@ describe('UsersController', () => {
       await expect(
         controller.removeUserBlock(studentUserId, supervisorUserId, mockUser),
       ).rejects.toThrow(expectedError);
+    });
+  });
+
+  describe('searchUsers', () => {
+    it('should search users with the provided query', async () => {
+      // Arrange
+      const searchQuery = 'test';
+      mockUsersService.searchUsers.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await controller.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockUsersService.searchUsers).toHaveBeenCalledWith(searchQuery);
     });
   });
 });

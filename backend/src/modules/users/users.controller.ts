@@ -170,65 +170,24 @@ export class UsersController {
   @Get('search')
   @ApiOperation({
     summary: 'Unified search for users',
-    description: 'Search for users by any combination of email, name, or tags.',
+    description: 'Search for users by email, first name, or last name with a single search string.',
   })
   @ApiQuery({
-    name: 'email',
-    required: false,
-    description: 'Email address to search for (exact match)',
-    example: 'studentId@fhstp.ac.at',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'firstName',
-    required: false,
-    description: 'First name to search for (case insensitive, partial match)',
-    example: 'Max',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'lastName',
-    required: false,
-    description: 'Last name to search for (case insensitive, partial match)',
-    example: 'Mustermann',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'tagId',
-    required: false,
-    description: 'Single tag ID to search for (UUID)',
-    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
-    type: String,
-  })
-  @ApiQuery({
-    name: 'tagIds',
-    required: false,
-    description: 'Comma-separated list of tag IDs (UUIDs)',
-    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479,e47ac10b-58cc-4372-a567-0e02b2c3d480',
+    name: 'query',
+    required: true,
+    description:
+      'Search string to match against email, first name, or last name (case insensitive, partial match)',
+    example: 'john',
     type: String,
   })
   @ApiResponse({
     status: 200,
-    description: 'Returns users matching the search criteria',
+    description: 'Returns users matching the search criteria (limited to 15 results)',
     type: [User],
   })
-  @ApiResponse({ status: 400, description: 'Bad request - Invalid parameters' })
-  searchUsers(
-    @Query('email') email?: string,
-    @Query('firstName') firstName?: string,
-    @Query('lastName') lastName?: string,
-    @Query('tagId') tagId?: string,
-    @Query('tagIds') tagIds?: string,
-  ): Promise<User[]> {
-    const tagIdsArray = tagIds ? tagIds.split(',').map(id => id.trim()) : [];
-
-    return this.usersService.searchUsers({
-      email,
-      firstName,
-      lastName,
-      tagId,
-      tagIds: tagIdsArray,
-    });
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid parameter' })
+  searchUsers(@Query('query') query: string): Promise<User[]> {
+    return this.usersService.searchUsers(query);
   }
 
   @Get('search/by-email')

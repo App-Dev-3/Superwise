@@ -9,13 +9,6 @@ import { TagsService } from '../tags/tags.service';
 import { UserRegistrationException } from '../../common/exceptions/custom-exceptions/user-registration.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
-interface SearchParams {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  tagId?: string;
-  tagIds: string[];
-}
 @Injectable()
 export class UsersService {
   constructor(
@@ -152,32 +145,14 @@ export class UsersService {
     return user;
   }
 
-  async searchUsers(searchParams: SearchParams): Promise<User[]> {
-    const { email, firstName, lastName, tagId, tagIds } = searchParams;
-
-    if (!email && !firstName && !lastName && !tagId && tagIds.length === 0) {
+  async searchUsers(searchQuery: string): Promise<User[]> {
+    // Validate search query - if empty, return empty array
+    if (!searchQuery || searchQuery.trim() === '') {
       return [];
     }
 
-    if (email && !firstName && !lastName && !tagId && tagIds.length === 0) {
-      try {
-        const user = await this.findUserByEmail(email);
-        return [user];
-      } catch (error) {
-        if (error instanceof NotFoundException) {
-          return [];
-        }
-        throw error;
-      }
-    }
-
-    return this.usersRepository.searchUsers({
-      email,
-      firstName,
-      lastName,
-      tagId,
-      tagIds,
-    });
+    // Delegate to repository - repository handles sanitization and result limiting
+    return this.usersRepository.searchUsers(searchQuery);
   }
 
   async findUserByEmail(email: string): Promise<User> {

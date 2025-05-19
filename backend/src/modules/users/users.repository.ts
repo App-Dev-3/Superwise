@@ -22,6 +22,7 @@ export interface IUsersRepository {
   findUsersByLastName(lastName: string): Promise<User[]>;
   findUsersByTagId(tagId: string): Promise<User[]>;
   findUsersByTagIds(tagIds: string[]): Promise<User[]>;
+  searchUsers(searchQuery: string): Promise<User[]>;
   updateUser(
     id: string,
     updateData: {
@@ -51,14 +52,6 @@ export interface IUsersRepository {
   findUserBlockByIds(blockerUserId: string, blockedUserId: string): Promise<UserBlock | null>;
 }
 
-interface SearchParams {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  tagId?: string;
-  tagIds: string[];
-}
-
 @Injectable()
 export class UsersRepository implements IUsersRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -77,44 +70,53 @@ export class UsersRepository implements IUsersRepository {
     });
   }
 
-  async searchUsers(searchParams: SearchParams): Promise<User[]> {
-    const { email, firstName, lastName, tagId, tagIds } = searchParams;
+  async searchUsers(searchQuery: string): Promise<User[]> {
+    // If search query is empty, return empty array
+    if (!searchQuery || searchQuery.trim() === '') {
+      return [];
+    }
+
+    // Sanitize the search query - trim whitespace and ensure it's safe
+    const sanitizedQuery = searchQuery.trim();
+
+    // Build the where conditions to search across multiple fields
     const whereConditions: Prisma.UserWhereInput = {
       is_deleted: false,
-    };
-
-    if (email) {
-      whereConditions.email = email;
-    }
-
-    if (firstName) {
-      whereConditions.first_name = {
-        contains: firstName,
-        mode: 'insensitive',
-      };
-    }
-
-    if (lastName) {
-      whereConditions.last_name = {
-        contains: lastName,
-        mode: 'insensitive',
-      };
-    }
-
-    if (tagId || (tagIds && tagIds.length > 0)) {
-      const allTagIds = [...(tagId ? [tagId] : []), ...tagIds];
-
-      if (allTagIds.length > 0) {
-        whereConditions.tags = {
-          some: {
-            tag_id: {
-              in: allTagIds,
+      OR: [
+        {
+          email: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          first_name: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          last_name: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          tags: {
+            some: {
+              tag: {
+                tag_name: {
+                  contains: sanitizedQuery,
+                  mode: 'insensitive',
+                },
+              },
             },
           },
-        };
-      }
-    }
+        },
+      ],
+    };
 
+    // Return a maximum of 15 users
     return this.prisma.user.findMany({
       where: whereConditions,
       orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
@@ -128,6 +130,7 @@ export class UsersRepository implements IUsersRepository {
           },
         },
       },
+      take: 15, // Limit to 15 results
     });
   }
 

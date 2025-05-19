@@ -145,6 +145,16 @@ export class UsersService {
     return user;
   }
 
+  async searchUsers(searchQuery: string): Promise<User[]> {
+    // Validate search query - if empty, return empty array
+    if (!searchQuery || searchQuery.trim() === '') {
+      return [];
+    }
+
+    // Delegate to repository - repository handles sanitization and result limiting
+    return this.usersRepository.searchUsers(searchQuery);
+  }
+
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findUserByEmail(email);
     if (!user) {

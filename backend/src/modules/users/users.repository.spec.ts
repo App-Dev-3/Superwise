@@ -86,6 +86,212 @@ describe('UsersRepository', () => {
   it('should be defined - verifies successful initialization', () => {
     expect(repository).toBeDefined();
   });
+  describe('findUsers', () => {
+    it('should return users matching email query', async () => {
+      // Arrange
+      const searchQuery = 'exampleStudent1@fhstp.ac.at';
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          OR: [
+            {
+              email: {
+                contains: searchQuery,
+                mode: 'insensitive',
+              },
+            },
+            {
+              first_name: {
+                contains: searchQuery,
+                mode: 'insensitive',
+              },
+            },
+            {
+              last_name: {
+                contains: searchQuery,
+                mode: 'insensitive',
+              },
+            },
+            {
+              tags: {
+                some: {
+                  tag: {
+                    tag_name: {
+                      contains: searchQuery,
+                      mode: 'insensitive',
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+        take: 15,
+      });
+    });
+
+    it('should return users matching first name query', async () => {
+      // Arrange
+      const searchQuery = 'Max';
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            is_deleted: false,
+            OR: expect.arrayContaining([
+              expect.objectContaining({
+                first_name: {
+                  contains: searchQuery,
+                  mode: 'insensitive',
+                },
+              }),
+              expect.objectContaining({
+                tags: {
+                  some: {
+                    tag: {
+                      tag_name: {
+                        contains: searchQuery,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              }),
+            ]),
+          },
+          take: 15,
+        }),
+      );
+    });
+
+    it('should return users matching last name query', async () => {
+      // Arrange
+      const searchQuery = 'Mustermann';
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            is_deleted: false,
+            OR: expect.arrayContaining([
+              expect.objectContaining({
+                last_name: {
+                  contains: searchQuery,
+                  mode: 'insensitive',
+                },
+              }),
+              expect.objectContaining({
+                tags: {
+                  some: {
+                    tag: {
+                      tag_name: {
+                        contains: searchQuery,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              }),
+            ]),
+          },
+          take: 15,
+        }),
+      );
+    });
+
+    it('should return empty array when search query is empty', async () => {
+      // Arrange
+      const searchQuery = '';
+
+      // Act
+      const result = await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockPrismaService.user.findMany).not.toHaveBeenCalled();
+    });
+
+    it('should sanitize search query by trimming whitespace', async () => {
+      // Arrange
+      const searchQuery = '  Max  ';
+      const sanitizedQuery = 'Max';
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            is_deleted: false,
+            OR: expect.arrayContaining([
+              expect.objectContaining({
+                first_name: {
+                  contains: sanitizedQuery,
+                  mode: 'insensitive',
+                },
+              }),
+              expect.objectContaining({
+                tags: {
+                  some: {
+                    tag: {
+                      tag_name: {
+                        contains: sanitizedQuery,
+                        mode: 'insensitive',
+                      },
+                    },
+                  },
+                },
+              }),
+            ]),
+          },
+        }),
+      );
+    });
+
+    it('should return empty array when no users match search criteria', async () => {
+      // Arrange
+      const searchQuery = 'NonExistent';
+      mockPrismaService.user.findMany.mockResolvedValue([]);
+
+      // Act
+      const result = await repository.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalled();
+    });
+  });
 
   describe('createUser', () => {
     it('should create a new user', async () => {

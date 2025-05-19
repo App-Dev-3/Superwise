@@ -12,6 +12,7 @@ export interface IUsersRepository {
     is_registered: boolean;
     clerk_id?: string | null;
   }): Promise<User>;
+
   findAllUsers(): Promise<User[]>;
   findUserById(id: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
@@ -21,6 +22,7 @@ export interface IUsersRepository {
   findUsersByLastName(lastName: string): Promise<User[]>;
   findUsersByTagId(tagId: string): Promise<User[]>;
   findUsersByTagIds(tagIds: string[]): Promise<User[]>;
+  searchUsers(searchQuery: string): Promise<User[]>;
   updateUser(
     id: string,
     updateData: {
@@ -65,6 +67,70 @@ export class UsersRepository implements IUsersRepository {
   }): Promise<User> {
     return this.prisma.user.create({
       data: userData,
+    });
+  }
+
+  async searchUsers(searchQuery: string): Promise<User[]> {
+    // If search query is empty, return empty array
+    if (!searchQuery || searchQuery.trim() === '') {
+      return [];
+    }
+
+    // Sanitize the search query - trim whitespace and ensure it's safe
+    const sanitizedQuery = searchQuery.trim();
+
+    // Build the where conditions to search across multiple fields
+    const whereConditions: Prisma.UserWhereInput = {
+      is_deleted: false,
+      OR: [
+        {
+          email: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          first_name: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          last_name: {
+            contains: sanitizedQuery,
+            mode: 'insensitive',
+          },
+        },
+        {
+          tags: {
+            some: {
+              tag: {
+                tag_name: {
+                  contains: sanitizedQuery,
+                  mode: 'insensitive',
+                },
+              },
+            },
+          },
+        },
+      ],
+    };
+
+    // Return a maximum of 15 users
+    return this.prisma.user.findMany({
+      where: whereConditions,
+      orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+          orderBy: {
+            priority: 'asc',
+          },
+        },
+      },
+      take: 15, // Limit to 15 results
     });
   }
 

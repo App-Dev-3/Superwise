@@ -107,7 +107,7 @@
         ]
       },
       "get": {
-        "description": "Retrieves all users.",
+        "description": "Retrieves all users. Restricted to administrators only.",
         "operationId": "UsersController_findAllUsers",
         "parameters": [],
         "responses": {
@@ -123,9 +123,52 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden - Not authorized to access this endpoint"
           }
         },
         "summary": "Get all users",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search": {
+      "get": {
+        "description": "Search for users by email, first name, last name, or tag names with a single search string.",
+        "operationId": "UsersController_searchUsers",
+        "parameters": [
+          {
+            "name": "query",
+            "required": true,
+            "in": "query",
+            "description": "Search string to match against email, first name, last name, or tag names (case insensitive, partial match)",
+            "schema": {
+              "example": "john",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns users matching the search criteria (limited to 15 results)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameter"
+          }
+        },
+        "summary": "Unified search for users",
         "tags": [
           "Users"
         ]
@@ -2355,9 +2398,14 @@
       "Match": {
         "type": "object",
         "properties": {
+          "supervisorId": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor record",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
           "supervisor_userId": {
             "type": "string",
-            "description": "The unique identifier of the supervisor in this match",
+            "description": "The unique identifier of the supervisor user in this match",
             "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
           },
           "firstName": {
@@ -2410,6 +2458,7 @@
           }
         },
         "required": [
+          "supervisorId",
           "supervisor_userId",
           "firstName",
           "lastName",

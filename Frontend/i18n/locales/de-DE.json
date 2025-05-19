@@ -2,7 +2,10 @@
   "generic": {
     "continue": "Weiter",
     "german": "🇩🇪 Deutsch",
-    "english": "🇬🇧 English"
+    "english": "🇬🇧 English",
+    "student": "Studierende",
+    "supervisor": "Betreuende",
+    "admin": "Admin"
   },
   "dataProtection": {
     "generic": {

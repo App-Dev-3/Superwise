@@ -33,9 +33,11 @@ const contentAdmin = [
   "dataProtection.admin.dataRetentionText.2",
 ];
 
+// Change to string for better role handling
+const selectedRole = ref('student');
 
-const adminContent = computed(() => false);
-
+// Fix the logic - we want to show admin content only when admin is selected
+const isAdminSelected = computed(() => selectedRole.value === 'admin');
 
 const getStyle = (content: string) => {
   if (content.match(/Subtitle(\.\d+)?$/))
@@ -64,14 +66,27 @@ const deleteData = () => {
 
     <div class="px-6 py-8 flex flex-col gap-2">
       <CustomSelect
+        :model-value="locales.find(locale => locale.code === $i18n.locale)?.code"
         :options="locales.map(locale => ({key: locale.code, value: $t('generic.'+locale.name)}))"
         label="Select Language"
         placeholder="Select Language"
         @update:model-value="(value) => setLocale(value)"
       />
 
+      <CustomSelect
+        :model-value="selectedRole"
+        :options="[
+          {key: 'student', value: t('generic.student')},
+          {key: 'supervisor', value: t('generic.supervisor')},
+          {key: 'admin', value: t('generic.admin')}
+        ]"
+        label="Select Role"
+        placeholder="Select Role"
+        @update:model-value="(value) => selectedRole = value"
+      />
+
       <div
-        v-for="content in (adminContent ? contentStudentAndSupervisor: contentAdmin)"
+        v-for="content in (isAdminSelected ? contentAdmin : contentStudentAndSupervisor)"
         :key="content"
         :class="getStyle(content)"
       >
@@ -81,7 +96,6 @@ const deleteData = () => {
             {{ item }}
           </li>
         </ul>
-
 
         <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">{{ $t(content) }}</h2>
 

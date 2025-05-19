@@ -9,9 +9,9 @@ interface NavButton {
 }
 // Example of bottomNavButtons array
 // const bottomNavButtons = [
-//     { label: 'Dashboard', icon: 'house', route: '/dashboard' },
-//     { label: 'Matching', icon: 'user-group', route: '/matching' },
-//     { label: 'Chat', icon: 'message', route: '/chat' }
+//     { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
+//     { label: 'Matching', icon: 'user-group', route: '/student/matching' },
+//     { label: 'Chat', icon: 'message', route: '/student/chat' }
 // ]
 interface Props {
     bottomNavButtons: NavButton[];
@@ -30,7 +30,7 @@ function handleClick(route: string) {
 }
 
 const isActiveRoute = (route: string) => {
-    return useRoute().path.endsWith(route);
+    return useRoute().path === route;
 };
 
 </script>

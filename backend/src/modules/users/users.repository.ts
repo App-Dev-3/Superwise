@@ -61,7 +61,7 @@ interface SearchParams {
 
 @Injectable()
 export class UsersRepository implements IUsersRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createUser(userData: {
     email: string;
@@ -79,8 +79,7 @@ export class UsersRepository implements IUsersRepository {
 
   async findUsers(searchParams: SearchParams): Promise<User[]> {
     const { email, firstName, lastName, tagId, tagIds } = searchParams;
-
-    const whereConditions: any = {
+    const whereConditions: Prisma.UserWhereInput = {
       is_deleted: false,
     };
 

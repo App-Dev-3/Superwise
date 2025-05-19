@@ -166,7 +166,7 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
-  // should there be roles restrictions ? 
+  // should there be roles restrictions ?
   @Get('search')
   @ApiOperation({
     summary: 'Unified search for users',

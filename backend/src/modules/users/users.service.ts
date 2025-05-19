@@ -171,7 +171,7 @@ export class UsersService {
       }
     }
 
-    return this.usersRepository.findUsers({
+    return this.usersRepository.searchUsers({
       email,
       firstName,
       lastName,

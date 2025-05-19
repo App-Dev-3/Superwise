@@ -77,7 +77,7 @@ export class UsersRepository implements IUsersRepository {
     });
   }
 
-  async findUsers(searchParams: SearchParams): Promise<User[]> {
+  async searchUsers(searchParams: SearchParams): Promise<User[]> {
     const { email, firstName, lastName, tagId, tagIds } = searchParams;
     const whereConditions: Prisma.UserWhereInput = {
       is_deleted: false,

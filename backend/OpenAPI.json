@@ -136,14 +136,14 @@
     },
     "/users/search": {
       "get": {
-        "description": "Search for users by email, first name, or last name with a single search string.",
+        "description": "Search for users by email, first name, last name, or tag names with a single search string.",
         "operationId": "UsersController_searchUsers",
         "parameters": [
           {
             "name": "query",
             "required": true,
             "in": "query",
-            "description": "Search string to match against email, first name, or last name (case insensitive, partial match)",
+            "description": "Search string to match against email, first name, last name, or tag names (case insensitive, partial match)",
             "schema": {
               "example": "john",
               "type": "string"

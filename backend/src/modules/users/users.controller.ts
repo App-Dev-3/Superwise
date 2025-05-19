@@ -166,17 +166,17 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
-  // should there be roles restrictions ?
   @Get('search')
   @ApiOperation({
     summary: 'Unified search for users',
-    description: 'Search for users by email, first name, or last name with a single search string.',
+    description:
+      'Search for users by email, first name, last name, or tag names with a single search string.',
   })
   @ApiQuery({
     name: 'query',
     required: true,
     description:
-      'Search string to match against email, first name, or last name (case insensitive, partial match)',
+      'Search string to match against email, first name, last name, or tag names (case insensitive, partial match)',
     example: 'john',
     type: String,
   })

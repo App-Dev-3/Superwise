@@ -166,6 +166,30 @@ export class UsersController {
     return this.usersService.findAllUsers();
   }
 
+  @Get('search')
+  @ApiOperation({
+    summary: 'Unified search for users',
+    description:
+      'Search for users by email, first name, last name, or tag names with a single search string.',
+  })
+  @ApiQuery({
+    name: 'query',
+    required: true,
+    description:
+      'Search string to match against email, first name, last name, or tag names (case insensitive, partial match)',
+    example: 'john',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns users matching the search criteria (limited to 15 results)',
+    type: [User],
+  })
+  @ApiResponse({ status: 400, description: 'Bad request - Invalid parameter' })
+  searchUsers(@Query('query') query: string): Promise<User[]> {
+    return this.usersService.searchUsers(query);
+  }
+
   @Get('search/by-email')
   @ApiOperation({
     summary: 'Search user by email',

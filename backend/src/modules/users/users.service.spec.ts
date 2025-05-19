@@ -33,6 +33,7 @@ describe('UsersService', () => {
     createUserBlock: jest.fn(),
     deleteUserBlock: jest.fn(),
     findUserBlockByIds: jest.fn(),
+    searchUsers: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -723,6 +724,47 @@ describe('UsersService', () => {
         new NotFoundException('Block relationship not found'),
       );
       expect(mockUsersRepository.deleteUserBlock).not.toHaveBeenCalled();
+    });
+  });
+
+  // Add this test suite for the updated searchUsers method
+  describe('searchUsers', () => {
+    it('should return users matching the search query', async () => {
+      // Arrange
+      const searchQuery = 'test';
+      const expectedUsers = [mockUser];
+      mockUsersRepository.searchUsers.mockResolvedValue(expectedUsers);
+
+      // Act
+      const result = await service.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual(expectedUsers);
+      expect(mockUsersRepository.searchUsers).toHaveBeenCalledWith(searchQuery);
+    });
+
+    it('should return an empty array when given an empty search query', async () => {
+      // Arrange
+      const searchQuery = '';
+
+      // Act
+      const result = await service.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockUsersRepository.searchUsers).not.toHaveBeenCalled();
+    });
+
+    it('should return an empty array when given a whitespace-only search query', async () => {
+      // Arrange
+      const searchQuery = '   ';
+
+      // Act
+      const result = await service.searchUsers(searchQuery);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockUsersRepository.searchUsers).not.toHaveBeenCalled();
     });
   });
 });

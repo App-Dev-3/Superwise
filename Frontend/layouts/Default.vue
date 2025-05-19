@@ -3,9 +3,6 @@
     v-if="isLoading"
     class="w-full h-screen flex max-w-3xl m-auto flex-col p-8 justify-center items-center"
   >
-    <NuxtLoadingIndicator
-      throttle="0"
-    />
     <ClientOnly>
       <img
         :src="colorMode.value === 'dark' ?

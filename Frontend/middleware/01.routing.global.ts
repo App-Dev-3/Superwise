@@ -42,7 +42,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
     if (userRole === UserRoles.SUPERVISOR) {
-      return navigateTo('/supervisor/onboarding')
+      return navigateTo('/onboarding/supervisor')
     } else {
       return navigateTo('/onboarding/student')
     }

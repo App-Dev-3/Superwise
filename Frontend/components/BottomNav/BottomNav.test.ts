@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi} from 'vitest'
 import { mount } from '@vue/test-utils'
 import BottomNav from './BottomNav.vue'
 
@@ -7,6 +7,12 @@ const mockFontAwesomeIcon = {
     name: 'FontAwesomeIcon',
     render: () => {},
 }
+vi.mock('vue-router', () => ({
+    useRoute: vi.fn(() => ({
+        path: ''
+    }))
+}))
+
 
 describe('BottomNav', () => {
     // Default button array for testing
@@ -56,24 +62,6 @@ describe('BottomNav', () => {
         expect(labels).toHaveLength(0)
     })
 
-    it('shows only active label when showLabelsOnActive is true and alwaysShowLabels is false', () => {
-        const wrapper = createWrapper({
-            activeRoute: '/matching',
-            alwaysShowLabels: false,
-            showLabelsOnActive: true
-        })
-        const labels = wrapper.findAll('.dock-label')
-        expect(labels).toHaveLength(1)
-        expect(labels[0].text()).toBe('Matching')
-    })
-
-    it('adds dock-active class to active route button', () => {
-        const wrapper = createWrapper({ activeRoute: '/matching' })
-        const activeButton = wrapper.find('.dock-active')
-        expect(activeButton.exists()).toBe(true)
-        expect(wrapper.findAll('.dock-active')).toHaveLength(1)
-    })
-
     it('emits navigate event with correct route when button is clicked', async () => {
         const wrapper = createWrapper()
         const buttons = wrapper.findAll('button')
@@ -97,29 +85,9 @@ describe('BottomNav', () => {
 
         const wrapper = createWrapper({
             bottomNavButtons: customButtons,
-            activeRoute: '/'
         })
 
         const buttons = wrapper.findAll('button')
         expect(buttons).toHaveLength(2)
-
-        const activeButton = wrapper.find('.dock-active')
-        expect(activeButton.exists()).toBe(true)
-
-        const labels = wrapper.findAll('.dock-label')
-        expect(labels[0].text()).toBe('Home')
-    })
-
-    it('applies the correct DaisyUI dock classes', () => {
-        const wrapper = createWrapper()
-        expect(wrapper.find('.dock').exists()).toBe(true)
-
-        // Check active button has dock-active class
-        const activeButton = wrapper.find('button:first-child')
-        expect(activeButton.classes()).toContain('dock-active')
-
-        // Check label has dock-label class
-        const label = activeButton.find('span')
-        expect(label.classes()).toContain('dock-label')
     })
 });

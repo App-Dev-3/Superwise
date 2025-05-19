@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useRoute } from "vue-router";
 
 interface NavButton {
     label: string;
@@ -13,7 +14,6 @@ interface NavButton {
 //     { label: 'Chat', icon: 'message', route: '/chat' }
 // ]
 interface Props {
-    activeRoute: string;
     bottomNavButtons: NavButton[];
     alwaysShowLabels?: boolean;
     showLabelsOnActive?: boolean;
@@ -25,12 +25,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['navigate']);
 
-function handleClick(route) {
+function handleClick(route: string) {
     emit('navigate', route);
 }
 
-const isActiveRoute = (route) => {
-    return props.activeRoute === route;
+const isActiveRoute = (route: string) => {
+    return useRoute().path.endsWith(route);
 };
 
 </script>

@@ -99,7 +99,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -134,7 +134,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -172,7 +172,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -210,7 +210,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -251,7 +251,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -292,7 +292,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([mockUser]);
@@ -341,7 +341,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([]);
@@ -375,7 +375,7 @@ describe('UsersRepository', () => {
       mockPrismaService.user.findMany.mockResolvedValue([]);
 
       // Act
-      const result = await repository.findUsers(searchParams);
+      const result = await repository.searchUsers(searchParams);
 
       // Assert
       expect(result).toEqual([]);

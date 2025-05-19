@@ -9,6 +9,13 @@ import { TagsService } from '../tags/tags.service';
 import { UserRegistrationException } from '../../common/exceptions/custom-exceptions/user-registration.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
+interface SearchParams {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  tagId?: string;
+  tagIds: string[];
+}
 @Injectable()
 export class UsersService {
   constructor(
@@ -143,6 +150,34 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
     return user;
+  }
+
+  async searchUsers(searchParams: SearchParams): Promise<User[]> {
+    const { email, firstName, lastName, tagId, tagIds } = searchParams;
+
+    if (!email && !firstName && !lastName && !tagId && tagIds.length === 0) {
+      return [];
+    }
+
+    if (email && !firstName && !lastName && !tagId && tagIds.length === 0) {
+      try {
+        const user = await this.findUserByEmail(email);
+        return [user];
+      } catch (error) {
+        if (error instanceof NotFoundException) {
+          return [];
+        }
+        throw error;
+      }
+    }
+
+    return this.usersRepository.findUsers({
+      email,
+      firstName,
+      lastName,
+      tagId,
+      tagIds,
+    });
   }
 
   async findUserByEmail(email: string): Promise<User> {

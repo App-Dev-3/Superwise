@@ -12,6 +12,7 @@ export interface IUsersRepository {
     is_registered: boolean;
     clerk_id?: string | null;
   }): Promise<User>;
+
   findAllUsers(): Promise<User[]>;
   findUserById(id: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
@@ -50,6 +51,14 @@ export interface IUsersRepository {
   findUserBlockByIds(blockerUserId: string, blockedUserId: string): Promise<UserBlock | null>;
 }
 
+interface SearchParams {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  tagId?: string;
+  tagIds: string[];
+}
+
 @Injectable()
 export class UsersRepository implements IUsersRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -65,6 +74,61 @@ export class UsersRepository implements IUsersRepository {
   }): Promise<User> {
     return this.prisma.user.create({
       data: userData,
+    });
+  }
+
+  async findUsers(searchParams: SearchParams): Promise<User[]> {
+    const { email, firstName, lastName, tagId, tagIds } = searchParams;
+
+    const whereConditions: any = {
+      is_deleted: false,
+    };
+
+    if (email) {
+      whereConditions.email = email;
+    }
+
+    if (firstName) {
+      whereConditions.first_name = {
+        contains: firstName,
+        mode: 'insensitive',
+      };
+    }
+
+    if (lastName) {
+      whereConditions.last_name = {
+        contains: lastName,
+        mode: 'insensitive',
+      };
+    }
+
+    if (tagId || (tagIds && tagIds.length > 0)) {
+      const allTagIds = [...(tagId ? [tagId] : []), ...tagIds];
+
+      if (allTagIds.length > 0) {
+        whereConditions.tags = {
+          some: {
+            tag_id: {
+              in: allTagIds,
+            },
+          },
+        };
+      }
+    }
+
+    return this.prisma.user.findMany({
+      where: whereConditions,
+      orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+      include: {
+        tags: {
+          include: {
+            tag: true,
+          },
+          orderBy: {
+            priority: 'asc',
+          },
+        },
+      },
     });
   }
 

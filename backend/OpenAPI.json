@@ -107,7 +107,7 @@
         ]
       },
       "get": {
-        "description": "Retrieves all users.",
+        "description": "Retrieves all users. Restricted to administrators only.",
         "operationId": "UsersController_findAllUsers",
         "parameters": [],
         "responses": {
@@ -123,9 +123,92 @@
                 }
               }
             }
+          },
+          "403": {
+            "description": "Forbidden - Not authorized to access this endpoint"
           }
         },
         "summary": "Get all users",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/users/search": {
+      "get": {
+        "description": "Search for users by any combination of email, name, or tags.",
+        "operationId": "UsersController_searchUsers",
+        "parameters": [
+          {
+            "name": "email",
+            "required": false,
+            "in": "query",
+            "description": "Email address to search for (exact match)",
+            "schema": {
+              "example": "studentId@fhstp.ac.at",
+              "type": "string"
+            }
+          },
+          {
+            "name": "firstName",
+            "required": false,
+            "in": "query",
+            "description": "First name to search for (case insensitive, partial match)",
+            "schema": {
+              "example": "Max",
+              "type": "string"
+            }
+          },
+          {
+            "name": "lastName",
+            "required": false,
+            "in": "query",
+            "description": "Last name to search for (case insensitive, partial match)",
+            "schema": {
+              "example": "Mustermann",
+              "type": "string"
+            }
+          },
+          {
+            "name": "tagId",
+            "required": false,
+            "in": "query",
+            "description": "Single tag ID to search for (UUID)",
+            "schema": {
+              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+              "type": "string"
+            }
+          },
+          {
+            "name": "tagIds",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated list of tag IDs (UUIDs)",
+            "schema": {
+              "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479,e47ac10b-58cc-4372-a567-0e02b2c3d480",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns users matching the search criteria",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid parameters"
+          }
+        },
+        "summary": "Unified search for users",
         "tags": [
           "Users"
         ]
@@ -2355,9 +2438,14 @@
       "Match": {
         "type": "object",
         "properties": {
+          "supervisorId": {
+            "type": "string",
+            "description": "The unique identifier of the supervisor record",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
           "supervisor_userId": {
             "type": "string",
-            "description": "The unique identifier of the supervisor in this match",
+            "description": "The unique identifier of the supervisor user in this match",
             "example": "15d2a5bc-c547-444d-91fb-b1c498ada33c"
           },
           "firstName": {
@@ -2410,6 +2498,7 @@
           }
         },
         "required": [
+          "supervisorId",
           "supervisor_userId",
           "firstName",
           "lastName",

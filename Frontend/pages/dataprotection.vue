@@ -59,43 +59,48 @@ const deleteData = () => {
 </script>
 
 <template>
-  <div>
+  <div class="h-screen flex flex-col">
     <AdminHeader
       :header-text="$t('dataProtection.generic.pageHeader')"
     />
 
-    <div class="px-6 py-8 flex flex-col gap-2">
-      <CustomSelect
-        :model-value="locales.find(locale => locale.code === $i18n.locale)?.code"
-        :options="locales.map(locale => ({key: locale.code, value: $t('generic.'+locale.name)}))"
-        label="Select Language"
-        placeholder="Select Language"
-        @update:model-value="(value) => setLocale(value)"
-      />
+    <div class="px-6 py-8 flex flex-col gap-2 h-full overflow-y-auto">
 
-      <CustomSelect
-        :model-value="selectedRole"
-        :options="[
+      <div class="flex flex-row gap-2 p-2 justify-center">
+        <CustomSelect
+          :model-value="locales.find(locale => locale.code === $i18n.locale)?.code"
+          :options="locales.map(locale => ({key: locale.code, value: $t('generic.'+locale.name)}))"
+          label="Select Language"
+          placeholder="Select Language"
+          @update:model-value="(value) => setLocale(value)"
+        />
+
+        <CustomSelect
+          :model-value="selectedRole"
+          :options="[
           {key: 'student', value: t('generic.student')},
           {key: 'supervisor', value: t('generic.supervisor')},
           {key: 'admin', value: t('generic.admin')}
         ]"
-        label="Select Role"
-        placeholder="Select Role"
-        @update:model-value="(value) => selectedRole = value"
-      />
+          label="Select Role"
+          placeholder="Select Role"
+          @update:model-value="(value) => selectedRole = value"
+        />
+
+      </div>
+
 
       <div
         v-for="content in (isAdminSelected ? contentAdmin : contentStudentAndSupervisor)"
         :key="content"
         :class="getStyle(content)"
       >
-        <!-- Use v-html for list items to render as actual HTML -->
         <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
           <li v-for="(item, index) in t(content).split('\n')" :key="index">
             {{ item }}
           </li>
         </ul>
+
 
         <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">{{ $t(content) }}</h2>
 

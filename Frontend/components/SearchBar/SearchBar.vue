@@ -78,31 +78,15 @@ async function getUsers(query) {
       getUserByLastName(query),
     ]);
 
-    const first = await getUserByFirstName(query);
-    const last = await getUserByLastName(query);
-    console.log("first");
-    console.log(first);
-    console.log("last");
-    console.log(last);
-
     results = [...firstNameUsers, ...lastNameUsers];
   }
-
-  console.log(props.searchFor);
-  console.log(results);
 
   if (props.searchFor !== "all") {
     const wantedRole =
       props.searchFor === "students" ? "STUDENT" : "SUPERVISOR";
-    console.log("one");
-
-    console.log(results);
 
     results = results.filter((user) => user.role === wantedRole);
-    console.log("two");
-    console.log(results);
   }
-  console.log(results);
 
   searchResults.value = results;
 }

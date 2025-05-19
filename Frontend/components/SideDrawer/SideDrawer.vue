@@ -85,11 +85,13 @@ const props = defineProps({
         </ul>
 
         <li>
-          <SignOutButton redirect-url="/">
-            <span>
-              <FontAwesomeIcon icon="fa-right-from-bracket" class="text-xl" />
-              <span>Logout</span>
-            </span>
+          <SignOutButton>
+            <a href="/">
+              <span>
+                <FontAwesomeIcon icon="fa-right-from-bracket" class="text-xl" />
+                Logout
+              </span>
+            </a>
           </SignOutButton>
         </li>
       </div>

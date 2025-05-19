@@ -40,8 +40,8 @@
 import { ref } from "vue";
 import { useUserStore } from "~/stores/useUserStore";
 import { useSupervisorStore } from "~/stores/useSupervisorStore";
-import type { UserData } from "~/shared/types/userInterfaces";
-import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
+import type { UserData } from "#shared/types/userInterfaces";
+import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 
 const { user } = useUser();
 const { getUserByEmail, getRecommendedSupervisors} = useUserApi();

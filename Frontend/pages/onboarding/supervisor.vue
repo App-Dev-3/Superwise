@@ -65,7 +65,7 @@ onMounted(async () => {
 
 const handleSubmit = () => {
   addUserTag({id: userStore.user?.id, tags: tags.value as tagData[]});
-  navigateTo("/dashboard");
+  navigateTo('/supervisor/dashboard');
 }
 
 

@@ -50,7 +50,7 @@
 
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { ref } from 'vue';
-import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
+import type { SupervisorData } from "#shared/types/supervisorInterfaces"
 
 const supervisorStore = useSupervisorStore();
 

@@ -18,7 +18,6 @@ onMounted(async() => {
     if (registrationStore.status?.exists){
       role = determineRole(registrationStore.status?.exists)
     }
-    
   } catch (error) {
     console.error("Error getting user role:", error);
   }

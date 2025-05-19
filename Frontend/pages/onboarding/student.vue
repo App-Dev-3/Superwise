@@ -74,7 +74,7 @@ async function handleStepChange(step: number): Promise<void> {
 
       if (error.statusCode === 400 && error.message.includes('Unique constraint violation')) {
         console.warn('User already registered. Skipping registration.');
-        return navigateTo(`/dashboard`);
+        return navigateTo('/student/dashboard');
       } else {
         console.error('Unexpected error:', error);
         await navigateTo('/');
@@ -90,7 +90,7 @@ async function handleSubmit() {
   }
   addUserTag({id: userStore.user.id, tags: tags.value as tagData[]});
   await registrationStore.fetchRegistrationStatus(userStore.user?.email)
-  return navigateTo(`/dashboard`);
+  return navigateTo('/student/dashboard');
 }
 
 

@@ -4,16 +4,16 @@ import { getAuth } from '@clerk/nuxt/server'
 export default defineEventHandler(async (event) => {
   console.warn(`[${new Date(Date.now())}]: Nuxt Proxy used for ${event.method} ${getRequestURL(event)} \nPlease use the appropriate Nuxt API endpoint instead of this proxy.`)
   const config = useRuntimeConfig()
-  const path = getRouterParam(event, 'path') ?? '' 
+  const path = getRouterParam(event, 'path') ?? ''
   let target = joinURL(config.nestApiUrl, path)
-  
+
   const incomingBody = await readBody(event)
   const method = incomingBody.action || 'GET'
   const data = incomingBody.data || {}
   //clerk token
   const { getToken } = getAuth(event)
   const token = await getToken({ template: 'SuperwiseJWT' })
-  
+
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
     })
 
     target = url.toString()
-  } else if (data){ 
+  } else if (data) {
     body = JSON.stringify(data)
   }
   const response = await fetch(target, {
@@ -48,5 +48,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  return response.json()  
+  return response.json()
 })

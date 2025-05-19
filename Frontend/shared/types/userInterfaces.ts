@@ -33,6 +33,23 @@ export interface SupervisionRequestData extends Record<string, unknown> {
     student_email?: string
 }
 
+export interface SupervisionRequestResponseData extends Record<string, unknown> {
+    id: string,
+    request_state: string,
+    student_id: string,
+    supervisor_id: string,
+    created_at: string,
+    updated_at: string,
+    studentWasCreated: boolean
+}
+
+export enum supervisionRequestStatus {
+    PENDING = 'PENDING',
+    ACCEPTED = 'ACCEPTED',
+    REJECTED = 'REJECTED',
+    WITHDRAWN = 'WITHDRAWN'
+}
+
 export interface ConfirmationDialogData {
     type: 'confirm' | 'dismiss'
     headline: string

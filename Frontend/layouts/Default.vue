@@ -13,7 +13,7 @@
     </ClientOnly>
     <span class="text-large flex flex-row items-center gap-1">
       Loading page
-      <span class="loading loading-dots loading-sm translate-y-1"/>
+      <span class="loading loading-dots loading-xs translate-y-1"/>
     </span>
   </div>
 

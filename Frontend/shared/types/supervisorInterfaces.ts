@@ -1,4 +1,5 @@
 export interface SupervisorData {
+  supervisorId: string
   supervisor_userId: string
   firstName: string
   lastName: string

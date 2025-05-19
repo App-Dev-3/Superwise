@@ -1,30 +1,50 @@
 <script lang="ts" setup>
 
+const {locales, setLocale} = useI18n();
+
 const contentStudentAndSupervisor = [
-  "data.protection.student.&.supervisor.general.info.title",
-  "data.protection.student.&.supervisor.general.info.text",
-  "data.protection.student.&.supervisor.collected.data.subtitle",
-  "data.protection.student.&.supervisor.collected.data.text",
-  "data.protection.student.&.supervisor.collected.data.list.1",
-  "data.protection.student.&.supervisor.changes.and.overwrites.subtitle",
-  "data.protection.student.&.supervisor.changes.and.overwrites.text",
-  "data.protection.student.&.supervisor.data.deletion.subtitle",
-  "data.protection.student.&.supervisor.data.deletion.text.1",
-  "data.protection.student.&.supervisor.data.deletion.list",
-  "data.protection.student.&.supervisor.data.deletion.text.2"
+  "dataProtection.generic.generalInfoTitle",
+  "dataProtection.generic.generalInfoText",
+  "dataProtection.generic.collectedDataSubtitle",
+  "dataProtection.student&supervisor.collectedDataText",
+  "dataProtection.student&supervisor.collectedDataList",
+  "dataProtection.generic.changesAndOverwritesSubtitle",
+  "dataProtection.student&supervisor.changesAndOverwritesText",
+  "dataProtection.generic.dataDeletionSubtitle",
+  "dataProtection.student&supervisor.dataDeletionText.1",
+  "dataProtection.student&supervisor.dataDeletionList",
+  "dataProtection.student&supervisor.dataDeletionText.2",
 ];
 
-// const adminContent = computed(() => false);
+const contentAdmin = [
+  "dataProtection.generic.generalInfoTitle",
+  "dataProtection.generic.generalInfoText",
+  "dataProtection.admin.generalInfoText",
+  "dataProtection.generic.collectedDataSubtitle",
+  "dataProtection.admin.collectedDataText",
+  "dataProtection.admin.collectedDataList",
+  "dataProtection.generic.changesAndOverwritesSubtitle",
+  "dataProtection.admin.changesAndOverwritesText",
+  "dataProtection.generic.dataDeletionSubtitle",
+  "dataProtection.admin.dataDeletionText",
+  "dataProtection.admin.dataRetentionSubtitle",
+  "dataProtection.admin.dataRetentionText.1",
+  "dataProtection.admin.dataRetentionList",
+  "dataProtection.admin.dataRetentionText.2",
+];
+
+
+const adminContent = computed(() => false);
 
 
 const getStyle = (content: string) => {
-  if (content.match(/subtitle(\.\d+)?$/))
+  if (content.match(/Subtitle(\.\d+)?$/))
     return "pt-6";
-  // if (content.match(/title(\.\d+)?$/))
+  // if (content.match(/Title(\.\d+)?$/))
   //   return "";
   // if (content.match(/text(\.\d+)?$/))
   //   return "text-body";
-  // if (content.match(/list(\.\d+)?$/))
+  // if (content.match(/List(\.\d+)?$/))
   //   return "text-body list-disc list-inside";
 };
 
@@ -39,38 +59,38 @@ const deleteData = () => {
 <template>
   <div>
     <AdminHeader
-      :header-text="$t('data.protection.student.&.supervisor.page.header')"
+      :header-text="$t('dataProtection.generic.pageHeader')"
     />
 
     <div class="px-6 py-8 flex flex-col gap-2">
-      <!--      <CustomSelect-->
-      <!--        :options="locales.map(locale => ({key: locale.code, value: $t('generic.'+locale.name)}))"-->
-      <!--        label="Select Language"-->
-      <!--        placeholder="Select Language"-->
-      <!--        @update:model-value="(value) => setLocale(value)"-->
-      <!--      />-->
+      <CustomSelect
+        :options="locales.map(locale => ({key: locale.code, value: $t('generic.'+locale.name)}))"
+        label="Select Language"
+        placeholder="Select Language"
+        @update:model-value="(value) => setLocale(value)"
+      />
 
       <div
-        v-for="content in contentStudentAndSupervisor"
+        v-for="content in (adminContent ? contentStudentAndSupervisor: contentAdmin)"
         :key="content"
         :class="getStyle(content)"
       >
         <!-- Use v-html for list items to render as actual HTML -->
-        <ul v-if="content.match(/list(\.\d+)?$/)" class="list-disc pl-5">
+        <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
           <li v-for="(item, index) in t(content).split('\n')" :key="index">
             {{ item }}
           </li>
         </ul>
 
 
-        <h2 v-else-if="content.match(/subtitle(\.\d+)?$/)" class="text-large">{{ $t(content) }}</h2>
+        <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">{{ $t(content) }}</h2>
 
-        <h1 v-else-if="content.match(/title(\.\d+)?$/)" class="text-header">{{ $t(content) }}</h1>
+        <h1 v-else-if="content.match(/Title(\.\d+)?$/)" class="text-header">{{ $t(content) }}</h1>
 
         <p v-else class="text-body">{{ $t(content) }}</p>
       </div>
       <CustomButton
-        :text="$t('data.protection.generic.deleteMyData')"
+        :text="$t('dataProtection.generic.deleteMyData')"
         block
         class="py-8"
         color="error"

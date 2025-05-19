@@ -1,18 +1,41 @@
 {
-  "generic.continue": "Weiter",
-  "generic.german": "🇩🇪 Deutsch",
-  "generic.english": "🇬🇧 English",
-  "data.protection.student.&.supervisor.page.header": "Datenschutz",
-  "data.protection.student.&.supervisor.general.info.title": "🛡️ SuperWise Datenschutzrichtlinie",
-  "data.protection.student.&.supervisor.general.info.text": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen.",
-  "data.protection.student.&.supervisor.collected.data.subtitle": "📌 Welche Daten wir erfassen",
-  "data.protection.student.&.supervisor.collected.data.text": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
-  "data.protection.student.&.supervisor.collected.data.list.1": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
-  "data.protection.student.&.supervisor.changes.and.overwrites.subtitle": "🔁 Datenänderungen und Überschreibungen",
-  "data.protection.student.&.supervisor.changes.and.overwrites.text": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
-  "data.protection.student.&.supervisor.data.deletion.subtitle": "🗑 Datenlöschung",
-  "data.protection.student.&.supervisor.data.deletion.text.1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
-  "data.protection.student.&.supervisor.data.deletion.list": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten",
-  "data.protection.student.&.supervisor.data.deletion.text.2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht.",
-  "data.protection.generic.deleteMyData": "Meine Daten löschen"
+  "generic": {
+    "continue": "Weiter",
+    "german": "🇩🇪 Deutsch",
+    "english": "🇬🇧 English"
+  },
+  "dataProtection": {
+    "generic": {
+      "deleteMyData": "Meine Daten löschen",
+      "pageHeader": "Datenschutz",
+      "generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie",
+      "collectedDataSubtitle": "📌 Welche Daten wir erfassen",
+      "changesAndOverwritesSubtitle": "🔁 Datenänderungen und Überschreibungen",
+      "dataDeletionSubtitle": "🗑 Datenlöschung",
+      "generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen."
+    },
+    "student&supervisor": {
+      "collectedDataText": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
+      "collectedDataList": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
+      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
+      "dataDeletionText": {
+        "1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
+        "2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
+      },
+      "dataDeletionList": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten"
+    },
+    "admin": {
+      "generalInfoText": "Diese Klausel gilt speziell für Nutzer*innen mit Admin-Zugriff auf SuperWise.",
+      "collectedDataText": "Für Admin-Konten erfassen und speichern wir ausschließlich:",
+      "collectedDataList": "Vollständiger Name\nE-Mail-Adresse\nProfilbild",
+      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen oder Ihr Profilbild aktualisieren, wird die vorherige Version dauerhaft überschrieben. Es werden keine Kopien oder Backups der vorherigen persönlichen Daten aufbewahrt.",
+      "dataDeletionText": "Wenn ein Admin sein Konto löscht, werden alle personenbezogenen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft und ohne Backup gelöscht.",
+      "dataRetentionSubtitle": "📁 Was nach der Löschung eines Admin-Kontos erhalten bleibt",
+      "dataRetentionText": {
+        "1": "Wenn ein Admin sein Konto löscht, werden alle persönlichen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft entfernt. Einige im Rahmen der Plattformverwaltung erstellte oder hochgeladene Daten gelten jedoch nicht als personenbezogene Daten und bleiben erhalten. Dazu zählen:",
+        "2": "Diese Inhalte sind Teil der Infrastruktur der Plattform und essenziell für die Aufrechterhaltung der Integrität und Kontinuität des SuperWise-Systems. Daher werden sie beim Löschen eines Admin-Kontos nicht entfernt."
+      },
+      "dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden"
+    }
+  }
 }

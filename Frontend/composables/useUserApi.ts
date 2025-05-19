@@ -1,5 +1,5 @@
 import { makeRequest } from './useApi'
-import type { UserCreateData, UserRegistrationData } from "~/shared/types/userInterfaces";
+import type {SupervisionRequestData, UserCreateData, UserRegistrationData} from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {
 
@@ -41,6 +41,17 @@ export const useUserApi = () => {
   const getRecommendedSupervisors = async (data: string) => {
     return await makeRequest(`match/${data}`, 'GET');
   }
+  const makeSupervisionRequest = async (data: SupervisionRequestData) => {
+    return await makeRequest(`supervision-requests`, 'POST', {
+      ...data
+    })
+  }
+  
+  const createStudentProfile = async (data: string) => {
+    return await makeRequest('students', 'POST', {
+      thesis_description: data
+    })
+  }
 
   return {
     getUserRegistrationStatus,
@@ -51,6 +62,8 @@ export const useUserApi = () => {
     getUserById,
     addUserTag,
     getRecommendedSupervisors,
+    makeSupervisionRequest,
+    createStudentProfile
   }
 
 }

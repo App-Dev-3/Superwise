@@ -1,3 +1,5 @@
+import type { SupervisorData } from "./supervisorInterfaces";
+
 export interface UserCreateData extends Record<string, unknown> {
     email: string;
     first_name?: string;
@@ -21,4 +23,26 @@ export interface UserData extends Record<string, unknown> {
 export interface UserRegistrationData extends Record<string, unknown> {
     exists: boolean;
     is_registered: boolean;
+}
+
+export interface SupervisionRequestData extends Record<string, unknown> {
+    supervisor_id?: string
+    student_email?: string
+}
+
+export interface ConfirmationDialogData {
+    type: 'confirm' | 'dismiss'
+    headline: string
+    icon: string
+    description: string
+    warning: string
+    confirmButtonText: string
+    confirmButtonColor: 'default' | 'primary' | 'secondary' | 'accent' | 'error' | 'success' | 'warning' | 'info' | 'neutral'
+    supervisor?: SupervisorData
+}
+
+export interface UserSettingsData {
+    theme?: string
+    language?: string
+    dismissConfirmationModal?: boolean
 }

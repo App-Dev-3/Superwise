@@ -86,6 +86,302 @@ describe('UsersRepository', () => {
   it('should be defined - verifies successful initialization', () => {
     expect(repository).toBeDefined();
   });
+  describe('findUsers', () => {
+    it('should return users matching email', async () => {
+      // Arrange
+      const searchParams = {
+        email: 'exampleStudent1@fhstp.ac.at',
+        firstName: undefined,
+        lastName: undefined,
+        tagId: undefined,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          email: 'exampleStudent1@fhstp.ac.at',
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return users matching firstName', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: 'Max',
+        lastName: undefined,
+        tagId: undefined,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          first_name: {
+            contains: 'Max',
+            mode: 'insensitive',
+          },
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return users matching lastName', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: undefined,
+        lastName: 'Mustermann',
+        tagId: undefined,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          last_name: {
+            contains: 'Mustermann',
+            mode: 'insensitive',
+          },
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return users matching single tagId', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        tagId: TAG_UUID_1,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          tags: {
+            some: {
+              tag_id: {
+                in: [TAG_UUID_1],
+              },
+            },
+          },
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return users matching multiple tagIds', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        tagId: undefined,
+        tagIds: [TAG_UUID_1, TAG_UUID_2],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          tags: {
+            some: {
+              tag_id: {
+                in: [TAG_UUID_1, TAG_UUID_2],
+              },
+            },
+          },
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return users matching combination of parameters', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: 'Max',
+        lastName: 'Mustermann',
+        tagId: TAG_UUID_1,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([mockUser]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+          first_name: {
+            contains: 'Max',
+            mode: 'insensitive',
+          },
+          last_name: {
+            contains: 'Mustermann',
+            mode: 'insensitive',
+          },
+          tags: {
+            some: {
+              tag_id: {
+                in: [TAG_UUID_1],
+              },
+            },
+          },
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return empty array when no parameters provided', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        tagId: undefined,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalledWith({
+        where: {
+          is_deleted: false,
+        },
+        orderBy: [{ last_name: 'asc' }, { first_name: 'asc' }],
+        include: {
+          tags: {
+            include: {
+              tag: true,
+            },
+            orderBy: {
+              priority: 'asc',
+            },
+          },
+        },
+      });
+    });
+
+    it('should return empty array when no users match search criteria', async () => {
+      // Arrange
+      const searchParams = {
+        email: undefined,
+        firstName: 'NonExistent',
+        lastName: undefined,
+        tagId: undefined,
+        tagIds: [],
+      };
+      mockPrismaService.user.findMany.mockResolvedValue([]);
+
+      // Act
+      const result = await repository.findUsers(searchParams);
+
+      // Assert
+      expect(result).toEqual([]);
+      expect(mockPrismaService.user.findMany).toHaveBeenCalled();
+    });
+  });
 
   describe('createUser', () => {
     it('should create a new user', async () => {

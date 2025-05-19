@@ -22,6 +22,18 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
 });
 
 const goBack = () => {
@@ -43,7 +55,13 @@ const goBack = () => {
           <span class="text-sm font-medium opacity-50">Back</span>
         </button>
 
-        <UserButton v-if="props.showUser" />
+        <div v-if="props.showUser">
+          <SideDrawer
+            :image="props.image"
+            :first-name="props.firstName"
+            :last-name="props.lastName"
+          />
+        </div>
 
         <AppThemeToggle class="ml-5" />
       </div>
@@ -58,7 +76,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          >
+          />
         </div>
       </ClientOnly>
 

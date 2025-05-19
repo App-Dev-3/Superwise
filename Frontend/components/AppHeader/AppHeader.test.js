@@ -1,13 +1,29 @@
-import { shallowMount } from "@vue/test-utils";
+import { mount, shallowMount  } from "@vue/test-utils";
 import { describe, it, expect, vi } from "vitest";
 import AppHeader from "./AppHeader.vue";
 
+const mockBack = vi.fn();
+
 vi.mock("#imports", () => ({
-  useColorMode: () => ({ preference: "light", value: "light" }),
+  useColorMode: () => ({
+    preference: "light",
+    value: "light",
+  }),
 }));
 
-const mockBack = vi.fn();
-vi.mock("vue-router", () => ({ useRouter: () => ({ back: mockBack }) }));
+//mock the router
+vi.mock("vue-router", () => ({
+  useRouter: () => ({
+    back: mockBack,
+  }),
+}));
+
+// Basic stub for InputField
+const InputFieldStub = {
+  template:
+    "<input @blur=\"$emit('blur')\" @input=\"$emit('update:modelValue', $event.target.value)\" />",
+  props: ["modelValue"],
+};
 
 const FontAwesomeIconStub = {
   name: "FontAwesomeIcon",
@@ -50,10 +66,13 @@ describe("AppHeader.vue", () => {
   });
 
   it("goes back when the back button is clicked", async () => {
-    const wrapper = shallowMount(AppHeader, {
-      ...globalConfig,
-      props: { showBack: true },
+    const wrapper = mount(AppHeader, {
+      props: { showBack: true, firstName: "Testus", lastName: "Tester" },
+      global: {
+        stubs: { InputField: InputFieldStub },
+      },
     });
+
     await wrapper.find('[data-test="back-button"]').trigger("click");
     expect(mockBack).toHaveBeenCalled();
   });

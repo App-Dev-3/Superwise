@@ -66,9 +66,9 @@ import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { useSettingsStore } from '~/stores/useSettingsStore'
 import { computed, nextTick, ref } from 'vue';
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
-import { 
-  type ConfirmationDialogData, 
-  type SupervisionRequestResponseData, 
+import type { 
+  ConfirmationDialogData, 
+  SupervisionRequestResponseData, 
 } from "~/shared/types/userInterfaces"
 import {
   HttpMethods,

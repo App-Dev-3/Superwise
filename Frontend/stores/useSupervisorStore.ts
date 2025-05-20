@@ -16,6 +16,9 @@ actions: {
     this.supervisors = this.supervisors.filter(supervisor => supervisor.supervisor_userId !== supervisorId)
   },
   addSupervisor(supervisor: SupervisorData) {
+    if (this.supervisors.some(existingSupervisor => existingSupervisor.supervisor_userId === supervisor.supervisor_userId)) {
+      this.removeSupervisor(supervisor.supervisor_userId)
+    }
     this.supervisors.push(supervisor)
   }
 },

@@ -111,10 +111,10 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
     supervisor: supervisor
   };
 
-  supervisorStore.removeSupervisor(supervisor.supervisor_userId);
   if (!settingsStore.settings?.dismissConfirmationModal) {
     openModal();
   } else {
+    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
     showToastInformation(supervisionRequestType.CONFIRM);
   }
 };
@@ -132,10 +132,10 @@ const handleSwipeLeft = async(supervisor: SupervisorData) => {
     supervisor: supervisor
   };
 
-  supervisorStore.removeSupervisor(supervisor.supervisor_userId);
   if (!settingsStore.settings?.dismissConfirmationModal) {
     openModal();
   } else {
+    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
     showToastInformation(supervisionRequestType.DISMISS);
   }
 };

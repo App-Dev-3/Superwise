@@ -91,6 +91,18 @@ const toast = ref({
     message: "This is a toast message",
 });
 
+if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
+    const {data, error} = await  useFetch(`/api/match/${userStore.user?.id}`, {
+      method: HttpMethods.GET,
+    });
+    if(error.value){ 
+      console.error("Error fetching supervisors:", error.value);
+      navigate('/student/dashboard');
+    } else {
+      supervisorStore.setSupervisors(data.value);
+    }
+  }
+
 const recommendedSupervisors = computed(() => {
   return [...supervisorStore.supervisors]
     .sort((a, b) => {

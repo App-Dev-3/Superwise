@@ -1,4 +1,4 @@
-import { makeRequest } from './useApi'
+import {makeRequest} from './useApi'
 import type {UserCreateData, UserRegistrationData} from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {

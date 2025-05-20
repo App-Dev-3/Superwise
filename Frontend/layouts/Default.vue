@@ -20,6 +20,6 @@ const { isLoaded } = useUser();
 const isLoading = ref(true);
 onMounted(async() => {
   await until(isLoaded).toBe(true);
-  isLoading.value = false;  
+  isLoading.value = false;
 })
 </script>

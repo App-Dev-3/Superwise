@@ -88,6 +88,7 @@ async function handleSubmit() {
   if (!userStore.user) {
     return;
   }
+  await useUserApi().createStudentProfile("")
   addUserTag({id: userStore.user.id, tags: tags.value as tagData[]});
   await registrationStore.fetchRegistrationStatus(userStore.user?.email)
   return navigateTo('/student/dashboard');

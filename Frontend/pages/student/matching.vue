@@ -29,7 +29,7 @@
           
           <div class="">
             <BottomNav
-                :active-route="dummyRoute"
+                :bottom-nav-buttons="bottomNavButtons"
                 :always-show-labels="false"
                 @navigate="navigate"
             />
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 
+
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { useSettingsStore } from '~/stores/useSettingsStore'
 import { computed, nextTick, ref } from 'vue';
@@ -75,7 +76,11 @@ import {
   supervisionRequestType 
 } from "~/shared/enums/enums"
 import type { SwipeContainer } from '#components';
-
+const bottomNavButtons = [
+    { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
+    { label: 'Matching', icon: 'user-group', route: '/student/matching' },
+    { label: 'Chat', icon: 'message', route: '/student/chat' }
+]
 
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
@@ -212,7 +217,10 @@ const openModal = async () => {
 }
 
 const showToastInformation = (type: string) => {
-  if (type === supervisionRequestType.CONFIRM) {
+    if (modalInformation.value?.supervisor?.supervisor_userId) {
+        supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
+    }
+    if (type === supervisionRequestType.CONFIRM) {
     toast.value = {
       visible: true,
       type: "success",

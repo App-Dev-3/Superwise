@@ -1,4 +1,4 @@
-import type { UserRegistrationData } from "~/shared/types/userInterfaces";
+import type {UserRegistrationData} from "~/shared/types/userInterfaces";
 
 const { getUserRegistrationStatus } = useUserApi();
 
@@ -9,8 +9,7 @@ export const useRegistrationStore = defineStore('registration', {
   actions: {
     async fetchRegistrationStatus(userEmail: string) {
       try {
-        const res = await getUserRegistrationStatus(userEmail);
-        this.status = res;
+        this.status = await getUserRegistrationStatus(userEmail);
       } catch (e) {
         console.error('Failed to fetch onboarding status:', e)
       }

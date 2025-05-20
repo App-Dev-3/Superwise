@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { UserData } from '~/shared/types/userInterfaces'
+import {HttpMethods} from "#shared/enums/enums";
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -12,5 +13,22 @@ export const useUserStore = defineStore('user', {
     clearUser() {
       this.user = null
     },
+    // Keeps the user data in sync with the server. If the user is not logged in, it clears the user data.
+    async refetchCurrentUser() {
+      const { data, error } = await useFetch<UserData>('/api/extended/current-user', {
+        method: HttpMethods.GET,
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+      if (error.value) {
+        this.clearUser()
+      }
+      if (data.value) {
+        this.setUser(data.value)
+      } else {
+        this.clearUser()
+      }
+    }
   },
 })

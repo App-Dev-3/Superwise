@@ -1,3 +1,5 @@
+import type {UserRoles} from "#shared/enums/enums";
+
 export interface UserCreateData extends Record<string, unknown> {
     email: string;
     first_name?: string;
@@ -10,7 +12,7 @@ export interface UserData extends Record<string, unknown> {
     email: string;
     first_name: string;
     last_name: string;
-    role: 'STUDENT' | 'SUPERVISOR' | string;
+    role: UserRoles;
     profile_image: string | null;
     is_registered: boolean;
     is_deleted: boolean;
@@ -21,4 +23,5 @@ export interface UserData extends Record<string, unknown> {
 export interface UserRegistrationData extends Record<string, unknown> {
     exists: boolean;
     is_registered: boolean;
+    role: UserRoles;
 }

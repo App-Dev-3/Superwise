@@ -1,49 +1,72 @@
 import { until } from "@vueuse/core";
+import {UserRoles} from "#shared/enums/enums";
 
 export default defineNuxtRouteMiddleware(async (to) => {
+  // ============ USER IS NOT AUTHENTICATED YET ============
+
+  // Skip if middleware is running on the server
   if (import.meta.server) return
 
   const { user, isLoaded, isSignedIn } = useUser()
   const registrationStore = useRegistrationStore()
   const userStore = useUserStore()
 
-
-  // Wait until user is loaded
+  // Make sure clerkUser and backendUser are ready
   if (!isLoaded.value) await until(isLoaded).toBe(true)
+  await userStore.refetchCurrentUser()
 
-  // Allow public access to root and login
+  // Only allow access to public paths if not signed in
   const publicPaths = ['/']
 
   if (!isSignedIn.value) {
     if (!publicPaths.includes(to.path)) {
       return navigateTo('/')
     }
-    // If signed out and on a public page, skip the rest of the logic
     return
   }
 
-  if (userStore.user?.role !='admin' && to.path.startsWith('/admin')) {
-    // Redirect non-admin users away from admin pages
-    return navigateTo('/dashboard')
-  }
-
-  // Onboarding check
   const userEmail = user.value?.primaryEmailAddress?.emailAddress;
+  if (!userEmail) {
+    return navigateTo('/')
+  }
+  // ============ USER IS NOW SIGNED IN ============
+
+  // Register user if is not already registered
+
   await registrationStore.fetchRegistrationStatus(userEmail)
-  
+  let userRole = UserRoles.STUDENT
+  if (registrationStore.status?.role) {
+    userRole = registrationStore.status.role
+  }
   const onboardingComplete = registrationStore.status?.is_registered
 
   if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
-    return navigateTo('/onboarding/onboarding')
+    if (userRole === UserRoles.SUPERVISOR) {
+      return navigateTo('/onboarding/supervisor')
+    } else {
+      return navigateTo('/onboarding/student')
+    }
   }
 
   if (onboardingComplete && to.path.startsWith('/onboarding')) {
-    return navigateTo('/dashboard')
+    return navigateTo(`/${userRole.toLowerCase()}/dashboard`)
   }
 
-  // Redirect signed-in users away from root
+  // ============ USER IS NOW REGISTERED AND ONBOARDED ============
+
+  // make sure only each role-specific route can only be accessed by the corresponding role
+  if (
+      !to.path.startsWith(`/${userRole.toLowerCase()}`)
+      && !to.path.startsWith('/profiles')
+  ) {
+    return navigateTo(`/${userRole.toLowerCase()}/dashboard`)
+  }
+
+  // Redirect signed-in users away from the root
   if (to.path === '/') {
-    return navigateTo('/dashboard')
+    if (userRole) {
+      return navigateTo(`/${userRole.toLowerCase()}/dashboard`)
+    }
   }
 })
 

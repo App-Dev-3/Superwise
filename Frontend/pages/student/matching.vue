@@ -6,8 +6,9 @@
         </div>
           <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
             <SwipeContainer
-                v-for="(supervisor, index) in supervisorStore.supervisors"
+                v-for="(supervisor, index) in recommendedSupervisors"
                 :key="supervisor.supervisor_userId || index"
+                :ref="el => setItemRef(el, supervisor.supervisor_userId)"
                 class="mb-4"
                 @swipe-left="handleSwipeLeft(supervisor)"
                 @swipe-right="handleSwipeRight(supervisor)"
@@ -23,73 +24,222 @@
                 image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 :description="supervisor.bio"
               />
-              <Toast
-                v-if="toast.visible"
-                :type="toast.type"
-                :message="toast.message"
-                :duration="3000"
-                button-text="undo"
-                @button-click="handleButtonClick()"
-                @close="toast.visible = false"
-              />
             </SwipeContainer>
           </div>
           
           <div class="">
-              <BottomNav
-                  :active-route="dummyRoute"
-                  :always-show-labels="false"
-                  @navigate="navigate"
-              />
+            <BottomNav
+                :bottom-nav-buttons="bottomNavButtons"
+                :always-show-labels="false"
+                @navigate="navigate"
+            />
           </div>
       </div>
+      <Toast
+        v-if="toast.visible"
+        :type="toast.type"
+        :message="toast.message"
+        :duration="3000"
+        button-text="Undo"
+        @button-click="handleToastUndoClick"
+        @close="handleToastClosed"
+      />
+      <ConfirmationModal
+        v-if="modalInformation && !settingsStore.settings?.dismissConfirmationModal"
+        linked-component-id="confirmationModal"
+        :headline="modalInformation.headline"
+        :icon="modalInformation.icon"
+        image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+        :description="modalInformation.description"
+        :confirm-button-text="modalInformation.confirmButtonText"
+        :confirm-button-color="modalInformation.confirmButtonColor"
+        @confirm="showToastInformation(modalInformation.type)"
+        @abort="handleActionResetSwipe(modalInformation.supervisor)"
+        @dont-show-again="handleModalDontShowAgain"
+        />
   </div>
 </template>
 
 <script setup lang="ts">
 
+
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
-import { ref } from 'vue';
-import type { SupervisorData } from "#shared/types/supervisorInterfaces"
+import { useSettingsStore } from '~/stores/useSettingsStore'
+import { computed, nextTick, ref } from 'vue';
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
+import type { 
+  ConfirmationDialogData, 
+  SupervisionRequestResponseData, 
+} from "~/shared/types/userInterfaces"
+import {
+  HttpMethods,
+  supervisionRequestType 
+} from "~/shared/enums/enums"
+import type { SwipeContainer } from '#components';
+const bottomNavButtons = [
+    { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
+    { label: 'Matching', icon: 'user-group', route: '/student/matching' },
+    { label: 'Chat', icon: 'message', route: '/student/chat' }
+]
 
 const supervisorStore = useSupervisorStore();
+const userStore = useUserStore();
+const settingsStore = useSettingsStore();
 
-const removedSupervisor = ref(null);
+const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
+const modalInformation = ref<ConfirmationDialogData | null>(null)
+const supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(null);
+const removedSupervisor = ref<SupervisorData | null>(null);
 const toast = ref({
     visible: false,
     type: "success",
     message: "This is a toast message",
 });
 
-const handleSwipeLeft = (supervisor: SupervisorData) => {
-    toast.value = {
-        visible: true,
-        type: "error",
-        message: "Supervisor has been dismissed",
-    };
-    removedSupervisor.value = supervisor;
-    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
+if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
+    const {data, error} = await  useFetch(`/api/match/${userStore.user?.id}`, {
+      method: HttpMethods.GET,
+    });
+    if(error.value){ 
+      console.error("Error fetching supervisors:", error.value);
+      navigate('/student/dashboard');
+    } else {
+      supervisorStore.setSupervisors(data.value);
+    }
+  }
 
+const recommendedSupervisors = computed(() => {
+  return [...supervisorStore.supervisors]
+    .sort((a, b) => {
+        return b.compatibilityScore - a.compatibilityScore;
+    })
+});
 
-    // Handle the left swipe action here
-};
 const handleSwipeRight = (supervisor: SupervisorData) => {
-    toast.value = {
-        visible: true,
-        type: "success",
-        message: "Chat request has been sent",
-    };
-    removedSupervisor.value = supervisor;
+  removedSupervisor.value = supervisor;
+  modalInformation.value = {
+    type: supervisionRequestType.CONFIRM,
+    headline: `Request ${supervisor.firstName} ${supervisor.lastName}`,
+    icon: '',
+    warning: '',
+    description: `You’re about to request supervision from ${supervisor.firstName} ${supervisor.lastName}. Proceed?`,
+    confirmButtonText: 'Send Request',
+    confirmButtonColor: 'primary',
+    supervisor: supervisor
+  };
+
+  if (!settingsStore.settings?.dismissConfirmationModal) {
+    openModal();
+  } else {
     supervisorStore.removeSupervisor(supervisor.supervisor_userId);
-    // Handle the right swipe action here
+    showToastInformation(supervisionRequestType.CONFIRM);
+  }
 };
 
-const handleButtonClick = () => {
+const handleSwipeLeft = async(supervisor: SupervisorData) => {
+  removedSupervisor.value = supervisor;
+  modalInformation.value = {
+    type: supervisionRequestType.DISMISS,
+    headline: `Dismiss Supervisor`,
+    icon: 'ban',
+    warning: 'Dismissed supervisors can still be found in the search',
+    description: `By dismissing ${supervisor.firstName} ${supervisor.lastName}, they will never get suggested again. Are you sure you want to do this?`,
+    confirmButtonText: 'Dismiss Supervisor',
+    confirmButtonColor: 'error',
+    supervisor: supervisor
+  };
+
+  if (!settingsStore.settings?.dismissConfirmationModal) {
+    openModal();
+  } else {
+    supervisorStore.removeSupervisor(supervisor.supervisor_userId);
+    showToastInformation(supervisionRequestType.DISMISS);
+  }
+};
+
+const handleToastUndoClick = async() => {
   toast.value.visible = false;
-  supervisorStore.addSupervisor(removedSupervisor.value);
+  if (removedSupervisor.value) {
+    supervisorStore.addSupervisor(removedSupervisor.value);
+    handleActionResetSwipe(removedSupervisor.value);
+  }
 };
 
+/**
+ * This function is called when the toast is closed.
+ * It is vital for the functionality of the matching. When the toast closes, the appropriate
+ * request is sent to perform the user action.
+ * 
+ * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
+ */
+const handleToastClosed = () => {
+  toast.value.visible = false;
+  if (modalInformation.value?.supervisor) {
+    handleActionConfirmation(modalInformation.value.supervisor);
+  }
+};
 
+const handleActionConfirmation = async (supervisor: SupervisorData) => {
+  if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
+    const { data } = await useFetch<SupervisionRequestResponseData>(`/api/supervision-requests`, {
+      method: HttpMethods.POST,
+      body: {
+        supervisor_id: supervisor.supervisorId,
+      },
+    });
+    supervisionRequestReturnData.value = data.value;
+  } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
+    await useFetch(`/api/users/${userStore.user?.id}/blocks`, {
+      method: HttpMethods.POST,
+      body: {
+        blocked_id: supervisor.supervisor_userId,
+      },
+    });
+  }
+  supervisorStore.removeSupervisor(supervisor.supervisor_userId);
+};
+
+const handleActionResetSwipe = (supervisor: SupervisorData) => {
+  const ref = swipeContainerRefs.value[supervisor.supervisor_userId]
+  ref?.reset?.()
+};
+
+const handleModalDontShowAgain = () => {
+  settingsStore.setSettings({
+    ...settingsStore.settings,
+    dismissConfirmationModal: true
+  });
+};
+const openModal = async () => {
+  await nextTick();
+  const modal = document.getElementById('confirmationModal') as HTMLDialogElement
+  modal?.showModal()
+}
+
+const showToastInformation = (type: string) => {
+    if (modalInformation.value?.supervisor?.supervisor_userId) {
+        supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
+    }
+    if (type === supervisionRequestType.CONFIRM) {
+    toast.value = {
+      visible: true,
+      type: "success",
+      message: "Supervision request has been sent",
+    };
+  } else if (type === supervisionRequestType.DISMISS) {
+    toast.value = {
+      visible: true,
+      type: "error",
+      message: "Supervisor has been dismissed",
+    };
+  }
+};
+
+const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) => {
+  if (el) {
+    swipeContainerRefs.value[id] = el
+  }
+}
 
 function navigate(route: string) {
     dummyRoute.value = route;

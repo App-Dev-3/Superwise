@@ -1,4 +1,6 @@
-import type {UserRoles} from "#shared/enums/enums";
+import type {supervisionRequestType, UserRoles} from "#shared/enums/enums";
+
+import type { SupervisorData } from "./supervisorInterfaces";
 
 export interface UserCreateData extends Record<string, unknown> {
     email: string;
@@ -23,5 +25,32 @@ export interface UserData extends Record<string, unknown> {
 export interface UserRegistrationData extends Record<string, unknown> {
     exists: boolean;
     is_registered: boolean;
-    role: UserRoles;
+    role?: UserRoles;
+}
+
+export interface SupervisionRequestResponseData extends Record<string, unknown> {
+    id: string,
+    request_state: string,
+    student_id: string,
+    supervisor_id: string,
+    created_at: string,
+    updated_at: string,
+    studentWasCreated: boolean
+}
+
+export interface ConfirmationDialogData {
+    type: supervisionRequestType
+    headline: string
+    icon: string
+    description: string
+    warning: string
+    confirmButtonText: string
+    confirmButtonColor: 'default' | 'primary' | 'secondary' | 'accent' | 'error' | 'success' | 'warning' | 'info' | 'neutral'
+    supervisor?: SupervisorData
+}
+
+export interface UserSettingsData {
+    theme?: string
+    language?: string
+    dismissConfirmationModal?: boolean
 }

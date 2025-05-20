@@ -19,7 +19,7 @@ interface AvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   shape?: "squircle" | "rounded" | "circle";
   online?: boolean;
-  ringColor?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "error";
+  ringColor?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "error" | '';
   firstName: string;
   lastName: string;
   emoji?: string;
@@ -34,6 +34,8 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   online: false,
   emoji: '',
   addButton: false,
+  placeholder: '',
+  ringColor: '',
 });
 
 // Track image loading errors
@@ -177,27 +179,27 @@ const handleImageError = () => {
   <div :class="onlineStatus" class="avatar">
     <div :class="[imgSize, shapeClass, ringClass]">
       <img
-        :key="imgKey"
-        :alt="props.alt"
-        :src="(props.src && !imgError)
+          :key="imgKey"
+          :alt="props.alt"
+          :src="(props.src && !imgError)
               ? props.src
               : getPlaceholderImage(props.firstName, props.lastName)"
-        class="object-cover w-full h-full"
-        loading="lazy"
-        @error="handleImageError"
+          class="object-cover w-full h-full"
+          loading="lazy"
+          @error="handleImageError"
       >
     </div>
     <span
-      v-if="props.emoji !== ''"
-      :class="[emojiPosition, ringClass]"
-      class="absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0">
+        v-if="props.emoji !== ''"
+        :class="[emojiPosition, ringClass]"
+        class="absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0">
       {{ props.emoji }}
     </span>
 
     <button
-      v-if="props.addButton"
-      :class="[addPosition, ringClass]"
-      class="btn absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0"
+        v-if="props.addButton"
+        :class="[addPosition, ringClass]"
+        class="btn absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0"
     >+
     </button>
 

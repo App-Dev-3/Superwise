@@ -536,13 +536,13 @@
         ]
       }
     },
-    "/users/{userId}/tags": {
+    "/users/{id}/tags": {
       "get": {
         "description": "Retrieves all tags assigned to a specific user with their priority ordering. Tags are sorted by priority where 1 is highest priority.",
         "operationId": "UsersController_findUserTagsByUserId",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "required": true,
             "in": "path",
             "description": "User unique identifier (UUID)",
@@ -584,7 +584,7 @@
         "operationId": "UsersController_setUserTagsByUserId",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "required": true,
             "in": "path",
             "description": "User unique identifier (UUID)",
@@ -633,16 +633,16 @@
         ]
       }
     },
-    "/users/{userId}/blocks": {
+    "/users/{id}/blocks": {
       "get": {
         "description": "Retrieves a list of all supervisors that have been blocked by the specified student.",
         "operationId": "UsersController_findBlockedSupervisorsByStudentUserId",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "required": true,
             "in": "path",
-            "description": "Student unique identifier (UUID)",
+            "description": "The User ID of the student (UUID)",
             "schema": {
               "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
@@ -681,10 +681,10 @@
         "operationId": "UsersController_createUserBlock",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "required": true,
             "in": "path",
-            "description": "Student unique identifier (UUID)",
+            "description": "The User ID of the student (UUID)",
             "schema": {
               "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
@@ -694,7 +694,7 @@
         ],
         "requestBody": {
           "required": true,
-          "description": "The ID of the supervisor to block",
+          "description": "The User ID (UUID) of the supervisor to block",
           "content": {
             "application/json": {
               "schema": {
@@ -727,16 +727,16 @@
         ]
       }
     },
-    "/users/{userId}/blocks/{blockedId}": {
+    "/users/{id}/blocks/{blockedId}": {
       "delete": {
         "description": "Removes a block from a supervisor, allowing them to appear in recommendations again.",
         "operationId": "UsersController_removeUserBlock",
         "parameters": [
           {
-            "name": "userId",
+            "name": "id",
             "required": true,
             "in": "path",
-            "description": "Student unique identifier (UUID)",
+            "description": "The User ID of the student (UUID)",
             "schema": {
               "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
@@ -747,7 +747,7 @@
             "name": "blockedId",
             "required": true,
             "in": "path",
-            "description": "Supervisor unique identifier (UUID) to unblock",
+            "description": "The User ID of the supervisor (UUID) to unblock",
             "schema": {
               "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174001",

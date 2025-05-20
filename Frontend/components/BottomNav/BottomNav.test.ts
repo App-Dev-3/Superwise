@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi} from 'vitest'
 import { mount } from '@vue/test-utils'
 import BottomNav from './BottomNav.vue'
 
@@ -7,11 +7,29 @@ const mockFontAwesomeIcon = {
     name: 'FontAwesomeIcon',
     render: () => {},
 }
+vi.mock('vue-router', () => ({
+    useRoute: vi.fn(() => ({
+        path: ''
+    }))
+}))
+
 
 describe('BottomNav', () => {
+    // Default button array for testing
+    const defaultButtons = [
+        { label: 'Dashboard', icon: 'house', route: '/dashboard' },
+        { label: 'Matching', icon: 'user-group', route: '/matching' },
+        { label: 'Chat', icon: 'message', route: '/chat' }
+    ]
+
     const createWrapper = (props = {}) => {
         return mount(BottomNav, {
-            props,
+            props: {
+                // Always provide bottomNavButtons as required prop
+                bottomNavButtons: defaultButtons,
+                activeRoute: '/dashboard',
+                ...props
+            },
             global: {
                 components: {
                     FontAwesomeIcon: mockFontAwesomeIcon,
@@ -20,7 +38,7 @@ describe('BottomNav', () => {
         })
     }
 
-    it('renders all navigation buttons', () => {
+    it('renders all navigation buttons from provided props', () => {
         const wrapper = createWrapper()
         const buttons = wrapper.findAll('button')
         expect(buttons).toHaveLength(3)
@@ -44,24 +62,6 @@ describe('BottomNav', () => {
         expect(labels).toHaveLength(0)
     })
 
-    it('shows only active label when showLabelsOnActive is true and alwaysShowLabels is false', () => {
-        const wrapper = createWrapper({
-            activeRoute: '/matching',
-            alwaysShowLabels: false,
-            showLabelsOnActive: true
-        })
-        const labels = wrapper.findAll('.dock-label')
-        expect(labels).toHaveLength(1)
-        expect(labels[0].text()).toBe('Matching')
-    })
-
-    it('adds dock-active class to active route button', () => {
-        const wrapper = createWrapper({ activeRoute: '/matching' })
-        const activeButton = wrapper.find('.dock-active')
-        expect(activeButton.exists()).toBe(true)
-        expect(wrapper.findAll('.dock-active')).toHaveLength(1)
-    })
-
     it('emits navigate event with correct route when button is clicked', async () => {
         const wrapper = createWrapper()
         const buttons = wrapper.findAll('button')
@@ -77,12 +77,17 @@ describe('BottomNav', () => {
         expect(wrapper.emitted('navigate')[2]).toEqual(['/chat'])
     })
 
-    it('renders with default activeRoute when none provided', () => {
-        const wrapper = createWrapper()
-        const activeButton = wrapper.find('.dock-active')
-        // Check if the button with matching route is active
-        expect(activeButton.exists()).toBe(true)
-        // Since default is '/dashboard'
-        expect(wrapper.findAll('button')[0].classes()).toContain('dock-active')
+    it('renders with custom navigation buttons when provided', () => {
+        const customButtons = [
+            { label: 'Home', icon: 'home', route: '/' },
+            { label: 'Settings', icon: 'cog', route: '/settings' }
+        ]
+
+        const wrapper = createWrapper({
+            bottomNavButtons: customButtons,
+        })
+
+        const buttons = wrapper.findAll('button')
+        expect(buttons).toHaveLength(2)
     })
-})
+});

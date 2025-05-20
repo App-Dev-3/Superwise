@@ -1,36 +1,38 @@
-<script setup>
+<script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useRoute } from "vue-router";
 
-const props = defineProps({
-    activeRoute: {
-        type: String,
-        default: '/dashboard'
-    },
-    alwaysShowLabels: {
-        type: Boolean,
-        default: true
-    },
-    showLabelsOnActive: {
-        type: Boolean,
-        default: true
-    },
+interface NavButton {
+    label: string;
+    icon: string;
+    route: string;
+}
+// Example of bottomNavButtons array
+// const bottomNavButtons = [
+//     { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
+//     { label: 'Matching', icon: 'user-group', route: '/student/matching' },
+//     { label: 'Chat', icon: 'message', route: '/student/chat' }
+// ]
+interface Props {
+    bottomNavButtons: NavButton[];
+    alwaysShowLabels?: boolean;
+    showLabelsOnActive?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+        alwaysShowLabels: false,
+        showLabelsOnActive: true
 });
 
 const emit = defineEmits(['navigate']);
 
-function handleClick(route) {
+function handleClick(route: string) {
     emit('navigate', route);
 }
 
-const isActiveRoute = (route) => {
-    return props.activeRoute === route;
+const isActiveRoute = (route: string) => {
+    return useRoute().path === route;
 };
 
-const bottomNavButtons = [
-    { icon: 'house', label: 'Dashboard', route: '/dashboard' },
-    { icon: 'user-group', label: 'Matching', route: '/matching' },
-    { icon: 'message', label: 'Chat', route: '/chat' }
-]
 </script>
 
 <template>

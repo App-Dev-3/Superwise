@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-const contentAdmin = [
+const pageContent = [
   "dataProtection.generic.generalInfoTitle",
   "dataProtection.generic.generalInfoText",
   "dataProtection.admin.generalInfoText",
@@ -20,12 +20,6 @@ const contentAdmin = [
 const getStyle = (content: string) => {
   if (content.match(/Subtitle(\.\d+)?$/))
     return "pt-6";
-  // if (content.match(/Title(\.\d+)?$/))
-  //   return "";
-  // if (content.match(/text(\.\d+)?$/))
-  //   return "text-body";
-  // if (content.match(/List(\.\d+)?$/))
-  //   return "text-body list-disc list-inside";
 };
 
 const {t} = useI18n();
@@ -44,7 +38,7 @@ const deleteData = () => {
 
     <div class="px-6 py-8 flex flex-col gap-2 h-full overflow-y-auto">
       <div
-        v-for="content in contentAdmin"
+        v-for="content in pageContent"
         :key="content"
         :class="getStyle(content)"
       >

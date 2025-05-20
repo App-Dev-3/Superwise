@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 
-const contentStudentAndSupervisor = [
+const pageContent = [
   "dataProtection.generic.generalInfoTitle",
   "dataProtection.generic.generalInfoText",
   "dataProtection.generic.collectedDataSubtitle",
@@ -37,7 +37,7 @@ const deleteData = () => {
 
     <div class="px-6 py-8 flex flex-col gap-2 h-full overflow-y-auto">
       <div
-        v-for="content in contentStudentAndSupervisor"
+        v-for="content in pageContent"
         :key="content"
         :class="getStyle(content)"
       >

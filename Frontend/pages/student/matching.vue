@@ -2,7 +2,11 @@
   <div class="flex flex-col items-center px-2 max-w-full">
       <div class="min-h-screen flex flex-col max-w-7xl w-full">
         <div class="fixed top-0 z-10 left-0 right-0 ">
-          <AppHeader show-search show-user />
+            <!-- Is this the header thats supposed to be used??-->
+            <AdminHeader 
+                header-text="Matching" 
+                variant="default" 
+            />
         </div>
           <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
             <SwipeContainer

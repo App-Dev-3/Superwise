@@ -1,6 +1,6 @@
 import type {supervisionRequestType, UserRoles} from "#shared/enums/enums";
 
-import type { SupervisorData } from "./supervisorInterfaces";
+import type { SupervisionRequestsData, SupervisorData } from "./supervisorInterfaces";
 
 export interface UserCreateData extends Record<string, unknown> {
     email: string;
@@ -47,6 +47,7 @@ export interface ConfirmationDialogData {
     confirmButtonText: string
     confirmButtonColor: 'default' | 'primary' | 'secondary' | 'accent' | 'error' | 'success' | 'warning' | 'info' | 'neutral'
     supervisor?: SupervisorData
+    request?: SupervisionRequestsData
 }
 
 export interface UserSettingsData {

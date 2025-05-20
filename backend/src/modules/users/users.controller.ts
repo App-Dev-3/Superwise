@@ -429,14 +429,14 @@ export class UsersController {
   /**
    * User Tag endpoints
    */
-  @Get(':userId/tags')
+  @Get(':id/tags')
   @ApiOperation({
     summary: 'Get all tags assigned to a user',
     description:
       'Retrieves all tags assigned to a specific user with their priority ordering. Tags are sorted by priority where 1 is highest priority.',
   })
   @ApiParam({
-    name: 'userId',
+    name: 'id',
     type: 'string',
     format: 'uuid',
     description: 'User unique identifier (UUID)',
@@ -450,18 +450,18 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserTagsByUserId(@Param('userId', ParseUUIDPipe) userId: string): Promise<UserTag[]> {
+  findUserTagsByUserId(@Param('id', ParseUUIDPipe) userId: string): Promise<UserTag[]> {
     return this.usersService.findUserTagsByUserId(userId);
   }
 
-  @Put(':userId/tags')
+  @Put(':id/tags')
   @ApiOperation({
     summary: 'Set/Replace all tags for a user with priorities',
     description:
       'Updates all tags for a user with the specified priorities. This operation replaces all existing tags with the new set provided.',
   })
   @ApiParam({
-    name: 'userId',
+    name: 'id',
     type: 'string',
     format: 'uuid',
     description: 'User unique identifier (UUID)',
@@ -486,7 +486,7 @@ export class UsersController {
       'Bad Request - Invalid input, non-sequential priorities, duplicate priorities, or invalid tag IDs.',
   })
   async setUserTagsByUserId(
-    @Param('userId', ParseUUIDPipe) userId: string,
+    @Param('id', ParseUUIDPipe) userId: string,
     @Body() setUserTagsDto: SetUserTagsDto,
     @CurrentUser() currentUser: User,
   ): Promise<UserTag[]> {
@@ -500,17 +500,17 @@ export class UsersController {
   /**
    * User Block endpoints
    */
-  @Get(':userId/blocks')
+  @Get(':id/blocks')
   @ApiOperation({
     summary: 'Get all supervisors blocked by a student',
     description:
       'Retrieves a list of all supervisors that have been blocked by the specified student.',
   })
   @ApiParam({
-    name: 'userId',
+    name: 'id',
     type: 'string',
     format: 'uuid',
-    description: 'Student unique identifier (UUID)',
+    description: 'The User ID of the student (UUID)',
     required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
@@ -522,7 +522,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 400, description: 'Bad request - User is not a student' })
   findBlockedSupervisorsByStudentUserId(
-    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @Param('id', ParseUUIDPipe) studentUserId: string,
     @CurrentUser() currentUser: User,
   ): Promise<UserBlock[]> {
     // Allow access only to the user themselves or admins
@@ -534,23 +534,23 @@ export class UsersController {
     );
   }
 
-  @Post(':userId/blocks')
+  @Post(':id/blocks')
   @ApiOperation({
     summary: 'Block a supervisor',
     description:
       'Allows a student to block a supervisor, preventing them from appearing in recommendations.',
   })
   @ApiParam({
-    name: 'userId',
+    name: 'id',
     type: 'string',
     format: 'uuid',
-    description: 'Student unique identifier (UUID)',
+    description: 'The User ID of the student (UUID)',
     required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @ApiBody({
     type: CreateUserBlockDto,
-    description: 'The ID of the supervisor to block',
+    description: 'The User ID (UUID) of the supervisor to block',
   })
   @ApiResponse({
     status: 201,
@@ -561,7 +561,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   @HttpCode(HttpStatus.CREATED)
   createUserBlock(
-    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @Param('id', ParseUUIDPipe) studentUserId: string,
     @Body() createUserBlockDto: CreateUserBlockDto,
     @CurrentUser() currentUser: User,
   ): Promise<UserBlock> {
@@ -574,17 +574,17 @@ export class UsersController {
     );
   }
 
-  @Delete(':userId/blocks/:blockedId')
+  @Delete(':id/blocks/:blockedId')
   @ApiOperation({
     summary: 'Unblock a supervisor',
     description:
       'Removes a block from a supervisor, allowing them to appear in recommendations again.',
   })
   @ApiParam({
-    name: 'userId',
+    name: 'id',
     type: 'string',
     format: 'uuid',
-    description: 'Student unique identifier (UUID)',
+    description: 'The User ID of the student (UUID)',
     required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
@@ -592,7 +592,7 @@ export class UsersController {
     name: 'blockedId',
     type: 'string',
     format: 'uuid',
-    description: 'Supervisor unique identifier (UUID) to unblock',
+    description: 'The User ID of the supervisor (UUID) to unblock',
     required: true,
     example: '123e4567-e89b-12d3-a456-426614174001',
   })
@@ -600,7 +600,7 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User or block relationship not found' })
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeUserBlock(
-    @Param('userId', ParseUUIDPipe) studentUserId: string,
+    @Param('id', ParseUUIDPipe) studentUserId: string,
     @Param('blockedId', ParseUUIDPipe) supervisorUserId: string,
     @CurrentUser() currentUser: User,
   ): Promise<void> {

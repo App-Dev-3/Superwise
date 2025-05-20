@@ -55,7 +55,7 @@
         :confirm-button-color="modalInformation.confirmButtonColor"
         @confirm="handleActionConfirmation(modalInformation.supervisor)"
         @abort="handleActionResetSwipe(modalInformation.supervisor)"
-        @dontShowAgain="handleModalDontShowAgain"
+        @dont-show-again="handleModalDontShowAgain"
         />
   </div>
 </template>
@@ -64,7 +64,7 @@
 
 import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { useSettingsStore } from '~/stores/useSettingsStore'
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
 import { 
   type ConfirmationDialogData, 
@@ -81,7 +81,7 @@ const settingsStore = useSettingsStore();
 
 const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
 const modalInformation = ref<ConfirmationDialogData | null>(null)
-let supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(null);
+const supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(null);
 const removedSupervisor = ref<SupervisorData | null>(null);
 const toast = ref({
     visible: false,
@@ -90,7 +90,7 @@ const toast = ref({
 });
 
 const recommendedSupervisors = computed(() => {
-    return supervisorStore.supervisors
+    return [...supervisorStore.supervisors]
       .sort((a, b) => {
           return b.compatibilityScore - a.compatibilityScore;
       })
@@ -147,7 +147,7 @@ const handleToastUndoClick = async() => {
   }
 
   if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
-    const {error} = await useFetch(`api/supervision-requests/${supervisionRequestReturnData.value?.id}`, {
+    await useFetch(`api/supervision-requests/${supervisionRequestReturnData.value?.id}`, {
       method: 'PATCH',
       body: {
         request_state: supervisionRequestStatus.WITHDRAWN,
@@ -155,7 +155,7 @@ const handleToastUndoClick = async() => {
     });
   } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
     if (!removedSupervisor.value) return;
-    const {error} = await useFetch(`api/users/${userStore.user?.id}/blocks/${removedSupervisor.value.supervisor_userId}`, {
+    await useFetch(`api/users/${userStore.user?.id}/blocks/${removedSupervisor.value.supervisor_userId}`, {
       method: 'DELETE',
     });
   }
@@ -194,7 +194,7 @@ const handleModalDontShowAgain = () => {
     dismissConfirmationModal: true
   });
 };
-const openModal = async (id: string) => {
+const openModal = async () => {
   await nextTick();
   const modal = document.getElementById('confirmationModal') as HTMLDialogElement
   modal?.showModal()
@@ -219,8 +219,6 @@ const showToastInformation = (type: string) => {
 const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) => {
   if (el) {
     swipeContainerRefs.value[id] = el
-  } else {
-    delete swipeContainerRefs.value[id]
   }
 }
 

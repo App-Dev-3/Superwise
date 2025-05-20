@@ -24,26 +24,26 @@
                 image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
                 :description="supervisor.bio"
               />
-              <Toast
-                v-if="toast.visible"
-                :type="toast.type"
-                :message="toast.message"
-                :duration="3000"
-                button-text="undo"
-                @button-click="handleToastUndoClick()"
-                @close="toast.visible = false"
-              />
             </SwipeContainer>
           </div>
           
           <div class="">
-              <BottomNav
-                  :active-route="dummyRoute"
-                  :always-show-labels="false"
-                  @navigate="navigate"
-              />
+            <BottomNav
+                :active-route="dummyRoute"
+                :always-show-labels="false"
+                @navigate="navigate"
+            />
           </div>
       </div>
+      <Toast
+        v-if="toast.visible"
+        :type="toast.type"
+        :message="toast.message"
+        :duration="3000"
+        button-text="Undo"
+        @button-click="handleToastUndoClick"
+        @close="handleToastClosed"
+      />
       <ConfirmationModal
         v-if="modalInformation && !settingsStore.settings?.dismissConfirmationModal"
         linked-component-id="confirmationModal"
@@ -53,7 +53,7 @@
         :description="modalInformation.description"
         :confirm-button-text="modalInformation.confirmButtonText"
         :confirm-button-color="modalInformation.confirmButtonColor"
-        @confirm="handleActionConfirmation(modalInformation.supervisor)"
+        @confirm="showToastInformation(modalInformation.type)"
         @abort="handleActionResetSwipe(modalInformation.supervisor)"
         @dont-show-again="handleModalDontShowAgain"
         />
@@ -72,7 +72,6 @@ import {
 } from "~/shared/types/userInterfaces"
 import {
   HttpMethods,
-  supervisionRequestStatus, 
   supervisionRequestType 
 } from "~/shared/enums/enums"
 import type { SwipeContainer } from '#components';
@@ -112,11 +111,11 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
     supervisor: supervisor
   };
 
+  supervisorStore.removeSupervisor(supervisor.supervisor_userId);
   if (!settingsStore.settings?.dismissConfirmationModal) {
     openModal();
   } else {
-    handleActionConfirmation(supervisor);
-    showToastInformation('success');
+    showToastInformation(supervisionRequestType.CONFIRM);
   }
 };
 
@@ -133,34 +132,33 @@ const handleSwipeLeft = async(supervisor: SupervisorData) => {
     supervisor: supervisor
   };
 
+  supervisorStore.removeSupervisor(supervisor.supervisor_userId);
   if (!settingsStore.settings?.dismissConfirmationModal) {
     openModal();
   } else {
-    handleActionConfirmation(supervisor);
-    showToastInformation('error');
+    showToastInformation(supervisionRequestType.DISMISS);
   }
 };
 
-  
 const handleToastUndoClick = async() => {
   toast.value.visible = false;
   if (removedSupervisor.value) {
     supervisorStore.addSupervisor(removedSupervisor.value);
     handleActionResetSwipe(removedSupervisor.value);
   }
+};
 
-  if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
-    await useFetch(`/api/supervision-requests/${supervisionRequestReturnData.value?.id}`, {
-      method: HttpMethods.PATCH,
-      body: {
-        request_state: supervisionRequestStatus.WITHDRAWN,
-      },
-    });
-  } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
-    if (!removedSupervisor.value) return;
-    await useFetch(`/api/users/${userStore.user?.id}/blocks/${removedSupervisor.value.supervisor_userId}`, {
-      method: HttpMethods.DELETE,
-    });
+/**
+ * This function is called when the toast is closed.
+ * It is vital for the functionality of the matching. When the toast closes, the appropriate
+ * request is sent to perform the user action.
+ * 
+ * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
+ */
+const handleToastClosed = () => {
+  toast.value.visible = false;
+  if (modalInformation.value?.supervisor) {
+    handleActionConfirmation(modalInformation.value.supervisor);
   }
 };
 
@@ -173,7 +171,6 @@ const handleActionConfirmation = async (supervisor: SupervisorData) => {
       },
     });
     supervisionRequestReturnData.value = data.value;
-    showToastInformation(supervisionRequestType.CONFIRM);
   } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
     await useFetch(`/api/users/${userStore.user?.id}/blocks`, {
       method: HttpMethods.POST,
@@ -181,7 +178,6 @@ const handleActionConfirmation = async (supervisor: SupervisorData) => {
         blocked_id: supervisor.supervisor_userId,
       },
     });
-    showToastInformation(supervisionRequestType.DISMISS);
   }
   supervisorStore.removeSupervisor(supervisor.supervisor_userId);
 };

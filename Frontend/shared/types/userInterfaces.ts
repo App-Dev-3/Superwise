@@ -25,11 +25,6 @@ export interface UserRegistrationData extends Record<string, unknown> {
     is_registered: boolean;
 }
 
-export interface SupervisionRequestData extends Record<string, unknown> {
-    supervisor_id?: string
-    student_email?: string
-}
-
 export interface SupervisionRequestResponseData extends Record<string, unknown> {
     id: string,
     request_state: string,
@@ -47,8 +42,13 @@ export enum supervisionRequestStatus {
     WITHDRAWN = 'WITHDRAWN'
 }
 
+export enum supervisionRequestType {
+    CONFIRM = 'CONFIRM',
+    DISMISS = 'DISMISS',
+}
+
 export interface ConfirmationDialogData {
-    type: 'confirm' | 'dismiss'
+    type: supervisionRequestType
     headline: string
     icon: string
     description: string

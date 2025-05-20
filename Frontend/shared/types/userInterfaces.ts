@@ -1,4 +1,4 @@
-import type {UserRoles} from "#shared/enums/enums";
+import type {supervisionRequestType, UserRoles} from "#shared/enums/enums";
 
 import type { SupervisorData } from "./supervisorInterfaces";
 
@@ -36,18 +36,6 @@ export interface SupervisionRequestResponseData extends Record<string, unknown> 
     created_at: string,
     updated_at: string,
     studentWasCreated: boolean
-}
-
-export enum supervisionRequestStatus {
-    PENDING = 'PENDING',
-    ACCEPTED = 'ACCEPTED',
-    REJECTED = 'REJECTED',
-    WITHDRAWN = 'WITHDRAWN'
-}
-
-export enum supervisionRequestType {
-    CONFIRM = 'CONFIRM',
-    DISMISS = 'DISMISS',
 }
 
 export interface ConfirmationDialogData {

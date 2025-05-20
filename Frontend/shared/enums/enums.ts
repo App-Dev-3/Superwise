@@ -11,3 +11,15 @@ export enum HttpMethods {
     PATCH = "PATCH",
     DELETE = "DELETE",
 }
+
+export enum supervisionRequestStatus {
+    PENDING = 'PENDING',
+    ACCEPTED = 'ACCEPTED',
+    REJECTED = 'REJECTED',
+    WITHDRAWN = 'WITHDRAWN'
+}
+
+export enum supervisionRequestType {
+    CONFIRM = 'CONFIRM',
+    DISMISS = 'DISMISS',
+}

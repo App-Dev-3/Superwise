@@ -30,7 +30,7 @@
                 :message="toast.message"
                 :duration="3000"
                 button-text="undo"
-                @button-click="handleToastClick()"
+                @button-click="handleToastUndoClick()"
                 @close="toast.visible = false"
               />
             </SwipeContainer>
@@ -53,8 +53,8 @@
         :description="modalInformation.description"
         :confirm-button-text="modalInformation.confirmButtonText"
         :confirm-button-color="modalInformation.confirmButtonColor"
-        @confirm="handleModalConfirm(modalInformation.supervisor)"
-        @abort="handleModalAbort(modalInformation.supervisor)"
+        @confirm="handleActionConfirmation(modalInformation.supervisor)"
+        @abort="handleActionResetSwipe(modalInformation.supervisor)"
         @dontShowAgain="handleModalDontShowAgain"
         />
   </div>
@@ -66,11 +66,15 @@ import { useSupervisorStore } from '~/stores/useSupervisorStore'
 import { useSettingsStore } from '~/stores/useSettingsStore'
 import { computed, nextTick, onMounted, ref } from 'vue';
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
-import { type SupervisionRequestData, type ConfirmationDialogData, type SupervisionRequestResponseData, supervisionRequestStatus } from "~/shared/types/userInterfaces"
+import { 
+  type ConfirmationDialogData, 
+  type SupervisionRequestResponseData, 
+  supervisionRequestStatus, 
+  supervisionRequestType 
+} from "~/shared/types/userInterfaces"
 import type { SwipeContainer } from '#components';
 
 
-const { makeSupervisionRequest, createStudentProfile } = useUserApi();
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
 const settingsStore = useSettingsStore();
@@ -85,7 +89,6 @@ const toast = ref({
     message: "This is a toast message",
 });
 
-console.log("Supervisor data:", supervisorStore.supervisors);
 const recommendedSupervisors = computed(() => {
     return supervisorStore.supervisors
       .sort((a, b) => {
@@ -93,10 +96,10 @@ const recommendedSupervisors = computed(() => {
       })
 });
 
-
 const handleSwipeRight = (supervisor: SupervisorData) => {
+  removedSupervisor.value = supervisor;
     modalInformation.value = {
-      type: 'confirm',
+      type: supervisionRequestType.CONFIRM,
       headline: `Request ${supervisor.firstName} ${supervisor.lastName}`,
       icon: '',
       warning: '',
@@ -105,13 +108,19 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
       confirmButtonColor: 'primary',
       supervisor: supervisor
     };
-    removedSupervisor.value = supervisor; 
-    openModal(supervisor.supervisor_userId);
+
+    if (!settingsStore.settings?.dismissConfirmationModal) {
+      openModal(supervisor.supervisor_userId);
+    } else {
+      handleActionConfirmation(supervisor);
+      showToastInformation('success');
+    }
 };
 
 const handleSwipeLeft = async(supervisor: SupervisorData) => {
+  removedSupervisor.value = supervisor;
     modalInformation.value = {
-      type: 'dismiss',
+      type: supervisionRequestType.DISMISS,
       headline: `Dismiss Supervisor`,
       icon: 'ban',
       warning: 'Dismissed supervisors can still be found in the search',
@@ -119,61 +128,62 @@ const handleSwipeLeft = async(supervisor: SupervisorData) => {
       confirmButtonText: 'Dismiss Supervisor',
       confirmButtonColor: 'error',
       supervisor: supervisor
-
     };
-    removedSupervisor.value = supervisor;
-    openModal(supervisor.supervisor_userId);
+
+    if (!settingsStore.settings?.dismissConfirmationModal) {
+      openModal(supervisor.supervisor_userId);
+    } else {
+      handleActionConfirmation(supervisor);
+      showToastInformation('error');
+    }
 };
 
 
-const handleToastClick = async() => {
+const handleToastUndoClick = async() => {
   toast.value.visible = false;
   if (removedSupervisor.value) {
     supervisorStore.addSupervisor(removedSupervisor.value);
+    handleActionResetSwipe(removedSupervisor.value);
   }
-  if (!supervisionRequestReturnData.value) return;
 
-  if (modalInformation.value?.type === 'confirm') {
-    console.log("Undoing request for supervisor:", supervisionRequestReturnData.value);
+  if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
     const {error} = await useFetch(`api/supervision-requests/${supervisionRequestReturnData.value?.id}`, {
       method: 'PATCH',
       body: {
         request_state: supervisionRequestStatus.WITHDRAWN,
       },
     });
-    console.log("Undo request error:", error);
+  } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
+    if (!removedSupervisor.value) return;
+    const {error} = await useFetch(`api/users/${userStore.user?.id}/blocks/${removedSupervisor.value.supervisor_userId}`, {
+      method: 'DELETE',
+    });
   }
 };
 
-const handleModalConfirm = async (supervisor: SupervisorData) => {
-  if (modalInformation.value?.type === 'confirm') {
-    supervisionRequestReturnData.value = await makeSupervisionRequest({
-      supervisor_id: supervisor.supervisorId,
-    } as SupervisionRequestData);
-    toast.value = {
-      visible: true,
-      type: "success",
-      message: "Chat request has been sent",
-    };
-  } else if (modalInformation.value?.type === 'dismiss') {
+const handleActionConfirmation = async (supervisor: SupervisorData) => {
+  if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
+    const { data } = await useFetch<SupervisionRequestResponseData>(`api/supervision-requests`, {
+      method: 'POST',
+      body: {
+        supervisor_id: supervisor.supervisorId,
+      },
+    });
+    supervisionRequestReturnData.value = data.value;
+    showToastInformation(supervisionRequestType.CONFIRM);
+  } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
     await useFetch(`/api/users/${userStore.user?.id}/blocks`, {
       method: 'POST',
       body: {
         blocked_id: supervisor.supervisor_userId,
       },
     });
-    toast.value = {
-      visible: true,
-      type: "error",
-      message: "Supervisor has been dismissed",
-    };
+    showToastInformation(supervisionRequestType.DISMISS);
   }
   supervisorStore.removeSupervisor(supervisor.supervisor_userId);
-  
-  console.log("Confirmed request for supervisor:", supervisionRequestReturnData.value);
 };
 
-const handleModalAbort = (supervisor: SupervisorData) => {
+const handleActionResetSwipe = (supervisor: SupervisorData) => {
   const ref = swipeContainerRefs.value[supervisor.supervisor_userId]
   ref?.reset?.()
 };
@@ -189,6 +199,22 @@ const openModal = async (id: string) => {
   const modal = document.getElementById('confirmationModal') as HTMLDialogElement
   modal?.showModal()
 }
+
+const showToastInformation = (type: string) => {
+  if (type === supervisionRequestType.CONFIRM) {
+    toast.value = {
+      visible: true,
+      type: "success",
+      message: "Supervision request has been sent",
+    };
+  } else if (type === supervisionRequestType.DISMISS) {
+    toast.value = {
+      visible: true,
+      type: "error",
+      message: "Supervisor has been dismissed",
+    };
+  }
+};
 
 const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) => {
   if (el) {

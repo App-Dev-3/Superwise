@@ -34,7 +34,6 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   online: false,
   emoji: '',
   addButton: false,
-  placeholder: '',
   ringColor: '',
 });
 

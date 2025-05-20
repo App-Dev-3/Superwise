@@ -18,12 +18,7 @@ const contentStudentAndSupervisor = [
 const getStyle = (content: string) => {
   if (content.match(/Subtitle(\.\d+)?$/))
     return "pt-6";
-  // if (content.match(/Title(\.\d+)?$/))
-  //   return "";
-  // if (content.match(/text(\.\d+)?$/))
-  //   return "text-body";
-  // if (content.match(/List(\.\d+)?$/))
-  //   return "text-body list-disc list-inside";
+// Removed unnecessary commented-out style conditions to reduce clutter.
 };
 
 const {t} = useI18n();

@@ -116,6 +116,10 @@ const recommendedSupervisors = computed(() => {
 });
 
 const handleSwipeRight = (supervisor: SupervisorData) => {
+  // quickest solution in the wild west for the bug where spamming the slider wont send old requests
+  if (toast.value.visible) {
+    handleToastClosed();
+  }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.CONFIRM,
@@ -137,6 +141,9 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
 };
 
 const handleSwipeLeft = async(supervisor: SupervisorData) => {
+  if (toast.value.visible) {
+    handleToastClosed();
+  }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.DISMISS,
@@ -173,6 +180,7 @@ const handleToastUndoClick = async() => {
  * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
  */
 const handleToastClosed = () => {
+  console.log('closing toast for: ' ,modalInformation.value?.supervisor?.firstName);
   toast.value.visible = false;
   if (modalInformation.value?.supervisor) {
     handleActionConfirmation(modalInformation.value.supervisor);
@@ -217,10 +225,10 @@ const openModal = async () => {
 }
 
 const showToastInformation = (type: string) => {
-    if (modalInformation.value?.supervisor?.supervisor_userId) {
-        supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
-    }
-    if (type === supervisionRequestType.CONFIRM) {
+  if (modalInformation.value?.supervisor?.supervisor_userId) {
+      supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
+  }
+  if (type === supervisionRequestType.CONFIRM) {
     toast.value = {
       visible: true,
       type: "success",

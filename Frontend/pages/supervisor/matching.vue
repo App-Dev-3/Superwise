@@ -10,18 +10,18 @@
                 :key="request.id || index"
                 :ref="el => setItemRef(el, request.id)"
                 class="mb-4"
-                :swipeThreshold="10"
+                :swipe-threshold="10"
                 @swipe-left="handleSwipeLeft(request)"
                 @swipe-right="handleSwipeRight(request)"
             >
               <MiniCard
                     image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                    :firstName="request.student.user.first_name"
-                    :lastName="request.student.user.last_name"
-                    :previewText="`${request.student.user.first_name} wants to be supervised by you`"
-                    topIcon="user-group"
-                    bottomIcon="tag"
-                    :bottomText="new Date(request.updated_at).toLocaleDateString()"
+                    :first-name="request.student.user.first_name"
+                    :last-name="request.student.user.last_name"
+                    :preview-text="`${request.student.user.first_name} wants to be supervised by you`"
+                    top-icon="user-group"
+                    bottom-icon="tag"
+                    :bottom-text="new Date(request.updated_at).toLocaleDateString()"
                 />
             </SwipeContainer>
           </div>
@@ -175,14 +175,14 @@ const handleToastClosed = () => {
 
 const handleActionConfirmation = async (request: SupervisionRequestsData) => {
     if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
-        const {data} = await useFetch(`/api/supervision-requests/${request.id}`, {
+        await useFetch(`/api/supervision-requests/${request.id}`, {
             method: HttpMethods.PATCH,
             body: {
                 request_state: supervisionRequestStatus.ACCEPTED
             }
         });
     } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
-        const {data} = await useFetch(`/api/supervision-requests/${request.id}`, {
+        await useFetch(`/api/supervision-requests/${request.id}`, {
             method: HttpMethods.PATCH,
             body: {
                 request_state: supervisionRequestStatus.REJECTED

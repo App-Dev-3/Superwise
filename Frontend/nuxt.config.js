@@ -18,10 +18,10 @@ export default defineNuxtConfig({
         "@nuxtjs/color-mode",
     ],
 
-  runtimeConfig: {
-    nestApiUrl: process.env.NEST_API_URL,
-    allowedEmailDomains: [process.env.ALLOWED_EMAIL_DOMAINS],
-  },
+    runtimeConfig: {
+        nestApiUrl: process.env.NEST_API_URL,
+        allowedEmailDomains: [process.env.ALLOWED_EMAIL_DOMAINS],
+    },
 
     router: {
         base: "/",
@@ -53,52 +53,52 @@ export default defineNuxtConfig({
         ]
     },
 
-  pwa: {
-    manifest: {
-      name: "Superwise",
-      //TBC.
-      short_name: "SW",
-      lang: "en",
-      description:
-        "An application that allows students to find their perfect supervisor match",
-      display: "standalone",
-      start_url: "/",
-      icons: [
-        {
-          src: "/icons/SS_512x512.svg",
-          sizes: "512x512",
-          type: "image/svg",
+    pwa: {
+        manifest: {
+            name: "Superwise",
+            //TBC.
+            short_name: "SW",
+            lang: "en",
+            description:
+                "An application that allows students to find their perfect supervisor match",
+            display: "standalone",
+            start_url: "/",
+            icons: [
+                {
+                    src: "/icons/SS_512x512.svg",
+                    sizes: "512x512",
+                    type: "image/svg",
+                },
+                {
+                    src: "/icons/SS_192x192.svg",
+                    sizes: "192x192",
+                    type: "image/svg",
+                },
+            ],
+            screenshots: [
+                {
+                    src: "/screenshots/Login.svg",
+                    sizes: "320x657",
+                    type: "image/svg",
+                    form_factor: "wide",
+                },
+                {
+                    src: "/screenshots/Chat.svg",
+                    sizes: "320x657",
+                    type: "image/svg",
+                },
+                {
+                    src: "/screenshots/Dashboard.svg",
+                    sizes: "320x657",
+                    type: "image/svg",
+                },
+                {
+                    src: "/screenshots/Matching.svg",
+                    sizes: "320x657",
+                    type: "image/svg",
+                },
+            ],
         },
-        {
-          src: "/icons/SS_192x192.svg",
-          sizes: "192x192",
-          type: "image/svg",
-        },
-      ],
-      screenshots: [
-        {
-          src: "/screenshots/Login.svg",
-          sizes: "320x657",
-          type: "image/svg",
-          form_factor: "wide",
-        },
-        {
-          src: "/screenshots/Chat.svg",
-          sizes: "320x657",
-          type: "image/svg",
-        },
-        {
-          src: "/screenshots/Dashboard.svg",
-          sizes: "320x657",
-          type: "image/svg",
-        },
-        {
-          src: "/screenshots/Matching.svg",
-          sizes: "320x657",
-          type: "image/svg",
-        },
-      ],
-    },
 
         workbox: {
             navigateFallback: "/",

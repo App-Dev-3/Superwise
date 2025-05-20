@@ -19,10 +19,11 @@ interface AvatarProps {
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   shape?: "squircle" | "rounded" | "circle";
   online?: boolean;
-  ring?: boolean;
-  ringColor?: "primary" | "error";
+  ringColor?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "error";
   firstName: string;
   lastName: string;
+  emoji?: string;
+  addButton?: boolean;
 }
 
 const props = withDefaults(defineProps<AvatarProps>(), {
@@ -31,8 +32,8 @@ const props = withDefaults(defineProps<AvatarProps>(), {
   size: 'md',
   shape: 'squircle',
   online: false,
-  ring: false,
-  ringColor: 'primary',
+  emoji: '',
+  addButton: false,
 });
 
 // Track image loading errors
@@ -110,9 +111,58 @@ const shapeClass = computed(() => {
 });
 
 const ringClass = computed(() => {
-  if (!props.ring) return '';
-  const ringColor = props.ringColor || 'primary';
-  return `ring-${ringColor} ring-offset-base-100 ring-2 ring-offset-2`;
+  switch (props.ringColor) {
+    case 'primary':
+      return 'ring-primary ring-offset-base-100 ring-2 ring-offset-2';
+    case 'error':
+      return 'ring-error ring-offset-base-100 ring-2 ring-offset-2';
+    case "secondary":
+      return 'ring-secondary ring-offset-base-100 ring-2 ring-offset-2';
+    case 'success':
+      return 'ring-success ring-offset-base-100 ring-2 ring-offset-2';
+    case 'warning':
+      return 'ring-warning ring-offset-base-100 ring-2 ring-offset-2';
+    case 'info':
+      return 'ring-info ring-offset-base-100 ring-2 ring-offset-2';
+    case 'accent':
+      return 'ring-accent ring-offset-base-100 ring-2 ring-offset-2';
+    case 'neutral':
+      return 'ring-neutral ring-offset-base-100 ring-2 ring-offset-2';
+    default:
+      return '';
+  }
+});
+
+const emojiPosition = computed(() => {
+  switch (props.size) {
+    case 'xs':
+      return '-left-[.5px] -bottom-[.5px] size-2 text-[6px]';
+    case 'sm':
+      return '-left-1 -bottom-1 size-4 text-[8px]';
+    case 'lg':
+      return '-left-1 -bottom-1 size-7 text-sm';
+    case 'xl':
+      return '-left-1 -bottom-1 size-8 text-base';
+    case 'md':
+    default:
+      return '-left-1 -bottom-1 size-6 text-xs';
+  }
+});
+
+const addPosition = computed(() => {
+  switch (props.size) {
+    case 'xs':
+      return '-right-[.5px] -bottom-[.5px] size-2 text-[8px]';
+    case 'sm':
+      return '-right-1 -bottom-1 size-4 text-sm';
+    case 'lg':
+      return '-right-1 -bottom-1 size-7 text-lg';
+    case 'xl':
+      return '-right-1 -bottom-1 size-8 text-xl';
+    case 'md':
+    default:
+      return '-right-1 -bottom-1 size-6 text-base';
+  }
 });
 
 // Handle image loading errors
@@ -127,16 +177,30 @@ const handleImageError = () => {
   <div :class="onlineStatus" class="avatar">
     <div :class="[imgSize, shapeClass, ringClass]">
       <img
-          :key="imgKey"
-          :alt="props.alt"
-          :src="(props.src && !imgError)
+        :key="imgKey"
+        :alt="props.alt"
+        :src="(props.src && !imgError)
               ? props.src
               : getPlaceholderImage(props.firstName, props.lastName)"
-          class="object-cover w-full h-full"
-          loading="lazy"
-          @error="handleImageError"
+        class="object-cover w-full h-full"
+        loading="lazy"
+        @error="handleImageError"
       >
     </div>
+    <span
+      v-if="props.emoji !== ''"
+      :class="[emojiPosition, ringClass]"
+      class="absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0">
+      {{ props.emoji }}
+    </span>
+
+    <button
+      v-if="props.addButton"
+      :class="[addPosition, ringClass]"
+      class="btn absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0"
+    >+
+    </button>
+
   </div>
 </template>
 

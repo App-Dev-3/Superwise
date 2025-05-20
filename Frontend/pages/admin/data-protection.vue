@@ -67,7 +67,7 @@ const deleteData = () => {
         class="py-8"
         color="error"
         left-icon="trash-can"
-        @click="() => deleteData()"
+        @click="deleteData"
       />
     </div>
   </div>

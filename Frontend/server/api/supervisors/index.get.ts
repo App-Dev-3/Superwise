@@ -1,16 +1,19 @@
 import {takeSchema, availableOnlySchema} from "#shared/validationSchemas/validationSchemas";
 import {ZodError} from "zod";
 
-
-export default defineEventHandler ( async (event) => {
+export default defineEventHandler(async (event) => {
     // specific checks for this endpoint
     const take = getQuery(event).take;
     const availableOnly = getQuery(event).availableOnly;
 
-    let parsedTake: number;
+    let parsedTake: number | undefined;
     let parsedAvailableOnly: boolean;
+
     try {
-        parsedTake = takeSchema.parse(take);
+        // Only parse take if it's provided
+        if (take !== undefined) {
+            parsedTake = takeSchema.parse(take);
+        }
         parsedAvailableOnly = availableOnlySchema.parse(availableOnly);
     } catch (e) {
         if (e instanceof ZodError) {
@@ -30,6 +33,16 @@ export default defineEventHandler ( async (event) => {
     const token = await getBearerToken(event)
     const targetPath = getTargetPath(event)
 
+    // Prepare query object, only including take if it's defined
+    const query: Record<string, number | boolean> = {
+        availableOnly: parsedAvailableOnly
+    };
+
+    // Only add take to query if it's defined
+    if (parsedTake !== undefined) {
+        query.take = parsedTake;
+    }
+
     // Send request to Nest API
     return await fetchNest(targetPath, {
         method: event.method,
@@ -37,10 +50,7 @@ export default defineEventHandler ( async (event) => {
             Authorization: `Bearer ${token}`,
             accept: 'application/json',
         },
-        query: {
-            take: parsedTake,
-            availableOnly: parsedAvailableOnly
-        }
+        query
     }).catch((error) => {
         throw createError({
             statusCode: error.statusCode || 500,

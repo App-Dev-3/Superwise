@@ -142,7 +142,7 @@ const csvToArray = (file: File): Promise<ParsedCsv> => {
         <div class="bg-base-100 rounded-3xl border border-base-300">
             <div class="flex flex-col items-center gap-4 w-full py-4 px-8">
                 <div
-                    class="flex flex-col px-8 py-3 shadow-inner rounded-3xl bg-base-200 w-full max-w-xs items-center gap-3"
+                    class="hover:cursor-pointer flex flex-col px-8 py-3 shadow-inner rounded-3xl bg-base-200 w-full max-w-xs items-center gap-3"
                     @click="fileInput?.click()"
                 >
 

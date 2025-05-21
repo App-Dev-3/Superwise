@@ -29,7 +29,7 @@ import {
     faUser,
     faUserGroup,
     faUserShield,
-    faXmark, faImage, faSpinner,
+    faXmark, faImage, faSpinner, faCloudArrowDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { defineNuxtPlugin } from "nuxt/app";
 
@@ -51,6 +51,7 @@ library.add(
     faHouse,
     faTriangleExclamation,
     faCloudArrowUp,
+    faCloudArrowDown,
     faArrowRight,
     faFileDownload,
     faTrashCan,

@@ -12,7 +12,7 @@
           :first-name="firstName"
           :img-src="imgSrc"
           :last-name="lastName"
-          emoji="🎓"
+          emoji="⚙️"
           ring-color="info"
           size="xl"
           @file-uploaded="handleFileUploaded"
@@ -40,41 +40,6 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div class="w-full flex justify-center flex-col p-4 gap-3">
-        <div
-          class="w-full flex flex-row flex-wrap gap-2 justify-center">
-          <CustomTag
-            v-for="(tag, index) in tags"
-            :key="`selected-${index}`"
-            :text="tag.tag_name"
-            @delete="removeTag(tag)"
-          />
-        </div>
-        <CustomButton
-          :text="$t('generic.edit')"
-          color="default"
-          left-icon="edit"
-          size="xs"
-          variant="ghost"
-          @click="navigateToEditTags"
-        />
-      </div>
-
-      <hr class="border-base-300 text-base-300">
-
-      <TextArea
-        v-model="topicDescription"
-        :maxlength="1000"
-        :rows="8"
-        class="w-full"
-        label-bottom="Your topic description will be visible to other users"
-        label-top="Topic Description"
-        name="topic-description"
-        placeholder="Tell us about your thesis idea..."
-      />
-
-      <hr class="border-base-300 text-base-300">
-
       <div class="w-full flex justify-center">
         <CustomButton
           :text="$t('generic.saveChanges')"
@@ -94,8 +59,6 @@
 import {ref} from 'vue';
 import PictureUpload from "~/components/Profile/PictureUpload.vue";
 import CustomButton from "~/components/CustomButton/CustomButton.vue";
-import type {tagData} from "#shared/types/tagInterfaces";
-import TextArea from "~/components/inputField/TextArea.vue";
 import {useRouter} from 'vue-router';
 
 const router = useRouter();
@@ -104,10 +67,6 @@ const imgSrc = ref('https://example.com/avatar.jpg');
 
 const handleFileUploaded = (base64: string) => {
   imgSrc.value = base64;
-};
-
-const navigateToEditTags = () => {
-  router.push('/edit-tags');
 };
 
 const handleSave = async () => {
@@ -137,19 +96,5 @@ const navigateToPreview = () => {
   // TODO: implement the logic, this is only a placeholder
   router.push('/profile-preview');
 };
-
-const removeTag = (tag: tagData) => {
-  tags.value = tags.value.filter(t => t.id !== tag.id);
-};
-
-const tags = ref([
-  {tag_name: 'AI', id: 1},
-  {tag_name: 'HCI', id: 2},
-  {tag_name: 'COMPUTER', id: 3},
-  {tag_name: 'MATH', id: 4},
-  {tag_name: 'Health Care', id: 5}
-] as tagData[]);
 const firstName = ref('Felix');
-const lastName = ref('Teutsch');
-const topicDescription = ref('My name is Markus Seidl and I am the head of the FH St. Pölten. I rule over all, and my commands must be followed! When I tell people to do things, they do things. When i...');
-</script>
+const lastName = ref('Teutsch');</script>

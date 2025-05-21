@@ -536,5 +536,25 @@ describe('MatchingService', () => {
       // Verify that the supervisor with a pending request was properly filtered out
       expect(result.some(match => match.supervisorId === SUPERVISOR_UUID_1)).toBeFalsy();
     });
+
+    it('should call findAllSupervisors with includeRegisteredOnly=true', async () => {
+      // Set up mocks
+      studentsService.findStudentByUserId.mockResolvedValue(mockStudentProfile);
+      supervisionRequestsService.findAllRequests.mockResolvedValue([]);
+      supervisorsService.findAllSupervisors.mockResolvedValue([]);
+      usersService.findBlockedSupervisorsByStudentUserId.mockResolvedValue([]);
+      usersService.findUserTagsByUserId.mockResolvedValue([]);
+
+      // Execute
+      await service.calculateAllMatchesForUserId(STUDENT_UUID);
+
+      // Verify the supervisors service was called with includeRegisteredOnly=true
+      expect(supervisorsService.findAllSupervisors).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.any(Object),
+          includeRegisteredOnly: true,
+        }),
+      );
+    });
   });
 });

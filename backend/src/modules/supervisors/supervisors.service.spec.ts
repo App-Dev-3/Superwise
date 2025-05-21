@@ -50,8 +50,17 @@ describe('SupervisorsService', () => {
       const result = await service.findAllSupervisors({});
 
       expect(result).toEqual([mockSupervisor]);
-
       expect(repository.findAllSupervisors).toHaveBeenCalledWith({});
+    });
+
+    it('should pass includeRegisteredOnly parameter to repository', async () => {
+      repository.findAllSupervisors.mockResolvedValue([mockSupervisor]);
+
+      await service.findAllSupervisors({ includeRegisteredOnly: true });
+
+      expect(repository.findAllSupervisors).toHaveBeenCalledWith({
+        includeRegisteredOnly: true,
+      });
     });
   });
 

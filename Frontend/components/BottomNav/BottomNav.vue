@@ -8,11 +8,6 @@ interface NavButton {
     route: string;
 }
 // Example of bottomNavButtons array
-// const bottomNavButtons = [
-//     { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
-//     { label: 'Matching', icon: 'user-group', route: '/student/matching' },
-//     { label: 'Chat', icon: 'message', route: '/student/chat' }
-// ]
 interface Props {
     bottomNavButtons: NavButton[];
     alwaysShowLabels?: boolean;

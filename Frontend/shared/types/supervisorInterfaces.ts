@@ -1,4 +1,7 @@
+import type { supervisionRequestStatus } from "../enums/enums"
+
 export interface SupervisorData {
+  supervisorId: string
   supervisor_userId: string
   firstName: string
   lastName: string
@@ -8,4 +11,29 @@ export interface SupervisorData {
   pendingRequests: number
   availableSpots: number
   totalSpots: number
+}
+
+export interface SupervisionRequestsData {
+  id: string;
+  request_state: supervisionRequestStatus;
+  student_id: string;
+  supervisor_id: string;
+  created_at: string;
+  updated_at: string;
+  studentWasCreated: boolean;
+  student: UserReference;
+  supervisor: UserReference;
+}
+
+export interface UserBasicInfo {
+  first_name: string;
+  last_name: string;
+  email: string;
+  profile_image?: string;
+}
+
+export interface UserReference {
+  id: string;
+  user_id: string;
+  user: UserBasicInfo;
 }

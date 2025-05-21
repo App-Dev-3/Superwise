@@ -9,11 +9,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const { user, isLoaded, isSignedIn } = useUser()
   const registrationStore = useRegistrationStore()
-  const userStore = useUserStore()
 
   // Make sure clerkUser and backendUser are ready
   if (!isLoaded.value) await until(isLoaded).toBe(true)
-  await userStore.refetchCurrentUser()
 
   // Only allow access to public paths if not signed in
   const publicPaths = ['/']
@@ -38,8 +36,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (registrationStore.status?.role) {
     userRole = registrationStore.status.role
   }
-  const onboardingComplete = registrationStore.status?.is_registered
+  const onboardingComplete = registrationStore.status?.is_registered || false
 
+  if (!onboardingComplete && to.path.startsWith('/onboarding')) {
+    return
+  }
+  
   if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
     if (userRole === UserRoles.SUPERVISOR) {
       return navigateTo('/onboarding/supervisor')
@@ -54,10 +56,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // ============ USER IS NOW REGISTERED AND ONBOARDED ============
 
+  const userStore = useUserStore()
+  await userStore.refetchCurrentUser()
+
   // make sure only each role-specific route can only be accessed by the corresponding role
   if (
       !to.path.startsWith(`/${userRole.toLowerCase()}`)
-      && !to.path.startsWith('/profiles')
+      && !to.path.startsWith('/profiles')  && to.path !== '/playground'
   ) {
     return navigateTo(`/${userRole.toLowerCase()}/dashboard`)
   }

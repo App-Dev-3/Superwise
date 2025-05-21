@@ -2,7 +2,7 @@ export interface SupervisorData {
   supervisor_userId: string
   firstName: string
   lastName: string
-  compatibilityScore: number
+  compatibilityScore?: number | null
   bio: string
   tags: string[]
   pendingRequests: number

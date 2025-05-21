@@ -19,7 +19,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   image: '',
-  warning: 'This action can not be undone!',
+  warning: '',
   cancelButtonText: 'Cancel',
   confirmButtonIcon: ''
 })

@@ -1,0 +1,44 @@
+{
+  "generic": {
+    "continue": "Continue",
+    "german": "🇩🇪 Deutsch",
+    "english": "🇬🇧 English",
+    "student": "Student",
+    "supervisor": "Supervisor",
+    "admin": "Admin"
+  },
+  "dataProtection": {
+    "generic": {
+      "deleteMyData": "Delete my data",
+      "pageHeader": "Data Protection",
+      "generalInfoTitle": "🛡 SuperWise Data Protection Policy",
+      "collectedDataSubtitle": "📌 What Data We Collect",
+      "changesAndOverwritesSubtitle": "🔁 Data Changes & Overwrites",
+      "dataDeletionSubtitle": "🗑 Data Deletion",
+      "generalInfoText": "At SuperWise, we take your privacy and the protection of your personal data seriously. This policy outlines how we collect, use, and manage your information to ensure transparency and your peace of mind."
+    },
+    "student&supervisor": {
+      "collectedDataText": "To provide our matchmaking and supervision services, we collect and store the following information:",
+      "collectedDataList": "Email address (used for login and communication)\nFirst and last name\nProfile picture\nMessages sent within the platform\nTopic description (students)\nBio (supervisors)\nTags selected to describe expertise or thesis topics\nMatch history: supervisors you have matched with or dismissed\nRequests sent: including chat and supervision requests",
+      "changesAndOverwritesText": "When you update your personal data, such as your name, profile picture, topic description, or bio, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
+      "dataDeletionText": {
+        "1": "You have the right to request the deletion of your data at any time. When you do your profile and personal information will no longer be visible or accessible to other users. Some minimal data may be retained until the end of the supervision period, for functionality and record purposes. This includes:",
+        "2": "After the supervision period ends, this remaining data will be fully and irreversibly deleted."
+      },
+      "dataDeletionList": "Your email\nRecords of matches\nMessages sent to or received from others"
+    },
+    "admin": {
+      "generalInfoText": "This clause applies specifically to users with admin-level access on SuperWise.",
+      "collectedDataText": "For admin accounts, we only collect and store:",
+      "collectedDataList": "Full name\nEmail address\nProfile picture",
+      "changesAndOverwritesText": "When you update your personal data, such as your name or profile picture, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
+      "dataDeletionText": "When an admin deletes their account all personally identifiable data (name, email, and profile picture) will be permanently deleted without backup.",
+      "dataRetentionSubtitle": "📁 What Is Retained After Admin Account Deletion",
+      "dataRetentionText": {
+        "1": "When an Admin deletes their account, all personal data (name, email, and profile picture) will be permanently removed. However, some data created or uploaded in the course of managing the platform is not considered personal data and will be retained. This includes:",
+        "2": "This content forms part of the platform infrastructure and is essential for maintaining the integrity and continuity of the SuperWise system. It is therefore not deleted when an Admin account is removed."
+      },
+      "dataRetentionList": "Tags added to the system\nSupervisor accounts and associated metadata\nPlatform configurations or any structural input made during administrative use"
+    }
+  }
+}

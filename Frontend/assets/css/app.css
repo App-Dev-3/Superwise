@@ -13,38 +13,31 @@
 }
 
 .text-header {
-  @apply font-bold;
-  font-size: 20px;
+  @apply font-extrabold p-0 m-0 text-xl;
 }
 
 .text-large {
-  font-size: 18px;
+  @apply font-semibold p-0 m-0 text-lg;
 }
 
 .text-body {
-  @apply font-normal;
-  font-size: 16px;
+  @apply font-normal text-base;
 }
 
 .text-small {
-  @apply font-light;
-  font-size: 14px;
+  @apply font-light text-sm;
 }
 
 .text-x-small {
-  @apply font-light;
-  font-size: 12px;
+  @apply font-light text-xs;
 }
 
 .text-xs-link {
-  @apply font-light underline;
-  color: var(--color-primary);
-  font-size: 12px;
+  @apply font-normal underline text-xs text-primary;
 }
 
 .text-xs-heavy {
-  @apply font-bold;
-  font-size: 12px;
+  @apply font-bold text-xs;
 }
 
 

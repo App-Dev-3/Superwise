@@ -27,7 +27,7 @@
 
             <div class="">
                 <BottomNav
-                    :active-route="dummyRoute"
+                    :bottom-nav-buttons="bottomNavButtons"
                     :always-show-labels="false"
                     @navigate="navigate"
                 />
@@ -43,6 +43,11 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { UserData } from "#shared/types/userInterfaces";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 
+const bottomNavButtons = [
+    { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
+    { label: 'Matching', icon: 'user-group', route: '/student/matching' },
+    { label: 'Chat', icon: 'message', route: '/student/chat' }
+]
 const { user } = useUser();
 const { getUserByEmail, getRecommendedSupervisors} = useUserApi();
 const userStore = useUserStore();

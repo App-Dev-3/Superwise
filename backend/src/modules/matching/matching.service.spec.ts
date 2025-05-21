@@ -72,6 +72,7 @@ describe('MatchingService', () => {
           first_name: 'Student',
           last_name: 'User',
           email: 'student@fhstp.ac.at',
+          profile_image: null,
         },
       },
       supervisor: {
@@ -81,6 +82,7 @@ describe('MatchingService', () => {
           first_name: 'John',
           last_name: 'Doe',
           email: 'supervisor@fhstp.ac.at',
+          profile_image: null,
         },
       },
     },
@@ -343,6 +345,7 @@ describe('MatchingService', () => {
       expect(result[0].supervisor_userId).toEqual(USER_UUID_1);
       expect(result[0].firstName).toEqual('John');
       expect(result[0].lastName).toEqual('Doe');
+      expect(result[0].profileImage).toBeNull();
       expect(result[0].bio).toEqual('Test bio 1');
       expect(result[0].availableSpots).toEqual(3);
       expect(result[0].totalSpots).toEqual(5);
@@ -353,6 +356,7 @@ describe('MatchingService', () => {
       expect(result[1].supervisor_userId).toEqual(USER_UUID_2);
       expect(result[1].firstName).toEqual('Jane');
       expect(result[1].lastName).toEqual('Smith');
+      expect(result[1].profileImage).toBeNull();
       expect(result[1].bio).toEqual('Test bio 2');
       expect(result[1].availableSpots).toEqual(2);
       expect(result[1].totalSpots).toEqual(4);

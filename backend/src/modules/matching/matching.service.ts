@@ -91,6 +91,7 @@ export class MatchingService {
         supervisor_userId: supervisor.user_id,
         firstName: supervisorUserData?.first_name || '',
         lastName: supervisorUserData?.last_name || '',
+        profileImage: supervisorUserData?.profile_image || null,
         compatibilityScore: compatibility_score,
         bio: supervisor.bio ?? '',
         tags: tagNames,

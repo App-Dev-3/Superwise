@@ -26,6 +26,13 @@ export class Match {
   lastName: string;
 
   @ApiProperty({
+    description: "The supervisor's profile image URL",
+    example: 'https://example.com/profile.jpg',
+    nullable: true,
+  })
+  profileImage: string | null;
+
+  @ApiProperty({
     description: 'Compatibility score between student and supervisor (0-1)',
     example: 0.85,
     minimum: 0,

@@ -15,7 +15,7 @@
           emoji="🎓"
           ring-color="info"
           size="xl"
-          @file-uploaded="handleFileUploaded"
+          @file-uploaded="updateProfileImage"
         />
       </div>
 
@@ -40,6 +40,7 @@
 
       <hr class="border-base-300 text-base-300">
 
+<!--        TODO:MAKE TAGS EDITABLE-->
       <div class="w-full flex justify-center flex-col p-4 gap-3">
         <div
           class="w-full flex flex-row flex-wrap gap-2 justify-center">
@@ -75,17 +76,18 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div class="w-full flex justify-center">
-        <CustomButton
-          :text="$t('generic.saveChanges')"
-          color="primary"
-          left-icon="check"
-          size="lg"
-          @click="handleSave"
-        />
-      </div>
+
 
     </div>
+      <div class="w-full flex justify-center p-4 border-t border-t-base-300 shadow">
+          <CustomButton
+              :text="$t('generic.saveChanges')"
+              color="primary"
+              left-icon="check"
+              size="lg"
+              @click="handleSave"
+          />
+      </div>
   </div>
 </template>
 
@@ -97,14 +99,55 @@ import CustomButton from "~/components/CustomButton/CustomButton.vue";
 import type {tagData} from "#shared/types/tagInterfaces";
 import TextArea from "~/components/inputField/TextArea.vue";
 import {useRouter} from 'vue-router';
+import {HttpMethods} from "#shared/enums/enums";
 
 const router = useRouter();
-const imgSrc = ref('https://example.com/avatar.jpg');
+
+const userStore = useUserStore();
+if (!userStore.user) {
+    userStore.refetchCurrentUser()
+        .then(() => {
+            imgSrc.value = userStore.user?.profile_image || '';
+            firstName.value = userStore.user?.first_name || '';
+            lastName.value = userStore.user?.last_name || '';
+        })
+        .catch(() => {
+            console.error('Error fetching user data in profile page');
+        });
+}
+
+const studentS
+if (!studentStore.student) {
+    studentStore.refetchCurrentStudent()
+        .then(() => {
+            tags.value = studentStore.student?.tags || [];
+        })
+        .catch(() => {
+            console.error('Error fetching student data in profile page');
+        });
+}
+
+const imgSrc = ref<string>(userStore.user?.profile_image || '');
+const firstName = ref(userStore.user?.first_name || '');
+const lastName = ref(userStore.user?.last_name || '');
+// const topicDescription = ref(userStore.user?.bio || '');
 
 
-const handleFileUploaded = (base64: string) => {
-  imgSrc.value = base64;
+const updateProfileImage = (base64: string) => {
+    $fetch('/api/users/:id', {
+        method: HttpMethods.PATCH,
+        body: {
+            profile_image: base64
+        }
+    }).finally(
+        () => {
+            userStore.refetchCurrentUser()
+        }
+    )
+    imgSrc.value = base64;
 };
+
+
 
 const navigateToEditTags = () => {
   router.push('/edit-tags');
@@ -142,14 +185,12 @@ const removeTag = (tag: tagData) => {
   tags.value = tags.value.filter(t => t.id !== tag.id);
 };
 
-const tags = ref([
-  {tag_name: 'AI', id: 1},
-  {tag_name: 'HCI', id: 2},
-  {tag_name: 'COMPUTER', id: 3},
-  {tag_name: 'MATH', id: 4},
-  {tag_name: 'Health Care', id: 5}
-] as tagData[]);
-const firstName = ref('Felix');
-const lastName = ref('Teutsch');
-const topicDescription = ref('My name is Markus Seidl and I am the head of the FH St. Pölten. I rule over all, and my commands must be followed! When I tell people to do things, they do things. When i...');
+// const tags = ref([
+//   {tag_name: 'AI', id: 1},
+//   {tag_name: 'HCI', id: 2},
+//   {tag_name: 'COMPUTER', id: 3},
+//   {tag_name: 'MATH', id: 4},
+//   {tag_name: 'Health Care', id: 5}
+// ] as tagData[]);
+
 </script>

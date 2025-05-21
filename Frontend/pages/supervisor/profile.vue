@@ -15,7 +15,7 @@
           emoji="🧑‍🏫"
           ring-color="info"
           size="xl"
-          @file-uploaded="handleFileUploaded"
+          @file-uploaded="updateProfileImage"
         />
       </div>
 
@@ -75,17 +75,16 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div class="w-full flex justify-center">
-        <CustomButton
-          :text="$t('generic.saveChanges')"
-          color="primary"
-          left-icon="check"
-          size="lg"
-          @click="handleSave"
-        />
-      </div>
-
     </div>
+      <div class="w-full flex justify-center p-4 border-t border-t-base-300 shadow">
+          <CustomButton
+              :text="$t('generic.saveChanges')"
+              color="primary"
+              left-icon="check"
+              size="lg"
+              @click="handleSave"
+          />
+      </div>
   </div>
 </template>
 
@@ -97,12 +96,25 @@ import CustomButton from "~/components/CustomButton/CustomButton.vue";
 import type {tagData} from "#shared/types/tagInterfaces";
 import TextArea from "~/components/inputField/TextArea.vue";
 import {useRouter} from 'vue-router';
+import {HttpMethods} from "#shared/enums/enums";
 
 const router = useRouter();
 const imgSrc = ref('https://example.com/avatar.jpg');
 
+const userStore = useUserStore();
 
-const handleFileUploaded = (base64: string) => {
+
+const updateProfileImage = (base64: string) => {
+    $fetch('/api/users/:id', {
+        method: HttpMethods.PATCH,
+        body: {
+            profile_image: base64
+        }
+    }).finally(
+        () => {
+            userStore.refetchCurrentUser()
+        }
+    )
   imgSrc.value = base64;
 };
 

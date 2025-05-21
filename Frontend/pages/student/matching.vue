@@ -25,7 +25,7 @@
                 :current-capacity="supervisor.availableSpots"
                 :max-capacity="supervisor.totalSpots"
                 :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-                :image="supervisor.profile_image || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
+                :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
                 :description="supervisor.bio"
               />
             </SwipeContainer>

@@ -15,13 +15,15 @@ interface Props {
   cancelButtonText?: string;
   confirmButtonColor: 'default' | 'primary' | 'secondary' | 'accent' | 'error' | 'success' | 'warning' | 'info' | 'neutral';
   confirmButtonIcon?: string;
+  hideCancelButton?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   image: '',
   warning: '',
   cancelButtonText: 'Cancel',
-  confirmButtonIcon: ''
+  confirmButtonIcon: '',
+  hideCancelButton: false,
 })
 
 // "cancel" emit is called abort because cancel is a reserved word
@@ -81,6 +83,7 @@ const handleConfirm = () => {
 
       <div class="flex flex-col gap-2">
         <CustomButton
+            v-if="!props.hideCancelButton"
             :text="props.cancelButtonText" block color="default" size="xl" variant="ghost"
             @click="handleCancel"/>
         <CustomButton

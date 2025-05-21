@@ -66,7 +66,7 @@ library.add(
     faSpinner,
     faEdit,
     faPlus,
-    faMinus
+    faMinus,
 )
 
 export default defineNuxtPlugin((nuxtApp) => {

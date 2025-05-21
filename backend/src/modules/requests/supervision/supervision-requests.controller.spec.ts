@@ -92,6 +92,7 @@ describe('SupervisionRequestsController', () => {
         first_name: 'Student',
         last_name: 'User',
         email: 'student@fhstp.ac.at',
+        profile_image: 'https://superwise.at/images/student-profile.jpg',
       },
     },
     supervisor: {
@@ -101,6 +102,7 @@ describe('SupervisionRequestsController', () => {
         first_name: 'Supervisor',
         last_name: 'User',
         email: 'supervisor@fhstp.ac.at',
+        profile_image: 'https://superwise.at/images/supervisor-profile.jpg',
       },
     },
   };

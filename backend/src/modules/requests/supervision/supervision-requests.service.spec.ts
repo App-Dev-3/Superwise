@@ -134,6 +134,7 @@ describe('SupervisionRequestsService', () => {
         first_name: 'Student',
         last_name: 'User',
         email: 'student@fhstp.ac.at',
+        profile_image: null,
       },
     },
     supervisor: {
@@ -143,6 +144,7 @@ describe('SupervisionRequestsService', () => {
         first_name: 'Supervisor',
         last_name: 'User',
         email: 'supervisor@fhstp.ac.at',
+        profile_image: null,
       },
     },
   };

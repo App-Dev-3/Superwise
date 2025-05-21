@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 // this should give type safety and autocomplete in the ide,
 // we should have used this from the start lol
-import type {Base64Image, CsvRow, ParsedCsv, TagSimilarityData} from "#shared/types/fileUploadTypes";
-import Papa from 'papaparse';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 interface Props {

@@ -76,7 +76,6 @@ import {supervisionRequestStatus, UserRoles} from "#shared/enums/enums";
 import type {UserData} from "#shared/types/userInterfaces";
 import type {SupervisorProfile} from "#shared/types/supervisorInterfaces";
 import type {SupervisionRequest} from "#shared/types/requests";
-import {until} from "@vueuse/core";
 import type {StudentProfile} from "#shared/types/StudentInterfaces";
 
 definePageMeta({

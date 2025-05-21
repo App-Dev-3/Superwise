@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref } from "vue";
 import SupervisorStudentList from "~/components/SupervisorStudentList/SupervisorStudentList.vue";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 
@@ -18,7 +17,7 @@ const students = computed(() =>
     id: request.student.user.id,
     firstName: request.student.user.first_name,
     lastName: request.student.user.last_name,
-    email: request.student.user.emailAddress ?? "",
+    email: request.student.user.email ?? "",
     src: request.student.user.profile_image ?? "",
   }))
 );
@@ -85,7 +84,10 @@ async function addStudent(email: string) {
       <AdminHeader header-text="Edit Supervising Students" />
       <div class="w-full flex flex-col gap-4 p-8 overflow-y-auto">
         <span class="text-large">Currently Supervising</span>
+        <div v-if="pending">Loading…</div>
+        <div v-else-if="error" class="text-red-600">{{ error.message }}</div>
         <SupervisorStudentList
+          v-else
           :max-students="10"
           :students="students"
           @add:students="addStudent"

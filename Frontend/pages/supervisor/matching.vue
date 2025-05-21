@@ -19,7 +19,7 @@
                 @swipe-right="handleSwipeRight(request)"
             >
               <MiniCard
-                    image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    :image="request.student.user.profile_image"
                     :first-name="request.student.user.first_name"
                     :last-name="request.student.user.last_name"
                     :preview-text="`${request.student.user.first_name} wants to be supervised by you`"
@@ -52,7 +52,7 @@
         linked-component-id="confirmationModal"
         :headline="modalInformation.headline"
         :icon="modalInformation.icon"
-        image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+        :image="modalInformation.request.student.user.profile_image || getPlaceholderImage(modalInformation.request.student.user.first_name, modalInformation.request.student.user.last_name)"
         :description="modalInformation.description"
         :confirm-button-text="modalInformation.confirmButtonText"
         :confirm-button-color="modalInformation.confirmButtonColor"
@@ -118,7 +118,7 @@ const handleSwipeRight = (request: SupervisionRequestsData) => {
         icon: '',
         warning: '',
         description: `Would you like to accept the supervision request from 
-        ${request.student.user.first_name} ${request.student.user.last_name}? Once accepted You will officially be a supervisor-studnet pair`,
+        ${request.student.user.first_name} ${request.student.user.last_name}? Once accepted You will officially be a supervisor-student pair`,
         confirmButtonText: 'Accept Request',
         confirmButtonColor: 'primary',
         request: request,
@@ -232,14 +232,14 @@ const showToastInformation = (type: string) => {
     toast.value = {
       visible: true,
       type: "success",
-      message: "Supervision request has been sent",
+      message: "You accepted the supervision request",
     };
   } else if (type === supervisionRequestType.DISMISS) {
     console.log("😀😀😀😀");
     toast.value = {
       visible: true,
       type: "error",
-      message: "Supervisor has been dismissed",
+      message: "You rejected the supervision request",
     };
   }
 };

@@ -25,7 +25,7 @@
                 :current-capacity="supervisor.availableSpots"
                 :max-capacity="supervisor.totalSpots"
                 :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-                image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                :image="supervisor.profile_image || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
                 :description="supervisor.bio"
               />
             </SwipeContainer>

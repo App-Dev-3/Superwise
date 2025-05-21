@@ -30,3 +30,22 @@ export function exportCsv(data: csvMatchExportRow[], filename = 'export.csv', de
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 }
+
+export function transformCsvDataToImportFormat (csvData: Record<string, string | number | undefined >[]) {
+    const supervisors = csvData.map(row => {
+        const email = row['Email'] || '';
+        const firstName = row['First Name'] || '';
+        const lastName = row['Last Name'] || '';
+        const totalSpots = parseInt(<string>row['Capacity'] || '0', 10);
+        const takenSpots = parseInt(<string>row['Final/Taken'] || '0', 10);
+
+        return {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            total_spots: totalSpots,
+            available_spots: totalSpots - takenSpots,
+        };
+    });
+    return { supervisors };
+}

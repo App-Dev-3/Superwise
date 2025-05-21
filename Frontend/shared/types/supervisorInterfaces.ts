@@ -37,3 +37,13 @@ export interface UserReference {
   user_id: string;
   user: UserBasicInfo;
 }
+
+export interface SupervisorProfile {
+  id: string;
+  user_id: string;
+  bio: string | null;
+  available_spots: number;
+  total_spots: number;
+  created_at: string;
+  updated_at: string;
+}

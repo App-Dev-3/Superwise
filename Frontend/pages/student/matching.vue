@@ -2,7 +2,11 @@
   <div class="flex flex-col items-center px-2 max-w-full">
       <div class="min-h-screen flex flex-col max-w-7xl w-full">
         <div class="fixed top-0 z-10 left-0 right-0 ">
-          <AppHeader show-search show-user />
+            <!-- Is this the header thats supposed to be used??-->
+            <AdminHeader 
+                header-text="Matching" 
+                variant="default" 
+            />
         </div>
           <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
             <SwipeContainer
@@ -21,7 +25,7 @@
                 :current-capacity="supervisor.availableSpots"
                 :max-capacity="supervisor.totalSpots"
                 :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-                image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                :image="supervisor.profile_image || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
                 :description="supervisor.bio"
               />
             </SwipeContainer>
@@ -116,6 +120,10 @@ const recommendedSupervisors = computed(() => {
 });
 
 const handleSwipeRight = (supervisor: SupervisorData) => {
+  // quickest solution in the wild west for the bug where spamming the slider wont send old requests
+  if (toast.value.visible) {
+    handleToastClosed();
+  }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.CONFIRM,
@@ -137,6 +145,9 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
 };
 
 const handleSwipeLeft = async(supervisor: SupervisorData) => {
+  if (toast.value.visible) {
+    handleToastClosed();
+  }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.DISMISS,
@@ -173,6 +184,7 @@ const handleToastUndoClick = async() => {
  * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
  */
 const handleToastClosed = () => {
+  console.log('closing toast for: ' ,modalInformation.value?.supervisor?.firstName);
   toast.value.visible = false;
   if (modalInformation.value?.supervisor) {
     handleActionConfirmation(modalInformation.value.supervisor);
@@ -217,10 +229,10 @@ const openModal = async () => {
 }
 
 const showToastInformation = (type: string) => {
-    if (modalInformation.value?.supervisor?.supervisor_userId) {
-        supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
-    }
-    if (type === supervisionRequestType.CONFIRM) {
+  if (modalInformation.value?.supervisor?.supervisor_userId) {
+      supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
+  }
+  if (type === supervisionRequestType.CONFIRM) {
     toast.value = {
       visible: true,
       type: "success",

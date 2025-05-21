@@ -5,6 +5,8 @@ import { UsersService } from '../users/users.service';
 import { TagsService } from '../tags/tags.service';
 import { UserTag } from '../users/entities/user-tag.entity';
 import { safeStringify } from '../../common/utils/string-utils';
+import { SupervisionRequestsService } from '../requests/supervision/supervision-requests.service';
+import { RequestState } from '@prisma/client';
 
 @Injectable()
 export class MatchingService {
@@ -18,11 +20,13 @@ export class MatchingService {
     private readonly supervisorsService: SupervisorsService,
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
+    private readonly supervisionRequestsService: SupervisionRequestsService,
   ) {}
+
   async calculateAllMatchesForUserId(studentUserId: string): Promise<Match[]> {
     this.checkCacheExpiration();
-    const matches: Match[] = [];
 
+    // Get all available supervisors
     const availableSupervisors = await this.supervisorsService.findAllSupervisors({
       where: {
         available_spots: {
@@ -36,11 +40,34 @@ export class MatchingService {
       await this.usersService.findBlockedSupervisorsByStudentUserId(studentUserId);
     const blockedSupervisorUserIds = new Set(blockedSupervisors.map(block => block.blocked_id));
 
+    // Get student's supervision requests
+    const activeRequests = await this.supervisionRequestsService.findAllRequests(
+      studentUserId,
+      'STUDENT',
+    );
+
+    // Extract supervisor IDs from pending and accepted requests
+    const requestedSupervisorIds = new Set(
+      activeRequests
+        .filter(
+          req =>
+            req.request_state === RequestState.PENDING ||
+            req.request_state === RequestState.ACCEPTED,
+        )
+        .map(req => req.supervisor_id),
+    );
+
     const studentTags = await this.usersService.findUserTagsByUserId(studentUserId);
 
+    const matches: Match[] = [];
     for (const supervisor of availableSupervisors) {
       // Skip blocked supervisors
       if (blockedSupervisorUserIds.has(supervisor.user_id)) {
+        continue;
+      }
+
+      // Skip supervisors with pending or accepted requests
+      if (requestedSupervisorIds.has(supervisor.id)) {
         continue;
       }
 

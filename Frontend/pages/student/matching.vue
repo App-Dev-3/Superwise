@@ -53,7 +53,7 @@
         linked-component-id="confirmationModal"
         :headline="modalInformation.headline"
         :icon="modalInformation.icon"
-        image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+        :image="modalInformation.supervisor?.profileImage"
         :description="modalInformation.description"
         :confirm-button-text="modalInformation.confirmButtonText"
         :confirm-button-color="modalInformation.confirmButtonColor"

@@ -33,6 +33,7 @@ export class MatchingService {
           gt: 0,
         },
       },
+      includeRegisteredOnly: true,
     });
 
     // Get list of supervisors blocked by this student

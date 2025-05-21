@@ -29,6 +29,7 @@ export class SupervisorsService {
     take?: number;
     where?: Prisma.SupervisorWhereInput;
     orderBy?: Prisma.SupervisorOrderByWithRelationInput;
+    includeRegisteredOnly?: boolean;
   }) {
     return this.supervisorsRepository.findAllSupervisors(params);
   }

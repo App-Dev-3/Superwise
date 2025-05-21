@@ -23,14 +23,31 @@ export class SupervisorsRepository {
     take?: number;
     where?: Prisma.SupervisorWhereInput;
     orderBy?: Prisma.SupervisorOrderByWithRelationInput;
+    includeRegisteredOnly?: boolean;
   }): Promise<Supervisor[]> {
-    const { take, where, orderBy } = params;
+    const { take, where, orderBy, includeRegisteredOnly } = params;
 
-    return this.prisma.supervisor.findMany({
+    // Create query with user relation for registration check
+    const query: Prisma.SupervisorFindManyArgs = {
       take,
       where,
       orderBy,
-    });
+      include: {
+        user: includeRegisteredOnly ? true : undefined,
+      },
+    };
+
+    // If we need to filter by registration status, add the condition to where
+    if (includeRegisteredOnly) {
+      query.where = {
+        ...query.where,
+        user: {
+          is_registered: true,
+        },
+      };
+    }
+
+    return this.prisma.supervisor.findMany(query);
   }
 
   async updateSupervisorProfile(

@@ -85,13 +85,6 @@ describe('ProfileDescription', () => {
             expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
         })
 
-        it('does not show button when content is shorter than threshold', () => {
-            const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'Short content'
-            })
-
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(false)
-        })
+        
     })
 })

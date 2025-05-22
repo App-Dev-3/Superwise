@@ -82,6 +82,7 @@ const goBack = () => {
 
       <div class="navbar-end">
         <SearchBar
+            v-if="props.showSearch"
           right-icon="xmark"
           placeholder="Search..."
           :model-value="props.modelValue"

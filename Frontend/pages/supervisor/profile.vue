@@ -160,7 +160,7 @@ const handleSave = async () => {
         })
     }
     if (bio.value !== userStore.supervisorProfile?.bio) {
-        const {status} = useFetch('/api/supervisors/' + userStore.supervisorProfile?.supervisorId, {
+        const {status} = useFetch('/api/supervisors/' + userStore.supervisorProfile?.id, {
             method: HttpMethods.PATCH,
             body: {
                 bio: bio.value

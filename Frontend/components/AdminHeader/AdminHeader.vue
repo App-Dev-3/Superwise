@@ -43,7 +43,7 @@ const emit = defineEmits(['right-button-click']);
 
   <div
     :class="headerBG"
-    class="w-full flex items-center p-4 gap-4 shadow z-10"
+    class="w-full flex items-center p-4 gap-4 shadow z-10 "
   >
     <CustomButton
       :class="colorText"

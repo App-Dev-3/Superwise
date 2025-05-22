@@ -22,8 +22,8 @@
                 :first-name="supervisor.firstName"
                 :last-name="supervisor.lastName"
                 :tags="supervisor.tags"
-                :current-capacity="supervisor.availableSpots"
-                :max-capacity="supervisor.totalSpots"
+                :current-capacity="supervisor.available_spots"
+                :max-capacity="supervisor.total_spots"
                 :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
                 :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
                 :description="supervisor.bio"
@@ -83,7 +83,7 @@ import type { SwipeContainer } from '#components';
 const bottomNavButtons = [
     { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
     { label: 'Matching', icon: 'user-group', route: '/student/matching' },
-    { label: 'Chat', icon: 'message', route: '/student/chat' }
+    { label: 'Chat', icon: 'message', route: '/student/requests' }
 ]
 
 const supervisorStore = useSupervisorStore();
@@ -196,7 +196,7 @@ const handleActionConfirmation = async (supervisor: SupervisorData) => {
     const { data } = await useFetch<SupervisionRequestResponseData>(`/api/supervision-requests`, {
       method: HttpMethods.POST,
       body: {
-        supervisor_id: supervisor.supervisorId,
+        supervisor_id: supervisor.id,
       },
     });
     supervisionRequestReturnData.value = data.value;

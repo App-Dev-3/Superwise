@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
       <div class="min-h-screen flex flex-col max-w-7xl w-full">
-        <div class="fixed top-0 z-10 left-0 right-0 ">
+        <div class="fixed top-0 z-10 left-0 right-0  max-w-3xl">
             <!-- Is this the header thats supposed to be used??-->
             <AdminHeader 
                 header-text="Supervision Requests" 
@@ -30,7 +30,7 @@
             </SwipeContainer>
           </div>
           
-          <div class="">
+          <div>
             <BottomNav
                 :bottom-nav-buttons="bottomNavButtons"
                 :always-show-labels="false"
@@ -252,7 +252,7 @@ function navigate(route: string) {
 const bottomNavButtons = [
     { label: 'Dashboard', icon: 'house', route: '/supervisor/dashboard' },
     { label: 'Matching', icon: 'user-group', route: '/supervisor/matching' },
-    { label: 'Chat', icon: 'message', route: '/supervisor/chat' }
+    { label: 'Chat', icon: 'message', route: '/supervisor/requests' }
 ];
 
 const dummyRoute = ref("/");

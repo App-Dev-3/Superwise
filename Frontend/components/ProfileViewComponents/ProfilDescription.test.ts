@@ -1,12 +1,12 @@
-import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {mount} from '@vue/test-utils'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import ProfileDescription from './ProfileDescription.vue'
-import { useMediaQuery } from '@vueuse/core'
+import {useMediaQuery} from '@vueuse/core'
 
 // Mock useMediaQuery
 vi.mock('@vueuse/core', async () => {
     return {
-        useMediaQuery: vi.fn().mockReturnValue({ value: false })
+        useMediaQuery: vi.fn().mockReturnValue({value: false})
     }
 })
 
@@ -21,7 +21,7 @@ beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     // Reset useMediaQuery mock to default value
-    vi.mocked(useMediaQuery).mockImplementation(() => ({ value: false }))
+    vi.mocked(useMediaQuery).mockImplementation(() => ({value: false}))
 })
 
 describe('ProfileDescription', () => {

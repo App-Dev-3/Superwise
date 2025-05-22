@@ -29,10 +29,6 @@ const visibleRequests = computed(
   () => pendingRequests.value?.slice(0, visibleCount.value) ?? []
 );
 
-function loadMore() {
-  visibleCount.value += 3;
-}
-
 watch(
   () => user.value?.primaryEmailAddress?.emailAddress,
   async (email) => {

@@ -5,6 +5,19 @@
     "english": "🇬🇧 English",
     "student": "Student",
     "supervisor": "Supervisor",
+    "admin": "Admin",
+    "edit": "Edit",
+    "saveChanges": "Save changes",
+    "mail": "Mail",
+    "chatRequest": "Chat request",
+    "supervisionRequest": "Supervision request",
+    "supervise": "Supervise",
+    "thesisDescription": "Thesis description",
+    "profile": "Profile"
+  },
+  "role": {
+    "student": "Student",
+    "supervisor": "Supervisor",
     "admin": "Admin"
   },
   "dataProtection": {
@@ -40,5 +53,9 @@
       },
       "dataRetentionList": "Tags added to the system\nSupervisor accounts and associated metadata\nPlatform configurations or any structural input made during administrative use"
     }
+  },
+  "profile": {
+    "pageHeader": "Your Profile",
+    "editProfile": "Edit Profile"
   }
 }

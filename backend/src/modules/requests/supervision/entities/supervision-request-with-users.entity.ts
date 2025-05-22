@@ -20,6 +20,13 @@ class UserBasicInfo {
     example: 'john.doe@fhstp.ac.at',
   })
   email: string;
+
+  @ApiProperty({
+    description: 'User profile image URL',
+    example: 'https://example.com/profile.jpg',
+    nullable: true,
+  })
+  profile_image: string | null;
 }
 
 // Define student with minimal user data

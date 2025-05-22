@@ -25,7 +25,7 @@
                 :current-capacity="supervisor.availableSpots"
                 :max-capacity="supervisor.totalSpots"
                 :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-                :image="supervisor.profile_image || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
+                :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
                 :description="supervisor.bio"
               />
             </SwipeContainer>
@@ -53,7 +53,7 @@
         linked-component-id="confirmationModal"
         :headline="modalInformation.headline"
         :icon="modalInformation.icon"
-        image="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+        :image="modalInformation.supervisor?.profileImage"
         :description="modalInformation.description"
         :confirm-button-text="modalInformation.confirmButtonText"
         :confirm-button-color="modalInformation.confirmButtonColor"

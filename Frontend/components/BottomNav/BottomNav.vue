@@ -31,7 +31,7 @@ const isActiveRoute = (route: string) => {
 </script>
 
 <template>
-    <div class="dock max-w-3xl w-full mx-auto">
+    <div class="dock max-w-3xl w-full mx-auto z-50">
         <button
             v-for="button in bottomNavButtons"
             :key="button.route"

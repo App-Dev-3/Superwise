@@ -5,7 +5,9 @@
     "english": "🇬🇧 English",
     "student": "Student",
     "supervisor": "Supervisor",
-    "admin": "Admin"
+    "admin": "Admin",
+    "edit": "Edit",
+    "saveChanges": "Save changes"
   },
   "dataProtection": {
     "generic": {
@@ -40,5 +42,8 @@
       },
       "dataRetentionList": "Tags added to the system\nSupervisor accounts and associated metadata\nPlatform configurations or any structural input made during administrative use"
     }
+  },
+  "profile": {
+    "pageHeader": "Your Profile"
   }
 }

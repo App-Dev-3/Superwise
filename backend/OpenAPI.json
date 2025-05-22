@@ -2418,6 +2418,12 @@
             "description": "The supervisor's last name",
             "example": "Smith"
           },
+          "profileImage": {
+            "type": "object",
+            "description": "The supervisor's profile image URL",
+            "example": "https://example.com/profile.jpg",
+            "nullable": true
+          },
           "compatibilityScore": {
             "type": "number",
             "description": "Compatibility score between student and supervisor (0-1)",
@@ -2462,6 +2468,7 @@
           "supervisor_userId",
           "firstName",
           "lastName",
+          "profileImage",
           "compatibilityScore",
           "bio",
           "tags",
@@ -2560,12 +2567,19 @@
             "type": "string",
             "description": "User email",
             "example": "john.doe@fhstp.ac.at"
+          },
+          "profile_image": {
+            "type": "object",
+            "description": "User profile image URL",
+            "example": "https://example.com/profile.jpg",
+            "nullable": true
           }
         },
         "required": [
           "first_name",
           "last_name",
-          "email"
+          "email",
+          "profile_image"
         ]
       },
       "StudentWithUser": {

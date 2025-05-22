@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, computed, ref } from "vue";
+import {computed, onMounted, ref} from "vue";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const props = defineProps({
   autoFocus: {
@@ -75,10 +76,10 @@ function handleRightIconClick() {
 </script>
 
 <template>
-  <div class="fieldset">
+  <fieldset class="fieldset">
     <legend
       v-if="props.label.length > 0"
-      class="fieldset-legend text-sm font-semibold mb-1"
+      class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
     >
       {{ label }}
     </legend>
@@ -91,22 +92,22 @@ function handleRightIconClick() {
       />
       <input
         ref="inputFieldRef"
-        type="text"
-        class="input input-bordered w-full rounded-full"
         :class="{
           'input-container__input--left': leftIcon,
           'input-container__input--right': rightIcon,
         }"
         :placeholder="placeholder"
         :value="modelValue"
-        @input="handleInput"
+        class="input input-bordered w-full rounded-full"
+        type="text"
         @blur="handleBlur"
+        @input="handleInput"
       >
       <FontAwesomeIcon
         v-if="rightIcon"
+        :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
         :icon="rightIcon"
         class="input-container__rightIcon"
-        :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
         @click="handleRightIconClick"
       />
     </div>
@@ -114,7 +115,7 @@ function handleRightIconClick() {
     <p class="text-xs text-gray-500 mt-1">
       {{ note }}
     </p>
-  </div>
+  </fieldset>
 </template>
 
 <style lang="scss" scoped>
@@ -134,6 +135,7 @@ function handleRightIconClick() {
   &__input--left {
     padding-left: 2.5rem;
   }
+
   &__input--right {
     padding-right: 2.5rem;
   }

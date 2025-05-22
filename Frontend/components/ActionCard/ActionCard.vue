@@ -25,7 +25,7 @@ function emitActionEvent() {
 
 <template>
     <div>
-        <p v-if="props.headerText" class="px-1">
+        <p v-if="props.headerText" class="mb-2 ml-4 text-lg font-bold">
           {{ props.headerText }}
         </p>
         <div class="card shadow-xl border border-base-300">

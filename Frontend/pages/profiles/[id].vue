@@ -56,7 +56,7 @@
 
 
       <div
-        v-if="userData.is_registered"
+        v-if="userData.is_registered && !userData.is_deleted"
         class="w-full h-full flex flex-col gap-4">
 
         <hr v-if="!isAdmin" class="border-base-300 text-base-300">

@@ -5,6 +5,19 @@
     "english": "🇬🇧 English",
     "student": "Studierende",
     "supervisor": "Betreuende",
+    "admin": "Admin",
+    "edit": "Bearbeiten",
+    "saveChanges": "Änderungen speichern",
+    "mail": "E-Mail",
+    "chatRequest": "Chat-Anfrage",
+    "supervisionRequest": "Betreuungsanfrage",
+    "supervise": "Betreuen",
+    "thesisDescription": "Thesis-Beschreibung",
+    "profile": "Profil"
+  },
+  "role": {
+    "student": "Studierende",
+    "supervisor": "Betreuende",
     "admin": "Admin"
   },
   "dataProtection": {
@@ -40,5 +53,9 @@
       },
       "dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden"
     }
+  },
+  "profile": {
+    "pageHeader": "Mein Profil",
+    "editProfile": "Profil bearbeiten"
   }
 }

@@ -19,8 +19,8 @@
                                 :first-name="matches[0].firstName || ''"
                                 :last-name="matches[0].lastName || ''"
                                 :tags="matches[0].tags"
-                                :current-capacity="matches[0].available_spots"
-                                :max-capacity="matches[0].total_spots"
+                                :current-capacity="matches[0].availableSpots"
+                                :max-capacity="matches[0].totalSpots"
                                 :similarity-score="Math.round(matches[0].compatibilityScore * 100)"
                                 name="Hello name"
                                 :image="matches[0].profileImage"
@@ -62,8 +62,8 @@
                                 :first-name="matches[0].firstName || ''"
                                 :last-name="matches[0].lastName || ''"
                                 :tags="matches[0].tags"
-                                :current-capacity="matches[0].available_spots"
-                                :max-capacity="matches[0].total_spots"
+                                :current-capacity="matches[0].availableSpots"
+                                :max-capacity="matches[0].totalSpots"
                                 :similarity-score="Math.round(matches[0].compatibilityScore * 100)"
                                 name="Hello name"
                                 :image="matches[0].profileImage"
@@ -137,7 +137,7 @@ import {useStudentStore} from "~/stores/useStudentStore";
 const bottomNavButtons = [
     { label: 'Dashboard', icon: 'house', route: '/student/dashboard' },
     { label: 'Matching', icon: 'user-group', route: '/student/matching' },
-    { label: 'Chat', icon: 'message', route: '/student/requests' }
+    { label: 'Requests', icon: 'message', route: '/student/requests' }
 ]
 const { user } = useUser();
 const { getUserByEmail, getRecommendedSupervisors} = useUserApi();

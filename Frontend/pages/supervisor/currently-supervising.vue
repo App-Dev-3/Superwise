@@ -68,7 +68,7 @@ async function removeStudent(studentId: string) {
 }
 
 async function addStudent(email: string) {
-  if (!supervisor_data.value?.id) {
+  if (!supervisor_data.value?.supervisorId) {
     console.warn("No supervisor ID yet!");
     return;
   }
@@ -98,6 +98,7 @@ async function addStudent(email: string) {
         <span class="text-large">Currently Supervising</span>
         <div v-if="pending">Loading…</div>
         <div v-else-if="error" class="text-red-600">{{ error.message }}</div>
+<!-- your IDE says that total_spots doesnt exists. Its lying. The interfaces are fucked up, we gotta fix that later-->
         <SupervisorStudentList
           v-else
           :students="students"

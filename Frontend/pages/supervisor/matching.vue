@@ -252,7 +252,7 @@ function navigate(route: string) {
 const bottomNavButtons = [
     { label: 'Dashboard', icon: 'house', route: '/supervisor/dashboard' },
     { label: 'Matching', icon: 'user-group', route: '/supervisor/matching' },
-    { label: 'Chat', icon: 'message', route: '/supervisor/requests' }
+    { label: 'Confirmed', icon: 'message', route: '/supervisor/confirmed' }
 ];
 
 const dummyRoute = ref("/");

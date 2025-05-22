@@ -52,8 +52,9 @@ watch(
 const bottomNavButtons = [
     { label: 'Dashboard', icon: 'house', route: '/supervisor/dashboard' },
     { label: 'Matching', icon: 'user-group', route: '/supervisor/matching' },
-    { label: 'Chat', icon: 'message', route: '/supervisor/requests' }
-]</script>
+    { label: 'Confirmed', icon: 'message', route: '/supervisor/confirmed' }
+]
+</script>
 
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
@@ -81,6 +82,7 @@ const bottomNavButtons = [
             <h2 class="text-xl">
               <FontAwesomeIcon icon="user-group" />
               {{
+                // this works, even though the IDE tells you it doesnt. The frontend interface types are not consitent with the backend types. Dont ask why.
                 supervisor_data?.total_spots - supervisor_data?.available_spots
               }}/{{ supervisor_data?.total_spots }}
             </h2>
@@ -93,7 +95,7 @@ const bottomNavButtons = [
           button-text="Show all"
           :disabled="visibleCount >= (pendingRequests?.length ?? 0)"
           card-type="ghost"
-          @action-button-clicked="navigateTo('/supervisor/requests')"
+          @action-button-clicked="navigateTo('/supervisor/matching')"
         >
           <div v-if="pending">Loading…</div>
           <div v-else-if="error">Error: {{ error.message }}</div>

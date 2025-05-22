@@ -19,15 +19,8 @@ const {
   error,
 } = useSupervisionRequests("PENDING");
 
-const dummyRoute = ref("/");
-
-const bottomNavButtons = [
-  { label: "Dashboard", icon: "house", route: "/supervisor/dashboard" },
-  { label: "Requests", icon: "user-group", route: "/supervisor/requests" },
-];
 
 function navigate(route: string) {
-  dummyRoute.value = route;
   navigateTo(route);
 }
 
@@ -59,7 +52,12 @@ watch(
   },
   { immediate: true }
 );
-</script>
+
+const bottomNavButtons = [
+    { label: 'Dashboard', icon: 'house', route: '/supervisor/dashboard' },
+    { label: 'Matching', icon: 'user-group', route: '/supervisor/matching' },
+    { label: 'Chat', icon: 'message', route: '/supervisor/requests' }
+]</script>
 
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
@@ -90,20 +88,16 @@ watch(
                 supervisor_data?.total_spots - supervisor_data?.available_spots
               }}/{{ supervisor_data?.total_spots }}
             </h2>
-            <p class="text-md">Capacity</p>
+            <p class="text-md">Slots filled</p>
           </div>
         </ActionCard>
 
         <ActionCard
           header-text="Requests"
-          :button-text="
-            visibleCount < (pendingRequests?.length ?? 0)
-              ? 'Show more…'
-              : 'End of requests'
-          "
+          button-text="Show all"
           :disabled="visibleCount >= (pendingRequests?.length ?? 0)"
           card-type="ghost"
-          @action-button-clicked="loadMore"
+          @action-button-clicked="navigateTo('/supervisor/requests')"
         >
           <div v-if="pending">Loading…</div>
           <div v-else-if="error">Error: {{ error.message }}</div>
@@ -117,16 +111,14 @@ watch(
             :preview-text="request.student.thesis_description"
             top-icon="message"
             :bottom-text="formatTimeString(request.updated_at, undefined)"
-            class="hover:bg-blue-300"
           />
         </ActionCard>
 
-        <BottomNav
-          :active-route="dummyRoute"
-          :always-show-labels="false"
-          :bottom-nav-buttons="bottomNavButtons"
-          @navigate="navigate"
-        />
+          <BottomNav
+              :bottom-nav-buttons="bottomNavButtons"
+              :always-show-labels="false"
+              @navigate="navigate"
+          />
       </div>
     </div>
   </div>

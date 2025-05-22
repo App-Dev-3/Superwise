@@ -169,6 +169,7 @@ watch(
           placeholder="Add Student..."
           @update:model-value="updateMail"
           @update:input-cleared="clearInput = false"
+          @keyup.enter="confirm"
         />
         <CustomButton
           color="default"

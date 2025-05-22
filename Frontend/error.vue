@@ -39,6 +39,8 @@ const props = defineProps({
     }
 })
 
+console.error(props.error)
+
 const errorDescription = computed(() => {
     if (props.error.statusCode === 404) {
         return "The page you're looking for doesn't exist."

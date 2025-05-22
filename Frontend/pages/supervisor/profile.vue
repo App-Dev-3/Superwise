@@ -21,34 +21,28 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div class="w-full flex justify-center flex-col p-4 gap-3">
-        <InputField
-          :model-value="firstName"
-          class="w-full"
-          label="First Name"
-          name="first-name"
-          placeholder="First Name"
-        />
-        <InputField
-          :model-value="lastName"
-          class="w-full"
-          label="Last Name"
-          name="last-name"
-          placeholder="Last Name"
-        />
-      </div>
+        <div class="w-full flex justify-center flex-col p-4 gap-3">
+            <fieldset class="fieldset w-full">
+                <legend class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1">First Name</legend>
+                <input v-model="firstName" type="text" class="input w-full" placeholder="First Name" >
+            </fieldset>
+            <fieldset class="fieldset w-full">
+                <legend class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1">Last Name</legend>
+                <input v-model="lastName" type="text" class="input w-full" placeholder="Last Name" >
+            </fieldset>
+        </div>
 
       <hr class="border-base-300 text-base-300">
 
       <div class="w-full flex justify-center flex-col p-4 gap-3">
         <div
           class="w-full flex flex-row flex-wrap gap-2 justify-center">
-          <CustomTag
-            v-for="(tag, index) in tags"
-            :key="`selected-${index}`"
-            :text="tag.tag_name"
-            @delete="removeTag(tag)"
-          />
+            <CustomTag
+                v-for="tag in tags"
+                :key="tag.tag.tag_id"
+                :text="tag.tag.tag_name"
+                @delete="removeTag(tag.tag.tag_id)"
+            />
         </div>
         <CustomButton
           :text="$t('generic.edit')"
@@ -93,19 +87,39 @@
 import {ref} from 'vue';
 import PictureUpload from "~/components/Profile/PictureUpload.vue";
 import CustomButton from "~/components/CustomButton/CustomButton.vue";
-import type {tagData} from "#shared/types/tagInterfaces";
 import TextArea from "~/components/inputField/TextArea.vue";
-import {useRouter} from 'vue-router';
 import {HttpMethods} from "#shared/enums/enums";
 
-const router = useRouter();
-const imgSrc = ref('https://example.com/avatar.jpg');
-
 const userStore = useUserStore();
+if (!userStore.user) {
+    userStore.refetchCurrentUser()
+        .then(() => {
+            userStore.fetchSupervisorProfile(userStore.user?.id || '')
+            imgSrc.value = userStore.user?.profile_image || '';
+            firstName.value = userStore.user?.first_name || '';
+            lastName.value = userStore.user?.last_name || '';
+        })
+        .catch(() => {
+            console.error('Error fetching user data in profile page');
+        });
+}
+
+if(!userStore.supervisorProfile) {
+    userStore.fetchSupervisorProfile(userStore.user?.id || '').then(() => {
+        bio.value = userStore.supervisorProfile?.bio || '';
+    });
+}
+
+const imgSrc = ref<string>(userStore.user?.profile_image || '');
+const firstName = ref(userStore.user?.first_name || '');
+const lastName = ref(userStore.user?.last_name || '');
+const bio = ref(userStore.supervisorProfile?.bio || '');
+const buttonIsLoading = ref(false);
+
 
 
 const updateProfileImage = (base64: string) => {
-    $fetch('/api/users/:id', {
+    $fetch('/api/users/' + userStore.user?.id, {
         method: HttpMethods.PATCH,
         body: {
             profile_image: base64
@@ -115,53 +129,73 @@ const updateProfileImage = (base64: string) => {
             userStore.refetchCurrentUser()
         }
     )
-  imgSrc.value = base64;
+    imgSrc.value = base64;
 };
 
+// TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
-  router.push('/edit-tags');
+    console.log('Navigate to edit tags');
 };
 
 const handleSave = async () => {
-  try {
-    // TODO: Implement API call to save profile data
-    // 1. Validate form data
-    // 2. Prepare data object with user information
-    // 3. Call API to update user profile
-    // 4. Handle success (show notification, etc.)
-    console.log('Saving profile data:', {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      bio: bio.value,
-      tags: tags.value,
-      imgSrc: imgSrc.value
-    });
+    if (!userStore.user) {
+        await userStore.refetchCurrentUser();
+    }
+    if (!userStore.supervisorProfile) {
+        await userStore.fetchSupervisorProfile(userStore.user?.id || '');
+    }
 
-    // Show success message or redirect
-  } catch (error) {
-    // Handle error (show error message, etc.)
-    console.error('Error saving profile:', error);
-  }
+    if (firstName.value !== userStore.user?.first_name || lastName.value !== userStore.user?.last_name || imgSrc.value !== userStore.user?.profile_image) {
+        const {status} = useFetch('/api/users/' + userStore.user?.id, {
+            method: HttpMethods.PATCH,
+            body: {
+                first_name: firstName.value,
+                last_name: lastName.value,
+                profile_image: imgSrc.value
+            }
+        })
+        await userStore.refetchCurrentUser();
+        watch(status, async (status) => {
+            buttonIsLoading.value = status === 'pending';
+        })
+    }
+    if (bio.value !== userStore.supervisorProfile?.bio) {
+        const {status} = useFetch('/api/supervisors/' + userStore.supervisorProfile?.supervisorId, {
+            method: HttpMethods.PATCH,
+            body: {
+                bio: bio.value
+            }
+        })
+        await userStore.fetchSupervisorProfile(userStore.user?.id || '');
+        watch(status, async (status) => {
+            buttonIsLoading.value = status === 'pending';
+        })
+    }
 };
 
+// TODO: implement the logic to navigate to profile preview
 const navigateToPreview = () => {
   // Navigate to the profile preview page
   // TODO: implement the logic, this is only a placeholder
-  router.push('/profile-preview');
+  // router.push('/profile-preview');
 };
 
-const removeTag = (tag: tagData) => {
-  tags.value = tags.value.filter(t => t.id !== tag.id);
+// TODO: implement the logic to remove tags
+const removeTag = (tag) => {
+  // tags.value = tags.value.filter(t => t.id !== tag.id);
+    console.log('Removing tag:', tag);
 };
 
-const tags = ref([
-  {tag_name: 'AI', id: 1},
-  {tag_name: 'HCI', id: 2},
-  {tag_name: 'COMPUTER', id: 3},
-  {tag_name: 'MATH', id: 4},
-  {tag_name: 'Health Care', id: 5}
-] as tagData[]);
-const firstName = ref('Felix');
-const lastName = ref('Teutsch');
-const bio = ref('My name is Markus Seidl and I am the head of the FH St. Pölten. I rule over all, and my commands must be followed! When I tell people to do things, they do things. When i...');
+
+if (!userStore.user) {
+    await userStore.refetchCurrentUser();
+}
+const tags = ref<Array<unknown>>([]);
+const {data} = useFetch<Array<unknown>>('/api/users/'+userStore.user?.id + '/tags', {
+    method: HttpMethods.GET,
+})
+watch(data, () => {
+    tags.value = data.value || [];
+})
+
 </script>

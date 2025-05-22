@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 
 interface PictureUploadProps {
-  imgSrc: string;
+  imgSrc?: string;
   firstName: string;
   lastName: string;
   emoji?: string;
@@ -12,7 +12,8 @@ interface PictureUploadProps {
 const props = withDefaults(defineProps<PictureUploadProps>(), {
   emoji: '',
   ringColor: 'primary',
-  size: 'md'
+  size: 'md',
+    imgSrc: '',
 });
 
 const acceptedTypes = computed(() => {

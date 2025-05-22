@@ -5,14 +5,19 @@
             <StatusBar :step="dashboardState" class="mt-4" />
 
             <div v-if="dashboardState === 1" class="my-auto mx-auto max-w-7xl w-full p-12">
-                <ActionCard button-text="Start Matching!" card-type="primary" @action-button-clicked="navigate('/student/matching')">
+                <ActionCard
+                    v-if="matches.length"
+                    button-text="Start Matching!"
+                    card-type="primary"
+                    @action-button-clicked="navigate('/student/matching')"
+                >
                     <div class="flex flex-col w-full items-center p-3">
                         <h2 class="text-xl mx-4 py-8">Find your supervisor now!</h2>
                         <CardStack :amount="3">
                             <SupervisorCard
                                 size="sm"
-                                :first-name="matches[0].firstName"
-                                :last-name="matches[0].lastName"
+                                :first-name="matches[0].firstName || ''"
+                                :last-name="matches[0].lastName || ''"
                                 :tags="matches[0].tags"
                                 :current-capacity="matches[0].availableSpots"
                                 :max-capacity="matches[0].totalSpots"
@@ -30,7 +35,7 @@
                 <ActionCard header-text="Your Requests" button-text="Show all..." card-type="ghost" @action-button-clicked="navigate('/student/requests')">
                     <div class="h-96 lg:h-128">
                         <div class="flex flex-col w-full items-center p-3 overflow-y-auto h-full">
-                            <div v-for="pendingRequest in pendingSupervisionRequests" :key="pendingRequest.id" class="mb-2 h-full w-full">
+                            <div v-for="pendingRequest in pendingSupervisionRequests" :key="pendingRequest.id" class="mb-2 w-full">
                                 <MiniCard
                                     :image="pendingRequest.supervisor.user.profile_image"
                                     :first-name="pendingRequest.supervisor.user.first_name"
@@ -44,13 +49,18 @@
                         </div>
                     </div>
                 </ActionCard>
-                <ActionCard header-text="Suggested Matches" button-text="Start Matching!" card-type="primary" @action-button-clicked="navigateTo('/student/matching')">
+                <ActionCard
+                    v-if="matches.length"
+                    header-text="Suggested Matches"
+                    button-text="Start Matching!"
+                    card-type="primary"
+                    @action-button-clicked="navigateTo('/student/matching')">
                     <div class="flex flex-col w-full items-center p-3">
                         <CardStack :amount="3">
                             <SupervisorCard
                                 size="sm"
-                                :first-name="matches[0].firstName"
-                                :last-name="matches[0].lastName"
+                                :first-name="matches[0].firstName || ''"
+                                :last-name="matches[0].lastName || ''"
                                 :tags="matches[0].tags"
                                 :current-capacity="matches[0].availableSpots"
                                 :max-capacity="matches[0].totalSpots"

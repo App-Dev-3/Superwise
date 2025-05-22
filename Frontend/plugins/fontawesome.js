@@ -1,15 +1,14 @@
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {
     faArrowLeft,
     faArrowRight,
     faArrowRightToBracket,
     faBan,
     faCheck,
+    faCloudArrowDown,
     faCloudArrowUp,
     faEdit,
-    faMinus,
-    faPlus,
     faEnvelope,
     faEye,
     faEyeSlash,
@@ -18,20 +17,24 @@ import {
     faHandshakeSimple,
     faHourglass,
     faHouse,
+    faImage,
     faMap,
     faMessage,
+    faMinus,
     faMoon,
+    faPlus,
     faRightFromBracket,
     faSearch,
+    faSpinner,
     faSun,
     faTrashCan,
     faTriangleExclamation,
     faUser,
     faUserGroup,
     faUserShield,
-    faXmark, faImage, faSpinner, faCloudArrowDown,
+    faXmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { defineNuxtPlugin } from "nuxt/app";
+import {defineNuxtPlugin} from "nuxt/app";
 
 library.add(
     faArrowLeft,

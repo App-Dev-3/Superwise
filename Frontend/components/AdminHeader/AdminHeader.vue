@@ -7,10 +7,14 @@ const router = useRouter();
 interface Props {
   variant?: "default" | "upload" | "download" | "delete";
   headerText: string;
+  rightButton?: string;
+  rightIcon?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   variant: "default",
+  rightButton: "",
+  rightIcon: "",
 });
 
 
@@ -31,6 +35,8 @@ const colorText = computed(() => ({
 const goBack = () => {
   router.back();
 };
+
+const emit = defineEmits(['right-button-click']);
 </script>
 
 <template>
@@ -49,6 +55,18 @@ const goBack = () => {
     />
     <span
       :class="colorText"
-      class="text-header bg-info-soft">{{props.headerText}}</span>
+      class="text-header bg-info-soft w-full">{{ props.headerText }}</span>
+    <CustomButton
+      v-if="props.rightButton && props.rightIcon"
+      :class="colorText"
+      :right-icon="props.rightIcon"
+      :text="props.rightButton"
+      class="opacity-75"
+      clickable
+      color="default"
+      size="xs"
+      variant="ghost"
+      @click="emit('right-button-click')"
+    />
   </div>
 </template>

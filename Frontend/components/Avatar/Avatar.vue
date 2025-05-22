@@ -134,6 +134,52 @@ const ringClass = computed(() => {
   }
 });
 
+const emojiStyle = computed(() => {
+  switch (props.ringColor) {
+    case 'primary':
+      return 'btn-primary';
+    case 'error':
+      return 'btn-primary';
+    case "secondary":
+      return 'btn-primary';
+    case 'success':
+      return 'btn-primary';
+    case 'warning':
+      return 'btn-primary';
+    case 'info':
+      return 'btn-primary';
+    case 'accent':
+      return 'btn-primary';
+    case 'neutral':
+      return 'btn-primary';
+    default:
+      return '';
+  }
+});
+
+const buttonStyle = computed(() => {
+  switch (props.ringColor) {
+    case 'primary':
+      return 'btn-primary';
+    case 'error':
+      return 'btn-error';
+    case "secondary":
+      return 'btn-secondary';
+    case 'success':
+      return 'btn-success';
+    case 'warning':
+      return 'btn-warning';
+    case 'info':
+      return 'btn-info';
+    case 'accent':
+      return 'btn-accent';
+    case 'neutral':
+      return 'btn-neutral';
+    default:
+      return '';
+  }
+});
+
 const emojiPosition = computed(() => {
   switch (props.size) {
     case 'xs':
@@ -178,27 +224,28 @@ const handleImageError = () => {
   <div :class="onlineStatus" class="avatar">
     <div :class="[imgSize, shapeClass, ringClass]">
       <img
-          :key="imgKey"
-          :alt="props.alt"
-          :src="(props.src && !imgError)
+        :key="imgKey"
+        :alt="props.alt"
+        :src="(props.src && !imgError)
               ? props.src
               : getPlaceholderImage(props.firstName, props.lastName)"
-          class="object-cover w-full h-full"
-          loading="lazy"
-          @error="handleImageError"
+        class="object-cover w-full h-full"
+        loading="lazy"
+        @error="handleImageError"
       >
     </div>
-    <span
-        v-if="props.emoji !== ''"
-        :class="[emojiPosition, ringClass]"
-        class="absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0">
+    <button
+      v-if="props.emoji"
+      :class="[emojiPosition, emojiStyle]"
+      class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+    >
       {{ props.emoji }}
-    </span>
+    </button>
 
     <button
-        v-if="props.addButton"
-        :class="[addPosition, ringClass]"
-        class="btn absolute rounded-full bg-base-100 border border-base-100 flex items-center justify-center aspect-square p-0"
+      v-if="props.addButton"
+      :class="[addPosition, buttonStyle]"
+      class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
     >+
     </button>
 

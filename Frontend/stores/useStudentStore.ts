@@ -1,11 +1,14 @@
 import type {SupervisionRequestsData} from "#shared/types/supervisorInterfaces";
 import {HttpMethods, supervisionRequestStatus} from "#shared/enums/enums";
+import type {StudentProfile} from "#shared/types/StudentInterfaces";
 
 export const useStudentStore = defineStore('student', () => {
     const supervisionRequestsSentByCurrentStudent = ref<SupervisionRequestsData[]>([])
     const acceptedSupervisionRequests = ref<SupervisionRequestsData[]>([])
     const pendingSupervisionRequests = ref<SupervisionRequestsData[]>([])
     const dashboardState = ref<number>(1)
+
+    const studentProfile = ref<StudentProfile | null>(null)
 
     const fetchSupervisionRequests = async () => {
         try {
@@ -50,11 +53,27 @@ export const useStudentStore = defineStore('student', () => {
         }
     },{ immediate: true })
 
+    const fetchStudentProfile = async (userId: string) => {
+        try {
+            studentProfile.value = await $fetch<StudentProfile>(`/api/students/user/${userId}`, {
+                method: HttpMethods.GET,
+                headers: {
+                    'Accept': 'application/json',
+                },
+            })
+            console.log("FETCHED STUDENT PROFILE: ", studentProfile.value)
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
     return {
         supervisionRequestsSentByCurrentStudent,
         fetchSupervisionRequests,
         acceptedSupervisionRequests,
         pendingSupervisionRequests,
-        dashboardState
+        dashboardState,
+        studentProfile,
+        fetchStudentProfile
     }
 })

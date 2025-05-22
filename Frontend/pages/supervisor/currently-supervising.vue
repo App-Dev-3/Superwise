@@ -1,9 +1,17 @@
 <script lang="ts" setup>
+import { computed, ref } from "vue";
 import SupervisorStudentList from "~/components/SupervisorStudentList/SupervisorStudentList.vue";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
+import type { UserData } from "~/shared/types/userInterfaces";
 
+const { user } = useUser();
 const userStore = useUserStore();
 const { getSupervisorByUserId } = useSupervisorApi();
+const { getUserByEmail } = useUserApi();
+
+const current_user = ref<UserData | null>(null);
+const supervisor_data = ref<SupervisorData | null>(null);
 
 const {
   data: requests,
@@ -14,7 +22,7 @@ const {
 
 const students = computed(() =>
   (requests.value ?? []).map((request) => ({
-    id: request.student.user.id,
+    id: request.student.user_id,
     firstName: request.student.user.first_name,
     lastName: request.student.user.last_name,
     email: request.student.user.email ?? "",
@@ -22,19 +30,21 @@ const students = computed(() =>
   }))
 );
 
-let supervisorId: string | null = null;
 watch(
-  () => userStore.user ?? userStore.user?.primaryEmailAddress?.emailAddress,
-  async () => {
-    if (!userStore.user && userStore.user?.primaryEmailAddress?.emailAddress) {
-      const u = await getUserByEmail(
-        userStore.user.primaryEmailAddress.emailAddress
-      );
-      userStore.setUser(u);
+  () => user.value?.primaryEmailAddress?.emailAddress,
+  async (email) => {
+    if (!email) return;
+
+    if (!userStore.user) {
+      const fetched = (await getUserByEmail(email)) as UserData;
+      userStore.setUser(fetched);
     }
-    if (userStore.user?.id) {
-      const sup = await getSupervisorByUserId(userStore.user.id);
-      supervisorId = sup.id;
+    current_user.value = userStore.user;
+
+    if (current_user.value?.id) {
+      supervisor_data.value = (await getSupervisorByUserId(
+        current_user.value.id
+      )) as SupervisorData;
     }
   },
   { immediate: true }
@@ -42,8 +52,9 @@ watch(
 
 async function removeStudent(studentId: string) {
   const req = requests.value?.find(
-    (request) => request.student.user.id === studentId
+    (request) => request.student.user_id === studentId
   );
+
   if (!req) return;
 
   await $fetch(`/api/supervision-requests/${req.id}`, {
@@ -57,7 +68,7 @@ async function removeStudent(studentId: string) {
 }
 
 async function addStudent(email: string) {
-  if (!supervisorId) {
+  if (!supervisor_data.value?.id) {
     console.warn("No supervisor ID yet!");
     return;
   }
@@ -65,11 +76,12 @@ async function addStudent(email: string) {
   const existingStudent = students.value.find(
     (student) => student.email === email
   );
+
   if (!existingStudent) {
     await $fetch("/api/supervision-requests", {
       method: "POST",
       body: {
-        supervisor_id: supervisorId,
+        supervisor_id: supervisor_data.value.id,
         student_email: email,
       },
     });
@@ -88,10 +100,10 @@ async function addStudent(email: string) {
         <div v-else-if="error" class="text-red-600">{{ error.message }}</div>
         <SupervisorStudentList
           v-else
-          :max-students="10"
           :students="students"
-          @add:students="addStudent"
-          @remove:student="removeStudent"
+          :max-students="supervisor_data?.total_spots"
+          @add-student="addStudent"
+          @remove-student="removeStudent"
         />
       </div>
     </div>

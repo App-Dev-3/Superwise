@@ -2,7 +2,7 @@ import type { supervisionRequestStatus } from "../enums/enums"
 
 // This is the data returned from /matching, the name is misleading. This is NOT the Supervisor Profile!
 export interface SupervisorData {
-  supervisorId: string
+  id: string
   supervisor_userId: string
   firstName: string
   lastName: string
@@ -10,8 +10,8 @@ export interface SupervisorData {
   bio: string
   tags: string[]
   pendingRequests: number
-  availableSpots: number
-  totalSpots: number
+  available_spots: number
+  total_spots: number
   profileImage: string
 }
 

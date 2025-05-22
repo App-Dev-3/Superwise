@@ -3,30 +3,41 @@ import { computed, ref } from "vue";
 import StudentCard from "./StudentCard.vue";
 import ValidatedMailInput from "./ValidatedMailInput.vue";
 import CustomButton from "../CustomButton/CustomButton.vue";
+import type { UserData } from "~/shared/types/userInterfaces";
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
+import type CustomModal from "../CustomModal/CustomModal.vue";
+
+const { user } = useUser();
+const userStore = useUserStore();
+const { getSupervisorByUserId } = useSupervisorApi();
+const { getUserByEmail } = useUserApi();
+
+const current_user = ref<UserData | null>(null);
+const supervisor_data = ref<SupervisorData | null>(null);
 
 interface Student {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  imgSrc: string;
+  src: string;
   online?: boolean;
 }
 
 interface SupervisorStudentListProps {
   students: Student[];
-  maxStudents?: number;
+  maxStudents: number | undefined;
 }
 
 // Define props for the component
-const props = withDefaults(defineProps<SupervisorStudentListProps>(), {
-  maxStudents: 12,
-});
+const props = defineProps<SupervisorStudentListProps>();
 
-const { getUserByEmail } = useUserApi();
-
-const modalExistingStudentRef = ref<HTMLDialogElement | null>(null);
-const modalNotExistingStudentRef = ref<HTMLDialogElement | null>(null);
+const modalExistingStudentRef = ref<InstanceType<typeof CustomModal> | null>(
+  null
+);
+const modalNotExistingStudentRef = ref<InstanceType<typeof CustomModal> | null>(
+  null
+);
 
 // Handle edit button click
 const isEditing = ref(false);
@@ -34,10 +45,10 @@ const toggleEdit = () => {
   isEditing.value = !isEditing.value;
 };
 
-const current_user = ref<UserData | null>(null);
+const modal_user = ref<UserData | null>(null);
 
 // Emit events when students are updated
-const emit = defineEmits(["remove:student", "add:students"]);
+const emit = defineEmits(["remove-student", "add-student"]);
 
 // Function to remove a student
 const removeStudent = (studentId: string) => {
@@ -45,7 +56,7 @@ const removeStudent = (studentId: string) => {
     return;
   }
 
-  emit("remove:student", studentId);
+  emit("remove-student", studentId);
 };
 
 const emailAddress = ref("");
@@ -68,12 +79,17 @@ const confirm = async () => {
   if (!emailAddress.value) return;
 
   try {
-    current_user.value = await getUserByEmail(emailAddress.value);
+    modal_user.value = await getUserByEmail(emailAddress.value);
 
-    modalExistingStudentRef.value?.showModal();
-  } catch (err: any) {
-    if (err.statusCode === 404) {
-      modalNotExistingStudentRef.value?.showModal();
+    modalExistingStudentRef.value?.show();
+  } catch (err: unknown) {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "statusCode" in err &&
+      (err as { statusCode: number }).statusCode === 404
+    ) {
+      modalNotExistingStudentRef.value?.show();
     } else {
       console.error("Unexpected error:", err);
     }
@@ -83,13 +99,33 @@ const confirm = async () => {
 const addStudent = () => {
   if (emailAddress.value) {
     // const email = `${emailAddress.value}@${emailDomain}`;
-    emit("add:students", emailAddress.value);
+    emit("add-student", emailAddress.value);
 
     // Clear the input
     clearInput.value = true;
     emailAddress.value = "";
   }
 };
+
+watch(
+  () => user.value?.primaryEmailAddress?.emailAddress,
+  async (email) => {
+    if (!email) return;
+
+    if (!userStore.user) {
+      const fetched = (await getUserByEmail(email)) as UserData;
+      userStore.setUser(fetched);
+    }
+    current_user.value = userStore.user;
+
+    if (current_user.value?.id) {
+      supervisor_data.value = (await getSupervisorByUserId(
+        current_user.value.id
+      )) as SupervisorData;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
@@ -119,7 +155,7 @@ const addStudent = () => {
           :edit-mode="isEditing"
           :email="student.email"
           :first-name="student.firstName"
-          :img-src="student.imgSrc"
+          :img-src="student.src"
           :last-name="student.lastName"
           @click="removeStudent(student.id)"
         />
@@ -142,81 +178,113 @@ const addStudent = () => {
         />
       </div>
     </div>
-    <!-- TODO Move modal to own component; Make pretty like design; Test that addStudent works   -->
-    <dialog ref="modalExistingStudentRef" class="modal">
-      <div class="modal-box w-11/12 max-w-5xl">
-        <form method="dialog">
-          <button class="btn btn-md btn-ghost absolute right-2 top-2">✕</button>
-        </form>
-        <h3 class="text-lg font-bold">
-          Supervise Student
-          <FontAwesomeIcon icon="user-group" class="text-lg" />
-        </h3>
-        <div>
+    <!-- TODO Move modal to own component;   -->
+    <CustomModal
+      ref="modalExistingStudentRef"
+      title="Supervise Student"
+      icon="user-group"
+      :image-src="modal_user?.profile_image || undefined"
+      :image-alt="
+        modal_user
+          ? 'Profile image of ' +
+            modal_user.first_name +
+            ' ' +
+            modal_user.last_name
+          : ''
+      "
+      :email="modal_user?.email"
+      :main-text="`Would you like to supervise ${modal_user?.first_name} ${modal_user?.last_name}?`"
+      sub-text="They will get notified that you are supervising them!"
+      confirm-text="Supervise Student"
+      @confirm="addStudent"
+    />
+
+    <CustomModal
+      ref="modalNotExistingStudentRef"
+      title="Supervise Student"
+      icon="user-group"
+      image-src="../images/Superwise_Logo.svg"
+      image-alt="Logo"
+      :email="emailAddress"
+      :main-text="`Would you like to supervise ${emailAddress}? They are not registered on SuperWise, but will get notified via mail.`"
+      sub-text="They will get notified that you are supervising them!"
+      confirm-text="Supervise Student"
+      @confirm="addStudent"
+    />
+    <!-- <dialog ref="modalExistingStudentRef" class="modal">
+      <div class="modal-box w-9/12 max-w-5xl">
+        <div class="flex w-full flex-row space-x-4 justify-between">
+          <h3 class="text-lg font-bold">Supervise Student</h3>
+          <FontAwesomeIcon icon="user-group" class="text-lg self-center" />
+        </div>
+        <div class="flex flex-col w-full items-center">
           <img
-            :src="current_user.profile_image"
+            :src="
+              modal_user?.profile_image === null
+                ? undefined
+                : modal_user?.profile_image
+            "
             :alt="
               'Profile image of ' +
-              current_user.first_name +
+              modal_user?.first_name +
               ' ' +
-              current_user.last_name
+              modal_user?.last_name
             "
-            class="h-6 mb-8"
+            class="h-24"
           />
-          <p class="text-grey-300">{{ current_user.email }}</p>
+          <p class="text-slate-500 text-sm">{{ modal_user?.email }}</p>
         </div>
-        <p class="py-4">
-          Would you like to supervise {{ current_user.first_name }}
-          {{ current_user.last_name }}?
+        <p>
+          Would you like to supervise {{ modal_user?.first_name }}
+          {{ modal_user?.last_name }}?
         </p>
-        <p class="text-grey-300">
+        <p class="text-slate-500 text-sm">
           They will get notified that you are supervising them!
         </p>
         <div class="modal-action">
-          <form method="dialog">
-            <CustomButton
-              class="btn mr-2"
-              @click="addStudent"
-              text="Add student"
-            />
-            <CustomButton class="btn mr-2" text="Close" />
+          <form method="dialog" class="flex flex-col w-full space-y-4">
+            <button class="btn w-full">Close</button>
+            <button class="btn w-full bg-emerald-500" wide @click="addStudent">
+              Supervise Student
+            </button>
           </form>
         </div>
       </div>
     </dialog>
 
     <dialog ref="modalNotExistingStudentRef" class="modal">
-      <div class="modal-box w-11/12 max-w-5xl">
-        <form method="dialog">
-          <button class="btn btn-md btn-ghost absolute right-2 top-2">✕</button>
-        </form>
-        <h3 class="text-lg font-bold">
-          Supervise Student
-          <FontAwesomeIcon icon="user-group" class="text-lg" />
-        </h3>
-        <div>
-          <img src="../images/Superwise_Logo.svg" alt="Logo" class="h-6 mb-8" />
-          <p class="text-grey-300">{{ emailAddress }}</p>
-        </div>
-        <p class="py-4">
-          Would you like to supervise {{ emailAddress }}? They are not
-          registered on SuperWise, but will get notified via mail.
-        </p>
-        <p class="text-grey-300">
-          They will get notified that you are supervising them!
-        </p>
-        <div class="modal-action">
-          <form method="dialog">
-            <CustomButton
-              class="btn mr-2"
-              @click="addStudent"
-              text="Add student"
+      <div class="modal-box w-9/12 max-w-5xl">
+        <div class="flex flex-col space-y-6">
+          <div class="flex w-full flex-row justify-between">
+            <h3 class="text-lg font-bold">Supervise Student</h3>
+            <FontAwesomeIcon icon="user-group" class="text-lg self-center" />
+          </div>
+          <div class="flex flex-col w-full items-center">
+            <img
+              :src="'../images/Superwise_Logo.svg'"
+              alt="Logo"
+              class="h-24"
             />
-            <CustomButton class="btn mr-2" text="Close" />
+            <p class="text-slate-500 text-sm">{{ emailAddress }}</p>
+          </div>
+          <p>
+            Would you like to supervise {{ emailAddress }}? They are not
+            registered on SuperWise, but will get notified via mail.
+          </p>
+          <p class="text-slate-500 text-sm">
+            They will get notified that you are supervising them!
+          </p>
+        </div>
+        <div class="modal-action">
+          <form method="dialog" class="flex flex-col w-full space-y-4">
+            <button class="btn w-full">Close</button>
+            <button class="btn w-full bg-emerald-500" wide @click="addStudent">
+              Supervise Student
+            </button>
           </form>
         </div>
       </div>
-    </dialog>
+    </dialog> -->
   </div>
 </template>
 

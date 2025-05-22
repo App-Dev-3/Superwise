@@ -52,11 +52,9 @@ watch(
     current_user.value = userStore.user;
 
     if (current_user.value?.id) {
-      const sup = (await getSupervisorByUserId(
+      supervisor_data.value = (await getSupervisorByUserId(
         current_user.value.id
       )) as SupervisorData;
-      supervisor_data.value = sup;
-      console.log(sup);
     }
   },
   { immediate: true }
@@ -69,9 +67,13 @@ watch(
       <AppHeader
         show-search
         show-user
-        :image="current_user.profile_image"
-        :first-name="current_user.first_name"
-        :last-name="current_user.last_name"
+        :image="
+          current_user?.profile_image === null
+            ? ''
+            : current_user?.profile_image
+        "
+        :first-name="current_user?.first_name"
+        :last-name="current_user?.last_name"
       />
 
       <div>
@@ -84,9 +86,9 @@ watch(
           <div class="py-8 px-16">
             <h2 class="text-xl">
               <FontAwesomeIcon icon="user-group" />
-              {{ supervisor_data?.available_spots }}/{{
-                supervisor_data?.total_spots
-              }}
+              {{
+                supervisor_data?.total_spots - supervisor_data?.available_spots
+              }}/{{ supervisor_data?.total_spots }}
             </h2>
             <p class="text-md">Capacity</p>
           </div>
@@ -114,7 +116,7 @@ watch(
             :last-name="request.student.user.last_name"
             :preview-text="request.student.thesis_description"
             top-icon="message"
-            :bottom-text="formatTimeString(request.updated_at)"
+            :bottom-text="formatTimeString(request.updated_at, undefined)"
             class="hover:bg-blue-300"
           />
         </ActionCard>

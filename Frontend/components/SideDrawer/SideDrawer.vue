@@ -1,5 +1,5 @@
 <script setup>
-import { useColorMode } from "#imports";
+import {useColorMode} from "#imports";
 
 const colorMode = useColorMode();
 
@@ -21,17 +21,20 @@ const props = defineProps({
 
 <template>
   <div class="drawer">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" >
+    <input id="my-drawer" class="drawer-toggle" type="checkbox">
     <div class="drawer-content">
-      <label for="my-drawer" class="drawer-button">
+      <label class="drawer-button" for="my-drawer">
         <div class="avatar">
           <div class="mask mask-squircle w-8 rounded-full">
             <img
-              :src="
+                :alt="$t('generic.profilePictureAlt', {
+                firstName: props.firstName,
+                lastName: props.lastName,
+              })"
+                :src="
                 props.image ||
                 getPlaceholderImage(props.firstName, props.lastName)
               "
-              alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
             >
           </div>
         </div>
@@ -40,46 +43,46 @@ const props = defineProps({
 
     <div class="drawer-side z-40">
       <label
-        for="my-drawer"
-        aria-label="close sidebar"
-        class="drawer-overlay"
+          aria-label="close sidebar"
+          class="drawer-overlay"
+          for="my-drawer"
       />
       <div
-        class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
+          class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
       >
         <img
-          :src="
+            :alt="$t('generic.logoAlt')"
+            :src="
             colorMode?.value === 'dark'
               ? '../images/appHeader_logo_dark.svg'
               : '../images/appHeader_logo_light.svg'
           "
-          alt="Logo"
-          class="h-6 mb-8"
+            class="h-6 mb-8"
         >
 
         <ul class="space-y-3 flex-grow">
           <li>
             <NuxtLink to="/profile">
-              <FontAwesomeIcon icon="user" class="text-xl mr-3" />
-              Profile
+              <FontAwesomeIcon class="text-xl mr-3" icon="user"/>
+              {{ $t('nav.profile') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/settings">
-              <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
-              Settings
+              <FontAwesomeIcon class="text-xl mr-3" icon="gear"/>
+              {{ $t('nav.settings') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/tour">
-              <FontAwesomeIcon icon="map" class="text-xl mr-3" />
-              App Tour
+              <FontAwesomeIcon class="text-xl mr-3" icon="map"/>
+              {{ $t('nav.appTour') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/data-protection">
-              <FontAwesomeIcon icon="user-shield" class="text-xl mr-3" />
-              Data Protection
+              <FontAwesomeIcon class="text-xl mr-3" icon="user-shield"/>
+              {{ $t('nav.dataProtection') }}
             </NuxtLink>
           </li>
         </ul>
@@ -88,8 +91,8 @@ const props = defineProps({
           <SignOutButton>
             <a href="/">
               <span>
-                <FontAwesomeIcon icon="fa-right-from-bracket" class="text-xl" />
-                Logout
+                <FontAwesomeIcon class="text-xl" icon="fa-right-from-bracket"/>
+              {{ $t('nav.logout') }}
               </span>
             </a>
           </SignOutButton>

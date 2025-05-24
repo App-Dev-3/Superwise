@@ -1,0 +1,139 @@
+{
+	"appHeader": {
+		"back": "Indietro",
+		"searchPlaceholder": "Cerca..."
+	},
+	"confirmed": {
+		"confirmedOn": "Confermato il {date}",
+		"supervising": "Stai supervisionando {firstName}"
+	},
+	"confirmation": {
+		"acceptedOn": "Accettato il: {date}",
+		"details": "Dettagli della Conferma",
+		"scanToVerify": "Scansiona per verificare la conferma",
+		"student": "Studente",
+		"supervisor": "Supervisore",
+		"title": "Conferma di Supervisione della Tesi"
+	},
+	"dashboard": {
+		"student": {
+			"downloadConfirmation": "Scarica conferma",
+			"findSupervisor": "Trova il tuo supervisore ora!",
+			"multipleAcceptedWarning": "Hai accettato {count} richieste di supervisione, ma hai bisogno di un solo supervisore. Per favore, parla con {supervisors} e risolvi il conflitto.",
+			"startMatching": "Inizia il Matching!",
+			"suggestedMatches": "Corrispondenze suggerite",
+			"yourRequests": "Le tue richieste"
+		},
+		"supervisor": {
+			"manageStudents": "Gestisci Studenti",
+			"slotsFilled": "Posti occupati"
+		}
+	},
+	"dataProtection": {
+		"admin": {
+			"changesAndOverwritesText": "Quando aggiorni i tuoi dati personali, come il tuo nome o l'immagine del profilo, la versione precedente viene sovrascritta in modo permanente. Non conserviamo copie o backup dei tuoi dati personali precedenti.",
+			"collectedDataList": "Nome completo\nIndirizzo email\nImmagine del profilo",
+			"collectedDataText": "Per gli account amministratore, raccogliamo e archiviamo solo:",
+			"dataDeletionText": "Quando un amministratore elimina il proprio account, tutti i dati personali identificabili (nome, email e immagine del profilo) verranno eliminati permanentemente senza backup.",
+			"dataRetentionList": "Tag aggiunti al sistema\nAccount supervisori e metadati associati\nConfigurazioni della piattaforma o qualsiasi input strutturale effettuato durante l'uso amministrativo",
+			"dataRetentionSubtitle": "📁 Cosa viene conservato dopo l'eliminazione dell'account amministratore",
+			"dataRetentionText": {
+				"1": "Quando un amministratore elimina il proprio account, tutti i dati personali (nome, email e immagine del profilo) verranno rimossi permanentemente. Tuttavia, alcuni dati creati o caricati durante la gestione della piattaforma non sono considerati dati personali e verranno conservati. Questi includono:",
+				"2": "Questi contenuti fanno parte dell'infrastruttura della piattaforma e sono essenziali per mantenere l'integrità e la continuità del sistema SuperWise. Pertanto, non vengono eliminati quando viene rimosso un account amministratore."
+			},
+			"generalInfoText": "Questa clausola si applica specificamente agli utenti con accesso a livello di amministratore su SuperWise."
+		},
+		"generic": {
+			"changesAndOverwritesSubtitle": "🔁 Modifiche e sovrascritture dei dati",
+			"collectedDataSubtitle": "📌 Quali dati raccogliamo",
+			"dataDeletionSubtitle": "🗑 Eliminazione dei dati",
+			"deleteMyData": "Elimina i miei dati",
+			"generalInfoText": "In SuperWise, prendiamo seriamente la tua privacy e la protezione dei tuoi dati personali. Questa politica descrive come raccogliamo, utilizziamo e gestiamo le tue informazioni per garantire trasparenza e tranquillità.",
+			"generalInfoTitle": "🛡 Politica di protezione dei dati SuperWise"
+		},
+		"student&supervisor": {
+			"changesAndOverwritesText": "Quando aggiorni i tuoi dati personali, come il tuo nome, l'immagine del profilo, la descrizione dell'argomento o la biografia, la versione precedente viene sovrascritta in modo permanente. Non conserviamo copie o backup dei tuoi dati personali precedenti.",
+			"collectedDataList": "Indirizzo email (utilizzato per l'accesso e la comunicazione)\nNome e cognome\nImmagine del profilo\nMessaggi inviati all'interno della piattaforma\nDescrizione dell'argomento (studenti)\nBiografia (supervisori)\nTag selezionati per descrivere competenze o argomenti di tesi\nCronologia degli abbinamenti: supervisori con cui ti sei abbinato o che hai rifiutato\nRichieste inviate: incluse richieste di chat e supervisione",
+			"collectedDataText": "Per fornire i nostri servizi di abbinamento e supervisione, raccogliamo e archiviamo le seguenti informazioni:",
+			"dataDeletionList": "La tua email\nRegistrazioni degli abbinamenti\nMessaggi inviati o ricevuti",
+			"dataDeletionText": {
+				"1": "Hai il diritto di richiedere l'eliminazione dei tuoi dati in qualsiasi momento. Quando lo fai, il tuo profilo e le tue informazioni personali non saranno più visibili o accessibili ad altri utenti. Alcuni dati minimi potrebbero essere conservati fino alla fine del periodo di supervisione, per motivi di funzionalità e registrazione. Questi includono:",
+				"2": "Dopo la fine del periodo di supervisione, questi dati rimanenti verranno eliminati completamente e irreversibilmente."
+			}
+		}
+	},
+	"generic": {
+		"admin": "Amministratore",
+		"cancel": "Annulla",
+		"continue": "Continua",
+		"edit": "Modifica",
+		"english": "🇬🇧 English",
+		"german": "🇩🇪 Deutsch",
+		"french": "🇫🇷 Français",
+		"spanish": "🇪🇸 Español",
+		"italian": "🇮🇹 Italiano",
+		"logoAlt": "logo",
+		"profilePictureAlt": "Immagine del profilo di {firstName} {lastName}",
+		"requests": "Richieste",
+		"saveChanges": "Salva modifiche",
+		"showAll": "Mostra tutto...",
+		"showLess": "Mostra meno",
+		"student": "Studente",
+		"supervisor": "Supervisore"
+	},
+	"landing": {
+		"dataCollection": "Per trovare il supervisore perfetto per te, dobbiamo raccogliere ed elaborare alcuni dati. Scopri {0} cosa ne facciamo!",
+		"here": "qui"
+	},
+	"modal": {
+		"dontShowAgain": "Non mostrare più"
+	},
+	"multiStepForm": {
+		"next": "Avanti",
+		"startMatching": "Inizia il Matching"
+	},
+	"nav": {
+		"appTour": "Tour dell'App",
+		"confirmed": "Confermato",
+		"dashboard": "Dashboard",
+		"dataProtection": "Protezione dei Dati",
+		"logout": "Disconnetti",
+		"matching": "Abbinamento",
+		"profile": "Profilo",
+		"settings": "Impostazioni"
+	},
+	"onboarding": {
+		"firstName": "Nome",
+		"lastName": "Cognome",
+		"maxSelection": "Selezione massima"
+	},
+	"profile": {
+		"pageHeader": "Il Tuo Profilo",
+		"preview": "Anteprima",
+		"firstName": "Nome",
+		"lastName": "Cognome",
+		"bio": "Biografia",
+		"bioVisibility": "La tua biografia sarà visibile agli altri utenti",
+		"bioPlaceholder": "Raccontaci di te..."
+	},
+	"searchBar": {
+		"noResults": "Nessun risultato trovato"
+	},
+	"statusBar": {
+		"confirmed": "Confermato",
+		"matching": "Abbinamento",
+		"onboarding": "Inserimento"
+	},
+	"supervisorCard": {
+		"capacity": "Capacità",
+		"pending": "Richieste in attesa",
+		"profilePictureAlt": "Immagine del profilo di {firstName} {lastName}",
+		"similarityScore": "Punteggio di somiglianza"
+	},
+	"tagPriority": {
+		"arrangeByPriority": "Organizza i tag per priorità"
+	},
+	"tagSelector": {
+		"tagCount": "{current}/{max}"
+	}
+}

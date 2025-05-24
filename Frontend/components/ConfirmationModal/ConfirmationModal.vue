@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {ref} from "vue";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 interface Props {
   // The id of the component that will be linked to this modal. This MUST BE UNIQUE,
@@ -13,7 +16,16 @@ interface Props {
   warning?: string;
   confirmButtonText: string;
   cancelButtonText?: string;
-  confirmButtonColor: 'default' | 'primary' | 'secondary' | 'accent' | 'error' | 'success' | 'warning' | 'info' | 'neutral';
+  confirmButtonColor:
+      | 'default'
+      | 'primary'
+      | 'secondary'
+      | 'accent'
+      | 'error'
+      | 'success'
+      | 'warning'
+      | 'info'
+      | 'neutral';
   confirmButtonIcon?: string;
   hideCancelButton?: boolean;
 }
@@ -21,20 +33,25 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   image: '',
   warning: '',
-  cancelButtonText: 'Cancel',
+  cancelButtonText: undefined, // Remove t() from here
   confirmButtonIcon: '',
   hideCancelButton: false,
-})
+});
+
+// Use computed to get cancel button text
+const cancelButtonTextComputed = computed(() => props.cancelButtonText || t('generic.cancel'));
 
 // "cancel" emit is called abort because cancel is a reserved word
 const emit = defineEmits<{
   (event: 'confirm' | 'abort' | 'dontShowAgain'): void;
-}>()
+}>();
 
 const dontShowAgain = ref(false);
 
 const closeModal = () => {
-  const modal = document.getElementById(props.linkedComponentId) as HTMLDialogElement;
+  const modal = document.getElementById(
+      props.linkedComponentId,
+  ) as HTMLDialogElement;
   if (modal) modal.close();
 };
 
@@ -44,7 +61,7 @@ const handleCancel = () => {
     emit('dontShowAgain');
   }
   closeModal();
-}
+};
 
 const handleConfirm = () => {
   emit('confirm');
@@ -52,43 +69,76 @@ const handleConfirm = () => {
     emit('dontShowAgain');
   }
   closeModal();
-}
+};
 </script>
 
 <template>
-  <dialog :id="props.linkedComponentId" class="modal" @cancel="handleCancel">
+  <dialog
+      :id="props.linkedComponentId"
+      class="modal"
+      @cancel="handleCancel"
+  >
     <div class="modal-box w-11/12 max-w-md">
       <div class="w-full flex justify-between mb-8">
-        <h3 class="text-2xl font-bold">{{ props.headline }}</h3>
+        <h3 class="text-2xl font-bold">
+          {{ props.headline }}
+        </h3>
         <div class="mx-4 mt-1">
           <FontAwesomeIcon :icon="props.icon"/>
         </div>
       </div>
 
       <div class="flex flex-col items-center max-w-full">
-        <div v-if="props.image" class="mask mask-squircle size-24 mb-8">
-          <img :src="props.image" alt="Modal image" class="rounded-box">
+        <div
+            v-if="props.image"
+            class="mask mask-squircle size-24 mb-8"
+        >
+          <img
+              :src="props.image"
+              alt="Modal image"
+              class="rounded-box"
+          >
         </div>
       </div>
-      <p class="text-lg text-base-content text-left mb-4">{{ props.description }}</p>
-      <div v-if="props.warning" class="text-sm text-base-content/60 text-left mb-8">
+      <p class="text-lg text-base-content text-left mb-4">
+        {{ props.description }}
+      </p>
+      <div
+          v-if="props.warning"
+          class="text-sm text-base-content/60 text-left mb-8"
+      >
         <span>{{ props.warning }}</span>
       </div>
       <div class="mb-4">
         <label class="label">
-          <input v-model="dontShowAgain" class="checkbox" type="checkbox">
-          Don't show again
+          <input
+              v-model="dontShowAgain"
+              class="checkbox"
+              type="checkbox"
+          >
+          {{ t('modal.dontShowAgain') }}
         </label>
       </div>
 
       <div class="flex flex-col gap-2">
         <CustomButton
             v-if="!props.hideCancelButton"
-            :text="props.cancelButtonText" block color="default" size="xl" variant="ghost"
-            @click="handleCancel"/>
+            :text="cancelButtonTextComputed"
+            block
+            color="default"
+            size="xl"
+            variant="ghost"
+            @click="handleCancel"
+        />
         <CustomButton
-            :color="props.confirmButtonColor" :left-icon="props.confirmButtonIcon" :text="props.confirmButtonText" block
-            size="xl" variant="soft" @click="handleConfirm"/>
+            :color="props.confirmButtonColor"
+            :left-icon="props.confirmButtonIcon"
+            :text="props.confirmButtonText"
+            block
+            size="xl"
+            variant="soft"
+            @click="handleConfirm"
+        />
       </div>
     </div>
   </dialog>

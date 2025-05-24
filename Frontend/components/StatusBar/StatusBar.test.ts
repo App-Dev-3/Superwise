@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import StatusBar from './StatusBar.vue'
+import { getI18n } from '../../test-utils'
 
 const mockFontAwesomeIcon = {
     name: 'FontAwesomeIcon',
@@ -14,7 +15,8 @@ describe('StatusBar', () => {
             global: {
                 components: {
                     FontAwesomeIcon: mockFontAwesomeIcon
-                }
+                },
+                plugins: [ getI18n() ]
             }
         })
     }
@@ -68,3 +70,4 @@ describe('StatusBar', () => {
         expect(steps[2].classes()).toContain('step-primary')
     })
 })
+

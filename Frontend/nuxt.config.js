@@ -1,10 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import {defineNuxtConfig} from "nuxt/config";
+import { defineNuxtConfig } from "nuxt/config";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
     compatibilityDate: "2024-11-01",
-    devtools: {enabled: true},
+    devtools: { enabled: true },
 
 
     buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
@@ -49,6 +49,21 @@ export default defineNuxtConfig({
                 code: "de",
                 name: "german",
                 file: "de-DE.json",
+            },
+            {
+                code: "fr",
+                name: "french",
+                file: "fr-FR.json",
+            },
+            {
+                code: "es",
+                name: "spanish",
+                file: "es-ES.json",
+            },
+            {
+                code: "it",
+                name: "italian",
+                file: "it-IT.json",
             },
         ]
     },

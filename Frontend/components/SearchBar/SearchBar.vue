@@ -1,21 +1,27 @@
 <script setup>
-import { onMounted, onBeforeUnmount, ref, nextTick } from "vue";
+import {nextTick, onBeforeUnmount, onMounted, ref} from 'vue';
+import {useI18n} from 'vue-i18n';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
+const {t} = useI18n();
 
 const props = defineProps({
-  modelValue: { type: String, default: "" },
-  rightIcon: { type: String, default: "" },
-  placeholder: { type: String, default: "" },
+  modelValue: {type: String, default: ''},
+  rightIcon: {type: String, default: ''},
+  placeholder: {type: String, default: ''},
   searchFor: {
     type: String,
-    default: "all", // "supervisors" | "students" | "all"
-    validator: (v) => ["all", "supervisors", "students"].includes(v),
+    default: 'all', // "supervisors" | "students" | "all"
+    validator: (v) =>
+        ['all', 'supervisors', 'students'].includes(v),
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
-const { getUserByEmail, getUserByFirstName, getUserByLastName } = useUserApi();
+const emit = defineEmits(['update:modelValue']);
+const {getUserByEmail, getUserByFirstName, getUserByLastName} =
+    useUserApi();
 
-const searchQuery = ref(props.modelValue || "");
+const searchQuery = ref(props.modelValue || '');
 const searchRef = ref(null);
 const inputRef = ref(null);
 const isSearching = ref(false);
@@ -24,7 +30,10 @@ const searchResults = ref([]);
 let debounceTimeout = null;
 
 const handleClickOutside = (event) => {
-  if (searchRef.value && !searchRef.value.contains(event.target)) {
+  if (
+      searchRef.value &&
+      !searchRef.value.contains(event.target)
+  ) {
     isSearching.value = false;
     isExpanded.value = false;
   }
@@ -39,7 +48,7 @@ const expandSearch = () => {
 };
 
 const clearSearch = () => {
-  searchQuery.value = "";
+  searchQuery.value = '';
 };
 
 function hasExactlyOneSpace(str) {
@@ -49,7 +58,7 @@ function hasExactlyOneSpace(str) {
 const handleInput = () => {
   clearTimeout(debounceTimeout);
   debounceTimeout = setTimeout(() => {
-    emit("update:modelValue", searchQuery.value);
+    emit('update:modelValue', searchQuery.value);
     getUsers(searchQuery.value);
   }, 300);
 };
@@ -57,46 +66,54 @@ const handleInput = () => {
 async function getUsers(query) {
   let results = [];
 
-  if (query.includes("@")) {
+  if (query.includes('@')) {
     results = [await getUserByEmail(query)];
   } else if (hasExactlyOneSpace(query)) {
     const [first, last] = query.trim().split(/\s+/);
 
-    const [firstNameUsers, lastNameUsers] = await Promise.all([
-      getUserByFirstName(first),
-      getUserByLastName(last),
-    ]);
+    const [firstNameUsers, lastNameUsers] =
+        await Promise.all([
+          getUserByFirstName(first),
+          getUserByLastName(last),
+        ]);
 
     const found = firstNameUsers.some((fu) =>
-      lastNameUsers.some((lu) => fu.id === lu.id)
+        lastNameUsers.some((lu) => fu.id === lu.id),
     );
 
-    results = found ? firstNameUsers : [...firstNameUsers, ...lastNameUsers];
+    results = found
+        ? firstNameUsers
+        : [...firstNameUsers, ...lastNameUsers];
   } else {
-    const [firstNameUsers, lastNameUsers] = await Promise.all([
-      getUserByFirstName(query),
-      getUserByLastName(query),
-    ]);
+    const [firstNameUsers, lastNameUsers] =
+        await Promise.all([
+          getUserByFirstName(query),
+          getUserByLastName(query),
+        ]);
 
     results = [...firstNameUsers, ...lastNameUsers];
   }
 
-  if (props.searchFor !== "all") {
+  if (props.searchFor !== 'all') {
     const wantedRole =
-      props.searchFor === "students" ? "STUDENT" : "SUPERVISOR";
+        props.searchFor === 'students'
+            ? 'STUDENT'
+            : 'SUPERVISOR';
 
-    results = results.filter((user) => user.role === wantedRole);
+    results = results.filter(
+        (user) => user.role === wantedRole,
+    );
   }
 
   searchResults.value = results;
 }
 
 onMounted(() => {
-  document.addEventListener("click", handleClickOutside);
+  document.addEventListener('click', handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("click", handleClickOutside);
+  document.removeEventListener('click', handleClickOutside);
   clearTimeout(debounceTimeout);
 });
 </script>
@@ -104,44 +121,60 @@ onBeforeUnmount(() => {
 <template>
   <div ref="searchRef" class="input-container w-70">
     <div
-      class="search-wrapper"
-      :class="{ expanded: isExpanded }"
-      @click="!isExpanded && expandSearch()"
+        :class="{ expanded: isExpanded }"
+        class="search-wrapper"
+        @click="!isExpanded && expandSearch()"
     >
       <FontAwesomeIcon
-        icon="fa-solid fa-magnifying-glass"
-        class="search-icon"
+          class="search-icon"
+          icon="fa-solid fa-magnifying-glass"
       />
       <input
-        ref="inputRef"
-        v-model="searchQuery"
-        :placeholder="placeholder"
-        class="search-input"
-        type="text"
-        @input="handleInput"
-        @focus="isSearching = true"
+          ref="inputRef"
+          v-model="searchQuery"
+          :placeholder="placeholder"
+          class="search-input"
+          type="text"
+          @focus="isSearching = true"
+          @input="handleInput"
       >
       <FontAwesomeIcon
-        v-if="rightIcon && isSearching"
-        :icon="rightIcon"
-        class="clear-icon"
-        @click="clearSearch"
+          v-if="rightIcon && isSearching"
+          :icon="rightIcon"
+          class="clear-icon"
+          @click="clearSearch"
       />
     </div>
 
-    <ul v-if="isSearching && searchResults.length" class="dropdown bg-base-100">
-      <li v-for="user in searchResults" :key="user.id" class="dropdown__item">
+    <ul
+        v-if="isSearching && searchResults.length"
+        class="dropdown bg-base-100"
+    >
+      <li
+          v-for="user in searchResults"
+          :key="user.id"
+          class="dropdown__item"
+      >
         <NuxtLink :to="`/profiles/${user.id}`">
-          {{ user.first_name + " " + user.last_name || "Unknown User" }}
+          {{
+            user.first_name +
+            ' ' +
+            user.last_name ||
+            'Unknown User'
+          }}
         </NuxtLink>
       </li>
     </ul>
 
     <div
-      v-if="isSearching && searchQuery && searchResults.length === 0"
-      class="dropdown dropdown__no-results"
+        v-if="
+				isSearching &&
+				searchQuery &&
+				searchResults.length === 0
+			"
+        class="dropdown dropdown__no-results"
     >
-      <p>No results found</p>
+      <p>{{ t('searchBar.noResults') }}</p>
     </div>
   </div>
 </template>

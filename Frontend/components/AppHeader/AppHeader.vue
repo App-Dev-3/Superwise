@@ -1,7 +1,10 @@
 <script setup>
-import { useRouter } from "vue-router";
-import { useColorMode } from "#imports";
+import {useRouter} from 'vue-router';
+import {useColorMode} from '#imports';
+import {useI18n} from 'vue-i18n';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
+const {t} = useI18n();
 const router = useRouter();
 const colorMode = useColorMode();
 
@@ -20,7 +23,7 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: "",
+    default: '',
   },
   image: {
     type: String,
@@ -46,36 +49,45 @@ const goBack = () => {
     <div class="navbar bg-base-100 shadow z-10">
       <div class="navbar-start ps-3">
         <button
-          v-if="props.showBack"
-          class="btn btn-ghost btn-circle"
-          data-test="back-button"
-          @click="goBack"
+            v-if="props.showBack"
+            class="btn btn-ghost btn-circle"
+            data-test="back-button"
+            @click="goBack"
         >
-          <FontAwesomeIcon icon="arrow-left" class="text-xl" />
-          <span class="text-sm font-medium opacity-50">Back</span>
+          <FontAwesomeIcon
+              class="text-xl"
+              icon="arrow-left"
+          />
+          <span
+              class="text-sm font-medium opacity-50"
+          >{{
+              t('appHeader.back')
+            }}</span
+          >
         </button>
 
         <div v-if="props.showUser">
           <SideDrawer
-            :image="props.image"
-            :first-name="props.firstName"
-            :last-name="props.lastName"
+              :first-name="props.firstName"
+              :image="props.image"
+              :last-name="props.lastName"
           />
         </div>
 
-        <AppThemeToggle class="ml-5" />
+        <AppThemeToggle class="ml-5"/>
       </div>
 
       <ClientOnly>
         <div class="navbar-center">
           <img
-            :src="
-              colorMode.value === 'dark'
-                ? '../images/appHeader_logo_dark.svg'
-                : '../images/appHeader_logo_light.svg'
-            "
-            alt="Logo image"
-            class="h-6"
+              :src="
+							colorMode.value ===
+							'dark'
+								? '../images/appHeader_logo_dark.svg'
+								: '../images/appHeader_logo_light.svg'
+						"
+              alt="Logo image"
+              class="h-6"
           >
         </div>
       </ClientOnly>
@@ -83,10 +95,14 @@ const goBack = () => {
       <div class="navbar-end">
         <SearchBar
             v-if="props.showSearch"
-          right-icon="xmark"
-          placeholder="Search..."
-          :model-value="props.modelValue"
-          search-for="supervisors"
+            :model-value="props.modelValue"
+            :placeholder="
+						t(
+							'appHeader.searchPlaceholder',
+						)
+					"
+            right-icon="xmark"
+            search-for="supervisors"
         />
       </div>
     </div>

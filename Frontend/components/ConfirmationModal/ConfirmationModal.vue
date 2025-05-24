@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -33,10 +33,13 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   image: '',
   warning: '',
-  cancelButtonText: t('generic.cancel'),
+  cancelButtonText: undefined, // Remove t() from here
   confirmButtonIcon: '',
   hideCancelButton: false,
 });
+
+// Use computed to get cancel button text
+const cancelButtonTextComputed = computed(() => props.cancelButtonText || t('generic.cancel'));
 
 // "cancel" emit is called abort because cancel is a reserved word
 const emit = defineEmits<{
@@ -120,7 +123,7 @@ const handleConfirm = () => {
       <div class="flex flex-col gap-2">
         <CustomButton
             v-if="!props.hideCancelButton"
-            :text="props.cancelButtonText"
+            :text="cancelButtonTextComputed"
             block
             color="default"
             size="xl"

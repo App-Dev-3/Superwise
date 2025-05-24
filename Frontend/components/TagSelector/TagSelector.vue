@@ -87,8 +87,8 @@ function removeTag(tag) {
       >
         {{
           t('tagSelector.tagCount', {
-            current: selectedTags.length,
-            max: maxSelection,
+            count: selectedTags.length,
+            max: props.maxSelection,
           })
         }}
       </div>

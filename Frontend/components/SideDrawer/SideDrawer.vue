@@ -1,7 +1,10 @@
 <script setup>
 import {useColorMode} from "#imports";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const colorMode = useColorMode();
+
+const {t} = useI18n();
 
 const props = defineProps({
   image: {
@@ -27,7 +30,7 @@ const props = defineProps({
         <div class="avatar">
           <div class="mask mask-squircle w-8 rounded-full">
             <img
-                :alt="$t('generic.profilePictureAlt', {
+                :alt="t('generic.profilePictureAlt', {
                 firstName: props.firstName,
                 lastName: props.lastName,
               })"
@@ -51,7 +54,7 @@ const props = defineProps({
           class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
       >
         <img
-            :alt="$t('generic.logoAlt')"
+            :alt="t('generic.logoAlt')"
             :src="
             colorMode?.value === 'dark'
               ? '../images/appHeader_logo_dark.svg'
@@ -64,25 +67,25 @@ const props = defineProps({
           <li>
             <NuxtLink to="/profile">
               <FontAwesomeIcon class="text-xl mr-3" icon="user"/>
-              {{ $t('nav.profile') }}
+              {{ t('nav.profile') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/settings">
               <FontAwesomeIcon class="text-xl mr-3" icon="gear"/>
-              {{ $t('nav.settings') }}
+              {{ t('nav.settings') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/tour">
               <FontAwesomeIcon class="text-xl mr-3" icon="map"/>
-              {{ $t('nav.appTour') }}
+              {{ t('nav.appTour') }}
             </NuxtLink>
           </li>
           <li>
             <NuxtLink to="/data-protection">
               <FontAwesomeIcon class="text-xl mr-3" icon="user-shield"/>
-              {{ $t('nav.dataProtection') }}
+              {{ t('nav.dataProtection') }}
             </NuxtLink>
           </li>
         </ul>
@@ -92,7 +95,7 @@ const props = defineProps({
             <a href="/">
               <span>
                 <FontAwesomeIcon class="text-xl" icon="fa-right-from-bracket"/>
-              {{ $t('nav.logout') }}
+              {{ t('nav.logout') }}
               </span>
             </a>
           </SignOutButton>

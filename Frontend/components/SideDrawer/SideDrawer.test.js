@@ -15,10 +15,6 @@ describe("SideDrawer.vue", () => {
     });
 
     // stub out NuxtLink, FontAwesomeIcon & SignOutButton
-    const globalConfig = {
-        stubs: ["NuxtLink", "FontAwesomeIcon", "SignOutButton"]
-    };
-
     it("renders the explicit image when `image` prop is non-empty", () => {
         const placeholderMock = vi.fn();
         const wrapper = mount(SideDrawer, {

@@ -19,16 +19,16 @@ const props = defineProps({
 <template>
   <div class="supervisor-card">
     <div class="card-header">
-      <img :src="image">
-      <h3>{{ firstName }} {{ lastName }}</h3>
+      <img :src="props.image">
+      <h3>{{ props.firstName }} {{ props.lastName }}</h3>
     </div>
 
-    <div v-if="description" class="description">{{ description }}</div>
+    <div v-if="props.description" class="props.description">{{ props.description }}</div>
 
-    <div class="tags-container">
-      <CustomTag v-for="(tag, index) in tags.slice(0, maxTagAmount)" :key="index" :text="tag"/>
-      <CustomTag :text="`${similarityScore}%`" color="success"/>
-      <CustomTag :text="`${currentCapacity}/${maxCapacity} `" right-icon="user-group"/>
+    <div class="props.tags-container">
+      <CustomTag v-for="(tag, index) in props.tags.slice(0, maxTagAmount)" :key="index" :text="tag"/>
+      <CustomTag :text="`${props.similarityScore}%`" color="success"/>
+      <CustomTag :text="`${currentCapacity}/${props.maxCapacity} `" right-icon="user-group"/>
       <CustomTag :text="`${pendingAmount} `" color="warning" right-icon="hourglass"/>
     </div>
   </div>

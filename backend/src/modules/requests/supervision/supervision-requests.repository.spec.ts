@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SupervisionRequestsRepository } from './supervision-requests.repository';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { RequestState } from '@prisma/client';
+import { RequestState, Role } from '@prisma/client';
 
 describe('SupervisionRequestsRepository', () => {
   let repository: SupervisionRequestsRepository;

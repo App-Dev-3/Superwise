@@ -26,7 +26,7 @@
 		},
 		"supervisor": {
 			"manageStudents": "Studenten Verwalten",
-			"slotsFilled": "Verwendete Slots"
+			"slotsFilled": "Belegte Slots"
 		}
 	},
 	"dataProtection": {
@@ -76,7 +76,7 @@
 		"profilePictureAlt": "Profil Bild von {firstName} {lastName}",
 		"requests": "Anfragen",
 		"saveChanges": "Änderungen speichern",
-		"showAll": "Alles anzeigen...",
+		"showAll": "Alle anzeigen...",
 		"showLess": "Weniger anzeigen",
 		"student": "Studierende",
 		"supervisor": "Betreuende"

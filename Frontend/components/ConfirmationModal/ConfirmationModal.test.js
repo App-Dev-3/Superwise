@@ -1,6 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { mount, flushPromises } from '@vue/test-utils';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
+import {flushPromises, mount} from '@vue/test-utils';
 import ConfirmationModal from './ConfirmationModal.vue';
+import {getI18n} from '../../test-utils'
 
 // Mock FontAwesomeIcon component
 vi.mock('@fortawesome/vue-fontawesome', () => ({
@@ -55,8 +56,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -88,8 +90,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -110,8 +113,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -129,8 +133,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -148,8 +153,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -167,8 +173,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -190,8 +197,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -212,8 +220,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -225,8 +234,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -240,8 +250,9 @@ describe('ConfirmationModal', () => {
             global: {
                 stubs: {
                     CustomButton,
-                    FontAwesomeIcon: true,
+                    FontAwesomeIcon: true
                 },
+                plugins: [getI18n()]
             },
         });
 
@@ -251,3 +262,4 @@ describe('ConfirmationModal', () => {
         expect(wrapper.find('.checkbox').exists()).toBe(true);
     });
 });
+

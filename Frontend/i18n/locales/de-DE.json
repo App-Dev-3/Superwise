@@ -1,49 +1,139 @@
 {
-  "generic": {
-    "continue": "Weiter",
-    "german": "🇩🇪 Deutsch",
-    "english": "🇬🇧 English",
-    "student": "Studierende",
-    "supervisor": "Betreuende",
-    "admin": "Admin",
-    "edit": "Bearbeiten",
-    "saveChanges": "Änderungen speichern"
-  },
-  "dataProtection": {
-    "generic": {
-      "deleteMyData": "Meine Daten löschen",
-      "pageHeader": "Datenschutz",
-      "generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie",
-      "collectedDataSubtitle": "📌 Welche Daten wir erfassen",
-      "changesAndOverwritesSubtitle": "🔁 Datenänderungen und Überschreibungen",
-      "dataDeletionSubtitle": "🗑 Datenlöschung",
-      "generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen."
-    },
-    "student&supervisor": {
-      "collectedDataText": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
-      "collectedDataList": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
-      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
-      "dataDeletionText": {
-        "1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
-        "2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
-      },
-      "dataDeletionList": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten"
-    },
-    "admin": {
-      "generalInfoText": "Diese Klausel gilt speziell für Nutzer*innen mit Admin-Zugriff auf SuperWise.",
-      "collectedDataText": "Für Admin-Konten erfassen und speichern wir ausschließlich:",
-      "collectedDataList": "Vollständiger Name\nE-Mail-Adresse\nProfilbild",
-      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen oder Ihr Profilbild aktualisieren, wird die vorherige Version dauerhaft überschrieben. Es werden keine Kopien oder Backups der vorherigen persönlichen Daten aufbewahrt.",
-      "dataDeletionText": "Wenn ein Admin sein Konto löscht, werden alle personenbezogenen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft und ohne Backup gelöscht.",
-      "dataRetentionSubtitle": "📁 Was nach der Löschung eines Admin-Kontos erhalten bleibt",
-      "dataRetentionText": {
-        "1": "Wenn ein Admin sein Konto löscht, werden alle persönlichen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft entfernt. Einige im Rahmen der Plattformverwaltung erstellte oder hochgeladene Daten gelten jedoch nicht als personenbezogene Daten und bleiben erhalten. Dazu zählen:",
-        "2": "Diese Inhalte sind Teil der Infrastruktur der Plattform und essenziell für die Aufrechterhaltung der Integrität und Kontinuität des SuperWise-Systems. Daher werden sie beim Löschen eines Admin-Kontos nicht entfernt."
-      },
-      "dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden"
-    }
-  },
-  "profile": {
-    "pageHeader": "Mein Profil"
-  }
+	"appHeader": {
+		"back": "Zurück",
+		"searchPlaceholder": "Suchen..."
+	},
+	"confirmed": {
+		"confirmedOn": "Bestätigt am {date}",
+		"supervising": "Sie betreuen {firstName}"
+	},
+	"confirmation": {
+		"acceptedOn": "Akzeptiert am: {date}",
+		"details": "Bestätigungsdetails",
+		"scanToVerify": "Scannen zur Überprüfung der Bestätigung",
+		"student": "Student",
+		"supervisor": "Betreuer",
+		"title": "Abschlussarbeitsbetreuung Bestätigung"
+	},
+	"dashboard": {
+		"student": {
+			"downloadConfirmation": "Bestätigung herunterladen",
+			"findSupervisor": "Finde jetzt deinen Betreuer!",
+			"multipleAcceptedWarning": "Du hast {count} Betreuungsanfragen akzeptiert, benötigst aber nur einen Betreuer. Bitte sprich mit {supervisors} und löse den Konflikt.",
+			"startMatching": "Beginne zu Matchen!",
+			"suggestedMatches": "Vorgeschlagene Matches",
+			"yourRequests": "Deine Anfragen"
+		},
+		"supervisor": {
+			"manageStudents": "Studenten Verwalten",
+			"slotsFilled": "Belegte Slots"
+		}
+	},
+	"dataProtection": {
+		"admin": {
+			"changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen oder Ihr Profilbild aktualisieren, wird die vorherige Version dauerhaft überschrieben. Es werden keine Kopien oder Backups der vorherigen persönlichen Daten aufbewahrt.",
+			"collectedDataList": "Vollständiger Name\nE-Mail-Adresse\nProfilbild",
+			"collectedDataText": "Für Admin-Konten erfassen und speichern wir ausschließlich:",
+			"dataDeletionText": "Wenn ein Admin sein Konto löscht, werden alle personenbezogenen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft und ohne Backup gelöscht.",
+			"dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden",
+			"dataRetentionSubtitle": "📁 Was nach der Löschung eines Admin-Kontos erhalten bleibt",
+			"dataRetentionText": {
+				"1": "Wenn ein Admin sein Konto löscht, werden alle persönlichen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft entfernt. Einige im Rahmen der Plattformverwaltung erstellte oder hochgeladene Daten gelten jedoch nicht als personenbezogene Daten und bleiben erhalten. Dazu zählen:",
+				"2": "Diese Inhalte sind Teil der Infrastruktur der Plattform und essenziell für die Aufrechterhaltung der Integrität und Kontinuität des SuperWise-Systems. Daher werden sie beim Löschen eines Admin-Kontos nicht entfernt."
+			},
+			"generalInfoText": "Diese Klausel gilt speziell für Nutzer*innen mit Admin-Zugriff auf SuperWise."
+		},
+		"generic": {
+			"changesAndOverwritesSubtitle": "🔁 Datenänderungen und Überschreibungen",
+			"collectedDataSubtitle": "📌 Welche Daten wir erfassen",
+			"dataDeletionSubtitle": "🗑 Datenlöschung",
+			"deleteMyData": "Meine Daten löschen",
+			"generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen.",
+			"generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie"
+		},
+		"student&supervisor": {
+			"changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
+			"collectedDataList": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
+			"collectedDataText": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
+			"dataDeletionList": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten",
+			"dataDeletionText": {
+				"1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
+				"2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
+			}
+		}
+	},
+	"generic": {
+		"admin": "Admin",
+		"cancel": "Abbrechen",
+		"continue": "Weiter",
+		"edit": "Bearbeiten",
+		"english": "🇬🇧 English",
+		"german": "🇩🇪 Deutsch",
+		"french": "🇫🇷 Français",
+		"spanish": "🇪🇸 Español",
+		"italian": "🇮🇹 Italiano",
+		"logoAlt": "Logo",
+		"profilePictureAlt": "Profil Bild von {firstName} {lastName}",
+		"requests": "Anfragen",
+		"saveChanges": "Änderungen speichern",
+		"showAll": "Alle anzeigen...",
+		"showLess": "Weniger anzeigen",
+		"student": "Studierende",
+		"supervisor": "Betreuende"
+	},
+	"landing": {
+		"dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
+		"here": "hier"
+	},
+	"modal": {
+		"dontShowAgain": "Nicht mehr anzeigen"
+	},
+	"multiStepForm": {
+		"next": "Weiter",
+		"startMatching": "Matching starten"
+	},
+	"nav": {
+		"appTour": "App Tour",
+		"confirmed": "Bestätigt",
+		"dashboard": "Dashboard",
+		"dataProtection": "Datenschutz",
+		"logout": "Abmelden",
+		"matching": "Matching",
+		"profile": "Profil",
+		"settings": "Einstellungen"
+	},
+	"onboarding": {
+		"firstName": "Vorname",
+		"lastName": "Nachname",
+		"maxSelection": "Maximale Auswahl"
+	},
+	"profile": {
+		"pageHeader": "Mein Profil",
+		"preview": "Vorschau",
+		"firstName": "Vorname",
+		"lastName": "Nachname",
+		"bio": "Biografie",
+		"bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
+		"bioPlaceholder": "Erzählen Sie etwas über sich..."
+	},
+	"searchBar": {
+		"noResults": "Keine Ergebnisse gefunden"
+	},
+	"statusBar": {
+		"confirmed": "Bestätigt",
+		"matching": "Matching",
+		"onboarding": "Onboarding"
+	},
+	"supervisorCard": {
+		"capacity": "Kapazität",
+		"pending": "Ausstehende Anfragen",
+		"profilePictureAlt": "Profilbild von {firstName} {lastName}",
+		"similarityScore": "Übereinstimmungswert"
+	},
+	"tagPriority": {
+		"arrangeByPriority": "Tags nach Priorität ordnen"
+	},
+	"tagSelector": {
+		"tagCount": "{current}/{max}"
+	}
 }

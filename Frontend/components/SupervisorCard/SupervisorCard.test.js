@@ -1,10 +1,10 @@
-import { mount } from '@vue/test-utils'
-import { describe, it, expect } from 'vitest'
-import SupervisorCard from './SupervisorCard.vue'
+import {mount} from '@vue/test-utils'
+import {describe, expect, it} from 'vitest'
+import SupervisorCard from './SupervisorCard.mock.vue' // Use mock component without i18n dependencies
 import CustomTag from '../CustomTag/CustomTag.vue'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserGroup, faHourglass } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {faHourglass, faUserGroup} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 library.add(faUserGroup, faHourglass)
 
@@ -100,3 +100,4 @@ describe('SupervisorCard', () => {
         expect(regularTags).toHaveLength(3)
     })
 })
+

@@ -22,7 +22,7 @@ const getStyle = (content: string) => {
     return "pt-6";
 };
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const deleteData = () => {
   // Implement the logic to delete data
@@ -33,14 +33,14 @@ const deleteData = () => {
 <template>
   <div class="h-screen flex flex-col">
     <AdminHeader
-      :header-text="$t('dataProtection.generic.pageHeader')"
+        :header-text="$t('nav.dataProtection')"
     />
 
     <div class="px-6 py-8 flex flex-col gap-2 h-full overflow-y-auto">
       <div
-        v-for="content in pageContent"
-        :key="content"
-        :class="getStyle(content)"
+          v-for="content in pageContent"
+          :key="content"
+          :class="getStyle(content)"
       >
         <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
           <li v-for="(item, index) in t(content).split('\n')" :key="index">
@@ -56,12 +56,12 @@ const deleteData = () => {
         <p v-else class="text-body">{{ $t(content) }}</p>
       </div>
       <CustomButton
-        :text="$t('dataProtection.generic.deleteMyData')"
-        block
-        class="py-8"
-        color="error"
-        left-icon="trash-can"
-        @click="deleteData"
+          :text="$t('dataProtection.generic.deleteMyData')"
+          block
+          class="py-8"
+          color="error"
+          left-icon="trash-can"
+          @click="deleteData"
       />
     </div>
   </div>

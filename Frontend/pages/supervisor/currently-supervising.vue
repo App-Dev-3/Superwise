@@ -68,7 +68,8 @@ async function removeStudent(studentId: string) {
 }
 
 async function addStudent(email: string) {
-  if (!supervisor_data.value?.supervisorId) {
+    // This "id" usage is correct based on the current backend, even if you ide says its not
+    if (!supervisor_data.value?.id) {
     console.warn("No supervisor ID yet!");
     return;
   }
@@ -81,6 +82,7 @@ async function addStudent(email: string) {
     await $fetch("/api/supervision-requests", {
       method: "POST",
       body: {
+          // This "id" usage is correct based on the current backend, even if you ide says its not
         supervisor_id: supervisor_data.value.id,
         student_email: email,
       },

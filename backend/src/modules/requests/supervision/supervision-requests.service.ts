@@ -14,6 +14,9 @@ import { SupervisionRequestStateConflictException } from '../../../common/except
 import { SupervisionRequestTooEarlyException } from '../../../common/exceptions/custom-exceptions/supervision-request-too-early.exception';
 import { InvalidRequestStateTransitionException } from '../../../common/exceptions/custom-exceptions/invalid-request-state-transition.exception';
 import { SupervisorCapacityException } from '../../../common/exceptions/custom-exceptions/supervisor-capacity.exception';
+import { SelfSupervisionException } from '../../../common/exceptions/custom-exceptions/self-supervision.exception';
+import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
+import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 
 @Injectable()
 export class SupervisionRequestsService {
@@ -108,7 +111,17 @@ export class SupervisionRequestsService {
   private async createSupervisorRequest(dto: { student_email?: string }, currentUser: User) {
     // Validate input
     if (!dto.student_email) {
-      throw new BadRequestException('student_email is required for supervisors');
+      throw new MissingStudentEmailException();
+    }
+    // Check that email is not the same as current user's email
+    if (dto.student_email === currentUser.email) {
+      throw new SelfSupervisionException();
+    }
+
+    // Check if target email belongs to a supervisor
+    const targetUser = await this.usersService.findUserByEmail(dto.student_email);
+    if (targetUser?.role === Role.SUPERVISOR) {
+      throw new SupervisorTargetException();
     }
 
     // Get supervisor profile

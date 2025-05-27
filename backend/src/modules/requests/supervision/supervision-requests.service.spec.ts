@@ -11,6 +11,9 @@ import { SupervisionRequestStateConflictException } from '../../../common/except
 import { SupervisionRequestTooEarlyException } from '../../../common/exceptions/custom-exceptions/supervision-request-too-early.exception';
 import { InvalidRequestStateTransitionException } from '../../../common/exceptions/custom-exceptions/invalid-request-state-transition.exception';
 import { SupervisorCapacityException } from '../../../common/exceptions/custom-exceptions/supervisor-capacity.exception';
+import { SelfSupervisionException } from '../../../common/exceptions/custom-exceptions/self-supervision.exception';
+import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
+import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 
 describe('SupervisionRequestsService', () => {
   let service: SupervisionRequestsService;
@@ -35,6 +38,7 @@ describe('SupervisionRequestsService', () => {
 
   const mockUsersService = {
     findUserById: jest.fn(),
+    findUserByEmail: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -51,6 +55,7 @@ describe('SupervisionRequestsService', () => {
   const STUDENT_USER_UUID = '123e4567-e89b-12d3-a456-426614174003';
   const SUPERVISOR_USER_UUID = '123e4567-e89b-12d3-a456-426614174004';
   const ADMIN_USER_UUID = '123e4567-e89b-12d3-a456-426614174005';
+  const ANOTHER_SUPERVISOR_USER_UUID = '123e4567-e89b-12d3-a456-426614174006';
   const STUDENT_CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
   const SUPERVISOR_CLERK_ID = 'user_1AUj8tGhSFhTLD9sdP0q4P7VoXY';
   const ADMIN_CLERK_ID = 'user_3CUj8tGhSFhTLD9sdP0q4P7VoZW';
@@ -282,6 +287,7 @@ describe('SupervisionRequestsService', () => {
         // Arrange
         const dto = { student_email: 'student@fhstp.ac.at' };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
         mockRepository.createSupervisionRequest.mockResolvedValue({
           ...mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
@@ -300,6 +306,7 @@ describe('SupervisionRequestsService', () => {
         expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
           mockSupervisorUser.id,
         );
+        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
         expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
           supervisor_id: mockSupervisor.id,
           student_email: dto.student_email,
@@ -312,6 +319,7 @@ describe('SupervisionRequestsService', () => {
         // Arrange
         const dto = { student_email: 'newstudent@fhstp.ac.at' };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+        mockUsersService.findUserByEmail.mockResolvedValue(null); // User doesn't exist
         mockRepository.createSupervisionRequest.mockResolvedValue({
           ...mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
@@ -330,6 +338,7 @@ describe('SupervisionRequestsService', () => {
         expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
           mockSupervisorUser.id,
         );
+        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
         expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
           supervisor_id: mockSupervisor.id,
           student_email: dto.student_email,
@@ -339,19 +348,20 @@ describe('SupervisionRequestsService', () => {
         expect(mockLoggerService.log).toHaveBeenCalled();
       });
 
-      it('should throw BadRequestException if student_email is missing', async () => {
+      it('should throw MissingStudentEmailException if student_email is missing', async () => {
         // Arrange
         const dto = {};
 
         // Act & Assert
         await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
-          BadRequestException,
+          MissingStudentEmailException,
         );
       });
 
       it('should throw SupervisorCapacityException if no spots available', async () => {
         // Arrange
         const dto = { student_email: 'student@fhstp.ac.at' };
+        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
         // Supervisor with no available spots
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue({
           ...mockSupervisor,
@@ -361,6 +371,33 @@ describe('SupervisionRequestsService', () => {
         // Act & Assert
         await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
           SupervisorCapacityException,
+        );
+      });
+
+      it('should throw SelfSupervisionException if supervisor tries to supervise themselves', async () => {
+        // Arrange
+        const dto = { student_email: mockSupervisorUser.email }; // Same email as supervisor
+
+        // Act & Assert
+        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
+          SelfSupervisionException,
+        );
+      });
+
+      it('should throw SupervisorTargetException if trying to create request for another supervisor', async () => {
+        // Arrange
+        const dto = { student_email: 'anothersupervisor@fhstp.ac.at' };
+        const anotherSupervisorUser = {
+          ...mockSupervisorUser,
+          id: ANOTHER_SUPERVISOR_USER_UUID,
+          email: 'anothersupervisor@fhstp.ac.at',
+        };
+        mockUsersService.findUserByEmail.mockResolvedValue(anotherSupervisorUser); // Return supervisor user
+        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+
+        // Act & Assert
+        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
+          SupervisorTargetException,
         );
       });
     });

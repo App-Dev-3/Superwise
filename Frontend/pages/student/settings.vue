@@ -15,7 +15,6 @@ const settingsStore = useSettingsStore();
 let version = "1.0.0"; // Default version
 // Get app version
 try {
-  // @ts-ignore
   version = app.version();
 } catch (e) {
   console.error("Error getting app version: ", e);

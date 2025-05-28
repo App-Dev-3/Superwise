@@ -24,7 +24,7 @@ const props = defineProps({
 
 <template>
   <div class="drawer">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" >
     <div class="drawer-content">
       <label class="drawer-button" for="my-drawer">
         <div class="avatar">
@@ -40,8 +40,7 @@ const props = defineProps({
                 props.image ||
                 getPlaceholderImage(props.firstName, props.lastName)
               "
-              alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-            />
+            >
           </div>
         </div>
       </label>
@@ -63,9 +62,8 @@ const props = defineProps({
               ? '../images/appHeader_logo_dark.svg'
               : '../images/appHeader_logo_light.svg'
           "
-          alt="Logo"
           class="h-6 mb-8"
-        />
+        >
 
         <ul class="space-y-3 flex-grow">
           <li>

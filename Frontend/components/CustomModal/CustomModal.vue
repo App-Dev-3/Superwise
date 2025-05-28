@@ -13,7 +13,7 @@
             :src="props.imageSrc"
             :alt="props.imageAlt"
             class="h-24 mb-2"
-          />
+          >
           <p v-if="props.email" class="text-slate-500 text-sm">
             {{ props.email }}
           </p>
@@ -27,11 +27,11 @@
         <!-- Optional checkbox -->
         <div v-if="props.showCheckbox" class="flex items-center space-x-2">
           <input
-            type="checkbox"
             :id="checkboxId"
             v-model="checked"
+            type="checkbox"
             class="checkbox"
-          />
+          >
           <label :for="checkboxId" class="text-sm select-none">
             {{ props.checkboxLabel || t("Don't show again") }}
           </label>
@@ -99,7 +99,6 @@ const checked = computed<boolean>({
   get() {
     if (props.showCheckbox && props.settingKey) {
       // invert: unchecked when setting=true
-      // @ts-ignore
       return !settingsStore[props.settingKey];
     }
     return false;
@@ -107,7 +106,6 @@ const checked = computed<boolean>({
   set(val: boolean) {
     if (props.showCheckbox && props.settingKey) {
       // invert back to store
-      // @ts-ignore
       settingsStore[props.settingKey] = !val;
     }
   },

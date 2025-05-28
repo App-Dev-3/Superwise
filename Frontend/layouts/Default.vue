@@ -12,7 +12,7 @@
         "
         alt="Logo image"
         class="w-full max-w-xs"
-      />
+      >
     </ClientOnly>
     <span class="text-large flex flex-row items-center gap-1">
       Loading page

@@ -15,7 +15,6 @@ const settingsStore = useSettingsStore();
 let version = "1.0.0"; // Default version
 // Get app version
 try {
-  // @ts-ignore
   version = app.version();
 } catch (e) {
   console.error("Error getting app version: ", e);
@@ -109,7 +108,7 @@ onBeforeUnmount(() => {
             />
           </SettingsElement>
 
-          <hr />
+          <hr >
 
           <SettingsElement
             description="Show confirmation modal when adding a student to supervise in the add view."

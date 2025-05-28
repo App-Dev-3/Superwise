@@ -80,29 +80,24 @@ const goBack = () => {
       <ClientOnly>
         <div class="navbar-center">
           <img
-              :src="
-							colorMode.value ===
-							'dark'
-								? '../images/appHeader_logo_dark.svg'
-								: '../images/appHeader_logo_light.svg'
-						"
-              alt="Logo image"
-              class="h-6"
-          >
+            :src="
+              colorMode.value === 'dark'
+                ? '../images/appHeader_logo_dark.svg'
+                : '../images/appHeader_logo_light.svg'
+            "
+            alt="Logo image"
+            class="h-6"
+          />
         </div>
       </ClientOnly>
 
       <div class="navbar-end">
         <SearchBar
-            v-if="props.showSearch"
-            :model-value="props.modelValue"
-            :placeholder="
-						t(
-							'appHeader.searchPlaceholder',
-						)
-					"
-            right-icon="xmark"
-            search-for="supervisors"
+          v-if="props.showSearch"
+          right-icon="xmark"
+          placeholder="Search..."
+          :model-value="props.modelValue"
+          search-for="supervisors"
         />
       </div>
     </div>

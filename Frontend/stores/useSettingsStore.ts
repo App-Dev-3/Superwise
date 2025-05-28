@@ -10,8 +10,6 @@ export const useSettingsStore = defineStore('settings', () => {
     dismissConfirmationModal: true,
     showSupervisionRequestModal: true,
     showDismissModal: true,
-    showChatRequestAcceptModal: true,
-    showChatRequestRejectModal: true,
     showSupervisionAcceptModal: true,
     showSupervisionRejectModal: true,
     showAddStudentModal: true,
@@ -84,16 +82,6 @@ export const useSettingsStore = defineStore('settings', () => {
     set: (val: boolean) => setSettings({ showDismissModal: val }),
   })
 
-  const showChatRequestAcceptModal = computed({
-    get: () => settings.value.showChatRequestAcceptModal ?? defaultSettings.showChatRequestAcceptModal,
-    set: (val: boolean) => setSettings({ showChatRequestAcceptModal: val }),
-  })
-
-  const showChatRequestRejectModal = computed({
-    get: () => settings.value.showChatRequestRejectModal ?? defaultSettings.showChatRequestRejectModal,
-    set: (val: boolean) => setSettings({ showChatRequestRejectModal: val }),
-  })
-
   const showSupervisionAcceptModal = computed({
     get: () => settings.value.showSupervisionAcceptModal ?? defaultSettings.showSupervisionAcceptModal,
     set: (val: boolean) => setSettings({ showSupervisionAcceptModal: val }),
@@ -125,8 +113,6 @@ export const useSettingsStore = defineStore('settings', () => {
     dismissConfirmationModal,
     showSupervisionRequestModal,
     showDismissModal,
-    showChatRequestAcceptModal,
-    showChatRequestRejectModal,
     showSupervisionAcceptModal,
     showSupervisionRejectModal,
     showAddStudentModal,

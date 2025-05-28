@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import StudentCard from "./StudentCard.vue";
 import ValidatedMailInput from "./ValidatedMailInput.vue";
 import CustomButton from "../CustomButton/CustomButton.vue";
 import type { UserData } from "~/shared/types/userInterfaces";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 import type CustomModal from "../CustomModal/CustomModal.vue";
+import { useSettingsStore } from "~/stores/useSettingsStore";
 
 const { user } = useUser();
 const userStore = useUserStore();
@@ -14,6 +15,8 @@ const { getUserByEmail } = useUserApi();
 
 const current_user = ref<UserData | null>(null);
 const supervisor_data = ref<SupervisorData | null>(null);
+
+const settingsStore = useSettingsStore();
 
 interface Student {
   id: string;
@@ -77,7 +80,10 @@ const editButtonIcon = computed(() => {
 
 const confirm = async () => {
   if (!emailAddress.value) return;
-
+  if (!settingsStore.showAddStudentModal) {
+    addStudent();
+    return;
+  }
   try {
     modal_user.value = await getUserByEmail(emailAddress.value);
 
@@ -179,7 +185,7 @@ watch(
         />
       </div>
     </div>
-    <!-- TODO Move modal to own component;   -->
+
     <CustomModal
       ref="modalExistingStudentRef"
       title="Supervise Student"
@@ -196,6 +202,9 @@ watch(
       :email="modal_user?.email"
       :main-text="`Would you like to supervise ${modal_user?.first_name} ${modal_user?.last_name}?`"
       sub-text="They will get notified that you are supervising them!"
+      :show-checkbox="true"
+      checkbox-label="Don't show again"
+      setting-key="showAddStudentModal"
       confirm-text="Supervise Student"
       @confirm="addStudent"
     />
@@ -209,83 +218,12 @@ watch(
       :email="emailAddress"
       :main-text="`Would you like to supervise ${emailAddress}? They are not registered on SuperWise, but will get notified via mail.`"
       sub-text="They will get notified that you are supervising them!"
+      :show-checkbox="true"
+      checkbox-label="Don't show again"
+      setting-key="showAddStudentModal"
       confirm-text="Supervise Student"
       @confirm="addStudent"
     />
-    <!-- <dialog ref="modalExistingStudentRef" class="modal">
-      <div class="modal-box w-9/12 max-w-5xl">
-        <div class="flex w-full flex-row space-x-4 justify-between">
-          <h3 class="text-lg font-bold">Supervise Student</h3>
-          <FontAwesomeIcon icon="user-group" class="text-lg self-center" />
-        </div>
-        <div class="flex flex-col w-full items-center">
-          <img
-            :src="
-              modal_user?.profile_image === null
-                ? undefined
-                : modal_user?.profile_image
-            "
-            :alt="
-              'Profile image of ' +
-              modal_user?.first_name +
-              ' ' +
-              modal_user?.last_name
-            "
-            class="h-24"
-          />
-          <p class="text-slate-500 text-sm">{{ modal_user?.email }}</p>
-        </div>
-        <p>
-          Would you like to supervise {{ modal_user?.first_name }}
-          {{ modal_user?.last_name }}?
-        </p>
-        <p class="text-slate-500 text-sm">
-          They will get notified that you are supervising them!
-        </p>
-        <div class="modal-action">
-          <form method="dialog" class="flex flex-col w-full space-y-4">
-            <button class="btn w-full">Close</button>
-            <button class="btn w-full bg-emerald-500" wide @click="addStudent">
-              Supervise Student
-            </button>
-          </form>
-        </div>
-      </div>
-    </dialog>
-
-    <dialog ref="modalNotExistingStudentRef" class="modal">
-      <div class="modal-box w-9/12 max-w-5xl">
-        <div class="flex flex-col space-y-6">
-          <div class="flex w-full flex-row justify-between">
-            <h3 class="text-lg font-bold">Supervise Student</h3>
-            <FontAwesomeIcon icon="user-group" class="text-lg self-center" />
-          </div>
-          <div class="flex flex-col w-full items-center">
-            <img
-              :src="'../images/Superwise_Logo.svg'"
-              alt="Logo"
-              class="h-24"
-            />
-            <p class="text-slate-500 text-sm">{{ emailAddress }}</p>
-          </div>
-          <p>
-            Would you like to supervise {{ emailAddress }}? They are not
-            registered on SuperWise, but will get notified via mail.
-          </p>
-          <p class="text-slate-500 text-sm">
-            They will get notified that you are supervising them!
-          </p>
-        </div>
-        <div class="modal-action">
-          <form method="dialog" class="flex flex-col w-full space-y-4">
-            <button class="btn w-full">Close</button>
-            <button class="btn w-full bg-emerald-500" wide @click="addStudent">
-              Supervise Student
-            </button>
-          </form>
-        </div>
-      </div>
-    </dialog> -->
   </div>
 </template>
 

@@ -4,11 +4,7 @@
   >
     <ClientOnly>
       <img
-          :src="
-					colorMode.value === 'dark'
-						? 'images/appLanding_logo_dark.svg'
-						: 'images/appLanding_logo_light.svg'
-				"
+          :src="colorMode.value === 'dark'? 'images/appLanding_logo_dark.svg': 'images/appLanding_logo_light.svg'"
           alt="Logo image"
           class="w-full max-w-96"
       >
@@ -46,7 +42,7 @@
 <script setup>
 import {useColorMode} from '#imports';
 
-const t = useI18n();
+const { t } = useI18n();
 
 const colorMode = useColorMode();
 </script>

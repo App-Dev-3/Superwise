@@ -1,10 +1,10 @@
 <script setup>
-import {useRouter} from 'vue-router';
-import {useColorMode} from '#imports';
-import {useI18n} from 'vue-i18n';
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { useRouter } from "vue-router";
+import { useColorMode } from "#imports";
+import { useI18n } from "vue-i18n";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-const {t} = useI18n();
+const { t } = useI18n();
 const router = useRouter();
 const colorMode = useColorMode();
 
@@ -23,7 +23,7 @@ const props = defineProps({
   },
   modelValue: {
     type: String,
-    default: '',
+    default: "",
   },
   image: {
     type: String,
@@ -34,6 +34,10 @@ const props = defineProps({
     required: true,
   },
   lastName: {
+    type: String,
+    required: true,
+  },
+  role: {
     type: String,
     required: true,
   },
@@ -49,32 +53,27 @@ const goBack = () => {
     <div class="navbar bg-base-100 shadow z-10">
       <div class="navbar-start ps-3">
         <button
-            v-if="props.showBack"
-            class="btn btn-ghost btn-circle"
-            data-test="back-button"
-            @click="goBack"
+          v-if="props.showBack"
+          class="btn btn-ghost btn-circle"
+          data-test="back-button"
+          @click="goBack"
         >
-          <FontAwesomeIcon
-              class="text-xl"
-              icon="arrow-left"
-          />
-          <span
-              class="text-sm font-medium opacity-50"
-          >{{
-              t('appHeader.back')
-            }}</span
-          >
+          <FontAwesomeIcon class="text-xl" icon="arrow-left" />
+          <span class="text-sm font-medium opacity-50">{{
+            t("appHeader.back")
+          }}</span>
         </button>
 
         <div v-if="props.showUser">
           <SideDrawer
-              :first-name="props.firstName"
-              :image="props.image"
-              :last-name="props.lastName"
+            :first-name="props.firstName"
+            :image="props.image"
+            :last-name="props.lastName"
+            :role="props.role"
           />
         </div>
 
-        <AppThemeToggle class="ml-5"/>
+        <AppThemeToggle class="ml-5" />
       </div>
 
       <ClientOnly>
@@ -95,7 +94,7 @@ const goBack = () => {
         <SearchBar
           v-if="props.showSearch"
           right-icon="xmark"
-          placeholder="Search..."
+          :placeholder="t('appHeader.searchPlaceholder')"
           :model-value="props.modelValue"
           search-for="supervisors"
         />

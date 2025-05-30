@@ -19,6 +19,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    required: true,
+  },
 });
 </script>
 
@@ -73,7 +77,7 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink to="/student/settings">
+            <NuxtLink :to="`/${props.role.toLowerCase()}/settings`">
               <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
               {{ t("nav.settings") }}
             </NuxtLink>
@@ -85,7 +89,7 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink to="/data-protection">
+            <NuxtLink :to="`/${props.role.toLowerCase()}/data-protection`">
               <FontAwesomeIcon class="text-xl mr-3" icon="user-shield" />
               {{ t("nav.dataProtection") }}
             </NuxtLink>

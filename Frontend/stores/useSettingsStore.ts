@@ -5,7 +5,6 @@ import type { UserSettingsData } from '~/shared/types/userInterfaces'
 export const useSettingsStore = defineStore('settings', () => {
   // Default settings
   const defaultSettings: Required<UserSettingsData> = {
-    theme: 'light',
     language: 'en',
     dismissConfirmationModal: true,
     showSupervisionRequestModal: true,
@@ -57,11 +56,6 @@ export const useSettingsStore = defineStore('settings', () => {
   loadSettings()
 
   // Computed getters/setters for each setting
-  const theme = computed({
-    get: () => settings.value.theme ?? defaultSettings.theme,
-    set: (val: string) => setSettings({ theme: val }),
-  })
-
   const language = computed({
     get: () => settings.value.language ?? defaultSettings.language,
     set: (val: string) => setSettings({ language: val }),
@@ -108,7 +102,6 @@ export const useSettingsStore = defineStore('settings', () => {
     loadSettings,
     clearSettings,
     setNotificationId,
-    theme,
     language,
     dismissConfirmationModal,
     showSupervisionRequestModal,

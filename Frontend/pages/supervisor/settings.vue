@@ -56,7 +56,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AdminHeader :header-text="t('Settings')" />
+      <AdminHeader :header-text="t('nav.settings')" />
       <div class="w-full flex flex-col gap-4 p-8 overflow-y-auto">
         <!-- App Settings -->
         <SettingsArea icon="eye" title="Appearance">
@@ -68,8 +68,8 @@ onBeforeUnmount(() => {
           </SettingsElement>
 
           <SettingsElement
-            :description="t('Select the language of the app')"
-            :title="t('language')"
+            :description="t('settings.select.language')"
+            :title="t('generic.language')"
           >
             <CustomSelect
               :model-value="locale"
@@ -79,8 +79,8 @@ onBeforeUnmount(() => {
                   value: t('generic.' + locale.name),
                 }))
               "
-              label="Select Language"
-              placeholder="Select Language"
+              :label="t('settings.select.language')"
+              :placeholder="t('settings.select.language')"
               @update:model-value="onChangeLocale"
             />
           </SettingsElement>
@@ -93,8 +93,7 @@ onBeforeUnmount(() => {
             title="Supervision request Accept Modal"
           >
             <CustomToggle
-              :model-value="settingsStore.showSupervisionAcceptModal"
-              @update:model-value="(value: boolean) => settingsStore.showSupervisionAcceptModal = value"
+              v-model:checked="settingsStore.showSupervisionAcceptModal"
             />
           </SettingsElement>
 
@@ -103,8 +102,7 @@ onBeforeUnmount(() => {
             title="Supervision request Reject Modal"
           >
             <CustomToggle
-              :model-value="settingsStore.showSupervisionRejectModal"
-              @update:model-value="(value: boolean) => settingsStore.showSupervisionRejectModal = value"
+              v-model:checked="settingsStore.showSupervisionRejectModal"
             />
           </SettingsElement>
 
@@ -114,10 +112,7 @@ onBeforeUnmount(() => {
             description="Show confirmation modal when adding a student to supervise in the add view."
             title="Add Student to Supervise Modal"
           >
-            <CustomToggle
-              :model-value="settingsStore.showAddStudentModal"
-              @update:model-value="(value: boolean) => settingsStore.showAddStudentModal = value"
-            />
+            <CustomToggle v-model:checked="settingsStore.showAddStudentModal" />
           </SettingsElement>
         </SettingsArea>
 

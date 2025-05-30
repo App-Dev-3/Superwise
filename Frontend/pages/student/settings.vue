@@ -56,20 +56,20 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AdminHeader :header-text="t('Settings')" />
+      <AdminHeader :header-text="t('nav.settings')" />
       <div class="w-full flex flex-col gap-4 p-8 overflow-y-auto">
         <!-- App Settings -->
         <SettingsArea icon="eye" title="Appearance">
           <SettingsElement
             :description="t('Select the theme of the app')"
-            :title="t('Theme')"
+            :title="t('settings.theme')"
           >
             <theme-toggle />
           </SettingsElement>
 
           <SettingsElement
-            :description="t('Select the language of the app')"
-            :title="t('language')"
+            :description="t('settings.select.language')"
+            :title="t('generic.language')"
           >
             <CustomSelect
               :model-value="locale"
@@ -79,8 +79,8 @@ onBeforeUnmount(() => {
                   value: t('generic.' + locale.name),
                 }))
               "
-              :label="t('Select Language')"
-              :placeholder="t('Select Language')"
+              :label="t('settings.select.language')"
+              :placeholder="t('settings.select.language')"
               @update:model-value="onChangeLocale"
             />
           </SettingsElement>
@@ -93,8 +93,7 @@ onBeforeUnmount(() => {
             title="Supervision Request Modal"
           >
             <CustomToggle
-              :model-value="settingsStore.showSupervisionRequestModal"
-              @update:model-value="(value: boolean) => settingsStore.showSupervisionRequestModal = value"
+              v-model:checked="settingsStore.showSupervisionRequestModal"
             />
           </SettingsElement>
 
@@ -102,10 +101,7 @@ onBeforeUnmount(() => {
             description="Show confirmation modal when swipe-dismissing a supervisor"
             title="Dismiss Modal"
           >
-            <CustomToggle
-              :model-value="settingsStore.showDismissModal"
-              @update:model-value="(value: boolean) => settingsStore.showDismissModal = value"
-            />
+            <CustomToggle v-model:checked="settingsStore.showDismissModal" />
           </SettingsElement>
         </SettingsArea>
 

@@ -79,9 +79,9 @@
         </ActionCard>
         <ActionCard
           v-if="matches.length"
-          :pbutton-text="t('dashboard.student.startMatching')"
+          :button-text="t('dashboard.student.startMatching')"
           card-type="primary"
-          header-text="t('dashboard.student.suggestedMatches')"
+          :header-text="t('dashboard.student.suggestedMatches')"
           @action-button-clicked="navigateTo('/student/matching')"
         >
           <div class="flex flex-col w-full items-center p-3">

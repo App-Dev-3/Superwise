@@ -58,9 +58,9 @@ function onChangeLocale(newLocale: string) {
             <CustomSelect
               :model-value="locale"
               :options="
-                locales.map((locale) => ({
-                  key: locale.code,
-                  value: t('generic.' + locale.name),
+                locales.map((l) => ({
+                  key: l.code,
+                  value: t('generic.' + l.name),
                 }))
               "
               label="Select Language"

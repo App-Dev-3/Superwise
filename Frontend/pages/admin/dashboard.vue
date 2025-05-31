@@ -3,6 +3,7 @@
         <AppHeader
             show-search
             show-user
+            role="Admin"
         />
 
         <div class="w-full h-full overflow-y-auto flex flex-col px-6 py-8 gap-4">

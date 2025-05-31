@@ -48,7 +48,7 @@
         @button-click="handleToastUndoClick"
     />
     <ConfirmationModal
-        v-if="modalInformation && modalInformation.request && !settingsStore.settings?.dismissConfirmationModal"
+        v-if="modalInformation && modalInformation.request"
         :confirm-button-color="modalInformation.confirmButtonColor"
         :confirm-button-text="modalInformation.confirmButtonText"
         :description="modalInformation.description"
@@ -58,7 +58,7 @@
         linked-component-id="confirmationModal"
         @abort="handleActionResetSwipe(modalInformation.request)"
         @confirm="showToastInformation(modalInformation.type)"
-        @dont-show-again="handleModalDontShowAgain"
+        @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
     />
   </div>
 </template>
@@ -123,7 +123,7 @@ const handleSwipeRight = (request: SupervisionRequestsData) => {
     confirmButtonColor: 'primary',
     request: request,
   };
-  if (!settingsStore.settings?.dismissConfirmationModal) {
+  if (settingsStore.settings?.showSupervisionAcceptModal) {
     openModal();
   } else {
     supervisorStore.removeSupervisionRequest(request.id);
@@ -147,7 +147,7 @@ const handleSwipeLeft = (request: SupervisionRequestsData) => {
     confirmButtonColor: 'error',
     request: request,
   };
-  if (!settingsStore.settings?.dismissConfirmationModal) {
+  if (settingsStore.settings?.showSupervisionRejectModal) {
     openModal();
   } else {
     supervisorStore.removeSupervisionRequest(request.id);
@@ -202,11 +202,23 @@ const openModal = async () => {
   modal?.showModal()
 }
 
-const handleModalDontShowAgain = () => {
-  settingsStore.setSettings({
-    ...settingsStore.settings,
-    dismissConfirmationModal: true
-  });
+const handleModalDontShowAgain = (type: supervisionRequestType) => {
+    switch (type) {
+        case supervisionRequestType.CONFIRM:
+            settingsStore.setSettings({
+            ...settingsStore.settings,
+            showSupervisionAcceptModal: false
+            });
+            break;
+        case supervisionRequestType.DISMISS:
+            settingsStore.setSettings({
+            ...settingsStore.settings,
+            showSupervisionRejectModal: false
+            });
+            break;
+        default:
+            console.warn("Unknown type for handleModalDontShowAgain:", type);
+    }
 };
 
 const handleActionResetSwipe = (request: SupervisionRequestsData) => {

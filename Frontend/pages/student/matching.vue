@@ -49,7 +49,7 @@
         @button-click="handleToastUndoClick"
     />
     <ConfirmationModal
-        v-if="modalInformation && !settingsStore.settings?.dismissConfirmationModal"
+        v-if="modalInformation"
         :confirm-button-color="modalInformation.confirmButtonColor"
         :confirm-button-text="modalInformation.confirmButtonText"
         :description="modalInformation.description"
@@ -59,7 +59,7 @@
         linked-component-id="confirmationModal"
         @abort="handleActionResetSwipe(modalInformation.supervisor)"
         @confirm="showToastInformation(modalInformation.type)"
-        @dont-show-again="handleModalDontShowAgain"
+        @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
     />
   </div>
 </template>
@@ -133,7 +133,7 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
     supervisor: supervisor
   };
 
-  if (!settingsStore.settings?.dismissConfirmationModal) {
+  if (settingsStore.settings?.showSupervisionRequestModal) {
     openModal();
   } else {
     supervisorStore.removeSupervisor(supervisor.supervisor_userId);
@@ -151,13 +151,13 @@ const handleSwipeLeft = async (supervisor: SupervisorData) => {
     headline: `Dismiss Supervisor`,
     icon: 'ban',
     warning: 'Dismissed supervisors can still be found in the search',
-    description: `By dismissing ${ supervisor.firstName } ${ supervisor.lastName }, they will never get suggested again. Are you sure you want to do this?`,
+    description: `By dismissing ${ supervisor.firstName } ${ supervisor.lastName }, they will never get suggested again, but you can still search for them. Are you sure you want to do this?`,
     confirmButtonText: 'Dismiss Supervisor',
     confirmButtonColor: 'error',
     supervisor: supervisor
   };
 
-  if (!settingsStore.settings?.dismissConfirmationModal) {
+  if (settingsStore.settings?.showDismissModal) {
     openModal();
   } else {
     supervisorStore.removeSupervisor(supervisor.supervisor_userId);
@@ -213,11 +213,24 @@ const handleActionResetSwipe = (supervisor: SupervisorData) => {
   ref?.reset?.()
 };
 
-const handleModalDontShowAgain = () => {
-  settingsStore.setSettings({
-    ...settingsStore.settings,
-    dismissConfirmationModal: true
-  });
+const handleModalDontShowAgain = (type: supervisionRequestType) => {
+    console.log("handleModalDontShowAgain called with type:", type);
+    switch (type) {
+        case supervisionRequestType.CONFIRM:
+            settingsStore.setSettings({
+                ...settingsStore.settings,
+                showSupervisionRequestModal: false
+            });
+            break;
+        case supervisionRequestType.DISMISS:
+            settingsStore.setSettings({
+                ...settingsStore.settings,
+                showDismissModal: false
+            });
+            break;
+        default:
+            console.warn("Unknown type for handleModalDontShowAgain:", type);
+    }
 };
 const openModal = async () => {
   await nextTick();

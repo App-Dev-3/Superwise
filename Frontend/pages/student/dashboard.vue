@@ -71,7 +71,6 @@
                   :image="pendingRequest.supervisor.user.profile_image"
                   :last-name="pendingRequest.supervisor.user.last_name"
                   :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-                  bottom-icon="tag"
                   top-icon="user-group"
                 />
               </div>
@@ -307,9 +306,7 @@ if (userStore.user !== null) {
 }
 
 function navigate(route: string) {
-  dummyRoute.value = route;
   navigateTo(route);
 }
 
-const dummyRoute = ref("/");
 </script>

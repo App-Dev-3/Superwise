@@ -1,4 +1,4 @@
-import type {supervisionRequestType, UserRoles} from "#shared/enums/enums";
+import type { supervisionRequestType, UserRoles } from "#shared/enums/enums";
 
 import type { SupervisionRequestsData, SupervisorData } from "./supervisorInterfaces";
 
@@ -51,7 +51,11 @@ export interface ConfirmationDialogData {
 }
 
 export interface UserSettingsData {
-    theme?: string
     language?: string
     dismissConfirmationModal?: boolean
+    showSupervisionRequestModal?: boolean
+    showDismissModal?: boolean
+    showAddStudentModal?: boolean
+    showSupervisionAcceptModal?: boolean
+    showSupervisionRejectModal?: boolean
 }

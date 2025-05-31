@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { UserData } from '~/shared/types/userInterfaces'
-import {HttpMethods} from "#shared/enums/enums";
-import type {SupervisorData} from "#shared/types/supervisorInterfaces";
+import { HttpMethods } from "#shared/enums/enums";
+import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 
 export const useUserStore = defineStore('user', {
   state: () => ({

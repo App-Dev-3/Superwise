@@ -1,139 +1,147 @@
 {
-	"appHeader": {
-		"back": "Back",
-		"searchPlaceholder": "Search..."
-	},
-	"confirmed": {
-		"confirmedOn": "Confirmed on {date}",
-		"supervising": "You are supervising {firstName}"
-	},
-	"confirmation": {
-		"acceptedOn": "Accepted on: {date}",
-		"details": "Confirmation Details",
-		"scanToVerify": "Scan to verify confirmation",
-		"student": "Student",
-		"supervisor": "Supervisor",
-		"title": "Thesis Supervision Confirmation"
-	},
-	"dashboard": {
-		"student": {
-			"downloadConfirmation": "Download Confirmation",
-			"findSupervisor": "Find your supervisor now!",
-			"multipleAcceptedWarning": "You accepted {count} supervision requests, but you only need one supervisor. Please talk to {supervisors} and resolve the conflict.",
-			"startMatching": "Start Matching!",
-			"suggestedMatches": "Suggested Matches",
-			"yourRequests": "Your Requests"
-		},
-		"supervisor": {
-			"manageStudents": "Manage Students",
-			"slotsFilled": "Slots filled"
-		}
-	},
-	"dataProtection": {
-		"admin": {
-			"changesAndOverwritesText": "When you update your personal data, such as your name or profile picture, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
-			"collectedDataList": "Full name\nEmail address\nProfile picture",
-			"collectedDataText": "For admin accounts, we only collect and store:",
-			"dataDeletionText": "When an admin deletes their account all personally identifiable data (name, email, and profile picture) will be permanently deleted without backup.",
-			"dataRetentionList": "Tags added to the system\nSupervisor accounts and associated metadata\nPlatform configurations or any structural input made during administrative use",
-			"dataRetentionSubtitle": "📁 What Is Retained After Admin Account Deletion",
-			"dataRetentionText": {
-				"1": "When an Admin deletes their account, all personal data (name, email, and profile picture) will be permanently removed. However, some data created or uploaded in the course of managing the platform is not considered personal data and will be retained. This includes:",
-				"2": "This content forms part of the platform infrastructure and is essential for maintaining the integrity and continuity of the SuperWise system. It is therefore not deleted when an Admin account is removed."
-			},
-			"generalInfoText": "This clause applies specifically to users with admin-level access on SuperWise."
-		},
-		"generic": {
-			"changesAndOverwritesSubtitle": "🔁 Data Changes & Overwrites",
-			"collectedDataSubtitle": "📌 What Data We Collect",
-			"dataDeletionSubtitle": "🗑 Data Deletion",
-			"deleteMyData": "Delete my data",
-			"generalInfoText": "At SuperWise, we take your privacy and the protection of your personal data seriously. This policy outlines how we collect, use, and manage your information to ensure transparency and your peace of mind.",
-			"generalInfoTitle": "🛡 SuperWise Data Protection Policy"
-		},
-		"student&supervisor": {
-			"changesAndOverwritesText": "When you update your personal data, such as your name, profile picture, topic description, or bio, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
-			"collectedDataList": "Email address (used for login and communication)\nFirst and last name\nProfile picture\nMessages sent within the platform\nTopic description (students)\nBio (supervisors)\nTags selected to describe expertise or thesis topics\nMatch history: supervisors you have matched with or dismissed\nRequests sent: including chat and supervision requests",
-			"collectedDataText": "To provide our matchmaking and supervision services, we collect and store the following information:",
-			"dataDeletionList": "Your email\nRecords of matches\nMessages sent to or received from others",
-			"dataDeletionText": {
-				"1": "You have the right to request the deletion of your data at any time. When you do your profile and personal information will no longer be visible or accessible to other users. Some minimal data may be retained until the end of the supervision period, for functionality and record purposes. This includes:",
-				"2": "After the supervision period ends, this remaining data will be fully and irreversibly deleted."
-			}
-		}
-	},
-	"generic": {
-		"admin": "Admin",
-		"cancel": "Cancel",
-		"continue": "Continue",
-		"edit": "Edit",
-		"english": "🇬🇧 English",
-		"german": "🇩🇪 Deutsch",
-		"french": "🇫🇷 Français",
-		"spanish": "🇪🇸 Español",
-		"italian": "🇮🇹 Italiano",
-		"logoAlt": "logo",
-		"profilePictureAlt": "Profile picture of {firstName} {lastName}",
-		"requests": "Requests",
-		"saveChanges": "Save changes",
-		"showAll": "Show all...",
-		"showLess": "Show less",
-		"student": "Student",
-		"supervisor": "Supervisor"
-	},
-	"landing": {
-		"dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
-		"here": "here"
-	},
-	"modal": {
-		"dontShowAgain": "Don't show again"
-	},
-	"multiStepForm": {
-		"next": "Next",
-		"startMatching": "Start Matching"
-	},
-	"nav": {
-		"appTour": "App Tour",
-		"confirmed": "Confirmed",
-		"dashboard": "Dashboard",
-		"dataProtection": "Data Protection",
-		"logout": "Logout",
-		"matching": "Matching",
-		"profile": "Profile",
-		"settings": "Settings"
-	},
-	"onboarding": {
-		"firstName": "First Name",
-		"lastName": "Last Name",
-		"maxSelection": "Maximum selection"
-	},
-	"profile": {
-		"pageHeader": "Your Profile",
-		"preview": "Preview",
-		"firstName": "First Name",
-		"lastName": "Last Name",
-		"bio": "Bio",
-		"bioVisibility": "Your bio will be visible to other users",
-		"bioPlaceholder": "Tell us about yourself..."
-	},
-	"searchBar": {
-		"noResults": "No results found"
-	},
-	"statusBar": {
-		"confirmed": "Confirmed",
-		"matching": "Matching",
-		"onboarding": "Onboarding"
-	},
-	"supervisorCard": {
-		"capacity": "Capacity",
-		"pending": "Pending requests",
-		"profilePictureAlt": "Profile Picture of {firstName} {lastName}",
-		"similarityScore": "Similarity score"
-	},
-	"tagPriority": {
-		"arrangeByPriority": "Arrange tags by priority"
-	},
-	"tagSelector": {
-		"tagCount": "{current}/{max}"
-	}
+  "appHeader": {
+    "back": "Back",
+    "searchPlaceholder": "Search..."
+  },
+  "confirmed": {
+    "confirmedOn": "Confirmed on {date}",
+    "supervising": "You are supervising {firstName}"
+  },
+  "confirmation": {
+    "acceptedOn": "Accepted on: {date}",
+    "details": "Confirmation Details",
+    "scanToVerify": "Scan to verify confirmation",
+    "student": "Student",
+    "supervisor": "Supervisor",
+    "title": "Thesis Supervision Confirmation"
+  },
+  "dashboard": {
+    "student": {
+      "downloadConfirmation": "Download Confirmation",
+      "findSupervisor": "Find your supervisor now!",
+      "multipleAcceptedWarning": "You accepted {count} supervision requests, but you only need one supervisor. Please talk to {supervisors} and resolve the conflict.",
+      "startMatching": "Start Matching!",
+      "suggestedMatches": "Suggested Matches",
+      "yourRequests": "Your Requests"
+    },
+    "supervisor": {
+      "manageStudents": "Manage Students",
+      "slotsFilled": "Slots filled"
+    }
+  },
+  "dataProtection": {
+    "admin": {
+      "changesAndOverwritesText": "When you update your personal data, such as your name or profile picture, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
+      "collectedDataList": "Full name\nEmail address\nProfile picture",
+      "collectedDataText": "For admin accounts, we only collect and store:",
+      "dataDeletionText": "When an admin deletes their account all personally identifiable data (name, email, and profile picture) will be permanently deleted without backup.",
+      "dataRetentionList": "Tags added to the system\nSupervisor accounts and associated metadata\nPlatform configurations or any structural input made during administrative use",
+      "dataRetentionSubtitle": "📁 What Is Retained After Admin Account Deletion",
+      "dataRetentionText": {
+        "1": "When an Admin deletes their account, all personal data (name, email, and profile picture) will be permanently removed. However, some data created or uploaded in the course of managing the platform is not considered personal data and will be retained. This includes:",
+        "2": "This content forms part of the platform infrastructure and is essential for maintaining the integrity and continuity of the SuperWise system. It is therefore not deleted when an Admin account is removed."
+      },
+      "generalInfoText": "This clause applies specifically to users with admin-level access on SuperWise."
+    },
+    "generic": {
+      "changesAndOverwritesSubtitle": "🔁 Data Changes & Overwrites",
+      "collectedDataSubtitle": "📌 What Data We Collect",
+      "dataDeletionSubtitle": "🗑 Data Deletion",
+      "deleteMyData": "Delete my data",
+      "generalInfoText": "At SuperWise, we take your privacy and the protection of your personal data seriously. This policy outlines how we collect, use, and manage your information to ensure transparency and your peace of mind.",
+      "generalInfoTitle": "🛡 SuperWise Data Protection Policy"
+    },
+    "student&supervisor": {
+      "changesAndOverwritesText": "When you update your personal data, such as your name, profile picture, topic description, or bio, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
+      "collectedDataList": "Email address (used for login and communication)\nFirst and last name\nProfile picture\nMessages sent within the platform\nTopic description (students)\nBio (supervisors)\nTags selected to describe expertise or thesis topics\nMatch history: supervisors you have matched with or dismissed\nRequests sent: including chat and supervision requests",
+      "collectedDataText": "To provide our matchmaking and supervision services, we collect and store the following information:",
+      "dataDeletionList": "Your email\nRecords of matches\nMessages sent to or received from others",
+      "dataDeletionText": {
+        "1": "You have the right to request the deletion of your data at any time. When you do your profile and personal information will no longer be visible or accessible to other users. Some minimal data may be retained until the end of the supervision period, for functionality and record purposes. This includes:",
+        "2": "After the supervision period ends, this remaining data will be fully and irreversibly deleted."
+      }
+    }
+  },
+  "generic": {
+    "admin": "Admin",
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "edit": "Edit",
+    "language": "Language",
+    "english": "🇬🇧 English",
+    "german": "🇩🇪 Deutsch",
+    "french": "🇫🇷 Français",
+    "spanish": "🇪🇸 Español",
+    "italian": "🇮🇹 Italiano",
+    "logoAlt": "logo",
+    "profilePictureAlt": "Profile picture of {firstName} {lastName}",
+    "requests": "Requests",
+    "saveChanges": "Save changes",
+    "showAll": "Show all...",
+    "showLess": "Show less",
+    "student": "Student",
+    "supervisor": "Supervisor"
+  },
+  "landing": {
+    "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
+    "here": "here"
+  },
+  "modal": {
+    "dontShowAgain": "Don't show again"
+  },
+  "multiStepForm": {
+    "next": "Next",
+    "startMatching": "Start Matching"
+  },
+  "nav": {
+    "appTour": "App Tour",
+    "confirmed": "Confirmed",
+    "dashboard": "Dashboard",
+    "dataProtection": "Data Protection",
+    "logout": "Logout",
+    "matching": "Matching",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "onboarding": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "maxSelection": "Maximum selection"
+  },
+  "profile": {
+    "pageHeader": "Your Profile",
+    "preview": "Preview",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "bio": "Bio",
+    "bioVisibility": "Your bio will be visible to other users",
+    "bioPlaceholder": "Tell us about yourself..."
+  },
+  "searchBar": {
+    "noResults": "No results found"
+  },
+  "settings": {
+    "theme": "Theme",
+    "select": {
+      "language": "Select the language of the app",
+      "theme": "Select the theme of the app"
+    }
+  },
+  "statusBar": {
+    "confirmed": "Confirmed",
+    "matching": "Matching",
+    "onboarding": "Onboarding"
+  },
+  "supervisorCard": {
+    "capacity": "Capacity",
+    "pending": "Pending requests",
+    "profilePictureAlt": "Profile Picture of {firstName} {lastName}",
+    "similarityScore": "Similarity score"
+  },
+  "tagPriority": {
+    "arrangeByPriority": "Arrange tags by priority"
+  },
+  "tagSelector": {
+    "tagCount": "{current}/{max}"
+  }
 }

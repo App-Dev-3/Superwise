@@ -530,7 +530,7 @@ describe('MatchingService', () => {
       // Verify that the supervisionRequestsService was called
       expect(supervisionRequestsService.findAllRequests).toHaveBeenCalledWith(
         STUDENT_UUID,
-        'STUDENT',
+        Role.STUDENT,
       );
 
       // Verify that the supervisor with a pending request was properly filtered out

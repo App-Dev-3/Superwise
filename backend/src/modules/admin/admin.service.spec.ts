@@ -2,32 +2,46 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from './admin.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AdminRepository } from './admin.repository';
+import { UsersRepository } from '../users/users.repository';
 import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
 import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
-import { Tag } from '@prisma/client';
+import { Tag, Role } from '@prisma/client';
+import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
+import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
 describe('AdminService', () => {
   let service: AdminService;
   let adminRepository: AdminRepository;
-  // Create mock functions upfront
-  const mockTagsBulkImport = jest.fn();
-  const mockSupervisorsBulkImport = jest.fn();
+  let usersRepository: UsersRepository;
+
+  // Proper UUIDs for testing
+  const ADMIN_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
+  const EXISTING_USER_ID = '223e4567-e89b-12d3-a456-426614174001';
+  const CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
+
+  // Create mock repository objects with all methods
+  const mockAdminRepository = {
+    tagsBulkImport: jest.fn(),
+    supervisorsBulkImport: jest.fn(),
+    createAdmin: jest.fn(),
+  };
+
+  const mockUsersRepository = {
+    findUserByEmail: jest.fn(),
+  };
 
   beforeEach(async () => {
-    // Reset mocks before each test
-    mockTagsBulkImport.mockReset();
-    mockSupervisorsBulkImport.mockReset();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminService,
         {
           provide: AdminRepository,
-          useValue: {
-            tagsBulkImport: mockTagsBulkImport,
-            supervisorsBulkImport: mockSupervisorsBulkImport,
-          },
+          useValue: mockAdminRepository,
+        },
+        {
+          provide: UsersRepository,
+          useValue: mockUsersRepository,
         },
         {
           provide: TagsRepository,
@@ -37,11 +51,24 @@ describe('AdminService', () => {
           provide: PrismaService,
           useValue: {},
         },
+        {
+          provide: WinstonLoggerService,
+          useValue: {
+            log: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
+            debug: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<AdminService>(AdminService);
     adminRepository = module.get<AdminRepository>(AdminRepository);
+    usersRepository = module.get<UsersRepository>(UsersRepository);
+
+    // Clear all mocks before each test
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -50,7 +77,7 @@ describe('AdminService', () => {
 
   describe('bulkImport', () => {
     it('should successfully import tags and similarities', async () => {
-      // Mock data
+      // Arrange
       const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python', 'react'],
         similarities: [
@@ -59,33 +86,30 @@ describe('AdminService', () => {
         ],
       };
 
-      // Setup mock for tagsBulkImport with the correct return structure
-      mockTagsBulkImport.mockResolvedValue({
+      const mockResponse = {
         success: true,
         message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
         duplicateTagsSkipped: 0,
         duplicateSimsSkipped: 0,
-      });
+      };
 
-      // Execute
+      mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
+
+      // Act
       const result = await service.tagsBulkImport(mockDto);
 
-      // Verify results
-      expect(mockTagsBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
-      expect(result).toEqual({
-        success: true,
-        message: '3 new tags added, 0 tags already existed',
-        tagsProcessed: 3,
-        similaritiesReplaced: 2,
-        duplicateTagsSkipped: 0,
-        duplicateSimsSkipped: 0,
-      });
+      // Assert
+      expect(mockAdminRepository.tagsBulkImport).toHaveBeenCalledWith(
+        mockDto.tags,
+        mockDto.similarities,
+      );
+      expect(result).toEqual(mockResponse);
     });
 
     it('should handle duplicates with formatting inconsistencies', async () => {
-      // Mock data with case and whitespace inconsistencies
+      // Arrange
       const mockDto: TagsBulkImportDto = {
         tags: ['JavaScript', 'javascript', ' python ', 'Python', 'react'],
         similarities: [
@@ -96,44 +120,40 @@ describe('AdminService', () => {
         ],
       };
 
-      // Setup mock for tagsBulkImport
-      mockTagsBulkImport.mockResolvedValue({
+      const mockResponse = {
         success: true,
         message: '3 new tags added, 0 tags already existed',
         tagsProcessed: 3,
         similaritiesReplaced: 2,
         duplicateTagsSkipped: 2, // 5 tags - 3 unique (case-insensitive)
         duplicateSimsSkipped: 2, // 4 similarities - 2 unique (case-insensitive)
-      });
+      };
 
-      // Execute
+      mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
+
+      // Act
       const result = await service.tagsBulkImport(mockDto);
 
-      // Verify results
-      expect(mockTagsBulkImport).toHaveBeenCalledWith(mockDto.tags, mockDto.similarities);
-      expect(result).toEqual({
-        success: true,
-        message: '3 new tags added, 0 tags already existed',
-        tagsProcessed: 3,
-        similaritiesReplaced: 2,
-        duplicateTagsSkipped: 2,
-        duplicateSimsSkipped: 2,
-      });
+      // Assert
+      expect(mockAdminRepository.tagsBulkImport).toHaveBeenCalledWith(
+        mockDto.tags,
+        mockDto.similarities,
+      );
+      expect(result).toEqual(mockResponse);
     });
 
     it('should throw BadRequestException when tag from similarities not found in tags list (field1)', async () => {
-      // Mock data with mismatched tags
+      // Arrange
       const mockDto: TagsBulkImportDto = {
         tags: ['python', 'react'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
 
-      // Mock the repository method to throw the expected error
-      mockTagsBulkImport.mockRejectedValue(
+      mockAdminRepository.tagsBulkImport.mockRejectedValue(
         new BadRequestException(`Tag 'javascript' not found in provided tags list.`),
       );
 
-      // Execute & assert
+      // Act & Assert
       await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
       await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(
         /Tag 'javascript' not found in provided tags list./,
@@ -141,18 +161,17 @@ describe('AdminService', () => {
     });
 
     it('should throw BadRequestException when tag from similarities not found in tags list (field2)', async () => {
-      // Mock data with mismatched tags
+      // Arrange
       const mockDto: TagsBulkImportDto = {
         tags: ['javascript', 'python'],
         similarities: [{ field1: 'javascript', field2: 'react', similarity_score: 0.8 }],
       };
 
-      // Mock the repository method to throw the expected error
-      mockTagsBulkImport.mockRejectedValue(
+      mockAdminRepository.tagsBulkImport.mockRejectedValue(
         new BadRequestException("Tag 'react' from similarities not found in provided tags list."),
       );
 
-      // Execute & assert
+      // Act & Assert
       await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
       await expect(service.tagsBulkImport(mockDto)).rejects.toThrow(
         /Tag 'react' from similarities not found in provided tags list/,
@@ -162,7 +181,7 @@ describe('AdminService', () => {
 
   describe('supervisorsBulkImport', () => {
     it('should successfully import supervisors', async () => {
-      // Mock data
+      // Arrange
       const mockDto = {
         supervisors: [
           {
@@ -176,29 +195,25 @@ describe('AdminService', () => {
         ],
       };
 
-      // Setup mock
-      mockSupervisorsBulkImport.mockResolvedValue({
+      const mockResponse = {
         success: true,
         message: '1 new supervisors successfully imported',
         supervisorsImported: 1,
         supervisorsUpdated: 0,
-      });
+      };
 
-      // Execute
+      mockAdminRepository.supervisorsBulkImport.mockResolvedValue(mockResponse);
+
+      // Act
       const result = await service.supervisorsBulkImport(mockDto);
 
-      // Verify results
-      expect(mockSupervisorsBulkImport).toHaveBeenCalledWith(mockDto.supervisors);
-      expect(result).toEqual({
-        success: true,
-        message: '1 new supervisors successfully imported',
-        supervisorsImported: 1,
-        supervisorsUpdated: 0,
-      });
+      // Assert
+      expect(mockAdminRepository.supervisorsBulkImport).toHaveBeenCalledWith(mockDto.supervisors);
+      expect(result).toEqual(mockResponse);
     });
 
     it('should handle updates to existing supervisors', async () => {
-      // Mock data for updating existing supervisors
+      // Arrange
       const mockDto = {
         supervisors: [
           {
@@ -209,29 +224,25 @@ describe('AdminService', () => {
         ],
       };
 
-      // Setup mock
-      mockSupervisorsBulkImport.mockResolvedValue({
+      const mockResponse = {
         success: true,
         message: '0 new supervisors successfully imported and 1 existing supervisors updated',
         supervisorsImported: 0,
         supervisorsUpdated: 1,
-      });
+      };
 
-      // Execute
+      mockAdminRepository.supervisorsBulkImport.mockResolvedValue(mockResponse);
+
+      // Act
       const result = await service.supervisorsBulkImport(mockDto);
 
-      // Verify results
-      expect(mockSupervisorsBulkImport).toHaveBeenCalledWith(mockDto.supervisors);
-      expect(result).toEqual({
-        success: true,
-        message: '0 new supervisors successfully imported and 1 existing supervisors updated',
-        supervisorsImported: 0,
-        supervisorsUpdated: 1,
-      });
+      // Assert
+      expect(mockAdminRepository.supervisorsBulkImport).toHaveBeenCalledWith(mockDto.supervisors);
+      expect(result).toEqual(mockResponse);
     });
 
     it('should throw BadRequestException on missing email', async () => {
-      // Mock data with missing required fields for a new supervisor
+      // Arrange
       const mockDto = {
         supervisors: [
           {
@@ -242,16 +253,168 @@ describe('AdminService', () => {
         ],
       };
 
-      // Mock the repository method to throw the expected error
-      mockSupervisorsBulkImport.mockRejectedValue(
+      mockAdminRepository.supervisorsBulkImport.mockRejectedValue(
         new BadRequestException('Email is required for supervisor: Doe'),
       );
 
-      // Execute & assert
+      // Act & Assert
       await expect(service.supervisorsBulkImport(mockDto)).rejects.toThrow(BadRequestException);
       await expect(service.supervisorsBulkImport(mockDto)).rejects.toThrow(
         /Email is required for supervisor/,
       );
+    });
+  });
+
+  describe('createAdmin', () => {
+    it('should successfully create a new admin user when email does not exist', async () => {
+      // Arrange
+      const mockDto = {
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+      };
+
+      const mockCreatedUser = {
+        id: ADMIN_USER_ID,
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+        role: Role.ADMIN,
+        is_registered: false,
+        clerk_id: null,
+        profile_image: null,
+        is_deleted: false,
+        created_at: new Date('2023-01-15T10:30:00Z'),
+        updated_at: new Date('2023-01-15T10:30:00Z'),
+      };
+
+      mockUsersRepository.findUserByEmail.mockResolvedValue(null); // No existing user
+      mockAdminRepository.createAdmin.mockResolvedValue(mockCreatedUser);
+
+      // Act
+      const result = await service.createAdmin(mockDto);
+
+      // Assert
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(mockDto.email);
+      expect(mockAdminRepository.createAdmin).toHaveBeenCalledWith({
+        email: mockDto.email,
+        first_name: mockDto.first_name,
+        last_name: mockDto.last_name,
+      });
+      expect(result).toEqual({
+        success: true,
+        message: 'Admin user created successfully',
+        adminId: ADMIN_USER_ID,
+      });
+    });
+
+    it('should throw UserAlreadyExistsException when admin email already exists', async () => {
+      // Arrange
+      const mockDto = {
+        email: 'existing@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+      };
+
+      const mockExistingUser = {
+        id: EXISTING_USER_ID,
+        email: 'existing@fhstp.ac.at',
+        first_name: 'Jane',
+        last_name: 'Smith',
+        role: Role.STUDENT,
+        is_registered: true,
+        clerk_id: CLERK_ID,
+        profile_image: null,
+        is_deleted: false,
+        created_at: new Date('2023-01-10T08:00:00Z'),
+        updated_at: new Date('2023-01-10T08:00:00Z'),
+      };
+
+      mockUsersRepository.findUserByEmail.mockResolvedValue(mockExistingUser);
+
+      // Act & Assert
+      await expect(service.createAdmin(mockDto)).rejects.toThrow(
+        new UserAlreadyExistsException('existing@fhstp.ac.at'),
+      );
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(mockDto.email);
+      expect(mockAdminRepository.createAdmin).not.toHaveBeenCalled();
+    });
+
+    it('should handle email case insensitivity when checking for existing users', async () => {
+      // Arrange
+      const mockDto = {
+        email: 'ADMIN@FHSTP.AC.AT',
+        first_name: 'John',
+        last_name: 'Doe',
+      };
+
+      const mockExistingUser = {
+        id: EXISTING_USER_ID,
+        email: 'admin@fhstp.ac.at',
+        first_name: 'Existing',
+        last_name: 'Admin',
+        role: Role.ADMIN,
+        is_registered: true,
+        clerk_id: CLERK_ID,
+        profile_image: null,
+        is_deleted: false,
+        created_at: new Date('2023-01-10T08:00:00Z'),
+        updated_at: new Date('2023-01-10T08:00:00Z'),
+      };
+
+      mockUsersRepository.findUserByEmail.mockResolvedValue(mockExistingUser);
+
+      // Act & Assert
+      await expect(service.createAdmin(mockDto)).rejects.toThrow(
+        new UserAlreadyExistsException('ADMIN@FHSTP.AC.AT'),
+      );
+    });
+
+    it('should handle concurrent creation attempts (race condition)', async () => {
+      // Arrange
+      const mockDto = {
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+      };
+
+      const mockCreatedUser = {
+        id: ADMIN_USER_ID,
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+        role: Role.ADMIN,
+        is_registered: false,
+        clerk_id: null,
+        profile_image: null,
+        is_deleted: false,
+        created_at: new Date('2023-01-15T10:30:00Z'),
+        updated_at: new Date('2023-01-15T10:30:00Z'),
+      };
+
+      // First call returns null (no user exists)
+      // Second call returns the created user (simulating another request created it)
+      mockUsersRepository.findUserByEmail
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockCreatedUser);
+
+      // Simulate a unique constraint violation from Prisma
+      const prismaError = new Error('Unique constraint failed on the fields: (`email`)');
+      (prismaError as any).code = 'P2002'; // Prisma unique constraint error code
+      mockAdminRepository.createAdmin.mockRejectedValue(prismaError);
+
+      // Act & Assert
+      await expect(service.createAdmin(mockDto)).rejects.toThrow(
+        'Unique constraint failed on the fields: (`email`)',
+      );
+
+      // Verify the service attempted to create after checking
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(mockDto.email);
+      expect(mockAdminRepository.createAdmin).toHaveBeenCalledWith({
+        email: mockDto.email,
+        first_name: mockDto.first_name,
+        last_name: mockDto.last_name,
+      });
     });
   });
 });

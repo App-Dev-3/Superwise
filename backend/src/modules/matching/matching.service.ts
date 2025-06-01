@@ -6,7 +6,7 @@ import { TagsService } from '../tags/tags.service';
 import { UserTag } from '../users/entities/user-tag.entity';
 import { safeStringify } from '../../common/utils/string-utils';
 import { SupervisionRequestsService } from '../requests/supervision/supervision-requests.service';
-import { RequestState } from '@prisma/client';
+import { RequestState, Role } from '@prisma/client';
 
 @Injectable()
 export class MatchingService {
@@ -44,7 +44,7 @@ export class MatchingService {
     // Get student's supervision requests
     const activeRequests = await this.supervisionRequestsService.findAllRequests(
       studentUserId,
-      'STUDENT',
+      Role.STUDENT,
     );
 
     // Extract supervisor IDs from pending and accepted requests

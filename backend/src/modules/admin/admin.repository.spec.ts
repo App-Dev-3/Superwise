@@ -3,6 +3,7 @@ import { AdminRepository } from './admin.repository';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BadRequestException } from '@nestjs/common';
 import { SupervisorsRepository } from '../supervisors/supervisors.repository';
+import { Role } from '@prisma/client';
 
 describe('AdminRepository', () => {
   let repository: AdminRepository;
@@ -17,6 +18,10 @@ describe('AdminRepository', () => {
           provide: PrismaService,
           useValue: {
             $transaction: jest.fn(),
+            user: {
+              findUnique: jest.fn(),
+              create: jest.fn(),
+            },
           },
         },
         {
@@ -40,7 +45,7 @@ describe('AdminRepository', () => {
 
   describe('tagsBulkImport', () => {
     it('should successfully import tags', async () => {
-      // Setup mock data
+      // Arrange
       const tags = ['javascript', 'typescript', 'nodejs'];
       const similarities = [{ field1: 'javascript', field2: 'typescript', similarity_score: 0.9 }];
 
@@ -54,17 +59,17 @@ describe('AdminRepository', () => {
         duplicateSimsSkipped: 0,
       });
 
-      // Execute
+      // Act
       const result = await repository.tagsBulkImport(tags, similarities);
 
-      // Assertions
+      // Assert
       expect(result.success).toBe(true);
       expect(result.tagsProcessed).toBe(2);
       expect(result.similaritiesReplaced).toBe(1);
     });
 
     it('should throw BadRequestException when tag from similarities is not found in tags list', async () => {
-      // Setup test data with missing tag
+      // Arrange
       const tags = ['javascript', 'typescript'];
       const similarities = [
         { field1: 'javascript', field2: 'nodejs', similarity_score: 0.5 }, // 'nodejs' not in tags
@@ -77,15 +82,16 @@ describe('AdminRepository', () => {
           new BadRequestException("Tag 'nodejs' not found in provided tags list."),
         );
 
-      // Execute & assert
+      // Act & Assert
       await expect(repository.tagsBulkImport(tags, similarities)).rejects.toThrow(
         BadRequestException,
       );
     });
   });
+
   describe('supervisorsBulkImport', () => {
     it('should successfully import new supervisors', async () => {
-      // Setup test data
+      // Arrange
       const supervisors = [
         {
           email: 'supervisor@example.com',
@@ -105,17 +111,17 @@ describe('AdminRepository', () => {
         supervisorsUpdated: 0,
       });
 
-      // Execute
+      // Act
       const result = await repository.supervisorsBulkImport(supervisors);
 
-      // Assertions
+      // Assert
       expect(result.success).toBe(true);
       expect(result.supervisorsImported).toBe(1);
       expect(result.supervisorsUpdated).toBe(0);
     });
 
     it('should update existing supervisors', async () => {
-      // Setup test data for updating
+      // Arrange
       const supervisors = [
         {
           email: 'existing@example.com',
@@ -135,17 +141,17 @@ describe('AdminRepository', () => {
         supervisorsUpdated: 1,
       });
 
-      // Execute
+      // Act
       const result = await repository.supervisorsBulkImport(supervisors);
 
-      // Assertions
+      // Assert
       expect(result.success).toBe(true);
       expect(result.supervisorsImported).toBe(0);
       expect(result.supervisorsUpdated).toBe(1);
     });
 
     it('should throw BadRequestException when email is missing', async () => {
-      // Setup test data with missing email
+      // Arrange
       const supervisors = [
         {
           email: '', // Empty email should trigger validation
@@ -161,10 +167,53 @@ describe('AdminRepository', () => {
         .spyOn(prismaService, '$transaction')
         .mockRejectedValue(new BadRequestException('Email is required for supervisor: Doe'));
 
-      // Execute & assert
+      // Act & Assert
       await expect(repository.supervisorsBulkImport(supervisors)).rejects.toThrow(
         BadRequestException,
       );
+    });
+  });
+
+  describe('createAdmin', () => {
+    it('should successfully create a new admin user', async () => {
+      // Arrange
+      const adminData = {
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+      };
+
+      const mockCreatedUser = {
+        id: '123e4567-e89b-12d3-a456-426614174000',
+        email: 'admin@fhstp.ac.at',
+        first_name: 'John',
+        last_name: 'Doe',
+        role: Role.ADMIN,
+        is_registered: false,
+        clerk_id: null,
+        profile_image: null,
+        is_deleted: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      };
+
+      // Mock user creation
+      (prismaService.user.create as jest.Mock).mockResolvedValue(mockCreatedUser);
+
+      // Act
+      const result = await repository.createAdmin(adminData);
+
+      // Assert
+      expect(result).toEqual(mockCreatedUser);
+      expect(prismaService.user.create).toHaveBeenCalledWith({
+        data: {
+          email: 'admin@fhstp.ac.at',
+          first_name: 'John',
+          last_name: 'Doe',
+          role: Role.ADMIN,
+          is_registered: false,
+        },
+      });
     });
   });
 });

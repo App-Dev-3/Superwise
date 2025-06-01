@@ -240,7 +240,7 @@ describe('SupervisionRequestsRepository', () => {
         email,
         first_name: 'Student',
         last_name: 'User',
-        role: 'STUDENT',
+        role: Role.STUDENT,
         is_registered: true,
       };
       const existingStudent = {
@@ -279,7 +279,7 @@ describe('SupervisionRequestsRepository', () => {
         email,
         first_name: '',
         last_name: '',
-        role: 'STUDENT',
+        role: Role.STUDENT,
         is_registered: false,
       };
       const newStudent = {
@@ -310,7 +310,7 @@ describe('SupervisionRequestsRepository', () => {
           email,
           first_name: '',
           last_name: '',
-          role: 'STUDENT',
+          role: Role.STUDENT,
           is_registered: false,
         },
       });
@@ -329,7 +329,7 @@ describe('SupervisionRequestsRepository', () => {
         email,
         first_name: 'Existing',
         last_name: 'User',
-        role: 'STUDENT',
+        role: Role.STUDENT,
         is_registered: true,
       };
       const newStudent = {

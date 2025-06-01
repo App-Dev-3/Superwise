@@ -1,10 +1,33 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import { SupervisorDto } from './dto/supervisors-bulk-import.dto';
 
+export interface IAdminRepository {
+  tagsBulkImport(
+    tags: string[],
+    similarities: Array<{ field1: string; field2: string; similarity_score: number }>,
+  ): Promise<{
+    success: boolean;
+    message: string;
+    tagsProcessed: number;
+    similaritiesReplaced: number;
+    duplicateTagsSkipped: number;
+    duplicateSimsSkipped: number;
+  }>;
+
+  supervisorsBulkImport(supervisors: SupervisorDto[]): Promise<{
+    success: boolean;
+    message: string;
+    supervisorsImported: number;
+    supervisorsUpdated: number;
+  }>;
+
+  createAdmin(adminData: { email: string; first_name: string; last_name: string }): Promise<User>;
+}
+
 @Injectable()
-export class AdminRepository {
+export class AdminRepository implements IAdminRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async tagsBulkImport(
@@ -123,7 +146,7 @@ export class AdminRepository {
                 email: supervisor.email,
                 first_name: supervisor.first_name,
                 last_name: supervisor.last_name,
-                role: 'SUPERVISOR',
+                role: Role.SUPERVISOR,
                 is_registered: false,
               },
             });
@@ -191,5 +214,30 @@ export class AdminRepository {
         timeout: 10000,
       },
     );
+  }
+
+  /**
+   * Creates a new admin user in the database
+   *
+   * This low-level method handles the actual database creation of an admin user.
+   * It sets is_registered to false, following the pattern established for supervisors,
+   * allowing the admin to later claim their account through Clerk authentication
+   * @param adminData - Basic user data (email, first name, last name)
+   * @returns The created User entity
+   */
+  async createAdmin(adminData: {
+    email: string;
+    first_name: string;
+    last_name: string;
+  }): Promise<User> {
+    return this.prisma.user.create({
+      data: {
+        email: adminData.email,
+        first_name: adminData.first_name,
+        last_name: adminData.last_name,
+        role: Role.ADMIN,
+        is_registered: false,
+      },
+    });
   }
 }

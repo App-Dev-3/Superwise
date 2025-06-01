@@ -114,13 +114,33 @@ export class UsersService {
         });
       }
 
-      // Scenario 2.4: Existing user is not a SUPERVISOR or STUDENT (e.g., ADMIN) and not registered
+      // Scenario 2.4: Existing user is an ADMIN and not yet registered
+      // This is the flow to link a pre-created admin account to their new Clerk login
+      if (existingUser.role === Role.ADMIN) {
+        this.logger.debug(
+          `Linking existing admin account (email: ${verifiedUserEmail}, id: ${existingUser.id}) to clerk_id: ${authUser.clerk_id}`,
+          'UsersService',
+        );
+        return this.usersRepository.updateUser(existingUser.id, {
+          clerk_id: authUser.clerk_id,
+          is_registered: true,
+          // Update profile details if provided in DTO, otherwise keep existing
+          first_name: createUserDto.first_name || existingUser.first_name,
+          last_name: createUserDto.last_name || existingUser.last_name,
+          profile_image:
+            createUserDto.profile_image !== undefined
+              ? createUserDto.profile_image
+              : existingUser.profile_image,
+        });
+      }
+
+      // Scenario 2.5: Existing user has an unknown role and is not registered
       this.logger.warn(
-        `Attempt to register with email ${verifiedUserEmail} which exists but is not a supervisor or student (role: ${existingUser.role}).`,
+        `Attempt to register with email ${verifiedUserEmail} which exists but has an unknown role (role: ${existingUser.role}).`,
         'UsersService',
       );
       throw new BadRequestException(
-        'An account with this email already exists and is not an unlinked supervisor or student. Please contact support if you believe this is an error.',
+        'An account with this email already exists but cannot be registered. Please contact support if you believe this is an error.',
       );
     }
   }

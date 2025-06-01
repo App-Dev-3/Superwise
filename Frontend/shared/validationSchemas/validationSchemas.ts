@@ -147,3 +147,9 @@ export const createSupervisionRequestSchema = z.object({
 export const updateSupervisionRequestStateScheme = z.object({
     request_state: requestStateSchema
 })
+
+export const createAdminSchema = z.object({
+    email: z.string().email("Email must be a valid email address"),
+    first_name: z.string().min(1, "First name cannot be empty"),
+    last_name: z.string().min(1, "Last name cannot be empty"),
+})

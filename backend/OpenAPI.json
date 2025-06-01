@@ -1361,6 +1361,46 @@
         ]
       }
     },
+    "/admin/create-admin": {
+      "post": {
+        "description": "Creates a new admin user account that is not yet registered with the authentication provider (Clerk). This endpoint allows existing admins to pre-create admin accounts that can later be claimed through the standard registration flow.",
+        "operationId": "AdminController_createAdmin",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "description": "Admin user details including email, first name, and last name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAdminDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Admin user created successfully. Returns the new admin user ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateAdminSuccessDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid email domain, missing required fields, or user already exists."
+          },
+          "403": {
+            "description": "Forbidden - Only existing admins can create new admin accounts."
+          }
+        },
+        "summary": "Create a new unregistered admin user",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/match/{userId}": {
       "get": {
         "description": "Calculate and retrieve a list of all supervisors with their compatibility scores for a specific student",
@@ -2393,6 +2433,56 @@
         },
         "required": [
           "supervisors"
+        ]
+      },
+      "CreateAdminDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address of the admin user",
+            "example": "admin@fhstp.ac.at"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "First name of the admin user",
+            "example": "John"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Last name of the admin user",
+            "example": "Doe"
+          }
+        },
+        "required": [
+          "email",
+          "first_name",
+          "last_name"
+        ]
+      },
+      "CreateAdminSuccessDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Success flag",
+            "example": true
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Admin user created successfully"
+          },
+          "adminId": {
+            "type": "string",
+            "description": "ID of the created admin user",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": [
+          "success",
+          "message",
+          "adminId"
         ]
       },
       "Match": {

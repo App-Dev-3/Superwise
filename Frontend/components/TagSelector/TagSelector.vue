@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -26,17 +26,15 @@ const initialVisibleTags = 5;
 
 const selectedTags = ref([ ...props.initialSelected ]);
 
-const availableTags = computed(() => {
-  return props.allTags.filter(
-      (tag) => !selectedTags.value.includes(tag) && (searchValue.value == '' || (tag.tag_name as string).indexOf(searchValue.value) >= 0),
-  );
-});
-
 const searchValue = ref('');
 
-// TODO: fix search
-watch(searchValue, (newValue) => {
-  console.log("Search value changed:", newValue);
+const availableTags = computed(() => {
+  const query = searchValue.value.trim().toLowerCase();
+  return props.allTags.filter(tag => {
+    const name = (tag.tag_name as string).toLowerCase();
+    return !selectedTags.value.includes(tag) &&
+        (query === '' || name.includes(query));
+  });
 });
 
 const visibleTags = computed(() => {
@@ -68,7 +66,7 @@ function removeTag(tag) {
   <div class="flex size-full flex-col">
 
     <InputField
-        :model-value="searchValue"
+        v-model="searchValue"
         class="h-fit"
         clearable
         label="Select up to 10 tags that fit your topic / interests"

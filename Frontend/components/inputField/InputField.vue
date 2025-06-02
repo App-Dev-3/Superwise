@@ -51,64 +51,61 @@ const inputFieldRef = ref(null);
 const emit = defineEmits(["update:modelValue", "blur"]);
 
 function handleInput(event) {
-  const trimmed = event.target.value.trim();
-  if (trimmed !== "") {
-    emit("update:modelValue", event.target.value);
-  }
+  emit("update:modelValue", event.target.value);
 }
 
 function handleBlur(event) {
   emit("blur", event);
 }
 
-const clearSearch = () => {
-  searchQuery.value = "";
-};
+// removed clearSearch helper; use direct input clear in handler
 
 function handleRightIconClick() {
-  if (!isClearIcon.value) {
-    return;
+  if (!isClearIcon.value) return;
+  const el = inputFieldRef.value;
+  if (el) {
+    el.value = '';
+    el.focus();
+    // dispatch native input event to trigger handleInput and update v-model
+    el.dispatchEvent(new Event('input', {bubbles: true}));
   }
-
-  clearSearch();
-  emit("update:modelValue", "");
 }
 </script>
 
 <template>
   <fieldset class="fieldset">
     <legend
-      v-if="props.label.length > 0"
-      class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
+        v-if="props.label.length > 0"
+        class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
     >
       {{ label }}
     </legend>
 
     <div class="input-container">
       <FontAwesomeIcon
-        v-if="leftIcon"
-        :icon="leftIcon"
-        class="input-container__leftIcon"
+          v-if="leftIcon"
+          :icon="leftIcon"
+          class="input-container__leftIcon"
       />
       <input
-        ref="inputFieldRef"
-        :class="{
+          ref="inputFieldRef"
+          :class="{
           'input-container__input--left': leftIcon,
           'input-container__input--right': rightIcon,
         }"
-        :placeholder="placeholder"
-        :value="modelValue"
-        class="input input-bordered w-full rounded-full"
-        type="text"
-        @blur="handleBlur"
-        @input="handleInput"
+          :placeholder="placeholder"
+          :value="modelValue"
+          class="input input-bordered w-full rounded-full"
+          type="text"
+          @blur="handleBlur"
+          @input="handleInput"
       >
       <FontAwesomeIcon
-        v-if="rightIcon"
-        :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
-        :icon="rightIcon"
-        class="input-container__rightIcon"
-        @click="handleRightIconClick"
+          v-if="rightIcon"
+          :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
+          :icon="rightIcon"
+          class="input-container__rightIcon"
+          @click="handleRightIconClick"
       />
     </div>
 

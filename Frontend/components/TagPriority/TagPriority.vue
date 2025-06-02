@@ -1,7 +1,6 @@
 <script setup>
 import {onMounted, ref} from 'vue';
 import draggable from 'vuedraggable';
-import {useI18n} from 'vue-i18n';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const {t} = useI18n();
@@ -49,63 +48,70 @@ function handelChange() {
 </script>
 
 <template>
-  <div class="flex flex-row size-full">
-    <div class="h-full w-0 flex flex-col">
-      <!--TODO: fix this to look better & go with size-->
-      <svg class="h-full" fill="none" viewBox="0 0 12 674" width="12" xmlns="http://www.w3.org/2000/svg">
-        <path
-            d="M6 0L0.226497 10H11.7735L6 0ZM0.666667 668C0.666667 670.946 3.05448 673.333 6 673.333C8.94552 673.333 11.3333 670.946 11.3333 668C11.3333 665.055 8.94552 662.667 6 662.667C3.05448 662.667 0.666667 665.055 0.666667 668ZM6 9H5V668H6H7V9H6Z"
-            fill="url(#paint0_linear_7269_5271)"/>
-        <defs>
-          <linearGradient id="paint0_linear_7269_5271" gradientUnits="userSpaceOnUse" x1="6.5" x2="6.5" y1="0" y2="668">
-            <stop stop-color="#00D390"/>
-            <stop offset="0.4" stop-color="#E4E4E7"/>
-            <stop offset="0.6" stop-color="#EEEEEE"/>
-            <stop offset="1" stop-color="#FCB700"/>
-          </linearGradient>
-        </defs>
-      </svg>
+  <div class="w-fit h-full overflow-y-auto flex flex-col gap-0 m-auto px-4">
+    <div class="flex flex-row items-center gap-8">
+      <div class="flex flex-col w-1 items-center justify-center h-full">
+        <!--ARROW-->
+        <span class=" border-x-[8px] border-b-[16px] border-transparent border-b-success"/>
+        <span class="size-full bg-success"/>
+      </div>
+      <!--Title and Desc.-->
+      <div class="flex flex-col items-start py-4">
+        <h2 class="text-header w-fit">
+          {{ t('tagPriority.arrangeByPriority') }}
+        </h2>
+        <!--<p class="text-body opacity-50 max-w-xs">-->
+        <!--  {{ t('multiStepForm.description.priority') }}-->
+        <!--</p>-->
+      </div>
     </div>
-    <div class="py-4 flex flex-col h-full gap-4">
-      <h2 class="text-header">
-        {{ t('tagPriority.arrangeByPriority') }}
-      </h2>
+
+    <div class="flex flex-row m-0 p-0">
+      <!--CONTENT-->
+      <div class="flex flex-col gap-[30px] items-center z-1 custom-gradient w-1 h-fit py-[7px]">
+        <div
+            v-for="(i) in sortedTags.length"
+            :key="i"
+            :class="tagStyles(i-1).bg"
+            class="size-7 flex items-center justify-center rounded-full font-bold"
+        >
+          <FontAwesomeIcon
+              v-if="i === 1"
+              icon="star"/>
+
+          <p
+              v-else
+              class="text-x-small">
+            {{ i }}
+          </p>
+        </div>
+      </div>
       <draggable
           v-model="sortedTags"
           :animation="250"
+          class="flex flex-col h-fit gap-4"
           ghost-class="ghost"
           item-key="element"
           tag="div"
           @end="handelChange"
       >
         <template #item="{ element, index }">
-          <div class="flex items-center mb-3 cursor-pointer">
+          <div class="flex items-center cursor-pointer">
+            <!-- Line -->
             <div
                 :class="tagStyles(index).bg"
-                class="size-7 flex items-center justify-center rounded-full font-bold"
-            >
-              <FontAwesomeIcon
-                  v-if="index === 0"
-                  icon="star"/>
+                class="w-6 h-1 rounded-full tag-line"
+            />
 
-              <p
-                  v-else
-                  class="text-x-small">
-                {{ index + 1 }}
-              </p>
-            </div>
-
-            <div
-                :class="tagStyles(index).bg"
-                class="w-2 h-1"/>
-
+            <!-- Pill -->
             <div
                 :class="tagStyles(index).border"
-                class="flex flex-1 items-center rounded-full overflow-hidden shadow border"
+                class="flex flex-1 items-center rounded-full overflow-hidden shadow border gap-3 pr-4 bg-base-100 tag-pill"
             >
+              <!-- Drag Handel -->
               <div
                   :class="tagStyles(index).bg"
-                  class="px-3 py-2 font-bold"
+                  class="px-3 py-2 tag-handel"
               >
                 <FontAwesomeIcon
                     class="opacity-50"
@@ -113,20 +119,52 @@ function handelChange() {
                 />
               </div>
 
-              <div
-                  class="flex-1 px-4 py-2 text-sm font-medium text-center"
-              >
-                <p class="text-body">
-                  {{ element.tag_name || t('tagPriority.unknownTag', {tagNumber: index}) }}
-                </p>
-              </div>
+              <!-- Tag Name -->
+              <p class="text-body text-nowrap w-full overflow-hidden text-ellipsis">
+                {{ element.tag_name || t('tagPriority.unknownTag', {tagNumber: index + 1}) }}
+              </p>
+
             </div>
           </div>
         </template>
       </draggable>
     </div>
+
+    <div class="flex flex-col w-1 items-center justify-center">
+      <!--BALL-->
+      <span class="w-full bg-[var(--color-warning)] h-8"/>
+      <span class="bg-[var(--color-warning)] rounded-full size-4"/>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.custom-gradient {
+  background: linear-gradient(
+      to bottom,
+      var(--color-success) 0%,
+      var(--color-neutral-content) 40%,
+      var(--color-neutral-content) 60%,
+      var(--color-warning) 100%
+  );
+}
+
+.ghost {
+  opacity: 0.3;
+}
+
+.ghost .tag-handel,
+.ghost .tag-line {
+  background: var(--color-neutral-content);
+  border-color: var(--color-neutral-content);
+  color: var(--color-base-content);
+}
+
+.ghost .tag-pill,
+.ghost .tag-handel,
+.ghost .tag-line {
+  border-color: var(--color-neutral-content);
+}
+
+
 </style>

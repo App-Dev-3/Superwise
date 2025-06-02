@@ -102,8 +102,14 @@
   "multiStepForm": {
     "description": {
       "name": "Your name is visible to everyone you send requests to. This can be changed on the profile later on.",
-      "priority": "These tags are used to find suitable supervisors for you. The priority can be changed on the profile later!",
-      "tag": "These tags are used to find suitable supervisors for you. They can be changed at any point on your profile!"
+      "priority": {
+        "student": "These tags are used to find suitable supervisors for you. The priority can be changed on the profile later!",
+        "supervisor": "The priority of these tags should relfect your expertece on the topic. They can be changed at any point on your profile."
+      },
+      "tag": {
+        "student": "These tags are used to find suitable supervisors for you. They can be changed at any point on your profile!",
+        "supervisor": "These tags are used for students to match with you. They can be changed at any point on your profile."
+      }
     },
     "next": "Next",
     "selectTags": "Select Tags",

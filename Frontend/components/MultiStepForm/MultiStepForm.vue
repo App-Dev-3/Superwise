@@ -1,31 +1,20 @@
-<script setup>
-import {ref} from 'vue';
-import {useI18n} from 'vue-i18n';
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
-const {t} = useI18n();
+const { t } = useI18n();
 
-const props = defineProps({
-  totalSteps: {
-    type: Number,
-    required: true,
-  },
-});
+interface MultiStepFormProps {
+  totalSteps: number;
+  buttonText: string[];
+  descriptionText: string[];
+}
 
-const emit = defineEmits(['submit', 'step-changed']);
+const props = defineProps<MultiStepFormProps>();
+
+const emit = defineEmits([ 'submit', 'step-changed' ]);
 
 const currentStep = ref(1);
-
-const buttonText = [
-  t('multiStepForm.selectTags'),
-  t('multiStepForm.tagPriority'),
-  t('multiStepForm.startMatching'),
-];
-
-const descriptionText = [
-  t('multiStepForm.description.name'),
-  t('multiStepForm.description.tag'),
-  t('multiStepForm.description.priority'),
-]
 
 function next() {
   if (currentStep.value < props.totalSteps) currentStep.value++;
@@ -48,12 +37,12 @@ function submit() {
     <div class="flex justify-center w-full flex-col gap-3">
       <p
           class="text-x-small opacity-50 px-4">
-        {{ descriptionText[currentStep] }}
+        {{ props.descriptionText[currentStep - 1] }}
       </p>
 
       <CustomButton
           v-if="currentStep < totalSteps"
-          :text="buttonText[currentStep]"
+          :text="props.buttonText[currentStep-1]"
           block
           class="w-full"
           data-test="next-button"

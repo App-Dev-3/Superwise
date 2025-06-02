@@ -96,8 +96,14 @@
   "multiStepForm": {
     "description": {
       "name": "",
-      "priority": "",
-      "tag": ""
+      "priority": {
+        "student": "",
+        "supervisor": ""
+      },
+      "tag": {
+        "student": "",
+        "supervisor": ""
+      }
     },
     "next": "Suivant",
     "selectTags": "",

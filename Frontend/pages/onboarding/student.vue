@@ -3,6 +3,8 @@
     <app-header :show-user="true"/>
     <div class="flex-1 flex p-8 flex-col items-center size-full">
       <multi-step-form
+          :button-text="buttonText"
+          :description-text="descriptionText"
           :total-steps="3"
           class="size-full flex flex-col gap-8"
           @submit="handleSubmit"
@@ -67,6 +69,18 @@ const userFormData = ref({} as UserCreateData);
 
 const DbTags = ref([] as tagData[]);
 const tags = ref([] as tagData[]);
+
+const buttonText = [
+  t('multiStepForm.selectTags'),
+  t('multiStepForm.tagPriority'),
+  t('multiStepForm.startMatching'),
+];
+
+const descriptionText = [
+  t('multiStepForm.description.name'),
+  t('multiStepForm.description.tag.student'),
+  t('multiStepForm.description.priority.student'),
+]
 
 async function handleStepChange(step: number): Promise<void> {
   if (step == 2 && user.value?.primaryEmailAddress) {

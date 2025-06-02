@@ -102,8 +102,14 @@
   "multiStepForm": {
     "description": {
       "name": "Dein Name ist für jeden sichtbar, dem / der du anfragen sendest. Der Name kann später auf den Profil angepasst werden",
-      "priority": "",
-      "tag": ""
+      "priority": {
+        "student": "",
+        "supervisor": ""
+      },
+      "tag": {
+        "student": "",
+        "supervisor": ""
+      }
     },
     "next": "Weiter",
     "selectTags": "Tags Auswählen",

@@ -1,9 +1,10 @@
-<script setup>
-import {onMounted, ref} from 'vue';
+<script lang="ts" setup>
+import { onMounted, ref } from 'vue';
 import draggable from 'vuedraggable';
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useI18n } from 'vue-i18n';
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
   tags: {
@@ -12,7 +13,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['update:tags']);
+const emit = defineEmits([ 'update:tags' ]);
 
 function tagStyles(index) {
   return {
@@ -32,7 +33,7 @@ function tagStyles(index) {
   };
 }
 
-const sortedTags = ref([...props.tags]);
+const sortedTags = ref([ ...props.tags ]);
 
 onMounted(() => {
   handelChange();
@@ -121,7 +122,7 @@ function handelChange() {
 
               <!-- Tag Name -->
               <p class="text-body text-nowrap w-full overflow-hidden text-ellipsis">
-                {{ element.tag_name || t('tagPriority.unknownTag', {tagNumber: index + 1}) }}
+                {{ element.tag_name || t('tagPriority.unknownTag', { tagNumber: index + 1 }) }}
               </p>
 
             </div>

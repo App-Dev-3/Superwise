@@ -3,10 +3,6 @@
     "back": "Atrás",
     "searchPlaceholder": "Buscar..."
   },
-  "confirmed": {
-    "confirmedOn": "Confirmado el {date}",
-    "supervising": "Estás supervisando a {firstName}"
-  },
   "confirmation": {
     "acceptedOn": "Aceptado el: {date}",
     "details": "Detalles de la Confirmación",
@@ -14,6 +10,10 @@
     "student": "Estudiante",
     "supervisor": "Supervisor",
     "title": "Confirmación de Supervisión de Tesis"
+  },
+  "confirmed": {
+    "confirmedOn": "Confirmado el {date}",
+    "supervising": "Estás supervisando a {firstName}"
   },
   "dashboard": {
     "student": {
@@ -67,11 +67,9 @@
     "cancel": "Cancelar",
     "continue": "Continuar",
     "edit": "Editar",
-    "language": "idioma",
     "english": "🇬🇧 English",
-    "german": "🇩🇪 Deutsch",
     "french": "🇫🇷 Français",
-    "spanish": "🇪🇸 Español",
+    "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
     "profilePictureAlt": "Foto de perfil de {firstName} {lastName}",
@@ -79,6 +77,7 @@
     "saveChanges": "Guardar cambios",
     "showAll": "Mostrar todo...",
     "showLess": "Mostrar menos",
+    "spanish": "🇪🇸 Español",
     "student": "Estudiante",
     "supervisor": "Supervisor",
     "404-not-found": "404 - Página no encontrada"
@@ -95,8 +94,15 @@
     "supervisionInfo": "Si envías una solicitud de supervisión de tesis, se enviará a los supervisores seleccionados. Ellos podrán decidir si aceptan o rechazan la solicitud. Si aceptan la solicitud, se creará una confirmación que podrás descargar."
   },
   "multiStepForm": {
+    "description": {
+      "name": "",
+      "priority": "",
+      "tag": ""
+    },
     "next": "Siguiente",
-    "startMatching": "Comenzar Emparejamiento"
+    "selectTags": "",
+    "startMatching": "Comenzar Emparejamiento",
+    "tagPriority": ""
   },
   "nav": {
     "appTour": "Tour de la App",
@@ -114,25 +120,18 @@
     "maxSelection": "Selección máxima"
   },
   "profile": {
-    "pageHeader": "Tu Perfil",
-    "preview": "Vista previa",
-    "firstName": "Nombre",
-    "lastName": "Apellido",
     "bio": "Biografía",
-    "bioVisibility": "Tu biografía será visible para otros usuarios",
     "bioPlaceholder": "Cuéntanos sobre ti...",
+    "bioVisibility": "Tu biografía será visible para otros usuarios",
     "errorOwnProfile": "No puedes enviar una solicitud de supervisión a tu propio perfil",
     "requestSent": "Solicitud enviada",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "pageHeader": "Tu Perfil",
+    "preview": "Vista previa"
   },
   "searchBar": {
     "noResults": "No se encontraron resultados"
-  },
-  "settings": {
-    "theme": "tema",
-    "select": {
-      "language": "Selecciona el idioma de la app",
-      "theme": "Selecciona el tema de la app"
-    }
   },
   "statusBar": {
     "confirmed": "Confirmado",
@@ -146,9 +145,11 @@
     "similarityScore": "Puntuación de similitud"
   },
   "tagPriority": {
-    "arrangeByPriority": "Organizar etiquetas por prioridad"
+    "arrangeByPriority": "Organizar etiquetas por prioridad",
+    "unknownTag": ""
   },
   "tagSelector": {
+    "selectedTags": "",
     "tagCount": "{current}/{max}"
   }
 }

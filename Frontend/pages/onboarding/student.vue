@@ -1,52 +1,48 @@
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="h-screen flex flex-col">
     <app-header :show-user="true"/>
-    <div class="flex-1 flex items-center justify-center">
-      <div class="w-3/4 max-w-md">
-        <multi-step-form
-            :total-steps="3"
-            @submit="handleSubmit"
-            @step-changed="handleStepChange"
-        >
-          <template #step1>
-            <input-field
-                v-model="userFormData.first_name"
-                :label="t('onboarding.firstName')"
-                placeholder="Max"
-            />
-            <input-field
-                v-model="
+    <div class="flex-1 flex p-8 flex-col items-center size-full">
+      <multi-step-form
+          :total-steps="3"
+          class="size-full flex flex-col gap-8"
+          @submit="handleSubmit"
+          @step-changed="handleStepChange"
+      >
+        <template #step1>
+          <input-field
+              v-model="userFormData.first_name"
+              :label="t('onboarding.firstName')"
+              class="mt-32"
+              placeholder="Max"
+          />
+          <input-field
+              v-model="
 								userFormData.last_name
 							"
-                :label="
-								t(
-									'onboarding.lastName',
-								)
-							"
-                placeholder="Mustermann"
-            />
-          </template>
+              :label="t('onboarding.lastName')"
+              placeholder="Mustermann"
+          />
+        </template>
 
-          <template #step2>
-            <tag-selector
-                :all-tags="DbTags"
-                :max-selection="10"
-                @update:selected-tags="
+        <template #step2>
+          <tag-selector
+              :all-tags="DbTags"
+              :max-selection="10"
+              @update:selected-tags="
 								tags = $event
 							"
-            />
-          </template>
+          />
+        </template>
 
-          <template #step3>
-            <TagPriority
-                :tags="tags"
-                @update:tags="
+        <template #step3>
+          <TagPriority
+              :tags="tags"
+              @update:tags="
 								tags = $event
 							"
-            />
-          </template>
-        </multi-step-form>
-      </div>
+          />
+        </template>
+      </multi-step-form>
     </div>
   </div>
 </template>

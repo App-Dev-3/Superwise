@@ -3,10 +3,6 @@
     "back": "Zurück",
     "searchPlaceholder": "Suchen..."
   },
-  "confirmed": {
-    "confirmedOn": "Bestätigt am {date}",
-    "supervising": "Sie betreuen {firstName}"
-  },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",
     "details": "Bestätigungsdetails",
@@ -14,6 +10,10 @@
     "student": "Student",
     "supervisor": "Betreuer",
     "title": "Abschlussarbeitsbetreuung Bestätigung"
+  },
+  "confirmed": {
+    "confirmedOn": "Bestätigt am {date}",
+    "supervising": "Sie betreuen {firstName}"
   },
   "dashboard": {
     "student": {
@@ -67,11 +67,9 @@
     "cancel": "Abbrechen",
     "continue": "Weiter",
     "edit": "Bearbeiten",
-    "language": "Sprache",
     "english": "🇬🇧 English",
-    "german": "🇩🇪 Deutsch",
     "french": "🇫🇷 Français",
-    "spanish": "🇪🇸 Español",
+    "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "Logo",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
@@ -79,6 +77,7 @@
     "saveChanges": "Änderungen speichern",
     "showAll": "Alle anzeigen...",
     "showLess": "Weniger anzeigen",
+    "spanish": "🇪🇸 Español",
     "student": "Studierende",
     "supervisor": "Betreuende",
     "chatRequest": "Chat-Anfrage",
@@ -101,8 +100,15 @@
     "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst."
   },
   "multiStepForm": {
+    "description": {
+      "name": "Dein Name ist für jeden sichtbar, dem / der du anfragen sendest. Der Name kann später auf den Profil angepasst werden",
+      "priority": "",
+      "tag": ""
+    },
     "next": "Weiter",
-    "startMatching": "Matching starten"
+    "selectTags": "Tags Auswählen",
+    "startMatching": "Matching starten",
+    "tagPriority": "Tags Sortieren"
   },
   "nav": {
     "appTour": "App Tour",
@@ -120,26 +126,19 @@
     "maxSelection": "Maximale Auswahl"
   },
   "profile": {
-    "pageHeader": "Mein Profil",
-    "preview": "Vorschau",
-    "firstName": "Vorname",
-    "lastName": "Nachname",
     "bio": "Biografie",
-    "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "bioPlaceholder": "Erzählen Sie etwas über sich...",
+    "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "editProfile": "Profil bearbeiten",
     "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
     "requestSent": "Anfrage gesendet",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "pageHeader": "Mein Profil",
+    "preview": "Vorschau"
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"
-  },
-  "settings": {
-    "theme": "Theme",
-    "select": {
-      "language": "Wählen Sie die Sprache der App aus",
-      "theme": "Wählen sie das Design der App aus"
-    }
   },
   "statusBar": {
     "confirmed": "Bestätigt",
@@ -153,9 +152,11 @@
     "similarityScore": "Übereinstimmungswert"
   },
   "tagPriority": {
-    "arrangeByPriority": "Tags nach Priorität ordnen"
+    "arrangeByPriority": "Tags nach Priorität ordnen",
+    "unknownTag": "Unknown Tag '{tagNumber}'"
   },
   "tagSelector": {
+    "selectedTags": "Ausgewählte Tags...",
     "tagCount": "{current}/{max}"
   },
   "role": {

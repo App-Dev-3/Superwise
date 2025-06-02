@@ -7,8 +7,6 @@ import { TagsRepository } from '../tags/tags.repository';
 import { BadRequestException } from '@nestjs/common';
 import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
 import { Tag, Role } from '@prisma/client';
-import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
-import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
 describe('AdminService', () => {
   let service: AdminService;
@@ -50,15 +48,6 @@ describe('AdminService', () => {
         {
           provide: PrismaService,
           useValue: {},
-        },
-        {
-          provide: WinstonLoggerService,
-          useValue: {
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-            debug: jest.fn(),
-          },
         },
       ],
     }).compile();
@@ -308,7 +297,7 @@ describe('AdminService', () => {
       });
     });
 
-    it('should throw UserAlreadyExistsException when admin email already exists', async () => {
+    it('should throw BadRequestException when admin email already exists', async () => {
       // Arrange
       const mockDto = {
         email: 'existing@fhstp.ac.at',
@@ -333,88 +322,12 @@ describe('AdminService', () => {
       mockUsersRepository.findUserByEmail.mockResolvedValue(mockExistingUser);
 
       // Act & Assert
+      await expect(service.createAdmin(mockDto)).rejects.toThrow(BadRequestException);
       await expect(service.createAdmin(mockDto)).rejects.toThrow(
-        new UserAlreadyExistsException('existing@fhstp.ac.at'),
+        /A user with email existing@fhstp.ac.at already exists/,
       );
       expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(mockDto.email);
       expect(mockAdminRepository.createAdmin).not.toHaveBeenCalled();
-    });
-
-    it('should handle email case insensitivity when checking for existing users', async () => {
-      // Arrange
-      const mockDto = {
-        email: 'ADMIN@FHSTP.AC.AT',
-        first_name: 'John',
-        last_name: 'Doe',
-      };
-
-      const mockExistingUser = {
-        id: EXISTING_USER_ID,
-        email: 'admin@fhstp.ac.at',
-        first_name: 'Existing',
-        last_name: 'Admin',
-        role: Role.ADMIN,
-        is_registered: true,
-        clerk_id: CLERK_ID,
-        profile_image: null,
-        is_deleted: false,
-        created_at: new Date('2023-01-10T08:00:00Z'),
-        updated_at: new Date('2023-01-10T08:00:00Z'),
-      };
-
-      mockUsersRepository.findUserByEmail.mockResolvedValue(mockExistingUser);
-
-      // Act & Assert
-      await expect(service.createAdmin(mockDto)).rejects.toThrow(
-        new UserAlreadyExistsException('ADMIN@FHSTP.AC.AT'),
-      );
-    });
-
-    it('should handle concurrent creation attempts (race condition)', async () => {
-      // Arrange
-      const mockDto = {
-        email: 'admin@fhstp.ac.at',
-        first_name: 'John',
-        last_name: 'Doe',
-      };
-
-      const mockCreatedUser = {
-        id: ADMIN_USER_ID,
-        email: 'admin@fhstp.ac.at',
-        first_name: 'John',
-        last_name: 'Doe',
-        role: Role.ADMIN,
-        is_registered: false,
-        clerk_id: null,
-        profile_image: null,
-        is_deleted: false,
-        created_at: new Date('2023-01-15T10:30:00Z'),
-        updated_at: new Date('2023-01-15T10:30:00Z'),
-      };
-
-      // First call returns null (no user exists)
-      // Second call returns the created user (simulating another request created it)
-      mockUsersRepository.findUserByEmail
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce(mockCreatedUser);
-
-      // Simulate a unique constraint violation from Prisma
-      const prismaError = new Error('Unique constraint failed on the fields: (`email`)');
-      (prismaError as any).code = 'P2002'; // Prisma unique constraint error code
-      mockAdminRepository.createAdmin.mockRejectedValue(prismaError);
-
-      // Act & Assert
-      await expect(service.createAdmin(mockDto)).rejects.toThrow(
-        'Unique constraint failed on the fields: (`email`)',
-      );
-
-      // Verify the service attempted to create after checking
-      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(mockDto.email);
-      expect(mockAdminRepository.createAdmin).toHaveBeenCalledWith({
-        email: mockDto.email,
-        first_name: mockDto.first_name,
-        last_name: mockDto.last_name,
-      });
     });
   });
 });

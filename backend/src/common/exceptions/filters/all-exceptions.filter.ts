@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, HttpException, HttpStatus, Inject } from '@nestjs
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { WinstonLoggerService } from '../../logging/winston-logger.service';
+import { AppConfigService } from '../../../config';
 
 // Define interfaces for type-safe error handling
 interface ErrorWithStatus extends Error {
@@ -12,7 +13,10 @@ interface ErrorWithStatus extends Error {
 
 @Catch()
 export class AllExceptionsFilter extends BaseExceptionFilter {
-  constructor(@Inject(WinstonLoggerService) private readonly logger: WinstonLoggerService) {
+  constructor(
+    @Inject(WinstonLoggerService) private readonly logger: WinstonLoggerService,
+    private readonly appConfig: AppConfigService,
+  ) {
     super();
   }
 
@@ -26,8 +30,9 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
       // Determine HTTP status code with proper type checking
       const status = this.getHttpStatus(exception);
 
-      // Log the error (detailed in development, minimal in production)
-      if (process.env.NODE_ENV !== 'production') {
+      // Log the error with appropriate detail level
+      if (!this.appConfig.isProduction) {
+        // In development, log full error details
         this.logger.error(
           `Unhandled exception: ${this.getErrorMessage(exception)}`,
           this.getErrorStack(exception),

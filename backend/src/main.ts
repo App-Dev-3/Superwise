@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 import { WinstonLoggerService } from './common/logging/winston-logger.service';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppConfigService } from '@config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -17,13 +18,11 @@ async function bootstrap() {
   app.useBodyParser('json', { limit: '20mb' });
   app.useBodyParser('urlencoded', { extended: true, limit: '20mb' });
 
-  // Check for required environment variables
-  if (!process.env.ALLOWED_EMAIL_DOMAINS) {
-    logger.error('ALLOWED_EMAIL_DOMAINS environment variable is required', undefined, 'Bootstrap');
-    process.exit(1);
-  } else {
-    logger.log(`Allowed email domains: ${process.env.ALLOWED_EMAIL_DOMAINS}`, 'Bootstrap');
-  }
+  // Get configuration services
+  const appConfig = app.get(AppConfigService);
+
+  // Log allowed email domains
+  logger.log(`Allowed email domains: ${appConfig.allowedEmailDomains.join(', ')}`, 'Bootstrap');
 
   // Add validation pipe for all requests
   app.useGlobalPipes(
@@ -58,13 +57,13 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: process.env.FRONTEND_HOST,
+    origin: appConfig.frontendHost,
     credentials: true,
   });
 
-  logger.log(`Application starting on port ${process.env.PORT || 8080}`, 'Bootstrap');
-  await app.listen(process.env.PORT || 8080);
-  logger.log(`Application running on port ${process.env.PORT || 8080}`, 'Bootstrap');
+  logger.log(`Application starting on port ${appConfig.port}`, 'Bootstrap');
+  await app.listen(appConfig.port);
+  logger.log(`Application running on port ${appConfig.port}`, 'Bootstrap');
 }
 
 bootstrap().catch(err => {

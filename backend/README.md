@@ -197,10 +197,7 @@ This project provides several scripts and uses CLI tools for common development 
     **Essential command.** Compares your `prisma/schema.prisma` file to the database and applies any necessary changes as a new migration. Also generates/updates the Prisma Client.
 -   `npx prisma studio`:
     Opens a GUI in your browser to view and interact with your database data.
-```cli
-npx prisma generate
-```
-:
+-   `npx prisma generate`:
     Manually generates the Prisma Client based on the schema. Usually run automatically by `migrate dev`.
 
 ### Testing (Jest)

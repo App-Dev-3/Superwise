@@ -35,7 +35,7 @@ const availableTags = computed(() => {
 const searchValue = ref('');
 
 // TODO: fix search
-watch(() => searchValue, (newValue) => {
+watch(searchValue, (newValue) => {
   console.log("Search value changed:", newValue);
 });
 

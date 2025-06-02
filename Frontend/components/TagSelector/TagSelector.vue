@@ -28,7 +28,7 @@ const selectedTags = ref([ ...props.initialSelected ]);
 
 const availableTags = computed(() => {
   return props.allTags.filter(
-      (tag) => !selectedTags.value.includes(tag) && (searchValue.value == '' || (tag.tag_name as string).indexOf(searchValue.value) > 0),
+      (tag) => !selectedTags.value.includes(tag) && (searchValue.value == '' || (tag.tag_name as string).indexOf(searchValue.value) >= 0),
   );
 });
 

@@ -36,6 +36,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (registrationStore.status?.role) {
     userRole = registrationStore.status.role
   }
+
+  // Skip checking is admin is oboarded. They should be redirected to dashboard
+  if (userRole === UserRoles.ADMIN) {
+    if (!to.path.startsWith('/admin')) {
+      return navigateTo('/admin/dashboard')
+    }
+    return
+  }
+
   const onboardingComplete = registrationStore.status?.is_registered || false
 
   if (!onboardingComplete && to.path.startsWith('/onboarding')) {

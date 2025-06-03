@@ -123,6 +123,8 @@ import CustomButton from '~/components/CustomButton/CustomButton.vue';
 import TextArea from '~/components/inputField/TextArea.vue';
 import { HttpMethods } from '#shared/enums/enums';
 
+const { t } = useI18n();
+
 const userStore = useUserStore();
 if (!userStore.user) {
   userStore

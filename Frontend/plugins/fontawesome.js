@@ -36,7 +36,7 @@ import {
   faCopy,
   faPhone,
   faInfoCircle,
-  faTag,
+  faTag, faWarning, faLinkSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import { defineNuxtPlugin } from "nuxt/app";
 
@@ -77,7 +77,9 @@ library.add(
   faCopy,
   faPhone,
   faInfoCircle,
-  faTag
+  faTag,
+  faWarning,
+  faLinkSlash
 );
 
 export default defineNuxtPlugin((nuxtApp) => {

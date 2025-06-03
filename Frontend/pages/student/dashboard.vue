@@ -1,19 +1,11 @@
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AppHeader
-          :first-name="currentUser?.first_name"
-          :image="currentUser?.profile_image || ''"
-          :last-name="currentUser?.last_name"
-          :role="currentUser?.role"
-          show-search
-          show-user
-      />
+    <div class="flex flex-col max-w-7xl w-full">
       <StatusBar :step="dashboardState" class="mt-4"/>
 
       <div
           v-if="dashboardState === 1"
-          class="my-auto mx-auto max-w-7xl w-full py-8 px-6 flex flex-col gap-8"
+          class="my-auto mx-auto max-w-7xl w-full p-12"
       >
         <CustomMessage
             :message="t('onboarding.completed')"
@@ -285,4 +277,7 @@ function navigate(route: string) {
   navigateTo(route);
 }
 
+definePageMeta({
+  layout: "student-base-layout",
+});
 </script>

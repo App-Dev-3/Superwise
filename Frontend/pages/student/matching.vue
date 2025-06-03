@@ -1,13 +1,6 @@
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <div class="fixed top-0 z-10 left-0 right-0 ">
-        <!-- Is this the header thats supposed to be used??-->
-        <AdminHeader
-            header-text="Matching"
-            variant="default"
-        />
-      </div>
+    <div class="flex flex-col max-w-7xl w-full">
       <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
         <template v-if="!hasSupervisor">
           <SwipeContainer
@@ -65,16 +58,9 @@
                 </h2>
               </div>
             </div>
-          </ActionCard> 
+          </ActionCard>
           </div>
         </template>
-      </div>
-
-      <div class="">
-        <BottomNav
-            :bottom-nav-buttons="bottomNavButtons"
-            @navigate="navigate"
-        />
       </div>
     </div>
     <Toast
@@ -265,23 +251,23 @@ const handleActionResetSwipe = (supervisor: SupervisorData) => {
 };
 
 const handleModalDontShowAgain = (type: supervisionRequestType) => {
-    console.log("handleModalDontShowAgain called with type:", type);
-    switch (type) {
-        case supervisionRequestType.CONFIRM:
-            settingsStore.setSettings({
-                ...settingsStore.settings,
-                showSupervisionRequestModal: false
-            });
-            break;
-        case supervisionRequestType.DISMISS:
-            settingsStore.setSettings({
-                ...settingsStore.settings,
-                showDismissModal: false
-            });
-            break;
-        default:
-            console.warn("Unknown type for handleModalDontShowAgain:", type);
-    }
+  console.log("handleModalDontShowAgain called with type:", type);
+  switch (type) {
+    case supervisionRequestType.CONFIRM:
+      settingsStore.setSettings({
+        ...settingsStore.settings,
+        showSupervisionRequestModal: false
+      });
+      break;
+    case supervisionRequestType.DISMISS:
+      settingsStore.setSettings({
+        ...settingsStore.settings,
+        showDismissModal: false
+      });
+      break;
+    default:
+      console.warn("Unknown type for handleModalDontShowAgain:", type);
+  }
 };
 const openModal = async () => {
   await nextTick();
@@ -320,5 +306,10 @@ function navigate(route: string) {
 }
 
 const dummyRoute = ref("/");
+
+
+definePageMeta({
+  layout: "student-base-layout",
+});
 
 </script>

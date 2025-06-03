@@ -1,10 +1,10 @@
 <script setup>
-import { useRouter } from "vue-router";
-import { useColorMode } from "#imports";
-import { useI18n } from "vue-i18n";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {useRouter} from "vue-router";
+import {useColorMode} from "#imports";
+import {useI18n} from "vue-i18n";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
-const { t } = useI18n();
+const {t} = useI18n();
 const router = useRouter();
 const colorMode = useColorMode();
 
@@ -49,23 +49,22 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="w-full">
-    <div class="navbar bg-base-100 shadow z-10">
-      <div class="navbar-start ps-3">
-        <button
+  <div class="navbar bg-base-100 shadow z-10 border-b border-neutral-content w-full">
+    <div class="navbar-start ps-3">
+      <button
           v-if="props.showBack"
           class="btn btn-ghost btn-circle"
           data-test="back-button"
           @click="goBack"
-        >
-          <FontAwesomeIcon class="text-xl" icon="arrow-left" />
-          <span class="text-sm font-medium opacity-50">{{
+      >
+        <FontAwesomeIcon class="text-xl" icon="arrow-left"/>
+        <span class="text-sm font-medium opacity-50">{{
             t("appHeader.back")
           }}</span>
-        </button>
+      </button>
 
-        <div v-if="props.showUser">
-          <SideDrawer
+      <div v-if="props.showUser">
+        <SideDrawer
             :first-name="props.firstName"
             :image="props.image"
             :last-name="props.lastName"
@@ -73,11 +72,12 @@ const goBack = () => {
           />
         </div>
 
-      </div>
+      <AppThemeToggle class="ml-5"/>
+    </div>
 
-      <ClientOnly>
-        <div class="navbar-center">
-          <img
+    <ClientOnly>
+      <div class="navbar-center">
+        <img
             :src="
               colorMode.value === 'dark'
                 ? '../images/appHeader_logo_dark.svg'
@@ -85,19 +85,18 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
-          >
-        </div>
-      </ClientOnly>
-
-      <div class="navbar-end">
-        <SearchBar
-          v-if="props.showSearch"
-          right-icon="xmark"
-          :placeholder="t('appHeader.searchPlaceholder')"
-          :model-value="props.modelValue"
-          search-for="supervisors"
-        />
+        >
       </div>
+    </ClientOnly>
+
+    <div class="navbar-end">
+      <SearchBar
+          v-if="props.showSearch"
+          :model-value="props.modelValue"
+          :placeholder="t('appHeader.searchPlaceholder')"
+          right-icon="xmark"
+          search-for="supervisors"
+      />
     </div>
   </div>
 </template>

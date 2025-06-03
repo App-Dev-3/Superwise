@@ -21,7 +21,7 @@ const isOpen = ref(false);
                 :class="{ 'line-clamp-4': !isOpen}"
                 class="text-body opacity-75"
             >
-                {{ content.trim() }}
+                {{ props.content.trim() }}
             </p>
 
             <CustomButton

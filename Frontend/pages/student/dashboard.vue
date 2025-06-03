@@ -7,6 +7,7 @@
         :first-name="currentUser?.first_name"
         :last-name="currentUser?.last_name"
         :role="currentUser?.role"
+        :image="currentUser?.profile_image || ''"
       />
       <StatusBar :step="dashboardState" class="mt-4" />
 
@@ -63,16 +64,18 @@
                 :key="pendingRequest.id"
                 class="mb-2 w-full"
               >
-                <MiniCard
-                  :bottom-text="
-                    new Date(pendingRequest.updated_at).toLocaleDateString()
-                  "
-                  :first-name="pendingRequest.supervisor.user.first_name"
-                  :image="pendingRequest.supervisor.user.profile_image"
-                  :last-name="pendingRequest.supervisor.user.last_name"
-                  :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-                  top-icon="user-group"
-                />
+                  <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
+                    <MiniCard
+                      :bottom-text="
+                        new Date(pendingRequest.updated_at).toLocaleDateString()
+                      "
+                      :first-name="pendingRequest.supervisor.user.first_name"
+                      :image="pendingRequest.supervisor.user.profile_image"
+                      :last-name="pendingRequest.supervisor.user.last_name"
+                      :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
+                      top-icon="user-group"
+                    />
+                  </NuxtLink>
               </div>
             </div>
           </div>
@@ -214,8 +217,7 @@ const bottomNavButtons = [
     route: "/student/requests",
   },
 ];
-const { user } = useUser();
-const { getUserByEmail, getRecommendedSupervisors } = useUserApi();
+const { getRecommendedSupervisors } = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 const studentStore = useStudentStore();
@@ -227,6 +229,10 @@ const dashboardState = studentStore.dashboardState;
 const pendingSupervisionRequests = studentStore.pendingSupervisionRequests;
 const acceptedSupervisionRequests = studentStore.acceptedSupervisionRequests;
 const currentUser = ref<UserData | null>(null);
+if (!userStore.user) {
+  await userStore.refetchCurrentUser();
+}
+currentUser.value = userStore.user;
 
 // if for some reason the user has more than one accepted supervision request, we will show a warning
 const warning = computed(() => {
@@ -289,14 +295,7 @@ watch(
 
 const matches = ref([] as SupervisorData[]);
 
-if (!userStore.user && user.value?.primaryEmailAddress?.emailAddress) {
-  const res = (await getUserByEmail(
-    user.value?.primaryEmailAddress.emailAddress
-  )) as UserData;
-  userStore.setUser(res);
-}
-
-if (userStore.user !== null) {
+if (userStore.user) {
   const res = (await getRecommendedSupervisors(
     userStore.user.id
   )) as SupervisorData[];

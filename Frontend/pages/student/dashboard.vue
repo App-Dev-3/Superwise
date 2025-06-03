@@ -64,16 +64,18 @@
                 :key="pendingRequest.id"
                 class="mb-2 w-full"
               >
-                <MiniCard
-                  :bottom-text="
-                    new Date(pendingRequest.updated_at).toLocaleDateString()
-                  "
-                  :first-name="pendingRequest.supervisor.user.first_name"
-                  :image="pendingRequest.supervisor.user.profile_image"
-                  :last-name="pendingRequest.supervisor.user.last_name"
-                  :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-                  top-icon="user-group"
-                />
+                  <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
+                    <MiniCard
+                      :bottom-text="
+                        new Date(pendingRequest.updated_at).toLocaleDateString()
+                      "
+                      :first-name="pendingRequest.supervisor.user.first_name"
+                      :image="pendingRequest.supervisor.user.profile_image"
+                      :last-name="pendingRequest.supervisor.user.last_name"
+                      :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
+                      top-icon="user-group"
+                    />
+                  </NuxtLink>
               </div>
             </div>
           </div>

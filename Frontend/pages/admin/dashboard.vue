@@ -76,8 +76,8 @@
 
 <script lang="ts" setup>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {supervisionRequestStatus, UserRoles} from "#shared/enums/enums";
-import type {UserData} from "#shared/types/userInterfaces";
+import {HttpMethods, supervisionRequestStatus, UserRoles} from "#shared/enums/enums";
+import type {UserCreateData, UserData} from "#shared/types/userInterfaces";
 import type {SupervisorProfile} from "#shared/types/supervisorInterfaces";
 import type {SupervisionRequest} from "#shared/types/requests";
 import type {StudentProfile} from "#shared/types/StudentInterfaces";
@@ -94,7 +94,11 @@ const amountOfStudents = ref(0);
 const acceptedSupervisionRequestsCount = ref(0);
 const pendingSupervisionRequestsCount = ref(0);
 
+const registrationStore = useRegistrationStore()
+const { user, isLoaded } = useUser()
+
 onMounted(async () => {
+    await getAdminRegistrationStatus();
     await getSupervisorInfo();
     await getAvailableSpots();
     await getAmountOfStudentsThatHaveASupervisorAndRequestStates();
@@ -171,6 +175,21 @@ const getAmountOfStudentsThatHaveASupervisorAndRequestStates = async () => {
         },
     })
     pendingSupervisionRequestsCount.value = pendingSupervisionRequests.length || 0;
+}
+
+const getAdminRegistrationStatus = async () => {
+    if (!registrationStore.status?.is_registered) {
+        if (!isLoaded.value) await until(isLoaded).toBe(true)
+        const adminEmail = ref({} as UserCreateData);
+        adminEmail.value.email =
+            user.value?.primaryEmailAddress?.emailAddress || '';
+        await useFetch('/api/users/', {
+            method: HttpMethods.POST,
+            body: {
+                email: adminEmail.value.email || '',
+            }
+        });
+    }
 }
 </script>
 

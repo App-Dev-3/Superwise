@@ -5,7 +5,6 @@ import type { UserData } from "#shared/types/userInterfaces";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import Requests from "~/pages/student/requests.vue";
 
 const { user } = useUser();
 const { getUserByEmail } = useUserApi();

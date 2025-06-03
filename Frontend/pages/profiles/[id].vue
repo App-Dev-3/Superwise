@@ -217,8 +217,7 @@ const askForConfirmation = () => {
         image: routeParamUser.value.profile_image || '',
         linkedComponentId: `profilesConfirmationModal-${routeParamUserId}`
     };
-    console.log("Opening modal for supervision request confirmation");
-    console.log(modalInformation);
+    // Removed unnecessary console.log statements
     openModal()
 }
 

@@ -68,8 +68,10 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Page non trouvée",
     "admin": "Administrateur",
     "cancel": "Annuler",
+    "chatRequest": "",
     "continue": "Continuer",
     "edit": "Modifier",
     "english": "🇬🇧 English",
@@ -77,6 +79,8 @@
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "",
+    "profile": "",
     "profilePictureAlt": "Photo de profil de {firstName} {lastName}",
     "requests": "Demandes",
     "saveChanges": "Enregistrer les modifications",
@@ -84,18 +88,20 @@
     "showLess": "Afficher moins",
     "spanish": "🇪🇸 Español",
     "student": "Étudiant",
+    "supervise": "",
+    "supervisionRequest": "",
     "supervisor": "Superviseur",
-    "404-not-found": "404 - Page non trouvée",
+    "thesisDescription": ""
   },
   "landing": {
     "dataCollection": "Afin de trouver le superviseur parfait pour vous, nous devons collecter et traiter certaines données. Découvrez {0} ce que nous en faisons !",
     "here": "ici"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Envoyer une Demande de Supervision",
-    "dontShowAgain": "Ne plus afficher",
     "cancel": "Annuler",
     "confirm": "Confirmer",
+    "dontShowAgain": "Ne plus afficher",
+    "sendSupervisionRequestHeadline": "Envoyer une Demande de Supervision",
     "supervisionInfo": "Lorsque vous envoyez une demande de supervision de thèse, elle sera transmise aux superviseurs sélectionnés. Ils pourront alors décider d'accepter ou de refuser la demande. S'ils acceptent la demande, une confirmation sera créée que vous pourrez télécharger."
   },
   "multiStepForm": {
@@ -137,12 +143,18 @@
     "bio": "Biographie",
     "bioPlaceholder": "Parlez-nous de vous...",
     "bioVisibility": "Votre biographie sera visible pour les autres utilisateurs",
+    "editProfile": "",
+    "errorOwnProfile": "Vous ne pouvez pas envoyer de demande de supervision à votre propre profil",
     "firstName": "Prénom",
     "lastName": "Nom",
     "pageHeader": "Votre Profil",
     "preview": "Aperçu",
-    "errorOwnProfile": "Vous ne pouvez pas envoyer de demande de supervision à votre propre profil",
     "requestSent": "Demande envoyée"
+  },
+  "role": {
+    "admin": "",
+    "student": "",
+    "supervisor": ""
   },
   "searchBar": {
     "noResults": "Aucun résultat trouvé"

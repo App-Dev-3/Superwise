@@ -68,8 +68,10 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Not Found",
     "admin": "Admin",
     "cancel": "Cancel",
+    "chatRequest": "Chat request",
     "continue": "Continue",
     "edit": "Edit",
     "english": "🇬🇧 English",
@@ -77,6 +79,8 @@
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "Mail",
+    "profile": "Profile",
     "profilePictureAlt": "Profile picture of {firstName} {lastName}",
     "requests": "Requests",
     "saveChanges": "Save changes",
@@ -84,24 +88,20 @@
     "showLess": "Show less",
     "spanish": "🇪🇸 Español",
     "student": "Student",
-    "supervisor": "Supervisor",
-    "chatRequest": "Chat request",
-    "mail": "Mail",
-    "profile": "Profile",
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
-    "thesisDescription": "Thesis description",
-    "404-not-found": "404 - Not Found",
+    "supervisor": "Supervisor",
+    "thesisDescription": "Thesis description"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
     "here": "here"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Send supervision request",
-    "dontShowAgain": "Don't show again",
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "dontShowAgain": "Don't show again",
+    "sendSupervisionRequestHeadline": "Send supervision request",
     "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download."
   },
   "multiStepForm": {
@@ -143,13 +143,18 @@
     "bio": "Bio",
     "bioPlaceholder": "Tell us about yourself...",
     "bioVisibility": "Your bio will be visible to other users",
+    "editProfile": "Edit Profile",
+    "errorOwnProfile": "You cannot send a supervision request to yourself",
     "firstName": "First Name",
     "lastName": "Last Name",
     "pageHeader": "Your Profile",
     "preview": "Preview",
-    "editProfile": "Edit Profile",
-    "errorOwnProfile": "You cannot send a supervision request to yourself",
     "requestSent": "Request sent"
+  },
+  "role": {
+    "admin": "Admin",
+    "student": "Student",
+    "supervisor": "Supervisor"
   },
   "searchBar": {
     "noResults": "No results found"
@@ -175,10 +180,5 @@
     "search": "Search Tag...",
     "tagCount": "{current}/{max}",
     "title": "Select your tags"
-  },
-  "role": {
-    "admin": "Admin",
-    "student": "Student",
-    "supervisor": "Supervisor"
   }
 }

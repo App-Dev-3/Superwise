@@ -68,8 +68,10 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Página no encontrada",
     "admin": "Administrador",
     "cancel": "Cancelar",
+    "chatRequest": "",
     "continue": "Continuar",
     "edit": "Editar",
     "english": "🇬🇧 English",
@@ -77,6 +79,8 @@
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "",
+    "profile": "",
     "profilePictureAlt": "Foto de perfil de {firstName} {lastName}",
     "requests": "Solicitudes",
     "saveChanges": "Guardar cambios",
@@ -84,18 +88,20 @@
     "showLess": "Mostrar menos",
     "spanish": "🇪🇸 Español",
     "student": "Estudiante",
+    "supervise": "",
+    "supervisionRequest": "",
     "supervisor": "Supervisor",
-    "404-not-found": "404 - Página no encontrada"
+    "thesisDescription": ""
   },
   "landing": {
     "dataCollection": "Para encontrar el supervisor perfecto para ti, necesitamos recopilar y procesar algunos datos. Descubre {0} ¡qué hacemos con ellos!",
     "here": "aquí"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Enviar Solicitud de Supervisión",
-    "dontShowAgain": "No mostrar de nuevo",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
+    "dontShowAgain": "No mostrar de nuevo",
+    "sendSupervisionRequestHeadline": "Enviar Solicitud de Supervisión",
     "supervisionInfo": "Si envías una solicitud de supervisión de tesis, se enviará a los supervisores seleccionados. Ellos podrán decidir si aceptan o rechazan la solicitud. Si aceptan la solicitud, se creará una confirmación que podrás descargar."
   },
   "multiStepForm": {
@@ -137,12 +143,18 @@
     "bio": "Biografía",
     "bioPlaceholder": "Cuéntanos sobre ti...",
     "bioVisibility": "Tu biografía será visible para otros usuarios",
+    "editProfile": "",
     "errorOwnProfile": "No puedes enviar una solicitud de supervisión a tu propio perfil",
-    "requestSent": "Solicitud enviada",
     "firstName": "Nombre",
     "lastName": "Apellido",
     "pageHeader": "Tu Perfil",
-    "preview": "Vista previa"
+    "preview": "Vista previa",
+    "requestSent": "Solicitud enviada"
+  },
+  "role": {
+    "admin": "",
+    "student": "",
+    "supervisor": ""
   },
   "searchBar": {
     "noResults": "No se encontraron resultados"

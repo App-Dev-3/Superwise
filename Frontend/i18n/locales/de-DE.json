@@ -68,8 +68,10 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Nicht gefunden",
     "admin": "Admin",
     "cancel": "Abbrechen",
+    "chatRequest": "Chat-Anfrage",
     "continue": "Weiter",
     "edit": "Bearbeiten",
     "english": "🇬🇧 English",
@@ -77,6 +79,8 @@
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "Logo",
+    "mail": "E-Mail",
+    "profile": "Profil",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
     "requests": "Anfragen",
     "saveChanges": "Änderungen speichern",
@@ -84,24 +88,20 @@
     "showLess": "Weniger anzeigen",
     "spanish": "🇪🇸 Español",
     "student": "Studierende",
-    "supervisor": "Betreuende",
-    "chatRequest": "Chat-Anfrage",
-    "mail": "E-Mail",
-    "profile": "Profil",
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
-    "thesisDescription": "Thesis-Beschreibung",
-    "404-not-found": "404 - Nicht gefunden",
+    "supervisor": "Betreuende",
+    "thesisDescription": "Thesis-Beschreibung"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
     "here": "hier"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
-    "dontShowAgain": "Nicht mehr anzeigen",
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
+    "dontShowAgain": "Nicht mehr anzeigen",
+    "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
     "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst."
   },
   "multiStepForm": {
@@ -145,11 +145,16 @@
     "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "editProfile": "Profil bearbeiten",
     "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
-    "requestSent": "Anfrage gesendet",
     "firstName": "Vorname",
     "lastName": "Nachname",
     "pageHeader": "Mein Profil",
-    "preview": "Vorschau"
+    "preview": "Vorschau",
+    "requestSent": "Anfrage gesendet"
+  },
+  "role": {
+    "admin": "Admin",
+    "student": "Studierende",
+    "supervisor": "Betreuende"
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"
@@ -175,10 +180,5 @@
     "search": "",
     "tagCount": "{current}/{max}",
     "title": ""
-  },
-  "role": {
-    "admin": "Admin",
-    "student": "Studierende",
-    "supervisor": "Betreuende"
   }
 }

@@ -68,8 +68,10 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Pagina non trovata",
     "admin": "Amministratore",
     "cancel": "Annulla",
+    "chatRequest": "",
     "continue": "Continua",
     "edit": "Modifica",
     "english": "🇬🇧 English",
@@ -77,6 +79,8 @@
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "",
+    "profile": "",
     "profilePictureAlt": "Immagine del profilo di {firstName} {lastName}",
     "requests": "Richieste",
     "saveChanges": "Salva modifiche",
@@ -84,18 +88,20 @@
     "showLess": "Mostra meno",
     "spanish": "🇪🇸 Español",
     "student": "Studente",
+    "supervise": "",
+    "supervisionRequest": "",
     "supervisor": "Supervisore",
-    "404-not-found": "404 - Pagina non trovata"
+    "thesisDescription": ""
   },
   "landing": {
     "dataCollection": "Per trovare il supervisore perfetto per te, dobbiamo raccogliere ed elaborare alcuni dati. Scopri {0} cosa ne facciamo!",
     "here": "qui"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Invia Richiesta di Supervisione",
-    "dontShowAgain": "Non mostrare più",
     "cancel": "Annulla",
     "confirm": "Conferma",
+    "dontShowAgain": "Non mostrare più",
+    "sendSupervisionRequestHeadline": "Invia Richiesta di Supervisione",
     "supervisionInfo": "Quando invii una richiesta di supervisione della tesi, verrà inoltrata ai supervisori selezionati. Possono quindi decidere se accettare o rifiutare la richiesta. Se accettano la richiesta, verrà creata una conferma che potrai scaricare."
   },
   "multiStepForm": {
@@ -137,12 +143,18 @@
     "bio": "Biografia",
     "bioPlaceholder": "Raccontaci di te...",
     "bioVisibility": "La tua biografia sarà visibile agli altri utenti",
+    "editProfile": "",
     "errorOwnProfile": "Non puoi inviare una richiesta di supervisione al tuo stesso profilo",
-    "requestSent": "Richiesta inviata",
     "firstName": "Nome",
     "lastName": "Cognome",
     "pageHeader": "Il Tuo Profilo",
-    "preview": "Anteprima"
+    "preview": "Anteprima",
+    "requestSent": "Richiesta inviata"
+  },
+  "role": {
+    "admin": "",
+    "student": "",
+    "supervisor": ""
   },
   "searchBar": {
     "noResults": "Nessun risultato trovato"

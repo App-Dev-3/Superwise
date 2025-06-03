@@ -1,54 +1,57 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <app-header :show-user="true"/>
-    <div class="flex-1 flex items-center justify-center">
-      <div class="w-3/4 max-w-md">
-        <multi-step-form
-            :total-steps="3"
-            @submit="handleSubmit"
-            @step-changed="handleStepChange"
-        >
-          <template #step1>
-            <input-field
-                v-model="userFormData.first_name"
-                :label="t('onboarding.firstName')"
-                placeholder="Max"
-            />
-            <input-field
-                v-model="
+  <multi-step-form
+      :button-text="buttonText"
+      :description-text="descriptionText"
+      :header-text="headerText"
+      :total-steps="3"
+      class="size-full flex flex-col"
+      @submit="handleSubmit"
+      @step-changed="handleStepChange"
+  >
+    <template #step1>
+      <div class="flex flex-col gap-2 pb-4">
+        <p class="text-large">{{ t('onboarding.name.title') }}</p>
+
+        <p class="text-x-small opacity-50">
+          {{ descriptionText[0] }}
+        </p>
+      </div>
+
+      <input-field
+          v-model="userFormData.first_name"
+          :label="t('onboarding.firstName')"
+          placeholder="Max"
+      />
+      <input-field
+          v-model="
 								userFormData.last_name
 							"
-                :label="
-								t(
-									'onboarding.lastName',
-								)
-							"
-                placeholder="Mustermann"
-            />
-          </template>
+          :label="t('onboarding.lastName')"
+          placeholder="Mustermann"
+      />
+    </template>
 
-          <template #step2>
-            <tag-selector
-                :all-tags="DbTags"
-                :max-selection="10"
-                @update:selected-tags="
+    <template #step2>
+      <tag-selector
+          :all-tags="DbTags"
+          :description-text="descriptionText[1]"
+          :max-selection="10"
+          @update:selected-tags="
 								tags = $event
 							"
-            />
-          </template>
+      />
+    </template>
 
-          <template #step3>
-            <TagPriority
-                :tags="tags"
-                @update:tags="
+    <template #step3>
+      <TagPriority
+          :description-text="descriptionText[2]"
+          :tags="tags"
+          @update:tags="
 								tags = $event
 							"
-            />
-          </template>
-        </multi-step-form>
-      </div>
-    </div>
-  </div>
+      />
+    </template>
+  </multi-step-form>
 </template>
 
 <script lang="ts" setup>
@@ -71,6 +74,24 @@ const userFormData = ref({} as UserCreateData);
 
 const DbTags = ref([] as tagData[]);
 const tags = ref([] as tagData[]);
+
+const buttonText = [
+  t('multiStepForm.selectTags'),
+  t('multiStepForm.tagPriority'),
+  t('multiStepForm.startMatching'),
+];
+
+const descriptionText = [
+  t('multiStepForm.description.name'),
+  t('multiStepForm.description.tag.student'),
+  t('multiStepForm.description.priority.student'),
+]
+
+const headerText = [
+  t('appHeader.onboarding.name'),
+  t('appHeader.onboarding.tags'),
+  t('appHeader.onboarding.priority'),
+];
 
 async function handleStepChange(step: number): Promise<void> {
   if (step == 2 && user.value?.primaryEmailAddress) {

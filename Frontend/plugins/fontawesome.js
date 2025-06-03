@@ -1,44 +1,46 @@
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {
-  faArrowLeft,
-  faArrowRight,
-  faArrowRightToBracket,
-  faBan,
-  faCheck,
-  faCloudArrowDown,
-  faCloudArrowUp,
-  faEdit,
-  faEnvelope,
-  faEye,
-  faEyeSlash,
-  faFileDownload,
-  faGear,
-  faHandshakeSimple,
-  faHourglass,
-  faHouse,
-  faImage,
-  faMap,
-  faMessage,
-  faMinus,
-  faMoon,
-  faPlus,
-  faRightFromBracket,
-  faSearch,
-  faSpinner,
-  faSun,
-  faTrashCan,
-  faTriangleExclamation,
-  faUser,
-  faUserGroup,
-  faUserShield,
-  faXmark,
-  faCopy,
-  faPhone,
-  faInfoCircle,
-  faTag, faWarning, faLinkSlash,
+    faArrowLeft,
+    faArrowRight,
+    faArrowRightToBracket,
+    faBan,
+    faCheck,
+    faCloudArrowDown,
+    faCloudArrowUp,
+    faCopy,
+    faEdit,
+    faEnvelope,
+    faEye,
+    faEyeSlash,
+    faFileDownload,
+    faGear,
+    faGripLines,
+    faHandshakeSimple,
+    faHourglass,
+    faHouse,
+    faImage,
+    faInfoCircle,
+    faMap,
+    faMessage,
+    faMinus,
+    faMoon,
+    faPhone,
+    faPlus,
+    faRightFromBracket,
+    faSearch,
+    faSpinner,
+    faStar,
+    faSun,
+    faTag,
+    faTrashCan,
+    faTriangleExclamation,
+    faUser,
+    faUserGroup,
+    faUserShield,
+    faXmark,faWarning, faLinkSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import { defineNuxtPlugin } from "nuxt/app";
+import {defineNuxtPlugin} from "nuxt/app";
 
 library.add(
   faArrowLeft,
@@ -78,10 +80,12 @@ library.add(
   faPhone,
   faInfoCircle,
   faTag,
-  faWarning,
-  faLinkSlash
+faWarning,
+    faLinkSlash,
+    faStar,
+    faGripLines
 );
 
 export default defineNuxtPlugin((nuxtApp) => {
-  nuxtApp.vueApp.component("FontAwesomeIcon", FontAwesomeIcon);
-});
+    nuxtApp.vueApp.component('FontAwesomeIcon', FontAwesomeIcon)
+})

@@ -59,6 +59,6 @@ describe('TagSelector.vue', () => {
         })
 
         const counter = wrapper.find('[data-test="selected-tags-count"]')
-        expect(counter.text()).toBe('3/10')
+        expect(counter.text()).toBe('3 / 10')
     })
 })

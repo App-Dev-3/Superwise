@@ -1,34 +1,33 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <app-header :show-user="true"/>
-    <div class="flex-1 flex items-center justify-center">
-      <div class="w-3/4 max-w-md">
-        <multi-step-form
-            :total-steps="2"
-            @submit="handleSubmit()"
-        >
-          <template #step1>
-            <tag-selector
-                :all-tags="DbTags"
-                :max-selection="10"
-                @update:selected-tags="
+  <multi-step-form
+      :button-text="buttonText"
+      :description-text="descriptionText"
+      :header-text="headerText"
+      :total-steps="2"
+      class="size-full flex flex-col gap-8"
+      @submit="handleSubmit()"
+  >
+    <template #step1>
+      <tag-selector
+          :all-tags="DbTags"
+          :description-text="descriptionText[0]"
+          :max-selection="10"
+          @update:selected-tags="
 								tags = $event
 							"
-            />
-          </template>
+      />
+    </template>
 
-          <template #step2>
-            <TagPriority
-                :tags="tags"
-                @update:tags="
+    <template #step2>
+      <TagPriority
+          :description-text="descriptionText[1]"
+          :tags="tags"
+          @update:tags="
 								tags = $event
 							"
-            />
-          </template>
-        </multi-step-form>
-      </div>
-    </div>
-  </div>
+      />
+    </template>
+  </multi-step-form>
 </template>
 
 <script lang="ts" setup>
@@ -37,10 +36,9 @@ import { useUser } from '@clerk/nuxt/composables';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
 
-definePageMeta({
-  layout: 'authenticated',
-});
-console.log('Onboarding supervisor page loaded');
+const { t } = useI18n();
+
+
 const { user } = useUser();
 const { createUser, addUserTag } = useUserApi();
 const { getTags } = useTagApi();
@@ -48,6 +46,22 @@ const userStore = useUserStore();
 
 const DbTags = ref([] as tagData[]);
 const tags = ref([] as tagData[]);
+
+const buttonText = [
+  t('multiStepForm.tagPriority'),
+  t('multiStepForm.seeMatches'),
+];
+
+const descriptionText = [
+  t('multiStepForm.description.tag.supervisor'),
+  t('multiStepForm.description.priority.supervisor'),
+]
+
+
+const headerText = [
+  t('appHeader.onboarding.tags'),
+  t('appHeader.onboarding.priority'),
+];
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');

@@ -7,6 +7,7 @@
         :first-name="currentUser?.first_name"
         :last-name="currentUser?.last_name"
         :role="currentUser?.role"
+        :image="currentUser?.profile_image || ''"
       />
       <StatusBar :step="dashboardState" class="mt-4" />
 
@@ -214,8 +215,7 @@ const bottomNavButtons = [
     route: "/student/requests",
   },
 ];
-const { user } = useUser();
-const { getUserByEmail, getRecommendedSupervisors } = useUserApi();
+const { getRecommendedSupervisors } = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 const studentStore = useStudentStore();
@@ -227,6 +227,10 @@ const dashboardState = studentStore.dashboardState;
 const pendingSupervisionRequests = studentStore.pendingSupervisionRequests;
 const acceptedSupervisionRequests = studentStore.acceptedSupervisionRequests;
 const currentUser = ref<UserData | null>(null);
+if (!userStore.user) {
+  await userStore.refetchCurrentUser();
+}
+currentUser.value = userStore.user;
 
 // if for some reason the user has more than one accepted supervision request, we will show a warning
 const warning = computed(() => {
@@ -289,14 +293,7 @@ watch(
 
 const matches = ref([] as SupervisorData[]);
 
-if (!userStore.user && user.value?.primaryEmailAddress?.emailAddress) {
-  const res = (await getUserByEmail(
-    user.value?.primaryEmailAddress.emailAddress
-  )) as UserData;
-  userStore.setUser(res);
-}
-
-if (userStore.user !== null) {
+if (userStore.user) {
   const res = (await getRecommendedSupervisors(
     userStore.user.id
   )) as SupervisorData[];

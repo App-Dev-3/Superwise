@@ -127,8 +127,8 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
     headline: `Request ${ supervisor.firstName } ${ supervisor.lastName }`,
     icon: '',
     warning: '',
-    description: `You’re about to request supervision from ${ supervisor.firstName } ${ supervisor.lastName }. Proceed?`,
-    confirmButtonText: 'Send Request',
+    description: t('modal.supervisionInfo'),
+    confirmButtonText: t('modal.confirm'),
     confirmButtonColor: 'primary',
     supervisor: supervisor
   };
@@ -152,7 +152,7 @@ const handleSwipeLeft = async (supervisor: SupervisorData) => {
     icon: 'ban',
     warning: 'Dismissed supervisors can still be found in the search',
     description: `By dismissing ${ supervisor.firstName } ${ supervisor.lastName }, they will never get suggested again, but you can still search for them. Are you sure you want to do this?`,
-    confirmButtonText: 'Dismiss Supervisor',
+    confirmButtonText: t('modal.confirm'),
     confirmButtonColor: 'error',
     supervisor: supervisor
   };

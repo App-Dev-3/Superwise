@@ -1,6 +1,11 @@
 {
   "appHeader": {
     "back": "Retour",
+    "onboarding": {
+      "name": "",
+      "priority": "",
+      "tags": ""
+    },
     "searchPlaceholder": "Rechercher..."
   },
   "confirmation": {

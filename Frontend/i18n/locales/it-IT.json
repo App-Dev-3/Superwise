@@ -1,6 +1,11 @@
 {
   "appHeader": {
     "back": "Indietro",
+    "onboarding": {
+      "name": "",
+      "priority": "",
+      "tags": ""
+    },
     "searchPlaceholder": "Cerca..."
   },
   "confirmation": {

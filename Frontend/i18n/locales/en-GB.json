@@ -1,6 +1,11 @@
 {
   "appHeader": {
     "back": "Back",
+    "onboarding": {
+      "name": "Who are you?",
+      "priority": "Whats the priority?",
+      "tags": "What do you like?"
+    },
     "searchPlaceholder": "Search..."
   },
   "confirmation": {

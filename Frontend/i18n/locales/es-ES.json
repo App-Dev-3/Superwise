@@ -1,6 +1,11 @@
 {
   "appHeader": {
     "back": "Atrás",
+    "onboarding": {
+      "name": "",
+      "priority": "",
+      "tags": ""
+    },
     "searchPlaceholder": "Buscar..."
   },
   "confirmation": {

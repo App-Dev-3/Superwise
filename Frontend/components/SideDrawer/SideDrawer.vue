@@ -28,7 +28,7 @@ const props = defineProps({
 
 <template>
   <div class="drawer">
-    <input id="my-drawer" type="checkbox" class="drawer-toggle" >
+    <input id="my-drawer" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content">
       <label class="drawer-button" for="my-drawer">
         <div class="avatar">
@@ -44,7 +44,7 @@ const props = defineProps({
                 props.image ||
                 getPlaceholderImage(props.firstName, props.lastName)
               "
-            >
+            />
           </div>
         </div>
       </label>
@@ -67,7 +67,7 @@ const props = defineProps({
               : '../images/appHeader_logo_light.svg'
           "
           class="h-6 mb-8"
-        >
+        />
 
         <ul class="space-y-3 flex-grow">
           <li>
@@ -77,7 +77,9 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="`/${props.role.toLowerCase()}/settings`">
+            <NuxtLink
+              :to="props.role ? `/${props.role.toLowerCase()}/settings` : `/`"
+            >
               <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
               {{ t("nav.settings") }}
             </NuxtLink>
@@ -89,7 +91,13 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="`/${props.role.toLowerCase()}/data-protection`">
+            <NuxtLink
+              :to="
+                props.role
+                  ? `/${props.role.toLowerCase()}/data-protection`
+                  : `/`
+              "
+            >
               <FontAwesomeIcon class="text-xl mr-3" icon="user-shield" />
               {{ t("nav.dataProtection") }}
             </NuxtLink>

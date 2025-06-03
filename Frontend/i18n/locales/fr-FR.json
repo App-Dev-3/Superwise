@@ -128,7 +128,10 @@
   "onboarding": {
     "firstName": "Prénom",
     "lastName": "Nom",
-    "maxSelection": "Sélection maximale"
+    "maxSelection": "Sélection maximale",
+    "name": {
+      "title": ""
+    }
   },
   "profile": {
     "bio": "Biographie",
@@ -160,7 +163,10 @@
     "unknownTag": ""
   },
   "tagSelector": {
-    "selectedTags": "",
-    "tagCount": "{current}/{max}"
+    "label": "",
+    "placeholder": "",
+    "search": "",
+    "tagCount": "{current}/{max}",
+    "title": ""
   }
 }

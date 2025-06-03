@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import GenericHeader from "~/components/AdminHeader/GenericHeader.vue";
+import GenericHeader from "../AdminHeader/GenericHeader.vue";
 
 const { t } = useI18n();
 
@@ -49,7 +49,6 @@ function submit() {
         <slot :name="`step${currentStep}`"/>
       </div>
 
-      <!-- TODO: Replace buttons with custom component button as soon as it is ready -->
       <div class="flex justify-center w-full flex-col gap-3">
         <p
             class="text-x-small opacity-50 px-4">

@@ -17,6 +17,10 @@ const props = defineProps({
     type: Number,
     default: 10,
   },
+  descriptionText: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits([ 'update:selectedTags' ]);
@@ -64,15 +68,23 @@ function removeTag(tag) {
 
 <template>
   <div class="flex size-full flex-col">
+    <div class="flex flex-col gap-2 pb-4">
+      <p class="text-large">{{ t('tagSelector.title') }}</p>
+
+      <p class="text-x-small opacity-50">
+        {{ props.descriptionText }}
+      </p>
+    </div>
 
     <InputField
         v-model="searchValue"
+        :label="t('tagSelector.label')"
+        :placeholder="t('tagSelector.search')"
         class="h-fit"
         clearable
-        label="Select up to 10 tags that fit your topic / interests"
-        placeholder="Search Tag..."
         right-icon="xmark"
     />
+
 
     <div
         class="flex flex-wrap gap-2 p-3"
@@ -81,9 +93,8 @@ function removeTag(tag) {
       <p
           v-if="selectedTags.length <= 0"
           class="text-x-small opacity-50 h-7 flex items-center">
-        {{ t('tagSelector.selectedTags') }}
+        {{ t('tagSelector.placeholder') }}
       </p>
-      <!-- TODO: WHY DOES THE @click not work????? -->
       <custom-tag
           v-for="(tag, index) in selectedTags"
           :key="`selected-${index}`"

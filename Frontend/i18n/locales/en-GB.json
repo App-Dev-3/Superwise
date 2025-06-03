@@ -134,7 +134,10 @@
   "onboarding": {
     "firstName": "First Name",
     "lastName": "Last Name",
-    "maxSelection": "Maximum selection"
+    "maxSelection": "Maximum selection",
+    "name": {
+      "title": "Enter your Name"
+    }
   },
   "profile": {
     "bio": "Bio",
@@ -167,8 +170,11 @@
     "unknownTag": "Unbekannter Tag '{tagNumber}'"
   },
   "tagSelector": {
-    "selectedTags": "Selected Tags...",
-    "tagCount": "{current}/{max}"
+    "label": "Select up to 10 tags that fit your topic / interests",
+    "placeholder": "Selected Tags...",
+    "search": "Search Tag...",
+    "tagCount": "{current}/{max}",
+    "title": "Select your tags"
   },
   "role": {
     "admin": "Admin",

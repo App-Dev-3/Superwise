@@ -10,6 +10,7 @@
     <template #step1>
       <tag-selector
           :all-tags="DbTags"
+          :description-text="descriptionText[0]"
           :max-selection="10"
           @update:selected-tags="
 								tags = $event
@@ -19,6 +20,7 @@
 
     <template #step2>
       <TagPriority
+          :description-text="descriptionText[1]"
           :tags="tags"
           @update:tags="
 								tags = $event

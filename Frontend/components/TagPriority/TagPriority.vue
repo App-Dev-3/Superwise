@@ -11,6 +11,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  descriptionText: {
+    type: String,
+    required: true,
+  },
 });
 
 const emit = defineEmits([ 'update:tags' ]);
@@ -57,13 +61,19 @@ function handelChange() {
         <span class="size-full bg-success"/>
       </div>
       <!--Title and Desc.-->
-      <div class="flex flex-col items-start py-4">
-        <h2 class="text-header w-fit">
+
+      <div class="flex flex-col gap-2 pb-4">
+        <p class="text-large">
           {{ t('tagPriority.arrangeByPriority') }}
-        </h2>
-        <!--<p class="text-body opacity-50 max-w-xs">-->
-        <!--  {{ t('multiStepForm.description.priority') }}-->
-        <!--</p>-->
+        </p>
+
+        <p class="text-x-small opacity-50">
+          {{ props.descriptionText }}
+        </p>
+      </div>
+      <div class="flex flex-col items-start py-4">
+        <h2 class="text-header w-fit"/>
+        <p class="text-body opacity-50 max-w-xs"/>
       </div>
     </div>
 

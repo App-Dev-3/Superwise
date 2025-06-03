@@ -9,10 +9,17 @@
       @step-changed="handleStepChange"
   >
     <template #step1>
+      <div class="flex flex-col gap-2 pb-4">
+        <p class="text-large">{{ t('onboarding.name.title') }}</p>
+
+        <p class="text-x-small opacity-50">
+          {{ descriptionText[0] }}
+        </p>
+      </div>
+
       <input-field
           v-model="userFormData.first_name"
           :label="t('onboarding.firstName')"
-          class="mt-32"
           placeholder="Max"
       />
       <input-field
@@ -27,6 +34,7 @@
     <template #step2>
       <tag-selector
           :all-tags="DbTags"
+          :description-text="descriptionText[1]"
           :max-selection="10"
           @update:selected-tags="
 								tags = $event
@@ -36,6 +44,7 @@
 
     <template #step3>
       <TagPriority
+          :description-text="descriptionText[2]"
           :tags="tags"
           @update:tags="
 								tags = $event

@@ -1,7 +1,11 @@
 <script lang="ts" setup>
-import { useColorMode } from "#imports";
+import { useColorMode as _useColorMode } from "#imports";
+import { ref } from 'vue';
 
-const colorMode = useColorMode();
+// In test environments, useColorMode may be undefined, default to light mode
+const colorMode = typeof _useColorMode === 'function'
+    ? _useColorMode()
+    : ref<{ value: string }>({ value: 'light' });
 
 interface GenericHeaderProps {
   showBack?: boolean;

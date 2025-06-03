@@ -134,7 +134,10 @@
   "onboarding": {
     "firstName": "Vorname",
     "lastName": "Nachname",
-    "maxSelection": "Maximale Auswahl"
+    "maxSelection": "Maximale Auswahl",
+    "name": {
+      "title": ""
+    }
   },
   "profile": {
     "bio": "Biografie",
@@ -167,8 +170,11 @@
     "unknownTag": "Unknown Tag '{tagNumber}'"
   },
   "tagSelector": {
-    "selectedTags": "Ausgewählte Tags...",
-    "tagCount": "{current}/{max}"
+    "label": "",
+    "placeholder": "Ausgewählte Tags...",
+    "search": "",
+    "tagCount": "{current}/{max}",
+    "title": ""
   },
   "role": {
     "admin": "Admin",

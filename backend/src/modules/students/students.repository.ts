@@ -49,7 +49,14 @@ export class StudentsRepository {
     user_id: string;
   }): Promise<Student> {
     return this.prisma.student.create({
-      data,
+      data: {
+        thesis_description: data.thesis_description,
+        user: {
+          connect: {
+            id: data.user_id,
+          },
+        },
+      },
     });
   }
 

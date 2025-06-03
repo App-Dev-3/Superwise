@@ -294,7 +294,10 @@ describe('SupervisionRequestsRepository', () => {
       // Mock student does not exist
       mockPrismaService.student.findUnique.mockResolvedValue(null);
       // Mock student creation
-      mockPrismaService.student.create.mockResolvedValue(newStudent);
+      mockPrismaService.student.create.mockResolvedValue({
+        id: STUDENT_UUID,
+        user_id: STUDENT_USER_UUID,
+      });
 
       // Act
       const result = await repository.createOrFindStudentByEmail(email);
@@ -316,7 +319,11 @@ describe('SupervisionRequestsRepository', () => {
       });
       expect(mockPrismaService.student.create).toHaveBeenCalledWith({
         data: {
-          user_id: STUDENT_USER_UUID,
+          user: {
+            connect: {
+              id: STUDENT_USER_UUID,
+            },
+          },
         },
       });
     });
@@ -342,7 +349,10 @@ describe('SupervisionRequestsRepository', () => {
       // Mock student doesn't exist
       mockPrismaService.student.findUnique.mockResolvedValue(null);
       // Mock student creation
-      mockPrismaService.student.create.mockResolvedValue(newStudent);
+      mockPrismaService.student.create.mockResolvedValue({
+        id: STUDENT_UUID,
+        user_id: STUDENT_USER_UUID,
+      });
 
       // Act
       const result = await repository.createOrFindStudentByEmail(email);
@@ -358,7 +368,11 @@ describe('SupervisionRequestsRepository', () => {
       // Student should be created
       expect(mockPrismaService.student.create).toHaveBeenCalledWith({
         data: {
-          user_id: STUDENT_USER_UUID,
+          user: {
+            connect: {
+              id: STUDENT_USER_UUID,
+            },
+          },
         },
       });
     });

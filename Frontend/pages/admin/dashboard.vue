@@ -95,7 +95,7 @@ const acceptedSupervisionRequestsCount = ref(0);
 const pendingSupervisionRequestsCount = ref(0);
 
 const registrationStore = useRegistrationStore()
-const { user, isLoaded, isSignedIn } = useUser()
+const { user, isLoaded } = useUser()
 
 onMounted(async () => {
     await getAdminRegistrationStatus();

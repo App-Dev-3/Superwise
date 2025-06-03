@@ -50,7 +50,7 @@ export class EnvironmentVariables {
    *
    * Must be a valid port number between 1 and 65535
    */
-  @Transform(({ value }) => parseInt(value, 10))
+  @Transform(({ value }) => parseInt(String(value), 10))
   @IsInt({ message: 'PORT must be an integer' })
   @Min(1, { message: 'PORT must be greater than 0' })
   @Max(65535, { message: 'PORT must be less than 65536' })
@@ -101,7 +101,7 @@ export class EnvironmentVariables {
    * supervision request to the same supervisor after rejection or withdrawal.
    * Must be between 1 and 365 days.
    */
-  @Transform(({ value }) => parseInt(value, 10))
+  @Transform(({ value }) => parseInt(String(value), 10))
   @IsInt({ message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be an integer' })
   @Min(1, { message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be at least 1 day' })
   @Max(365, { message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be less than 365 days' })
@@ -120,8 +120,8 @@ export class EnvironmentVariables {
       message: 'CLERK_JWKS_URI must be a valid HTTPS URL',
     },
   )
-  @Matches(/^https:\/\/.*\.clerk\.accounts\.dev\/\.well-known\/jwks\.json$/, {
-    message: 'CLERK_JWKS_URI must be a valid Clerk JWKS endpoint (*.clerk.accounts.dev)',
+  @Matches(/^https:\/\/.*\/\.well-known\/jwks\.json$/, {
+    message: 'CLERK_JWKS_URI must be a valid HTTPS URL ending with /.well-known/jwks.json',
   })
   CLERK_JWKS_URI: string;
 }

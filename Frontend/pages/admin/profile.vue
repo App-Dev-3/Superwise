@@ -65,6 +65,8 @@ import CustomButton from '~/components/CustomButton/CustomButton.vue';
 import { useRouter } from 'vue-router';
 import { HttpMethods } from '#shared/enums/enums';
 
+const { t } = useI18n();
+
 const router = useRouter();
 const imgSrc = ref('https://example.com/avatar.jpg');
 

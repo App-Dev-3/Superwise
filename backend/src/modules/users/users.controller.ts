@@ -75,12 +75,13 @@ export class UsersController {
 
     try {
       // Find the user but don't expose the full user object
-      const user = await this.usersService.findUserByEmail(email);
+      const user = await this.usersService.findUserByIdWithRelations(email);
 
       return {
         exists: true,
         is_registered: user.is_registered,
         role: user.role,
+        tags: user.tags && user.tags.length > 0
       };
     } catch (error) {
       // If user not found, return exists: false with default values

@@ -1667,6 +1667,11 @@
               "ADMIN"
             ],
             "example": "STUDENT"
+          },
+          "tags": {
+            "type": "boolean",
+            "description": "Wether the user has tags or not",
+            "example": true
           }
         },
         "required": [

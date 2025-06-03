@@ -26,4 +26,10 @@ export class UserExistsDto {
     required: false,
   })
   role?: Role;
+
+  @ApiPropertyOptional({
+    description: 'Wether the user has tags or not',
+    example: true,
+  })
+  tags?: boolean;
 }

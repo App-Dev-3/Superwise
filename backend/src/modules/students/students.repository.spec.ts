@@ -263,7 +263,14 @@ describe('StudentsRepository', () => {
       // Assert
       expect(result).toBe(mockStudent);
       expect(mockPrismaService.student.create).toHaveBeenCalledWith({
-        data: createStudentData,
+        data: {
+          thesis_description: createStudentData.thesis_description,
+          user: {
+            connect: {
+              id: createStudentData.user_id,
+            },
+          },
+        },
       });
     });
   });

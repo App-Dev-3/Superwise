@@ -135,25 +135,34 @@ export class SupervisionRequestsService {
     if (supervisor.available_spots <= 0) {
       throw new SupervisorCapacityException(supervisor.id);
     }
+    try {
+      // Create request with student (creating student if needed) in a transaction
+      const result = await this.repository.createSupervisionRequest({
+        supervisor_id: supervisor.id,
+        student_email: dto.student_email,
+        available_spots: supervisor.available_spots,
+        request_state: RequestState.ACCEPTED,
+      });
 
-    // Create request with student (creating student if needed) in a transaction
-    const result = await this.repository.createSupervisionRequest({
-      supervisor_id: supervisor.id,
-      student_email: dto.student_email,
-      available_spots: supervisor.available_spots,
-      request_state: RequestState.ACCEPTED,
-    });
+      // Log if a new student was created
+      if (result.studentWasCreated) {
+        this.logger.log(
+          `New student account was created for email ${dto.student_email} by supervisor ${currentUser.id}`,
+          'SupervisionRequestsService',
+        );
+      }
 
-    // Log if a new student was created
-    if (result.studentWasCreated) {
-      this.logger.log(
-        `New student account was created for email ${dto.student_email} by supervisor ${currentUser.id}`,
-        'SupervisionRequestsService',
-      );
+      // Return the result directly
+      return result;
+    } catch (error) {
+      // Handle validation errors for manual supervisor assignment
+      if (error.message && error.message.includes('already has an accepted supervision request')) {
+        throw new BadRequestException(
+          'Student already has an accepted supervision request. Manual assignment not allowed.'
+        );
+      }
+      throw error;
     }
-
-    // Return the result directly
-    return result;
   }
 
   /**
@@ -246,37 +255,55 @@ export class SupervisionRequestsService {
     // Validate state transition based on user role
     this.validateStateTransition(request.request_state, newState, currentUser.role);
 
-    // For transitions affecting supervisor capacity, get supervisor details
-    if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
-      const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
+    try {
+      // For transitions affecting supervisor capacity, get supervisor details
+      if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
+        const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
 
-      // Check capacity if accepting a request
-      if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
-        if (supervisor.available_spots <= 0) {
-          throw new SupervisorCapacityException(request.supervisor_id);
+        // Check capacity if accepting a request
+        if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
+          if (supervisor.available_spots <= 0) {
+            throw new SupervisorCapacityException(request.supervisor_id);
+          }
         }
+
+        const result = await this.repository.updateRequestState({
+          id,
+          newState,
+          currentState: request.request_state,
+          supervisor_id: request.supervisor_id,
+          available_spots: supervisor.available_spots,
+          total_spots: supervisor.total_spots,
+        });
+
+        if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
+          this.logger.log(
+            `Request ${id} accepted, competing requests auto-withdrawn`,
+            'SupervisionRequestsService'
+          );
+        }
+
+        return result;
       }
 
-      // Update with transaction for capacity management
+      // For other state transitions that don't affect capacity
       return this.repository.updateRequestState({
         id,
         newState,
         currentState: request.request_state,
         supervisor_id: request.supervisor_id,
-        available_spots: supervisor.available_spots,
-        total_spots: supervisor.total_spots,
+        available_spots: 0, // Not used for non-capacity affecting changes
+        total_spots: 0, // Not used for non-capacity affecting changes
       });
+    } catch (error) {
+      // NEW: Handle validation errors gracefully
+      if (error.message && error.message.includes('already has an accepted supervision request')) {
+        throw new BadRequestException(
+          'Student already has an accepted supervision request. Only one accepted request is allowed per student.'
+        );
+      }
+      throw error;
     }
-
-    // For other state transitions that don't affect capacity
-    return this.repository.updateRequestState({
-      id,
-      newState,
-      currentState: request.request_state,
-      supervisor_id: request.supervisor_id,
-      available_spots: 0, // Not used for non-capacity affecting changes
-      total_spots: 0, // Not used for non-capacity affecting changes
-    });
   }
 
   /**

@@ -90,6 +90,40 @@ export class SupervisionRequestsRepository {
     });
   }
 
+  async hasAcceptedSupervision(studentId: string, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx || this.prisma;
+
+    const existingAccepted = await client.supervisionRequest.findFirst({
+      where: {
+        student_id: studentId,
+        request_state: RequestState.ACCEPTED,
+      },
+    });
+
+    return !!existingAccepted;
+  }
+
+  async withdrawCompetingRequests(
+    studentId: string,
+    excludeRequestId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const client = tx || this.prisma;
+
+    const result = await client.supervisionRequest.updateMany({
+      where: {
+        student_id: studentId,
+        request_state: RequestState.PENDING,
+        id: { not: excludeRequestId },
+      },
+      data: {
+        request_state: RequestState.WITHDRAWN,
+      },
+    });
+
+    return result.count;
+  }
+
   /**
    * Count supervision requests with filtering options
    * @param request_state Optional request state filter
@@ -176,66 +210,87 @@ export class SupervisionRequestsRepository {
    * Simple version: Create request with provided data
    * For ACCEPTED requests: Also handles student creation and supervisor capacity
    */
-  async createSupervisionRequest(data: {
-    student_id?: string;
-    supervisor_id: string;
-    request_state: RequestState;
-    student_email?: string;
-    available_spots?: number;
-  }): Promise<SupervisionRequest & { studentWasCreated?: boolean }> {
-    // Handle ACCEPTED requests with student email (supervisor creating)
-    if (
-      data.request_state === RequestState.ACCEPTED &&
-      data.student_email &&
-      typeof data.available_spots === 'number'
-    ) {
-      const availableSpots = data.available_spots;
-
-      return this.prisma.$transaction(async tx => {
-        // Find or create student using our helper method
-        const studentResult = await this.createOrFindStudentByEmail(
-          data.student_email as string, // Safe assertion as we've checked it exists above
-          tx,
-        );
-
-        // Create the supervision request
-        const request = await tx.supervisionRequest.create({
-          data: {
-            student_id: studentResult.id,
-            supervisor_id: data.supervisor_id,
-            request_state: RequestState.ACCEPTED,
-          },
-        });
-
-        // Update supervisor's available spots
-        await tx.supervisor.update({
-          where: { id: data.supervisor_id },
-          data: {
-            available_spots: availableSpots - 1,
-          },
-        });
-
-        // Add the flag indicating if a student was created
-        return {
-          ...request,
-          studentWasCreated: studentResult.wasCreated,
-        };
-      });
+async createSupervisionRequest(data: {
+  student_id?: string;
+  supervisor_id: string;
+  request_state: RequestState;
+  student_email?: string;
+  available_spots?: number;
+}): Promise<SupervisionRequest & { studentWasCreated?: boolean }> {
+  
+  // ✅ ADD THIS: Validate ACCEPTED requests require student_email
+  if (data.request_state === RequestState.ACCEPTED) {
+    if (!data.student_email) {
+      throw new Error('student_email is required for creating ACCEPTED requests');
     }
+    if (typeof data.available_spots !== 'number') {
+      throw new Error('available_spots is required for creating ACCEPTED requests');
+    }
+  }
 
-    // For simple request creation (PENDING from students)
+  // Handle ACCEPTED requests with student email (supervisor creating)
+  if (
+    data.request_state === RequestState.ACCEPTED &&
+    data.student_email &&
+    typeof data.available_spots === 'number'
+  ) {
+    const availableSpots = data.available_spots;
+
+    return this.prisma.$transaction(async tx => {
+      // Find or create student using our helper method
+      const studentResult = await this.createOrFindStudentByEmail(
+        data.student_email as string, // Safe assertion as we've checked it exists above
+        tx,
+      );
+
+      const hasAccepted = await this.hasAcceptedSupervision(studentResult.id, tx);
+      if (hasAccepted) {
+        throw new Error('Student already has an accepted supervision request');
+      }
+
+      // Create the supervision request
+      const request = await tx.supervisionRequest.create({
+        data: {
+          student_id: studentResult.id,
+          supervisor_id: data.supervisor_id,
+          request_state: RequestState.ACCEPTED,
+        },
+      });
+
+      // Update supervisor's available spots
+      await tx.supervisor.update({
+        where: { id: data.supervisor_id },
+        data: {
+          available_spots: availableSpots - 1,
+        },
+      });
+
+      await this.withdrawCompetingRequests(studentResult.id, request.id, tx);
+
+      // Add the flag indicating if a student was created
+      return {
+        ...request,
+        studentWasCreated: studentResult.wasCreated,
+      };
+    });
+  }
+
+
+  if (data.request_state === RequestState.PENDING) {
     if (!data.student_id) {
       throw new Error('student_id is required for creating PENDING requests');
     }
-
-    return this.prisma.supervisionRequest.create({
-      data: {
-        student_id: data.student_id,
-        supervisor_id: data.supervisor_id,
-        request_state: data.request_state,
-      },
-    });
   }
+
+  // For simple request creation (PENDING from students)
+  return this.prisma.supervisionRequest.create({
+    data: {
+      student_id: data.student_id!,  
+      supervisor_id: data.supervisor_id,
+      request_state: data.request_state,
+    },
+  });
+}
 
   /**
    * Update a supervision request state
@@ -267,6 +322,24 @@ export class SupervisionRequestsRepository {
 
     if (isBecomingAccepted || isLeavingAccepted) {
       return this.prisma.$transaction(async tx => {
+        // If becoming accepted, check for existing accepted supervision
+        if (isBecomingAccepted) {
+          // Get the request to find student_id
+          const request = await tx.supervisionRequest.findUnique({
+            where: { id },
+            select: { student_id: true },
+          });
+
+          if (!request) {
+            throw new Error('Supervision request not found');
+          }
+
+          const hasAccepted = await this.hasAcceptedSupervision(request.student_id, tx);
+          if (hasAccepted) {
+            throw new Error('Student already has an accepted supervision request');
+          }
+        }
+
         // Update the request state
         const updatedRequest = await tx.supervisionRequest.update({
           where: { id },
@@ -280,6 +353,9 @@ export class SupervisionRequestsRepository {
             where: { id: supervisor_id },
             data: { available_spots: available_spots - 1 },
           });
+
+          // Withdraw competing requests
+          await this.withdrawCompetingRequests(updatedRequest.student_id, id, tx);
         } else {
           // When withdrawing/rejecting an accepted request, increase available spots
           const newSpots = Math.min(available_spots + 1, total_spots);

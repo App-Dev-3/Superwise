@@ -81,7 +81,7 @@ const bottomNavButtons = [
             : current_user?.profile_image
         "
         :last-name="current_user?.last_name"
-        :role="current_user?.role"
+        :role="current_user?.role || ''"
         show-search
         show-user
       />

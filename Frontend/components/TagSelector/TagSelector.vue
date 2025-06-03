@@ -129,7 +129,7 @@ function removeTag(tag) {
           :text="tag.tag_name"
           class="opacity-75"
           clickable
-          color="neutral"
+          color="default"
           variant="outline"
           @click="selectTag(tag)"
       />

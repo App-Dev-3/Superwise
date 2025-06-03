@@ -31,8 +31,8 @@ function tagStyles(index) {
     }),
     ...(index !== 0 &&
         index !== sortedTags.value.length - 1 && {
-          bg: 'bg-neutral-content text-base-content',
-          border: 'border-neutral-content',
+          bg: 'bg-neutral text-neutral-content',
+          border: 'border-neutral',
         }),
   };
 }
@@ -67,13 +67,9 @@ function handelChange() {
           {{ t('tagPriority.arrangeByPriority') }}
         </p>
 
-        <p class="text-x-small opacity-50">
+        <p class="text-x-small opacity-50 max-w-xs">
           {{ props.descriptionText }}
         </p>
-      </div>
-      <div class="flex flex-col items-start py-4">
-        <h2 class="text-header w-fit"/>
-        <p class="text-body opacity-50 max-w-xs"/>
       </div>
     </div>
 
@@ -154,8 +150,8 @@ function handelChange() {
   background: linear-gradient(
       to bottom,
       var(--color-success) 0%,
-      var(--color-neutral-content) 40%,
-      var(--color-neutral-content) 60%,
+      var(--color-neutral) 40%,
+      var(--color-neutral) 60%,
       var(--color-warning) 100%
   );
 }

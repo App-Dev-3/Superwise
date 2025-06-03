@@ -80,14 +80,19 @@
     "showAll": "Mostrar todo...",
     "showLess": "Mostrar menos",
     "student": "Estudiante",
-    "supervisor": "Supervisor"
+    "supervisor": "Supervisor",
+    "404-not-found": "404 - Página no encontrada"
   },
   "landing": {
     "dataCollection": "Para encontrar el supervisor perfecto para ti, necesitamos recopilar y procesar algunos datos. Descubre {0} ¡qué hacemos con ellos!",
     "here": "aquí"
   },
   "modal": {
-    "dontShowAgain": "No mostrar de nuevo"
+    "sendSupervisionRequestHeadline": "Enviar Solicitud de Supervisión",
+    "dontShowAgain": "No mostrar de nuevo",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "supervisionInfo": "Si envías una solicitud de supervisión de tesis, se enviará a los supervisores seleccionados. Ellos podrán decidir si aceptan o rechazan la solicitud. Si aceptan la solicitud, se creará una confirmación que podrás descargar."
   },
   "multiStepForm": {
     "next": "Siguiente",
@@ -115,7 +120,9 @@
     "lastName": "Apellido",
     "bio": "Biografía",
     "bioVisibility": "Tu biografía será visible para otros usuarios",
-    "bioPlaceholder": "Cuéntanos sobre ti..."
+    "bioPlaceholder": "Cuéntanos sobre ti...",
+    "errorOwnProfile": "No puedes enviar una solicitud de supervisión a tu propio perfil",
+    "requestSent": "Solicitud enviada",
   },
   "searchBar": {
     "noResults": "No se encontraron resultados"

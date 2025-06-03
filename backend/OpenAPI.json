@@ -1393,6 +1393,9 @@
           },
           "403": {
             "description": "Forbidden - Only existing admins can create new admin accounts."
+          },
+          "409": {
+            "description": "Conflict - User with this email already exists."
           }
         },
         "summary": "Create a new unregistered admin user",

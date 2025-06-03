@@ -21,7 +21,7 @@ const props = defineProps({
   },
   role: {
     type: String,
-    required: true,
+      default: "student",
   },
 });
 </script>

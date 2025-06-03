@@ -80,14 +80,25 @@
     "showAll": "Show all...",
     "showLess": "Show less",
     "student": "Student",
-    "supervisor": "Supervisor"
+    "supervisor": "Supervisor",
+    "chatRequest": "Chat request",
+    "mail": "Mail",
+    "profile": "Profile",
+    "supervise": "Supervise",
+    "supervisionRequest": "Supervision request",
+    "thesisDescription": "Thesis description",
+    "404-not-found": "404 - Not Found",
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
     "here": "here"
   },
   "modal": {
-    "dontShowAgain": "Don't show again"
+    "sendSupervisionRequestHeadline": "Send supervision request",
+    "dontShowAgain": "Don't show again",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download."
   },
   "multiStepForm": {
     "next": "Next",
@@ -115,7 +126,10 @@
     "lastName": "Last Name",
     "bio": "Bio",
     "bioVisibility": "Your bio will be visible to other users",
-    "bioPlaceholder": "Tell us about yourself..."
+    "bioPlaceholder": "Tell us about yourself...",
+    "editProfile": "Edit Profile",
+    "errorOwnProfile": "You cannot send a supervision request to yourself",
+    "requestSent": "Request sent"
   },
   "searchBar": {
     "noResults": "No results found"
@@ -143,5 +157,10 @@
   },
   "tagSelector": {
     "tagCount": "{current}/{max}"
+  },
+  "role": {
+    "admin": "Admin",
+    "student": "Student",
+    "supervisor": "Supervisor"
   }
 }

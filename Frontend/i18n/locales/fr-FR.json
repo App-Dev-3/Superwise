@@ -80,14 +80,19 @@
     "showAll": "Afficher tout...",
     "showLess": "Afficher moins",
     "student": "Étudiant",
-    "supervisor": "Superviseur"
+    "supervisor": "Superviseur",
+    "404-not-found": "404 - Page non trouvée",
   },
   "landing": {
     "dataCollection": "Afin de trouver le superviseur parfait pour vous, nous devons collecter et traiter certaines données. Découvrez {0} ce que nous en faisons !",
     "here": "ici"
   },
   "modal": {
-    "dontShowAgain": "Ne plus afficher"
+    "sendSupervisionRequestHeadline": "Envoyer une Demande de Supervision",
+    "dontShowAgain": "Ne plus afficher",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "supervisionInfo": "Lorsque vous envoyez une demande de supervision de thèse, elle sera transmise aux superviseurs sélectionnés. Ils pourront alors décider d'accepter ou de refuser la demande. S'ils acceptent la demande, une confirmation sera créée que vous pourrez télécharger."
   },
   "multiStepForm": {
     "next": "Suivant",
@@ -115,7 +120,9 @@
     "lastName": "Nom",
     "bio": "Biographie",
     "bioVisibility": "Votre biographie sera visible pour les autres utilisateurs",
-    "bioPlaceholder": "Parlez-nous de vous..."
+    "bioPlaceholder": "Parlez-nous de vous...",
+    "errorOwnProfile": "Vous ne pouvez pas envoyer de demande de supervision à votre propre profil",
+    "requestSent": "Demande envoyée"
   },
   "searchBar": {
     "noResults": "Aucun résultat trouvé"

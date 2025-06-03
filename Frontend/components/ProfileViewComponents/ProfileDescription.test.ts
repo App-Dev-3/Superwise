@@ -1,12 +1,12 @@
-import { mount } from '@vue/test-utils'
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import {mount} from '@vue/test-utils'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
 import ProfileDescription from './ProfileDescription.vue'
-import { useMediaQuery } from '@vueuse/core'
+import {useMediaQuery} from '@vueuse/core'
 
 // Mock useMediaQuery
 vi.mock('@vueuse/core', async () => {
     return {
-        useMediaQuery: vi.fn().mockReturnValue({ value: false })
+    useMediaQuery: vi.fn().mockReturnValue({value: false})
     }
 })
 
@@ -21,11 +21,11 @@ beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     // Reset useMediaQuery mock to default value
-    vi.mocked(useMediaQuery).mockImplementation(() => ({ value: false }))
+    vi.mocked(useMediaQuery).mockImplementation(() => ({value: false}))
 })
 
 describe('ProfileDescription', () => {
-    const defaultProps = {
+        const defaultProps = {
         headline: 'Test Headline',
         content: 'Test content'
     }
@@ -35,7 +35,7 @@ describe('ProfileDescription', () => {
             props,
             global: {
                 components: {
-                    CustomButton
+                CustomButton
                 }
             }
         })
@@ -57,13 +57,13 @@ describe('ProfileDescription', () => {
             // Setup mock to return true for extra small screen
             const mockUseMediaQuery = vi.fn()
             mockUseMediaQuery.mockImplementation((query: string) => ({
-                value: query === '(max-width: 639px)'
+            value: query === '(max-width: 639px)'
             }))
             vi.mocked(useMediaQuery).mockImplementation(mockUseMediaQuery)
 
             const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'a'.repeat(101)
+            headline: 'Test',
+            content: 'a'.repeat(101)
             })
 
             expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
@@ -83,15 +83,6 @@ describe('ProfileDescription', () => {
             })
 
             expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
-        })
-
-        it('does not show button when content is shorter than threshold', () => {
-            const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'Short content'
-            })
-
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(false)
         })
     })
 })

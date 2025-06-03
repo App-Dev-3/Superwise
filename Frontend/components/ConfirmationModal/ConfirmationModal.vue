@@ -28,6 +28,7 @@ interface Props {
       | 'neutral';
   confirmButtonIcon?: string;
   hideCancelButton?: boolean;
+  hideDontShowAgain?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,6 +37,7 @@ const props = withDefaults(defineProps<Props>(), {
   cancelButtonText: undefined, // Remove t() from here
   confirmButtonIcon: '',
   hideCancelButton: false,
+  hideDontShowAgain: false,
 });
 
 // Use computed to get cancel button text
@@ -109,7 +111,7 @@ const handleConfirm = () => {
       >
         <span>{{ props.warning }}</span>
       </div>
-      <div class="mb-4">
+      <div v-if="!props.hideDontShowAgain" class="mb-4">
         <label class="label">
           <input
               v-model="dontShowAgain"

@@ -116,6 +116,7 @@ const feedbackToast = ref({
             :message="feedbackToast.message"
             :duration="8000"
             @button-click="feedbackToast.visible = false"
+            @close="feedbackToast.visible = false"
         />
     </div>
 </template>

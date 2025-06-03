@@ -350,19 +350,8 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  findUserByIdWithRelations(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() currentUser: User,
-  ): Promise<UserWithRelations> {
-    // Allow users to access their own relation data, but only admins/supervisors can access others
-    if (
-      currentUser.id === id ||
-      currentUser.role === Role.ADMIN ||
-      currentUser.role === Role.SUPERVISOR
-    ) {
-      return this.usersService.findUserByIdWithRelations(id);
-    }
-    throw new UnauthorizedException('You do not have permission to access this user data');
+  findUserByIdWithRelations(@Param('id', ParseUUIDPipe) id: string): Promise<UserWithRelations> {
+    return this.usersService.findUserByIdWithRelations(id);
   }
 
   @Patch(':id')

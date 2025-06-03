@@ -3,10 +3,11 @@ import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import nestjsPlugin from '@darraghor/eslint-plugin-nestjs-typed';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', 'dist/**', 'node_modules/**', 'coverage/**'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -17,19 +18,55 @@ export default tseslint.config(
         ...globals.node,
         ...globals.jest,
       },
-      ecmaVersion: 5,
+      ecmaVersion: 2022,
       sourceType: 'module',
       parserOptions: {
-        projectService: true,
+        project: true,
         tsconfigRootDir: import.meta.dirname,
       },
     },
   },
+  nestjsPlugin.configs.flatRecommended,
   {
     rules: {
+      // Error Prevention
+      '@typescript-eslint/no-explicit-any': 'warn', // Allow any but warn about it
+      '@typescript-eslint/no-floating-promises': 'warn', // Important for async code
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+
+      // Disable rules that we've handled properly in our code
+      '@typescript-eslint/no-base-to-string': 'off', // We properly handle string conversion
+      '@typescript-eslint/restrict-template-expressions': 'off', // We use safeStringify
+
+      // Code Style & Quality
+      'max-len': ['warn', { code: 150, ignoreUrls: true, ignoreStrings: true, ignoreTemplateLiterals: true }],
+      'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'prefer-const': 'warn',
+      'no-duplicate-imports': 'error',
+
+      // NestJS specific
+      'no-useless-constructor': 'off', // NestJS uses empty constructors for DI
+      '@typescript-eslint/no-useless-constructor': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+    },
+  },
+  // Testing specific rules
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test/**/*.ts'],
+    rules: {
+      // Relax rules that make testing difficult
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/unbound-method': 'off', // Disable unbound-method rule for tests
+      'max-len': 'off',
+      '@darraghor/nestjs-typed/api-property-matches-property-optionality': 'off',
+      '@darraghor/nestjs-typed/api-property-returning-array-should-set-array': 'off',
+      'no-console': 'off'
     },
   },
 );

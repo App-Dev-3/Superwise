@@ -1,0 +1,154 @@
+{
+  "appHeader": {
+    "back": "Retour",
+    "searchPlaceholder": "Rechercher..."
+  },
+  "confirmed": {
+    "confirmedOn": "Confirmé le {date}",
+    "supervising": "Vous supervisez {firstName}"
+  },
+  "confirmation": {
+    "acceptedOn": "Accepté le: {date}",
+    "details": "Détails de la Confirmation",
+    "scanToVerify": "Scanner pour vérifier la confirmation",
+    "student": "Étudiant",
+    "supervisor": "Superviseur",
+    "title": "Confirmation de Supervision de Thèse"
+  },
+  "dashboard": {
+    "student": {
+      "downloadConfirmation": "Télécharger la confirmation",
+      "findSupervisor": "Trouvez votre superviseur maintenant !",
+      "multipleAcceptedWarning": "Vous avez accepté {count} demandes de supervision, mais vous n'avez besoin que d'un seul superviseur. Veuillez parler avec {supervisors} et résoudre ce conflit.",
+      "startMatching": "Commencer le Matching !",
+      "suggestedMatches": "Correspondances suggérées",
+      "yourRequests": "Vos demandes"
+    },
+    "supervisor": {
+      "manageStudents": "Gérer les Étudiants",
+      "slotsFilled": "Places occupées"
+    }
+  },
+  "dataProtection": {
+    "admin": {
+      "changesAndOverwritesText": "Lorsque vous mettez à jour vos données personnelles, comme votre nom ou photo de profil, la version précédente est définitivement écrasée. Nous ne conservons ni copies ni sauvegardes de vos anciennes données personnelles.",
+      "collectedDataList": "Nom complet\nAdresse e-mail\nPhoto de profil",
+      "collectedDataText": "Pour les comptes administrateurs, nous collectons et stockons uniquement :",
+      "dataDeletionText": "Lorsqu'un administrateur supprime son compte, toutes les données personnelles identifiables (nom, e-mail et photo de profil) seront définitivement supprimées sans sauvegarde.",
+      "dataRetentionList": "Tags ajoutés au système\nComptes superviseurs et métadonnées associées\nConfigurations de la plateforme ou toute contribution structurelle effectuée durant l'utilisation administrative",
+      "dataRetentionSubtitle": "📁 Ce qui est conservé après la suppression d'un compte administrateur",
+      "dataRetentionText": {
+        "1": "Lorsqu'un administrateur supprime son compte, toutes les données personnelles (nom, e-mail et photo de profil) seront définitivement supprimées. Cependant, certaines données créées ou téléchargées dans le cadre de la gestion de la plateforme ne sont pas considérées comme des données personnelles et seront conservées. Cela inclut :",
+        "2": "Ce contenu fait partie de l'infrastructure de la plateforme et est essentiel pour maintenir l'intégrité et la continuité du système SuperWise. Il n'est donc pas supprimé lors de la suppression d'un compte administrateur."
+      },
+      "generalInfoText": "Cette clause s'applique spécifiquement aux utilisateurs ayant un accès niveau administrateur sur SuperWise."
+    },
+    "generic": {
+      "changesAndOverwritesSubtitle": "🔁 Modifications et écrasements de données",
+      "collectedDataSubtitle": "📌 Les données que nous collectons",
+      "dataDeletionSubtitle": "🗑 Suppression des données",
+      "deleteMyData": "Supprimer mes données",
+      "generalInfoText": "Chez SuperWise, nous prenons au sérieux votre vie privée et la protection de vos données personnelles. Cette politique décrit comment nous collectons, utilisons et gérons vos informations pour assurer la transparence et votre tranquillité d'esprit.",
+      "generalInfoTitle": "🛡 Politique de protection des données SuperWise"
+    },
+    "student&supervisor": {
+      "changesAndOverwritesText": "Lorsque vous mettez à jour vos données personnelles, comme votre nom, photo de profil, description de sujet ou biographie, la version précédente est définitivement écrasée. Nous ne conservons ni copies ni sauvegardes de vos anciennes données personnelles.",
+      "collectedDataList": "Adresse e-mail (utilisée pour la connexion et la communication)\nPrénom et nom\nPhoto de profil\nMessages envoyés via la plateforme\nDescription du sujet (étudiants)\nBiographie (superviseurs)\nTags sélectionnés pour décrire l'expertise ou les sujets de thèse\nHistorique des correspondances : superviseurs avec qui vous avez été mis en relation ou que vous avez refusés\nDemandes envoyées : y compris les demandes de chat et de supervision",
+      "collectedDataText": "Pour fournir nos services de mise en relation et de supervision, nous collectons et stockons les informations suivantes :",
+      "dataDeletionList": "Votre e-mail\nRegistres des correspondances\nMessages envoyés ou reçus",
+      "dataDeletionText": {
+        "1": "Vous avez le droit de demander la suppression de vos données à tout moment. Lorsque vous le faites, votre profil et vos informations personnelles ne seront plus visibles ni accessibles aux autres utilisateurs. Certaines données minimales peuvent être conservées jusqu'à la fin de la période de supervision, pour des raisons de fonctionnalité et d'archivage. Cela inclut :",
+        "2": "Après la fin de la période de supervision, ces données restantes seront entièrement et irréversiblement supprimées."
+      }
+    }
+  },
+  "generic": {
+    "admin": "Administrateur",
+    "cancel": "Annuler",
+    "continue": "Continuer",
+    "edit": "Modifier",
+    "language": "langue",
+    "english": "🇬🇧 English",
+    "german": "🇩🇪 Deutsch",
+    "french": "🇫🇷 Français",
+    "spanish": "🇪🇸 Español",
+    "italian": "🇮🇹 Italiano",
+    "logoAlt": "logo",
+    "profilePictureAlt": "Photo de profil de {firstName} {lastName}",
+    "requests": "Demandes",
+    "saveChanges": "Enregistrer les modifications",
+    "showAll": "Afficher tout...",
+    "showLess": "Afficher moins",
+    "student": "Étudiant",
+    "supervisor": "Superviseur",
+    "404-not-found": "404 - Page non trouvée",
+  },
+  "landing": {
+    "dataCollection": "Afin de trouver le superviseur parfait pour vous, nous devons collecter et traiter certaines données. Découvrez {0} ce que nous en faisons !",
+    "here": "ici"
+  },
+  "modal": {
+    "sendSupervisionRequestHeadline": "Envoyer une Demande de Supervision",
+    "dontShowAgain": "Ne plus afficher",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "supervisionInfo": "Lorsque vous envoyez une demande de supervision de thèse, elle sera transmise aux superviseurs sélectionnés. Ils pourront alors décider d'accepter ou de refuser la demande. S'ils acceptent la demande, une confirmation sera créée que vous pourrez télécharger."
+  },
+  "multiStepForm": {
+    "next": "Suivant",
+    "startMatching": "Commencer le Matching"
+  },
+  "nav": {
+    "appTour": "Visite de l'Application",
+    "confirmed": "Confirmé",
+    "dashboard": "Tableau de Bord",
+    "dataProtection": "Protection des Données",
+    "logout": "Déconnexion",
+    "matching": "Mise en Relation",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "onboarding": {
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "maxSelection": "Sélection maximale"
+  },
+  "profile": {
+    "pageHeader": "Votre Profil",
+    "preview": "Aperçu",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "bio": "Biographie",
+    "bioVisibility": "Votre biographie sera visible pour les autres utilisateurs",
+    "bioPlaceholder": "Parlez-nous de vous...",
+    "errorOwnProfile": "Vous ne pouvez pas envoyer de demande de supervision à votre propre profil",
+    "requestSent": "Demande envoyée"
+  },
+  "searchBar": {
+    "noResults": "Aucun résultat trouvé"
+  },
+  "settings": {
+    "theme": "Thème",
+    "select": {
+      "language": "Sélectionner la langue de l'application",
+      "theme": "Sélectionner le thème de l'application"
+    }
+  },
+  "statusBar": {
+    "confirmed": "Confirmé",
+    "matching": "Mise en relation",
+    "onboarding": "Intégration"
+  },
+  "supervisorCard": {
+    "capacity": "Capacité",
+    "pending": "Demandes en attente",
+    "profilePictureAlt": "Photo de profil de {firstName} {lastName}",
+    "similarityScore": "Score de similarité"
+  },
+  "tagPriority": {
+    "arrangeByPriority": "Organiser les tags par priorité"
+  },
+  "tagSelector": {
+    "tagCount": "{current}/{max}"
+  }
+}

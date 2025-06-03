@@ -8,6 +8,7 @@ import { SupervisorsBulkImportDto } from './dto/supervisors-bulk-import.dto';
 import { AdminRepository } from './admin.repository';
 import { SupervisorsRepository } from '../supervisors/supervisors.repository';
 import { CreateAdminDto } from './dto/create-admin.dto';
+import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -174,7 +175,7 @@ describe('AdminController', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('should pass through BadRequestException when email already exists', async () => {
+    it('should pass through UserAlreadyExistsException when email already exists', async () => {
       // Arrange
       const mockDto: CreateAdminDto = {
         email: 'existing@fhstp.ac.at',
@@ -183,11 +184,11 @@ describe('AdminController', () => {
       };
 
       mockAdminService.createAdmin.mockRejectedValue(
-        new BadRequestException('A user with email existing@fhstp.ac.at already exists'),
+        new UserAlreadyExistsException('existing@fhstp.ac.at'),
       );
 
       // Act & Assert
-      await expect(controller.createAdmin(mockDto)).rejects.toThrow(BadRequestException);
+      await expect(controller.createAdmin(mockDto)).rejects.toThrow(UserAlreadyExistsException);
       expect(service.createAdmin).toHaveBeenCalledWith(mockDto);
     });
   });

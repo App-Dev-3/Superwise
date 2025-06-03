@@ -70,19 +70,32 @@ export class AdminController {
   }
 
   @Post('create-admin')
-  @ApiOperation({ summary: 'Create a new unregistered admin user' })
+  @ApiOperation({
+    summary: 'Create a new unregistered admin user',
+    description:
+      'Creates a new admin user account that is not yet registered with the authentication provider (Clerk). This endpoint allows existing admins to pre-create admin accounts that can later be claimed through the standard registration flow.',
+  })
   @ApiBody({
     type: CreateAdminDto,
-    description: 'Admin user data to create a new unregistered admin account',
+    description: 'Admin user details including email, first name, and last name',
   })
   @ApiResponse({
     status: 201,
-    description: 'Admin user created successfully',
+    description: 'Admin user created successfully. Returns the new admin user ID.',
     type: CreateAdminSuccessDto,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad Request - Invalid data or user already exists',
+    description:
+      'Bad Request - Invalid email domain, missing required fields, or user already exists.',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Only existing admins can create new admin accounts.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - User with this email already exists.',
   })
   async createAdmin(@Body() dto: CreateAdminDto): Promise<CreateAdminSuccessDto> {
     return this.adminService.createAdmin(dto);

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Role, User } from '@prisma/client';
 import { SupervisorDto } from './dto/supervisors-bulk-import.dto';
 
 export interface IAdminRepository {
@@ -146,7 +146,7 @@ export class AdminRepository implements IAdminRepository {
                 email: supervisor.email,
                 first_name: supervisor.first_name,
                 last_name: supervisor.last_name,
-                role: 'SUPERVISOR',
+                role: Role.SUPERVISOR,
                 is_registered: false,
               },
             });
@@ -220,6 +220,15 @@ export class AdminRepository implements IAdminRepository {
     );
   }
 
+  /**
+   * Creates a new admin user in the database
+   *
+   * This low-level method handles the actual database creation of an admin user.
+   * It sets is_registered to false, following the pattern established for supervisors,
+   * allowing the admin to later claim their account through Clerk authentication
+   * @param adminData - Basic user data (email, first name, last name)
+   * @returns The created User entity
+   */
   async createAdmin(adminData: {
     email: string;
     first_name: string;
@@ -230,7 +239,7 @@ export class AdminRepository implements IAdminRepository {
         email: adminData.email,
         first_name: adminData.first_name,
         last_name: adminData.last_name,
-        role: 'ADMIN',
+        role: Role.ADMIN,
         is_registered: false,
       },
     });

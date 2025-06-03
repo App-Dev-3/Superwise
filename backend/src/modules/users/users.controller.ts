@@ -81,7 +81,7 @@ export class UsersController {
         exists: true,
         is_registered: user.is_registered,
         role: user.role,
-        tags: user.tags && user.tags.length > 0
+        tags: !!(user.tags && user.tags.length > 0)
       };
     } catch (error) {
       // If user not found, return exists: false with default values
@@ -89,6 +89,7 @@ export class UsersController {
         return {
           exists: false,
           is_registered: false,
+          tags: false,
         };
       }
       throw error; // Re-throw other errors

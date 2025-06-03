@@ -31,5 +31,5 @@ export class UserExistsDto {
     description: 'Wether the user has tags or not',
     example: true,
   })
-  tags?: boolean;
+  tags: boolean;
 }

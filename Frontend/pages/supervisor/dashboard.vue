@@ -115,7 +115,11 @@ const bottomNavButtons = [
           @action-button-clicked="navigateTo('/supervisor/matching')"
         >
           <div v-if="pending">Loading…</div>
-          <div v-else-if="error">Error: {{ error.message }}</div>
+          <div v-else-if="error">
+              <div v-if="error.statusCode === 404">
+                <p class="text-base-content-60">No requests yet</p>
+              </div>
+          </div>
           <MiniCard
             v-for="request in visibleRequests"
             v-else

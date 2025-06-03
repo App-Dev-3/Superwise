@@ -5,6 +5,7 @@ import type { UserData } from "#shared/types/userInterfaces";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import Requests from "~/pages/student/requests.vue";
 
 const { user } = useUser();
 const { getUserByEmail } = useUserApi();
@@ -115,7 +116,11 @@ const bottomNavButtons = [
           @action-button-clicked="navigateTo('/supervisor/matching')"
         >
           <div v-if="pending">Loading…</div>
-          <div v-else-if="error">Error: {{ error.message }}</div>
+          <div v-else-if="error">
+              <div v-if="error.statusCode === 404">
+                <p class="text-base-content-60">No requests yet</p>
+              </div>
+          </div>
           <MiniCard
             v-for="request in visibleRequests"
             v-else

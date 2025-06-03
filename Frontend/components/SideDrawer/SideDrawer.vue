@@ -77,7 +77,9 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="`/${props.role.toLowerCase()}/settings`">
+            <NuxtLink
+              :to="props.role ? `/${props.role.toLowerCase()}/settings` : `/`"
+            >
               <FontAwesomeIcon icon="gear" class="text-xl mr-3" />
               {{ t("nav.settings") }}
             </NuxtLink>
@@ -89,7 +91,13 @@ const props = defineProps({
             </NuxtLink>
           </li>
           <li>
-            <NuxtLink :to="`/${props.role.toLowerCase()}/data-protection`">
+            <NuxtLink
+              :to="
+                props.role
+                  ? `/${props.role.toLowerCase()}/data-protection`
+                  : `/`
+              "
+            >
               <FontAwesomeIcon class="text-xl mr-3" icon="user-shield" />
               {{ t("nav.dataProtection") }}
             </NuxtLink>

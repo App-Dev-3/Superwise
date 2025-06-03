@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { Prisma, RequestState, SupervisionRequest } from '@prisma/client';
+import { Prisma, RequestState, Role, SupervisionRequest } from '@prisma/client';
 import { SupervisionRequestWithUsersEntity } from './entities/supervision-request-with-users.entity';
 
 @Injectable()
@@ -116,7 +116,7 @@ export class SupervisionRequestsRepository {
           email,
           first_name: '',
           last_name: '',
-          role: 'STUDENT',
+          role: Role.STUDENT,
           is_registered: false,
         },
       });

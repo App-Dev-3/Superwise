@@ -71,7 +71,6 @@
                   :image="pendingRequest.supervisor.user.profile_image"
                   :last-name="pendingRequest.supervisor.user.last_name"
                   :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-                  bottom-icon="tag"
                   top-icon="user-group"
                 />
               </div>
@@ -80,9 +79,9 @@
         </ActionCard>
         <ActionCard
           v-if="matches.length"
-          :pbutton-text="t('dashboard.student.startMatching')"
+          :button-text="t('dashboard.student.startMatching')"
           card-type="primary"
-          header-text="t('dashboard.student.suggestedMatches')"
+          :header-text="t('dashboard.student.suggestedMatches')"
           @action-button-clicked="navigateTo('/student/matching')"
         >
           <div class="flex flex-col w-full items-center p-3">
@@ -307,9 +306,7 @@ if (userStore.user !== null) {
 }
 
 function navigate(route: string) {
-  dummyRoute.value = route;
   navigateTo(route);
 }
 
-const dummyRoute = ref("/");
 </script>

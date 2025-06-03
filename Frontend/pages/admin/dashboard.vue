@@ -3,6 +3,10 @@
         <AppHeader
             show-search
             show-user
+            role="Admin"
+            image=""
+            first-name="Admin"
+            last-name=""
         />
 
         <div class="w-full h-full overflow-y-auto flex flex-col px-6 py-8 gap-4">

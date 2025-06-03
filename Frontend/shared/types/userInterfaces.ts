@@ -51,7 +51,6 @@ export interface ConfirmationDialogData {
 }
 
 export interface UserSettingsData {
-    theme?: string
     language?: string
     dismissConfirmationModal?: boolean
     showSupervisionRequestModal?: boolean

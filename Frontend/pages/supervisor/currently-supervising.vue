@@ -4,6 +4,7 @@ import SupervisorStudentList from "~/components/SupervisorStudentList/Supervisor
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 import type { UserData } from "~/shared/types/userInterfaces";
+import {supervisionRequestStatus} from "#shared/enums/enums";
 
 const { user } = useUser();
 const userStore = useUserStore();
@@ -60,7 +61,7 @@ async function removeStudent(studentId: string) {
   await $fetch(`/api/supervision-requests/${req.id}`, {
     method: "PATCH",
     body: {
-      request_state: "REJECTED",
+      request_state: supervisionRequestStatus.WITHDRAWN,
     },
   });
 

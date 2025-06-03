@@ -217,7 +217,6 @@ const askForConfirmation = () => {
         image: routeParamUser.value.profile_image || '',
         linkedComponentId: `profilesConfirmationModal-${routeParamUserId}`
     };
-    // Removed unnecessary console.log statements
     openModal()
 }
 

@@ -214,7 +214,7 @@ describe('UsersController', () => {
     it('should return a user with relations by ID', async () => {
       const userWithRelations: UserWithRelations = { ...mockUser, tags: [] };
       mockUsersService.findUserByIdWithRelations.mockResolvedValue(userWithRelations);
-      const result = await controller.findUserByIdWithRelations(USER_UUID, mockUser);
+      const result = await controller.findUserByIdWithRelations(USER_UUID);
       expect(result).toEqual(userWithRelations);
       expect(mockUsersService.findUserByIdWithRelations).toHaveBeenCalledWith(USER_UUID);
     });

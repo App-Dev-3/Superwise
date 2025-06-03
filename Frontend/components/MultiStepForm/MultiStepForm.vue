@@ -38,7 +38,7 @@ function submit() {
       @submit.prevent="submit"
   >
     <GenericHeader
-        :show-back="currentStep > 1"
+        :show-back="currentStep > 1 && currentStep < props.totalSteps"
         :text="props.headerText[currentStep - 1]"
         @back="back"
     />

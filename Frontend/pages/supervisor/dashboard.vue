@@ -124,7 +124,7 @@ const bottomNavButtons = [
             :first-name="request.student.user.first_name"
             :last-name="request.student.user.last_name"
             :preview-text="request.student.thesis_description"
-            image=""
+            :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
             top-icon="message"
           />
         </ActionCard>

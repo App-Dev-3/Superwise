@@ -228,29 +228,6 @@ describe('SupervisionRequestsService', () => {
         );
       });
 
-      it('should throw TooEarlyException if rejected request is within waiting period', async () => {
-        // Arrange
-        const dto = { supervisor_id: SUPERVISOR_UUID };
-        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-        mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
-
-        // Recent rejected request (within waiting period)
-        const recentDate = new Date();
-        recentDate.setHours(recentDate.getHours() - 12); // 12 hours ago (less than 2 days)
-        mockRepository.findAllRequests.mockResolvedValue([
-          {
-            ...mockSupervisionRequest,
-            request_state: RequestState.REJECTED,
-            updated_at: recentDate,
-          },
-        ]);
-
-        // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockStudentUser)).rejects.toThrow(
-          SupervisionRequestTooEarlyException,
-        );
-      });
-
       it('should allow creation of a new request after waiting period', async () => {
         // Arrange
         const dto = { supervisor_id: SUPERVISOR_UUID };

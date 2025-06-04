@@ -54,6 +54,7 @@ const { t } = useI18n();
 
 const { user } = useUser();
 const { createUser, addUserTag } = useUserApi();
+const registrationStore = useRegistrationStore();
 const { getTags } = useTagApi();
 const userStore = useUserStore();
 
@@ -84,6 +85,11 @@ const headerText = [
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');
+  
+  if (registrationStore.status?.is_registered) {
+    DbTags.value = (await getTags()) as tagData[];
+    return
+  }
 
   try {
     const res = (await createUser({
@@ -92,9 +98,15 @@ onMounted(async () => {
     } as UserCreateData)) as UserData;
     userStore.setUser(res);
 
-    DbTags.value = (await getTags()) as tagData[];
   } catch (error) {
     console.error('Error fetching data:', error);
+  }
+});
+
+onMounted(async() => {
+  if (registrationStore.status?.is_registered) {
+    await fetchAlldata();
+    multiStepFormRef.value.goToStep(2);
   }
 });
 

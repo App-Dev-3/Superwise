@@ -136,7 +136,11 @@
     "lastName": "Nachname",
     "maxSelection": "Maximale Auswahl",
     "name": {
-      "title": ""
+      "title": "Gib deinen Namen ein"
+    },
+    "error": {
+      "missingName": "Bitte fülle alle Informationen aus.",
+      "missingTags": "Bitte wähle mindestens ein Tag aus."
     }
   },
   "profile": {

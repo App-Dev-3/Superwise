@@ -9,12 +9,13 @@ export interface csvMatchExportRow {
     'Student Last Name': AcceptedData;
     'Student First Name': AcceptedData;
     'Student Email': AcceptedData;
+    'Confirmed at': AcceptedData;
 }
 
 // The default delimiter for German/Austrian locale is semicolon. If opened in a german excel, it will be formatted correctly
 export function exportCsv(data: csvMatchExportRow[], filename = 'export.csv', delimiter = ';'): void {
     const config = {
-        columns: ['Supervisor Last Name', 'Supervisor First Name', 'Supervisor Email', 'Student Last Name', 'Student First Name', 'Student Email',],
+        columns: ['Supervisor Last Name', 'Supervisor First Name', 'Supervisor Email', 'Student Last Name', 'Student First Name', 'Student Email', 'Confirmed at'],
         delimiter: delimiter,
     }
 

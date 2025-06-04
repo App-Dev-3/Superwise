@@ -29,6 +29,17 @@ const downloadConfirmedSupervisions = () => {
                     "Student First Name": request.student.user.first_name,
                     "Student Last Name": request.student.user.last_name,
                     "Student Email": request.student.user.email,
+                    "Confirmed at": request.updated_at ?
+                        new Date(request.updated_at).toLocaleString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            hour12: false
+                        }
+                        )
+                        : "No Date Available",
                 }
             });
             exportCsv(csvData, "confirmed_supervisions.csv");

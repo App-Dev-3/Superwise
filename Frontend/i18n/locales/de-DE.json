@@ -147,13 +147,20 @@
     "bio": "Biografie",
     "bioPlaceholder": "Erzählen Sie etwas über sich...",
     "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
+    "thesisTopic": "Thesis-Thema",
+    "topicPlaceholder": "Beschreibe deine Thesis-Idee...",
+    "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein",
     "editProfile": "Profil bearbeiten",
     "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
     "firstName": "Vorname",
     "lastName": "Nachname",
     "pageHeader": "Mein Profil",
     "preview": "Vorschau",
-    "requestSent": "Anfrage gesendet"
+    "requestSent": "Anfrage gesendet",
+    "saveChanges": "Änderungen speichern",
+    "changesSaved": "Änderungen gespeichert",
+    "errorSavingChanges": "Fehler beim Speichern der Änderungen, bitte versuchen Sie es später erneut",
+    "imageUpdated": "Profilbild aktualisiert"
   },
   "role": {
     "admin": "Admin",

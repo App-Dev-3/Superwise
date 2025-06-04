@@ -2,9 +2,6 @@
   <div class="w-full h-screen flex flex-col justify-center items-center">
     <AdminHeader
         :header-text="t('profile.pageHeader')"
-        :right-button="t('profile.preview')"
-        right-icon="eye"
-        @right-button-click="navigateToPreview"
     />
     <div
         class="w-full h-full overflow-y-auto p-6 flex flex-col gap-4"
@@ -23,58 +20,43 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div
-          class="w-full flex justify-center flex-col p-4 gap-3"
-      >
+      <div class="w-full flex justify-center flex-col p-4 gap-3">
         <fieldset class="fieldset w-full">
-          <legend
-              class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
-          >
+          <legend class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1">
             {{ t('profile.firstName') }}
           </legend>
           <input
               v-model="firstName"
-              :placeholder="
-							t('profile.firstName')
-						"
+              :placeholder="t('profile.firstName')"
               class="input w-full"
               type="text"
+              @keyup.enter="handleSave"
           >
         </fieldset>
         <fieldset class="fieldset w-full">
-          <legend
-              class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
-          >
+          <legend class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1">
             {{ t('profile.lastName') }}
           </legend>
           <input
               v-model="lastName"
-              :placeholder="
-							t('profile.lastName')
-						"
+              :placeholder="t('profile.lastName')"
               class="input w-full"
               type="text"
+              @keyup.enter="handleSave"
           >
         </fieldset>
       </div>
 
       <hr class="border-base-300 text-base-300">
 
-      <div
-          class="w-full flex justify-center flex-col p-4 gap-3"
-      >
-        <div
-            class="w-full flex flex-row flex-wrap gap-2 justify-center"
-        >
+        <!--        TODO:MAKE TAGS EDITABLE-->
+        <div class="w-full flex justify-center flex-col p-4 gap-3">
+        <div class="w-full flex flex-row flex-wrap gap-2 justify-center">
           <CustomTag
               v-for="tag in tags"
               :key="tag.tag.tag_id"
               :text="tag.tag.tag_name"
-              @delete="
-							removeTag(
-								tag.tag.tag_id,
-							)
-						"
+              @delete="removeTag(tag.tag.tag_id,)"
           />
         </div>
         <CustomButton
@@ -98,7 +80,8 @@
           :rows="8"
           class="w-full"
           name="bio"
-      />
+          @keyup.ctrl.enter="handleSave"
+          />
 
       <hr class="border-base-300 text-base-300">
     </div>
@@ -106,13 +89,23 @@
         class="w-full flex justify-center p-4 border-t border-t-base-300 shadow"
     >
       <CustomButton
+          v-if="userHasChanged || supervisorProfileHasChanged"
           :text="t('generic.saveChanges')"
           color="primary"
           left-icon="check"
           size="lg"
+          :is-loading="buttonIsLoading"
           @click="handleSave"
       />
     </div>
+      <Toast
+          v-if="toastData.visible"
+          :type="toastData.type"
+          :message="toastData.message"
+          :duration="3000"
+          @button-click="toastData.visible = false"
+          @close="toastData.visible = false"
+      />
   </div>
 </template>
 
@@ -162,17 +155,51 @@ const lastName = ref(userStore.user?.last_name || '');
 const bio = ref(userStore.supervisorProfile?.bio || '');
 const buttonIsLoading = ref(false);
 
+const toastData = ref({
+    visible: false,
+    type: 'success',
+    message: ''
+});
+
 const updateProfileImage = (base64: string) => {
-  $fetch('/api/users/' + userStore.user?.id, {
-    method: HttpMethods.PATCH,
-    body: {
-      profile_image: base64,
-    },
-  }).finally(() => {
-    userStore.refetchCurrentUser();
-  });
-  imgSrc.value = base64;
+    $fetch('/api/users/' + userStore.user?.id, {
+        method: HttpMethods.PATCH,
+        body: {
+            profile_image: base64,
+        },
+    }).then(() => {
+        userStore.refetchCurrentUser();
+        imgSrc.value = base64;
+        toastData.value = {
+            visible: true,
+            type: 'success',
+            message: t('profile.imageUpdated'),
+        };
+    })
+        .catch((error) => {
+            console.error('Error updating profile image:', error);
+            userStore.refetchCurrentUser();
+            toastData.value = {
+                visible: true,
+                type: 'error',
+                message: t('profile.errorSavingChanges'),
+            };
+        })
 };
+
+const userHasChanged = computed(() => {
+    if(!userStore.user) return false;
+    return (
+        firstName.value !== userStore.user?.first_name ||
+        lastName.value !== userStore.user?.last_name ||
+        imgSrc.value !== userStore.user?.profile_image
+    )
+})
+
+const supervisorProfileHasChanged = computed(() => {
+    if(!userStore.supervisorProfile) return false;
+    return (bio.value !== userStore.supervisorProfile?.bio)
+})
 
 // TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
@@ -180,62 +207,83 @@ const navigateToEditTags = () => {
 };
 
 const handleSave = async () => {
-  if (!userStore.user) {
-    await userStore.refetchCurrentUser();
-  }
-  if (!userStore.supervisorProfile) {
-    await userStore.fetchSupervisorProfile(
-        userStore.user?.id || '',
+    if (!userHasChanged.value && !supervisorProfileHasChanged.value) return;
+    buttonIsLoading.value = true;
+    if (!userStore.user) {
+        await userStore.refetchCurrentUser();
+    }
+    if (!userStore.supervisorProfile) {
+        await userStore.fetchSupervisorProfile(
+            userStore.user?.id || '',
     );
-  }
+    }
 
-  if (
-      firstName.value !== userStore.user?.first_name ||
-      lastName.value !== userStore.user?.last_name ||
-      imgSrc.value !== userStore.user?.profile_image
-  ) {
-    const { status } = useFetch(
-        '/api/users/' + userStore.user?.id,
-        {
-          method: HttpMethods.PATCH,
-          body: {
-            first_name: firstName.value,
-            last_name: lastName.value,
-            profile_image: imgSrc.value,
-          },
-        },
-    );
-    await userStore.refetchCurrentUser();
-    watch(status, async (status) => {
-      buttonIsLoading.value = status === 'pending';
-    });
-  }
-  if (bio.value !== userStore.supervisorProfile?.bio) {
-    const { status } = useFetch(
-        '/api/supervisors/' +
-        userStore.supervisorProfile?.id,
-        {
-          method: HttpMethods.PATCH,
-          body: {
-            bio: bio.value,
-          },
-        },
-    );
-    await userStore.fetchSupervisorProfile(
-        userStore.user?.id || '',
-    );
-    watch(status, async (status) => {
-      buttonIsLoading.value = status === 'pending';
-    });
-  }
-};
+    if (userHasChanged.value) {
+    try {
+        useFetch(
+            '/api/users/' + userStore.user?.id,
+            {
+                method: HttpMethods.PATCH,
+                body: {
+                    first_name: firstName.value,
+                    last_name: lastName.value,
+                    profile_image: imgSrc.value,
+                },
+            },
+        );
+        await userStore.refetchCurrentUser();
+        firstName.value = userStore.user?.first_name || '';
+        lastName.value = userStore.user?.last_name || '';
+        imgSrc.value = userStore.user?.profile_image || '';
+        toastData.value = {
+            visible: true,
+            type: 'success',
+            message: t('profile.changesSaved'),
+        };
+    } catch (error) {
+        await userStore.refetchCurrentUser();
+        console.error('Error updating profile:', error);
+        toastData.value = {
+            visible: true,
+            type: 'error',
+            message: t('profile.errorSavingChanges'),
+        };
+    }
+    }
+    if (supervisorProfileHasChanged.value) {
+        try {
+            useFetch(
+                '/api/supervisors/' + userStore.supervisorProfile?.id,
+                {
+                    method: HttpMethods.PATCH,
+                    body: {
+                        bio: bio.value,
+                    },
+                },
+            );
+            await userStore.fetchSupervisorProfile(
+                userStore.user?.id || '',
+            );
+            toastData.value = {
+                visible: true,
+                type: 'success',
+                message: t('profile.changesSaved'),
+            };
+        } catch (error) {
+            await userStore.fetchSupervisorProfile(
+                userStore.user?.id || '',
+            );
+            console.error('Error updating supervisor profile:', error);
+            toastData.value = {
+                visible: true,
+                type: 'error',
+                message: t('profile.errorSavingChanges'),
+            };
+        }
+    }
+    buttonIsLoading.value = false;
+}
 
-// TODO: implement the logic to navigate to profile preview
-const navigateToPreview = () => {
-  // Navigate to the profile preview page
-  // TODO: implement the logic, this is only a placeholder
-  // router.push('/profile-preview');
-};
 
 // TODO: implement the logic to remove tags
 const removeTag = (tag) => {

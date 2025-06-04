@@ -2,9 +2,6 @@
   <div class="w-full h-screen flex flex-col justify-center items-center">
     <AdminHeader
         :header-text="t('profile.pageHeader')"
-        right-button="Preview"
-        right-icon="eye"
-        @right-button-click="navigateToPreview"
     />
     <div
         class="w-full h-full overflow-y-auto p-6 flex flex-col gap-4"
@@ -23,24 +20,42 @@
 
       <hr class="border-base-300 text-base-300">
 
-      <div
-          class="w-full flex justify-center flex-col p-4 gap-3"
-      >
-        <InputField
-            :model-value="firstName"
-            class="w-full"
-            label="First Name"
-            name="first-name"
-            placeholder="First Name"
-        />
-        <InputField
-            :model-value="lastName"
-            class="w-full"
-            label="Last Name"
-            name="last-name"
-            placeholder="Last Name"
-        />
-      </div>
+        <div
+            class="w-full flex justify-center flex-col p-4 gap-3"
+        >
+            <fieldset class="fieldset w-full">
+                <legend
+                    class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
+                >
+                    {{ t('profile.firstName') }}
+                </legend>
+                <input
+                    v-model="firstName"
+                    :placeholder="
+							t('profile.firstName')
+						"
+                    class="input w-full"
+                    type="text"
+                    @keyup.enter="handleSave"
+                >
+            </fieldset>
+            <fieldset class="fieldset w-full">
+                <legend
+                    class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
+                >
+                    {{ t('profile.lastName') }}
+                </legend>
+                <input
+                    v-model="lastName"
+                    :placeholder="
+							t('profile.lastName')
+						"
+                    class="input w-full"
+                    type="text"
+                    @keyup.enter="handleSave"
+                >
+            </fieldset>
+        </div>
 
       <hr class="border-base-300 text-base-300">
     </div>
@@ -48,13 +63,23 @@
         class="w-full flex justify-center p-4 border-t border-t-base-300 shadow"
     >
       <CustomButton
+          v-if="userHasChanged"
           :text="t('generic.saveChanges')"
           color="primary"
           left-icon="check"
           size="lg"
+          :is-loading="buttonIsLoading"
           @click="handleSave"
       />
     </div>
+      <Toast
+          v-if="toastData.visible"
+          :type="toastData.type"
+          :message="toastData.message"
+          :duration="3000"
+          @button-click="toastData.visible = false"
+          @close="toastData.visible = false"
+      />
   </div>
 </template>
 
@@ -62,55 +87,106 @@
 import { ref } from 'vue';
 import PictureUpload from '~/components/Profile/PictureUpload.vue';
 import CustomButton from '~/components/CustomButton/CustomButton.vue';
-import { useRouter } from 'vue-router';
 import { HttpMethods } from '#shared/enums/enums';
 
 const { t } = useI18n();
 
-const router = useRouter();
-const imgSrc = ref('https://example.com/avatar.jpg');
-
 const userStore = useUserStore();
 
+if (!userStore.user) {
+    await userStore
+        .refetchCurrentUser()
+        .catch(() => {
+            console.error(
+                'Error fetching user data in profile page',
+            );
+        });
+}
+
+const imgSrc = ref<string>(userStore.user?.profile_image || '');
+const firstName = ref(userStore.user?.first_name || '');
+const lastName = ref(userStore.user?.last_name || '');
+const buttonIsLoading = ref(false);
+
+const toastData = ref({
+    visible: false,
+    type: 'success',
+    message: ''
+});
+
 const updateProfileImage = (base64: string) => {
-  $fetch('/api/users/:id', {
+    $fetch('/api/users/' + userStore.user?.id, {
     method: HttpMethods.PATCH,
     body: {
       profile_image: base64,
     },
-  }).finally(() => {
+  }).then(() => {
     userStore.refetchCurrentUser();
-  });
-  imgSrc.value = base64;
+    imgSrc.value = base64;
+    toastData.value = {
+      visible: true,
+      type: 'success',
+      message: t('profile.imageUpdated'),
+    };
+  })
+  .catch((error) => {
+    console.error('Error updating profile image:', error);
+      userStore.refetchCurrentUser();
+      toastData.value = {
+      visible: true,
+      type: 'error',
+        message: t('profile.errorSavingChanges'),
+    };
+  })
 };
+
+const userHasChanged = computed(() => {
+    if (!userStore.user) return false;
+    return (
+        firstName.value !== userStore.user.first_name ||
+        lastName.value !== userStore.user.last_name ||
+        imgSrc.value !== userStore.user.profile_image
+    );
+})
 
 const handleSave = async () => {
-  try {
-    // TODO: Implement API call to save profile data
-    // 1. Validate form data
-    // 2. Prepare data object with user information
-    // 3. Call API to update user profile
-    // 4. Handle success (show notification, etc.)
-    console.log('Saving profile data:', {
-      firstName: firstName.value,
-      lastName: lastName.value,
-      bio: topicDescription.value,
-      tags: tags.value,
-      imgSrc: imgSrc.value,
-    });
+    if (!userHasChanged.value) return;
 
-    // Show success message or redirect
-  } catch (error) {
-    // Handle error (show error message, etc.)
-    console.error('Error saving profile:', error);
-  }
+    buttonIsLoading.value = true;
+    if (!userStore.user) {
+        await userStore.refetchCurrentUser();
+    }
+    try {
+        useFetch('/api/users/' + userStore.user?.id,
+            {
+                method: HttpMethods.PATCH,
+                body: {
+                    first_name: firstName.value,
+                    last_name: lastName.value,
+                    profile_image: imgSrc.value,
+                },
+            },
+        );
+        await userStore.refetchCurrentUser();
+        firstName.value = userStore.user?.first_name || '';
+        lastName.value = userStore.user?.last_name || '';
+        imgSrc.value = userStore.user?.profile_image || '';
+        toastData.value = {
+            visible: true,
+            type: 'success',
+            message: t('profile.changesSaved'),
+        };
+    } catch (error) {
+        await userStore.refetchCurrentUser();
+        console.error('Error updating profile:', error);
+        toastData.value = {
+            visible: true,
+            type: 'error',
+            message: t('profile.errorSavingChanges'),
+        };
+    }
+    buttonIsLoading.value = false;
+
 };
 
-const navigateToPreview = () => {
-  // Navigate to the profile preview page
-  // TODO: implement the logic, this is only a placeholder
-  router.push('/profile-preview');
-};
-const firstName = ref('Felix');
-const lastName = ref('Teutsch');
 </script>

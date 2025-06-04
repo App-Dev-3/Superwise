@@ -80,32 +80,6 @@
             </div>
           </div>
         </ActionCard>
-        <ActionCard
-          v-if="matches.length"
-          :button-text="t('dashboard.student.startMatching')"
-          card-type="primary"
-          :header-text="t('dashboard.student.suggestedMatches')"
-          @action-button-clicked="navigateTo('/student/matching')"
-        >
-          <div class="flex flex-col w-full items-center p-3">
-            <CardStack :amount="3">
-              <SupervisorCard
-                :current-capacity="matches[0].availableSpots"
-                :description="matches[0].bio"
-                :first-name="matches[0].firstName || ''"
-                :image="matches[0].profileImage"
-                :last-name="matches[0].lastName || ''"
-                :max-capacity="matches[0].totalSpots"
-                :similarity-score="
-                  Math.round(matches[0].compatibilityScore * 100)
-                "
-                :tags="matches[0].tags"
-                name="Hello name"
-                size="sm"
-              />
-            </CardStack>
-          </div>
-        </ActionCard>
       </div>
 
       <div

@@ -74,13 +74,15 @@ export class UsersController {
     }
 
     try {
-      // Find the user but don't expose the full user object
       const user = await this.usersService.findUserByEmail(email);
+
+      const userWithRelations = await this.usersService.findUserByIdWithRelations(user.id);
 
       return {
         exists: true,
-        is_registered: user.is_registered,
-        role: user.role,
+        is_registered: userWithRelations.is_registered,
+        role: userWithRelations.role,
+        tags: !!(userWithRelations.tags && userWithRelations.tags.length > 0),
       };
     } catch (error) {
       // If user not found, return exists: false with default values
@@ -88,6 +90,7 @@ export class UsersController {
         return {
           exists: false,
           is_registered: false,
+          tags: false,
         };
       }
       throw error; // Re-throw other errors

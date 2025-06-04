@@ -28,6 +28,15 @@ function back() {
   emit('step-changed', currentStep.value);
 }
 
+function goToStep(step: number) {
+  if (step >= 1 && step <= props.totalSteps) {
+    currentStep.value = step;
+    emit('step-changed', currentStep.value);
+  }
+}
+
+defineExpose({ goToStep });
+
 function submit() {
   emit('submit');
 }

@@ -1676,7 +1676,8 @@
         },
         "required": [
           "exists",
-          "is_registered"
+          "is_registered",
+          "tags"
         ]
       },
       "CreateUserDto": {

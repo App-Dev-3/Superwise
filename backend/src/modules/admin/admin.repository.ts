@@ -179,7 +179,11 @@ export class AdminRepository implements IAdminRepository {
           } else {
             await tx.supervisor.create({
               data: {
-                user_id: user.id,
+                user: {
+                  connect: {
+                    id: user.id,
+                  },
+                },
                 total_spots: supervisor.total_spots || 0,
                 available_spots:
                   supervisor.available_spots !== undefined

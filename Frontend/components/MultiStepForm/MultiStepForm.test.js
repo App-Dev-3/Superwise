@@ -8,6 +8,9 @@ describe("MultiStepForm.vue", () => {
         const wrapper = mount(MultiStepForm, {
             props: {
                 totalSteps: 2,
+                buttonText: ['Next', 'Submit'],
+                descriptionText: ['Description 1', 'Description 2'],
+                headerText: ['Header 1', 'Header 2'],
             },
             slots: {
                 step1: "<div>Step 1 content</div>",

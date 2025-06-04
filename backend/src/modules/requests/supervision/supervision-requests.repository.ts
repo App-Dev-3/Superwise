@@ -131,7 +131,11 @@ export class SupervisionRequestsRepository {
     if (!student) {
       student = await client.student.create({
         data: {
-          user_id: user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
         },
       });
       wasCreated = true;

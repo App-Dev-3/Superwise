@@ -1,22 +1,30 @@
-<script setup>
-import {ref} from 'vue';
-import {useI18n} from 'vue-i18n';
+<script lang="ts" setup>
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+import GenericHeader from "../AdminHeader/GenericHeader.vue";
 
-const {t} = useI18n();
+const { t } = useI18n();
 
-const props = defineProps({
-  totalSteps: {
-    type: Number,
-    required: true,
-  },
-});
+interface MultiStepFormProps {
+  totalSteps: number;
+  buttonText: string[];
+  descriptionText: string[];
+  headerText: string[];
+}
 
-const emit = defineEmits(['submit', 'step-changed']);
+const props = defineProps<MultiStepFormProps>();
+
+const emit = defineEmits([ 'submit', 'step-changed' ]);
 
 const currentStep = ref(1);
 
 function next() {
   if (currentStep.value < props.totalSteps) currentStep.value++;
+  emit('step-changed', currentStep.value);
+}
+
+function back() {
+  if (currentStep.value > 1) currentStep.value--;
   emit('step-changed', currentStep.value);
 }
 
@@ -26,32 +34,49 @@ function submit() {
 </script>
 
 <template>
-  <form @submit.prevent="submit">
-    <!-- Dynamic slots for each step -->
-    <slot :name="`step${currentStep}`"/>
+  <form
+      @submit.prevent="submit"
+  >
+    <GenericHeader
+        :show-back="currentStep > 1 && currentStep < props.totalSteps"
+        :text="props.headerText[currentStep - 1]"
+        @back="back"
+    />
+    <div class="p-8 flex flex-col gap-8 size-full">
 
-    <!-- TODO: Replace buttons with custom component button as soon as it is ready -->
-    <div class="flex justify-center pt-4">
-      <CustomButton
-          v-if="currentStep < totalSteps"
-          :text="t('multiStepForm.next')"
-          :wide="true"
-          class="w-3/4"
-          data-test="next-button"
-          right-icon="arrow-right"
-          @click="next"
-      />
+      <!-- Dynamic slots for each step -->
+      <div class="size-full flex flex-col">
+        <slot :name="`step${currentStep}`"/>
+      </div>
 
-      <CustomButton
-          v-else
-          :text="t('multiStepForm.startMatching')"
-          :wide="true"
-          btn-type="submit"
-          class="w-3/4"
-          data-test="submit-button"
-          right-icon="arrow-right"
-          @click="next"
-      />
+      <div class="flex justify-center w-full flex-col gap-3">
+        <p
+            class="text-x-small opacity-50 px-4">
+          {{ props.descriptionText[currentStep - 1] }}
+        </p>
+
+        <CustomButton
+            v-if="currentStep < totalSteps"
+            :text="props.buttonText[currentStep-1]"
+            block
+            class="w-full"
+            data-test="next-button"
+            right-icon="arrow-right"
+            @click="next"
+
+        />
+
+        <CustomButton
+            v-else
+            :text="t('multiStepForm.startMatching')"
+            block
+            btn-type="submit"
+            class="w-full"
+            data-test="submit-button"
+            right-icon="arrow-right"
+            @click="next"
+        />
+      </div>
     </div>
   </form>
 </template>

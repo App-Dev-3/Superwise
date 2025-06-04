@@ -69,7 +69,7 @@ const goBack = () => {
             :first-name="props.firstName"
             :image="props.image"
             :last-name="props.lastName"
-            :role="props.role"
+            :role="props.role || ''"
           />
         </div>
 

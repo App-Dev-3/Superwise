@@ -1,11 +1,12 @@
 {
   "appHeader": {
     "back": "Zurück",
+    "onboarding": {
+      "name": "",
+      "priority": "",
+      "tags": ""
+    },
     "searchPlaceholder": "Suchen..."
-  },
-  "confirmed": {
-    "confirmedOn": "Bestätigt am {date}",
-    "supervising": "Sie betreuen {firstName}"
   },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",
@@ -14,6 +15,10 @@
     "student": "Student",
     "supervisor": "Betreuer",
     "title": "Abschlussarbeitsbetreuung Bestätigung"
+  },
+  "confirmed": {
+    "confirmedOn": "Bestätigt am {date}",
+    "supervising": "Sie betreuen {firstName}"
   },
   "dashboard": {
     "student": {
@@ -63,46 +68,58 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Nicht gefunden",
     "admin": "Admin",
     "cancel": "Abbrechen",
+    "chatRequest": "Chat-Anfrage",
     "continue": "Weiter",
     "edit": "Bearbeiten",
-    "language": "Sprache",
     "english": "🇬🇧 English",
-    "german": "🇩🇪 Deutsch",
     "french": "🇫🇷 Français",
-    "spanish": "🇪🇸 Español",
+    "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "Logo",
+    "mail": "E-Mail",
+    "profile": "Profil",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
     "requests": "Anfragen",
     "saveChanges": "Änderungen speichern",
     "showAll": "Alle anzeigen...",
     "showLess": "Weniger anzeigen",
+    "spanish": "🇪🇸 Español",
     "student": "Studierende",
-    "supervisor": "Betreuende",
-    "chatRequest": "Chat-Anfrage",
-    "mail": "E-Mail",
-    "profile": "Profil",
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
-    "thesisDescription": "Thesis-Beschreibung",
-    "404-not-found": "404 - Nicht gefunden",
+    "supervisor": "Betreuende",
+    "thesisDescription": "Thesis-Beschreibung"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
     "here": "hier"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
-    "dontShowAgain": "Nicht mehr anzeigen",
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
+    "dontShowAgain": "Nicht mehr anzeigen",
+    "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
     "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst."
   },
   "multiStepForm": {
+    "description": {
+      "name": "Dein Name ist für jeden sichtbar, dem / der du anfragen sendest. Der Name kann später auf den Profil angepasst werden",
+      "priority": {
+        "student": "",
+        "supervisor": ""
+      },
+      "tag": {
+        "student": "",
+        "supervisor": ""
+      }
+    },
     "next": "Weiter",
-    "startMatching": "Matching starten"
+    "selectTags": "Tags Auswählen",
+    "startMatching": "Matching starten",
+    "tagPriority": "Tags Sortieren"
   },
   "nav": {
     "appTour": "App Tour",
@@ -117,29 +134,30 @@
   "onboarding": {
     "firstName": "Vorname",
     "lastName": "Nachname",
-    "maxSelection": "Maximale Auswahl"
+    "maxSelection": "Maximale Auswahl",
+    "name": {
+      "title": ""
+    }
   },
   "profile": {
-    "pageHeader": "Mein Profil",
-    "preview": "Vorschau",
-    "firstName": "Vorname",
-    "lastName": "Nachname",
     "bio": "Biografie",
-    "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "bioPlaceholder": "Erzählen Sie etwas über sich...",
+    "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "editProfile": "Profil bearbeiten",
     "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
-    "requestSent": "Anfrage gesendet",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "pageHeader": "Mein Profil",
+    "preview": "Vorschau",
+    "requestSent": "Anfrage gesendet"
+  },
+  "role": {
+    "admin": "Admin",
+    "student": "Studierende",
+    "supervisor": "Betreuende"
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"
-  },
-  "settings": {
-    "theme": "Theme",
-    "select": {
-      "language": "Wählen Sie die Sprache der App aus",
-      "theme": "Wählen sie das Design der App aus"
-    }
   },
   "statusBar": {
     "confirmed": "Bestätigt",
@@ -153,14 +171,14 @@
     "similarityScore": "Übereinstimmungswert"
   },
   "tagPriority": {
-    "arrangeByPriority": "Tags nach Priorität ordnen"
+    "arrangeByPriority": "Tags nach Priorität ordnen",
+    "unknownTag": "Unknown Tag '{tagNumber}'"
   },
   "tagSelector": {
-    "tagCount": "{current}/{max}"
-  },
-  "role": {
-    "admin": "Admin",
-    "student": "Studierende",
-    "supervisor": "Betreuende"
+    "label": "",
+    "placeholder": "Ausgewählte Tags...",
+    "search": "",
+    "tagCount": "{current}/{max}",
+    "title": ""
   }
 }

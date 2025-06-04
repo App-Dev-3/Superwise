@@ -1,11 +1,12 @@
 {
   "appHeader": {
     "back": "Back",
+    "onboarding": {
+      "name": "Who are you?",
+      "priority": "Whats the priority?",
+      "tags": "What do you like?"
+    },
     "searchPlaceholder": "Search..."
-  },
-  "confirmed": {
-    "confirmedOn": "Confirmed on {date}",
-    "supervising": "You are supervising {firstName}"
   },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",
@@ -14,6 +15,10 @@
     "student": "Student",
     "supervisor": "Supervisor",
     "title": "Thesis Supervision Confirmation"
+  },
+  "confirmed": {
+    "confirmedOn": "Confirmed on {date}",
+    "supervising": "You are supervising {firstName}"
   },
   "dashboard": {
     "student": {
@@ -63,46 +68,58 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Not Found",
     "admin": "Admin",
     "cancel": "Cancel",
+    "chatRequest": "Chat request",
     "continue": "Continue",
     "edit": "Edit",
-    "language": "Language",
     "english": "🇬🇧 English",
-    "german": "🇩🇪 Deutsch",
     "french": "🇫🇷 Français",
-    "spanish": "🇪🇸 Español",
+    "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "Mail",
+    "profile": "Profile",
     "profilePictureAlt": "Profile picture of {firstName} {lastName}",
     "requests": "Requests",
     "saveChanges": "Save changes",
     "showAll": "Show all...",
     "showLess": "Show less",
+    "spanish": "🇪🇸 Español",
     "student": "Student",
-    "supervisor": "Supervisor",
-    "chatRequest": "Chat request",
-    "mail": "Mail",
-    "profile": "Profile",
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
-    "thesisDescription": "Thesis description",
-    "404-not-found": "404 - Not Found",
+    "supervisor": "Supervisor",
+    "thesisDescription": "Thesis description"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
     "here": "here"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Send supervision request",
-    "dontShowAgain": "Don't show again",
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "dontShowAgain": "Don't show again",
+    "sendSupervisionRequestHeadline": "Send supervision request",
     "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download."
   },
   "multiStepForm": {
+    "description": {
+      "name": "Your name is visible to everyone you send requests to. This can be changed on the profile later on.",
+      "priority": {
+        "student": "These tags are used to find suitable supervisors for you. The priority can be changed on the profile later!",
+        "supervisor": "The priority of these tags should relfect your expertece on the topic. They can be changed at any point on your profile."
+      },
+      "tag": {
+        "student": "These tags are used to find suitable supervisors for you. They can be changed at any point on your profile!",
+        "supervisor": "These tags are used for students to match with you. They can be changed at any point on your profile."
+      }
+    },
     "next": "Next",
-    "startMatching": "Start Matching"
+    "selectTags": "Select Tags",
+    "startMatching": "Start Matching",
+    "tagPriority": "Tag Priority"
   },
   "nav": {
     "appTour": "App Tour",
@@ -117,29 +134,30 @@
   "onboarding": {
     "firstName": "First Name",
     "lastName": "Last Name",
-    "maxSelection": "Maximum selection"
+    "maxSelection": "Maximum selection",
+    "name": {
+      "title": "Enter your Name"
+    }
   },
   "profile": {
-    "pageHeader": "Your Profile",
-    "preview": "Preview",
-    "firstName": "First Name",
-    "lastName": "Last Name",
     "bio": "Bio",
-    "bioVisibility": "Your bio will be visible to other users",
     "bioPlaceholder": "Tell us about yourself...",
+    "bioVisibility": "Your bio will be visible to other users",
     "editProfile": "Edit Profile",
     "errorOwnProfile": "You cannot send a supervision request to yourself",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "pageHeader": "Your Profile",
+    "preview": "Preview",
     "requestSent": "Request sent"
+  },
+  "role": {
+    "admin": "Admin",
+    "student": "Student",
+    "supervisor": "Supervisor"
   },
   "searchBar": {
     "noResults": "No results found"
-  },
-  "settings": {
-    "theme": "Theme",
-    "select": {
-      "language": "Select the language of the app",
-      "theme": "Select the theme of the app"
-    }
   },
   "statusBar": {
     "confirmed": "Confirmed",
@@ -153,14 +171,14 @@
     "similarityScore": "Similarity score"
   },
   "tagPriority": {
-    "arrangeByPriority": "Arrange tags by priority"
+    "arrangeByPriority": "Arrange tags by priority",
+    "unknownTag": "Unbekannter Tag '{tagNumber}'"
   },
   "tagSelector": {
-    "tagCount": "{current}/{max}"
-  },
-  "role": {
-    "admin": "Admin",
-    "student": "Student",
-    "supervisor": "Supervisor"
+    "label": "Select up to 10 tags that fit your topic / interests",
+    "placeholder": "Selected Tags...",
+    "search": "Search Tag...",
+    "tagCount": "{current}/{max}",
+    "title": "Select your tags"
   }
 }

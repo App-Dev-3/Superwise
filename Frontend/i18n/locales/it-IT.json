@@ -1,11 +1,12 @@
 {
   "appHeader": {
     "back": "Indietro",
+    "onboarding": {
+      "name": "",
+      "priority": "",
+      "tags": ""
+    },
     "searchPlaceholder": "Cerca..."
-  },
-  "confirmed": {
-    "confirmedOn": "Confermato il {date}",
-    "supervising": "Stai supervisionando {firstName}"
   },
   "confirmation": {
     "acceptedOn": "Accettato il: {date}",
@@ -14,6 +15,10 @@
     "student": "Studente",
     "supervisor": "Supervisore",
     "title": "Conferma di Supervisione della Tesi"
+  },
+  "confirmed": {
+    "confirmedOn": "Confermato il {date}",
+    "supervising": "Stai supervisionando {firstName}"
   },
   "dashboard": {
     "student": {
@@ -63,40 +68,58 @@
     }
   },
   "generic": {
+    "404-not-found": "404 - Pagina non trovata",
     "admin": "Amministratore",
     "cancel": "Annulla",
+    "chatRequest": "",
     "continue": "Continua",
     "edit": "Modifica",
-    "language": "lingua",
     "english": "🇬🇧 English",
-    "german": "🇩🇪 Deutsch",
     "french": "🇫🇷 Français",
-    "spanish": "🇪🇸 Español",
+    "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "logoAlt": "logo",
+    "mail": "",
+    "profile": "",
     "profilePictureAlt": "Immagine del profilo di {firstName} {lastName}",
     "requests": "Richieste",
     "saveChanges": "Salva modifiche",
     "showAll": "Mostra tutto...",
     "showLess": "Mostra meno",
+    "spanish": "🇪🇸 Español",
     "student": "Studente",
+    "supervise": "",
+    "supervisionRequest": "",
     "supervisor": "Supervisore",
-    "404-not-found": "404 - Pagina non trovata"
+    "thesisDescription": ""
   },
   "landing": {
     "dataCollection": "Per trovare il supervisore perfetto per te, dobbiamo raccogliere ed elaborare alcuni dati. Scopri {0} cosa ne facciamo!",
     "here": "qui"
   },
   "modal": {
-    "sendSupervisionRequestHeadline": "Invia Richiesta di Supervisione",
-    "dontShowAgain": "Non mostrare più",
     "cancel": "Annulla",
     "confirm": "Conferma",
+    "dontShowAgain": "Non mostrare più",
+    "sendSupervisionRequestHeadline": "Invia Richiesta di Supervisione",
     "supervisionInfo": "Quando invii una richiesta di supervisione della tesi, verrà inoltrata ai supervisori selezionati. Possono quindi decidere se accettare o rifiutare la richiesta. Se accettano la richiesta, verrà creata una conferma che potrai scaricare."
   },
   "multiStepForm": {
+    "description": {
+      "name": "",
+      "priority": {
+        "student": "",
+        "supervisor": ""
+      },
+      "tag": {
+        "student": "",
+        "supervisor": ""
+      }
+    },
     "next": "Avanti",
-    "startMatching": "Inizia il Matching"
+    "selectTags": "",
+    "startMatching": "Inizia il Matching",
+    "tagPriority": "Priorizza Tags"
   },
   "nav": {
     "appTour": "Tour dell'App",
@@ -111,28 +134,30 @@
   "onboarding": {
     "firstName": "Nome",
     "lastName": "Cognome",
-    "maxSelection": "Selezione massima"
+    "maxSelection": "Selezione massima",
+    "name": {
+      "title": ""
+    }
   },
   "profile": {
-    "pageHeader": "Il Tuo Profilo",
-    "preview": "Anteprima",
+    "bio": "Biografia",
+    "bioPlaceholder": "Raccontaci di te...",
+    "bioVisibility": "La tua biografia sarà visibile agli altri utenti",
+    "editProfile": "",
+    "errorOwnProfile": "Non puoi inviare una richiesta di supervisione al tuo stesso profilo",
     "firstName": "Nome",
     "lastName": "Cognome",
-    "bio": "Biografia",
-    "bioVisibility": "La tua biografia sarà visibile agli altri utenti",
-    "bioPlaceholder": "Raccontaci di te...",
-    "errorOwnProfile": "Non puoi inviare una richiesta di supervisione al tuo stesso profilo",
+    "pageHeader": "Il Tuo Profilo",
+    "preview": "Anteprima",
     "requestSent": "Richiesta inviata"
+  },
+  "role": {
+    "admin": "",
+    "student": "",
+    "supervisor": ""
   },
   "searchBar": {
     "noResults": "Nessun risultato trovato"
-  },
-  "settings": {
-    "theme": "Tema",
-    "select": {
-      "language": "Selezionare la lingua dell'applicazione",
-      "theme": "Selezionare il tema dell'applicazione"
-    }
   },
   "statusBar": {
     "confirmed": "Confermato",
@@ -146,9 +171,14 @@
     "similarityScore": "Punteggio di somiglianza"
   },
   "tagPriority": {
-    "arrangeByPriority": "Organizza i tag per priorità"
+    "arrangeByPriority": "Organizza i tag per priorità",
+    "unknownTag": ""
   },
   "tagSelector": {
-    "tagCount": "{current}/{max}"
+    "label": "",
+    "placeholder": "Tags selezionati...",
+    "search": "",
+    "tagCount": "{current}/{max}",
+    "title": ""
   }
 }

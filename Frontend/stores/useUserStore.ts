@@ -34,7 +34,7 @@ export const useUserStore = defineStore('user', {
     },
     async fetchSupervisorProfile(userId: string) {
       try {
-        this.supervisorProfile = await $fetch<SupervisorData>(`/api/supervisors/${userId}`, {
+        this.supervisorProfile = await $fetch<SupervisorData>(`/api/supervisors/user/${userId}`, {
           method: HttpMethods.GET,
           headers: {
             'Accept': 'application/json',

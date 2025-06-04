@@ -121,7 +121,7 @@ import TextArea from '~/components/inputField/TextArea.vue';
 import { HttpMethods } from '#shared/enums/enums';
 import {useI18n} from "vue-i18n";
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const userStore = useUserStore();
 if (!userStore.user) {

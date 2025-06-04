@@ -71,7 +71,9 @@ const props = defineProps({
 
         <ul class="space-y-3 flex-grow">
           <li>
-            <NuxtLink to="/profile">
+              <NuxtLink
+                  :to="props.role ? `/${props.role.toLowerCase()}/profile` : `/`"
+              >
               <FontAwesomeIcon class="text-xl mr-3" icon="user" />
               {{ t("nav.profile") }}
             </NuxtLink>
@@ -84,12 +86,12 @@ const props = defineProps({
               {{ t("nav.settings") }}
             </NuxtLink>
           </li>
-          <li>
-            <NuxtLink to="/tour">
-              <FontAwesomeIcon class="text-xl mr-3" icon="map" />
-              {{ t("nav.appTour") }}
-            </NuxtLink>
-          </li>
+<!--          <li>-->
+<!--            <NuxtLink to="/tour">-->
+<!--              <FontAwesomeIcon class="text-xl mr-3" icon="map" />-->
+<!--              {{ t("nav.appTour") }}-->
+<!--            </NuxtLink>-->
+<!--          </li>-->
           <li>
             <NuxtLink
               :to="

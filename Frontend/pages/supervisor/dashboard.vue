@@ -81,7 +81,7 @@ const bottomNavButtons = [
             : current_user?.profile_image
         "
         :last-name="current_user?.last_name"
-        :role="current_user?.role"
+        :role="current_user?.role || ''"
         show-search
         show-user
       />
@@ -115,7 +115,11 @@ const bottomNavButtons = [
           @action-button-clicked="navigateTo('/supervisor/matching')"
         >
           <div v-if="pending">Loading…</div>
-          <div v-else-if="error">Error: {{ error.message }}</div>
+          <div v-else-if="error">
+              <div v-if="error.statusCode === 404">
+                <p class="text-base-content-60">No requests yet</p>
+              </div>
+          </div>
           <MiniCard
             v-for="request in visibleRequests"
             v-else
@@ -124,7 +128,7 @@ const bottomNavButtons = [
             :first-name="request.student.user.first_name"
             :last-name="request.student.user.last_name"
             :preview-text="request.student.thesis_description"
-            image=""
+            :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
             top-icon="message"
           />
         </ActionCard>

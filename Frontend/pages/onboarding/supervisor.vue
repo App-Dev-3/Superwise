@@ -104,7 +104,7 @@ const handleStepChange = (step: number) => {
       multiStepFormRef.value.goToStep(1);
       toastInformation.value = {
         visible: true,
-        message: 'Please fill in all the information before proceeding.',
+        message: t('onboarding.error.missingTags'),
         type: 'error',
       };
     }

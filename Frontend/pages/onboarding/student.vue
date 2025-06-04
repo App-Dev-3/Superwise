@@ -124,7 +124,7 @@ async function handleStepChange(step: number): Promise<void> {
       multiStepFormRef.value.goToStep(1);
       toastInformation.value = {
         visible: true,
-        message: 'Please fill in all the information before proceeding.',
+        message: t('onboarding.error.missingName'),
         type: 'error',
       };
       return;
@@ -165,7 +165,7 @@ async function handleStepChange(step: number): Promise<void> {
       multiStepFormRef.value.goToStep(2);
       toastInformation.value = {
         visible: true,
-        message: 'Please select at least one tag.',
+        message: t('onboarding.error.missingTags'),
         type: 'error',
       };
     }

@@ -1,5 +1,15 @@
 <template>
+  <div class="min-h-screen">
+
+  <toast
+      v-if="toastInformation.visible"
+      :message="toastInformation.message"
+      :type="toastInformation.type"
+      @close="toastInformation.visible = false"
+      @button-click="toastInformation.visible = false"
+  />
   <multi-step-form
+      ref="multiStepFormRef"
       :button-text="buttonText"
       :description-text="descriptionText"
       :header-text="headerText"
@@ -40,6 +50,7 @@
 								tags = $event
 							"
       />
+
     </template>
 
     <template #step3>
@@ -52,6 +63,10 @@
       />
     </template>
   </multi-step-form>
+
+  
+</div>
+  
 </template>
 
 <script lang="ts" setup>
@@ -74,6 +89,12 @@ const userFormData = ref({} as UserCreateData);
 
 const DbTags = ref([] as tagData[]);
 const tags = ref([] as tagData[]);
+const multiStepFormRef = ref();
+const toastInformation = ref({
+  visible: false,
+  message: '',
+  type: 'success',
+});
 
 const buttonText = [
   t('multiStepForm.selectTags'),
@@ -94,7 +115,20 @@ const headerText = [
 ];
 
 async function handleStepChange(step: number): Promise<void> {
-  if (step == 2 && user.value?.primaryEmailAddress) {
+  if (
+    step == 2 && 
+    user.value?.primaryEmailAddress && 
+    !userStore.user
+  ) {
+    if (!userFormData.value.first_name || !userFormData.value.last_name) {
+      multiStepFormRef.value.goToStep(1);
+      toastInformation.value = {
+        visible: true,
+        message: 'Please fill in all the information before proceeding.',
+        type: 'error',
+      };
+      return;
+    }
     userFormData.value.email =
         user.value.primaryEmailAddress.emailAddress;
     try {
@@ -124,6 +158,16 @@ async function handleStepChange(step: number): Promise<void> {
         );
         await navigateTo('/');
       }
+    }
+  }
+  if (step == 3){
+    if (tags.value.length === 0) {
+      multiStepFormRef.value.goToStep(2);
+      toastInformation.value = {
+        visible: true,
+        message: 'Please select at least one tag.',
+        type: 'error',
+      };
     }
   }
 }

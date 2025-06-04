@@ -45,24 +45,33 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return
   }
 
-  const onboardingComplete = registrationStore.status?.is_registered || false
+  const accountRegistrationCompleted = registrationStore.status?.is_registered || false
+  const tagsSelected = registrationStore.status?.tags || false
 
-  if (!onboardingComplete && to.path.startsWith('/onboarding')) {
+  if (!accountRegistrationCompleted && to.path.startsWith('/onboarding')) {
     return
   }
-  
-  if (!onboardingComplete && !to.path.startsWith('/onboarding')) {
+
+  if (!accountRegistrationCompleted && !to.path.startsWith('/onboarding')) {
     if (userRole === UserRoles.SUPERVISOR) {
       return navigateTo('/onboarding/supervisor')
     } else {
       return navigateTo('/onboarding/student')
     }
   }
-
-  if (onboardingComplete && to.path.startsWith('/onboarding')) {
+  if (
+    accountRegistrationCompleted && 
+    !tagsSelected
+  ) {
+    if (!to.path.startsWith(`/onboarding/${userRole.toLowerCase()}`)) {
+      return navigateTo(`/onboarding/${userRole.toLowerCase()}`)
+    }
+    return
+  }
+  if (accountRegistrationCompleted && tagsSelected && to.path.startsWith('/onboarding')) {
     return navigateTo(`/${userRole.toLowerCase()}/dashboard`)
   }
-
+  
   // ============ USER IS NOW REGISTERED AND ONBOARDED ============
 
   const userStore = useUserStore()

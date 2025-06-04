@@ -26,6 +26,7 @@ export interface UserRegistrationData extends Record<string, unknown> {
     exists: boolean;
     is_registered: boolean;
     role?: UserRoles;
+    tags?: boolean;
 }
 
 export interface SupervisionRequestResponseData extends Record<string, unknown> {

@@ -135,6 +135,7 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "maxSelection": "Maximum selection",
+    "processing": "Processing information, please wait...",
     "name": {
       "title": "Enter your Name"
     },

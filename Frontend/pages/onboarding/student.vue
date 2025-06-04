@@ -114,11 +114,19 @@ const headerText = [
   t('appHeader.onboarding.priority'),
 ];
 
+onMounted(async() => {
+  if (registrationStore.status?.is_registered) {
+    await fetchAlldata();
+    multiStepFormRef.value.goToStep(2);
+  }
+});
+
 async function handleStepChange(step: number): Promise<void> {
   if (
     step == 2 && 
     user.value?.primaryEmailAddress && 
-    !userStore.user
+    !userStore.user &&
+    !registrationStore.status?.is_registered
   ) {
     if (!userFormData.value.first_name || !userFormData.value.last_name) {
       multiStepFormRef.value.goToStep(1);

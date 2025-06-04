@@ -36,7 +36,7 @@ const alertClass = computed(() => ({
 
 // Get the actual icon name as a string
 const iconName = computed(() => {
-    if (props.type === 'error') return 'xmark';
+    if (props.type === 'error') return 'ban';
     if (props.type === 'exception') return 'triangle-exclamation';
     return 'check'; // default for success
 });

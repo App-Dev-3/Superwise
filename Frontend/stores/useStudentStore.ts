@@ -61,7 +61,6 @@ export const useStudentStore = defineStore('student', () => {
                     'Accept': 'application/json',
                 },
             })
-            console.log("FETCHED STUDENT PROFILE: ", studentProfile.value)
         } catch (error) {
             console.error(error)
         }

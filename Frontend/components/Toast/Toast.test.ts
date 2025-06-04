@@ -59,7 +59,7 @@ describe('Toast.vue', () => {
         })
 
         expect(wrapper.find('.alert-error').exists()).toBe(true)
-        expect(wrapper.find('[data-icon="xmark"]').exists()).toBe(true)
+        expect(wrapper.find('[data-icon="ban"]').exists()).toBe(true)
     })
 
     it('uses correct classes and icons for exception type', () => {

@@ -44,7 +44,7 @@ import { UserBlock } from './entities/user-block.entity';
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   @Get('check-registration')
   @UseGuards(ClerkRegistrationGuard)
@@ -74,14 +74,16 @@ export class UsersController {
     }
 
     try {
-      // Find the user but don't expose the full user object
-      const user = await this.usersService.findUserByIdWithRelations(email);
+  
+      const user = await this.usersService.findUserByEmail(email);
+
+      const userWithRelations = await this.usersService.findUserByIdWithRelations(user.id);
 
       return {
         exists: true,
-        is_registered: user.is_registered,
-        role: user.role,
-        tags: !!(user.tags && user.tags.length > 0)
+        is_registered: userWithRelations.is_registered,
+        role: userWithRelations.role,
+        tags: !!(userWithRelations.tags && userWithRelations.tags.length > 0)
       };
     } catch (error) {
       // If user not found, return exists: false with default values

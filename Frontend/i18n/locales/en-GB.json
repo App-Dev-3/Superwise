@@ -137,6 +137,10 @@
     "maxSelection": "Maximum selection",
     "name": {
       "title": "Enter your Name"
+    },
+    "error": {
+      "missingName": "Please fill in all the information.",
+      "missingTags": "Please select at least one tag."
     }
   },
   "profile": {

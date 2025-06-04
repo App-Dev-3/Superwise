@@ -20,7 +20,7 @@
         >
           <a
               class="text-primary"
-              href="https://www.youtube.com/watch?v=PcRyjkYdDxM"
+              href="https://superwise.at/data-protection"
               target="_blank"
           >
             {{ t('landing.here') }}

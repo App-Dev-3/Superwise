@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
   headline: string;
@@ -22,13 +23,9 @@ const isOpen = ref(false);
     <div class="flex flex-col gap-3 items-start">
       <h3 class="text-large">{{ props.headline }}</h3>
 
-      <p
-          class="text-body opacity-75"
-      >
+      <p class="text-body opacity-75 text-wrap wrap-anywhere">
         {{
-          props.content.trim().length > props.maxLength && !isOpen
-              ? props.content.trim().substring(0, props.maxLength) + '...'
-              : props.content.trim()
+          isOpen ? props.content.trim() : (props.content.trim().length > props.maxLength ? props.content.trim().substring(0, props.maxLength) + '...' : props.content.trim())
         }}
       </p>
 
@@ -47,5 +44,4 @@ const isOpen = ref(false);
 </template>
 
 <style scoped>
-
 </style>

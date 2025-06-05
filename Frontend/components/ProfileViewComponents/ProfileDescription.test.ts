@@ -3,6 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import ProfileDescription from './ProfileDescription.vue'
 import { useMediaQuery } from '@vueuse/core'
 
+// Mock vue-i18n
+vi.mock('vue-i18n', () => ({
+    useI18n: () => ({
+        t: (key) => key // Return the key as is for testing
+    })
+}))
+
 // Mock useMediaQuery
 vi.mock('@vueuse/core', async () => {
     return {
@@ -47,38 +54,41 @@ describe('ProfileDescription', () => {
         expect(wrapper.find('p').text()).toBe('Test content')
     })
 
+    it('does not show button when content is shorter than maxLength', () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(100)
+        })
+        expect(wrapper.findComponent(CustomButton).exists()).toBe(false)
+    })
 
-    describe('buttonNeeded computed property', () => {
-        it('shows button for extra small screen with content > 100 chars', async () => {
-            // Setup mock to return true for extra small screen
-            const mockUseMediaQuery = vi.fn()
-            mockUseMediaQuery.mockImplementation((query: string) => ({
-                value: query === '(max-width: 639px)'
-            }))
-            vi.mocked(useMediaQuery).mockImplementation(mockUseMediaQuery)
+    it('shows button when content is longer than maxLength', () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(151)
+        })
+        expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
+    })
 
-            const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'a'.repeat(101)
-            })
+    it('truncates content when not expanded and content is longer than maxLength', () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(200)
+        })
+        expect(wrapper.find('p').text()).toBe('a'.repeat(150) + '...')
+    })
 
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(false)
+
+    it('toggles isOpen when button is clicked', async () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(200)
         })
 
-        it('shows button for small screen with content > 160 chars', async () => {
-            // Setup mock to return true for small screen
-            const mockUseMediaQuery = vi.fn()
-            mockUseMediaQuery.mockImplementation((query: string) => ({
-                value: query === '(max-width: 767px) and (min-width: 640px)'
-            }))
-            vi.mocked(useMediaQuery).mockImplementation(mockUseMediaQuery)
+        const button = wrapper.findComponent(CustomButton)
+        expect(button.props('leftIcon')).toBe('eye')
 
-            const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'a'.repeat(161)
-            })
-
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
-        })
+        await button.trigger('click')
+        expect(button.props('leftIcon')).toBe('eye')
     })
 })

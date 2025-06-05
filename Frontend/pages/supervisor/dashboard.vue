@@ -134,7 +134,6 @@ const bottomNavButtons = [
         </ActionCard>
 
         <BottomNav
-          :always-show-labels="false"
           :bottom-nav-buttons="bottomNavButtons"
           @navigate="navigate"
         />

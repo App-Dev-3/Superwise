@@ -14,7 +14,7 @@ interface Props {
     showLabelsOnActive?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
-        alwaysShowLabels: false,
+        alwaysShowLabels: true,
         showLabelsOnActive: true
 });
 

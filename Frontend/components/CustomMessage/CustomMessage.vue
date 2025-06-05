@@ -31,7 +31,7 @@ const messageIcon = computed(() => {
         '': props.type=='info'
       }"
       class="flex flex-row bg-base-100 border border-neutral-content rounded-3xl items-center h-fit w-full">
-    <div class="size-8 m-8 flex items-center justify-center rounded-xl bg-success">
+    <div class="size-10 min-w-10 min-h-10 m-4 flex items-center justify-center rounded-2xl bg-success">
       <FontAwesomeIcon
           :class="{
           'text-success-content': props.type=='success',
@@ -41,7 +41,7 @@ const messageIcon = computed(() => {
           :icon="messageIcon"
       />
     </div>
-    <p class="text-body pr-8 opacity-75">
+    <p class="text-body p-4 pl-0 opacity-75">
       {{ props.message }}
     </p>
   </div>

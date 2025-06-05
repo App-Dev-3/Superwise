@@ -5,6 +5,7 @@ import { StudentsService } from '../../students/students.service';
 import { SupervisorsService } from '../../supervisors/supervisors.service';
 import { UsersService } from '../../users/users.service';
 import { WinstonLoggerService } from '../../../common/logging/winston-logger.service';
+import { AppConfigService } from '@config';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { RequestState, Role, User } from '@prisma/client';
 import { SupervisionRequestStateConflictException } from '../../../common/exceptions/custom-exceptions/supervision-request-state-conflict.exception';
@@ -46,6 +47,17 @@ describe('SupervisionRequestsService', () => {
     debug: jest.fn(),
     warn: jest.fn(),
     error: jest.fn(),
+  };
+
+  const mockAppConfigService = {
+    supervisionRequestCooldownDays: 2, // Default cooldown period for tests
+    isDevelopment: true,
+    isProduction: false,
+    isTest: true,
+    nodeEnv: 'test',
+    port: 3000,
+    frontendHost: 'http://localhost:3000',
+    allowedEmailDomains: ['fhstp.ac.at'],
   };
 
   // Test data
@@ -163,6 +175,7 @@ describe('SupervisionRequestsService', () => {
         { provide: SupervisorsService, useValue: mockSupervisorsService },
         { provide: UsersService, useValue: mockUsersService },
         { provide: WinstonLoggerService, useValue: mockLoggerService },
+        { provide: AppConfigService, useValue: mockAppConfigService },
       ],
     }).compile();
 

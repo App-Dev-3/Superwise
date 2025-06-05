@@ -1,14 +1,15 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 import * as winston from 'winston';
+import { AppConfigService } from '@config';
 import { safeStringify } from '../utils/string-utils';
 
 type LogMessage = string | object | Error;
 @Injectable()
 export class WinstonLoggerService implements LoggerService {
-  private logger: winston.Logger;
+  private readonly logger: winston.Logger;
 
-  constructor() {
-    const isProd = process.env.NODE_ENV === 'production';
+  constructor(private readonly appConfig: AppConfigService) {
+    const isProd = this.appConfig.isProduction;
 
     // Define formats
     const commonFormat = winston.format.combine(
@@ -31,6 +32,7 @@ export class WinstonLoggerService implements LoggerService {
     const transports: winston.transport[] = [
       new winston.transports.Console({
         format: isProd ? prodFormat : devFormat,
+        handleExceptions: true,
       }),
     ];
 
@@ -50,6 +52,12 @@ export class WinstonLoggerService implements LoggerService {
     // Create logger instance
     this.logger = winston.createLogger({
       level: isProd ? 'info' : 'debug',
+      format: winston.format.combine(
+        commonFormat,
+        isProd
+          ? prodFormat
+          : winston.format.combine(winston.format.colorize(), winston.format.simple()),
+      ),
       transports,
       exitOnError: false,
     });

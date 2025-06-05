@@ -25,7 +25,7 @@ export function IsAllowedEmailDomain(validationOptions?: ValidationOptions) {
             throw new Error('ALLOWED_EMAIL_DOMAINS environment variable must be set');
           }
 
-          const allowedDomains = allowedDomainsStr.split(',').map(d => d.trim());
+          const allowedDomains = allowedDomainsStr.split(',').map(d => d.trim().toLowerCase());
           return allowedDomains.includes(domain);
         },
         defaultMessage(): string {

@@ -17,6 +17,7 @@ import { SupervisorCapacityException } from '../../../common/exceptions/custom-e
 import { SelfSupervisionException } from '../../../common/exceptions/custom-exceptions/self-supervision.exception';
 import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
+import { AppConfigService } from '@config';
 
 @Injectable()
 export class SupervisionRequestsService {
@@ -26,6 +27,7 @@ export class SupervisionRequestsService {
     private readonly supervisorsService: SupervisorsService,
     private readonly usersService: UsersService,
     private readonly logger: WinstonLoggerService,
+    private readonly appConfig: AppConfigService,
   ) {}
 
   /**
@@ -312,11 +314,10 @@ export class SupervisionRequestsService {
   }
 
   /**
-   * Get the cooldown period in days from environment variable or default to 2
+   * Get the cooldown period in days from configuration
    */
   private getCooldownDays(): number {
-    const envValue = process.env.SUPERVISION_REQUEST_COOLDOWN_DAYS;
-    return envValue ? parseInt(envValue, 10) : 2;
+    return this.appConfig.supervisionRequestCooldownDays;
   }
 
   /**

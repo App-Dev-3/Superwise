@@ -9,6 +9,7 @@ import { WinstonLoggerService } from '../../../common/logging/winston-logger.ser
 import { User } from '@prisma/client';
 import * as jwksClient from 'jwks-rsa';
 import { Request } from 'express';
+import { AuthConfigService } from '@config';
 
 interface JwtHeader {
   kid: string;
@@ -27,9 +28,10 @@ export class ClerkJwtStrategy extends PassportStrategy(Strategy, 'clerk-jwt') {
     private readonly usersService: UsersService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly logger: WinstonLoggerService,
+    private readonly authConfig: AuthConfigService,
   ) {
     // Create a JWKS client to fetch the public key
-    const jwksUri = 'https://vital-pelican-84.clerk.accounts.dev/.well-known/jwks.json';
+    const jwksUri = authConfig.clerkJwksUri;
 
     // Create JWKS client for key retrieval
     const client = jwksClient({

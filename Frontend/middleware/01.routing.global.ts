@@ -1,4 +1,3 @@
-import { until } from "@vueuse/core";
 import {UserRoles} from "#shared/enums/enums";
 
 export default defineNuxtRouteMiddleware(async (to) => {
@@ -7,11 +6,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Skip if middleware is running on the server
   if (import.meta.server) return
 
-  const { user, isLoaded, isSignedIn } = useUser()
+  const authStore = useAuthStore()
+  await authStore.initialize()
+  const { user, isSignedIn } = storeToRefs(authStore)
   const registrationStore = useRegistrationStore()
-
-  // Make sure clerkUser and backendUser are ready
-  if (!isLoaded.value) await until(isLoaded).toBe(true)
 
   // Only allow access to public paths if not signed in
   const publicPaths = ['/']
@@ -31,7 +29,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Register user if is not already registered
 
-  await registrationStore.fetchRegistrationStatus(userEmail)
+  if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+    console.log('🍍🍍🍍🍍🍍🍍[ROUTING MIDDLEWARE]: Fetching registration status for user:', userEmail)
+    await registrationStore.fetchRegistrationStatus(userEmail)
+  }
   let userRole = UserRoles.STUDENT
   if (registrationStore.status?.role) {
     userRole = registrationStore.status.role
@@ -73,9 +74,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   }
   
   // ============ USER IS NOW REGISTERED AND ONBOARDED ============
-
-  const userStore = useUserStore()
-  await userStore.refetchCurrentUser()
 
   // make sure only each role-specific route can only be accessed by the corresponding role
   if (

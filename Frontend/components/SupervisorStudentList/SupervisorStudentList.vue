@@ -10,7 +10,9 @@ import { useSettingsStore } from "~/stores/useSettingsStore";
 import { useI18n } from "vue-i18n";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
-const { user } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { user } = storeToRefs(authStore)
 const userStore = useUserStore();
 const { getSupervisorByUserId } = useSupervisorApi();
 const { getUserByEmail } = useUserApi();

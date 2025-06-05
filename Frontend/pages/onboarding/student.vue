@@ -80,7 +80,9 @@ import { useRegistrationStore } from '~/stores/useRegistrationStore';
 import { HttpMethods } from '~/shared/enums/enums';
 
 const { t } = useI18n();
-const { user } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { user } = storeToRefs(authStore)
 const { getTags } = useTagApi();
 const { createUser, addUserTag } = useUserApi();
 const userStore = useUserStore();
@@ -210,9 +212,9 @@ async function handleSubmit() {
     id: userStore.user?.id || '',
     tags: tags.value as tagData[],
   });
-  await registrationStore.fetchRegistrationStatus(
-      userStore.user?.email,
-  );
+    if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+        await registrationStore.fetchRegistrationStatus(userStore.user?.email)
+    }
   return navigateTo('/student/dashboard');
 }
 

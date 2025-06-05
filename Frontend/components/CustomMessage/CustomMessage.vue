@@ -24,20 +24,20 @@ const messageIcon = computed(() => {
 
 <template>
 
-  <div
-      :class="{
-        'shadow-xl': props.type=='success',
-        '': props.type=='warn',
-        '': props.type=='info'
-      }"
-      class="flex flex-row bg-base-100 border border-neutral-content rounded-3xl items-center h-fit w-full">
-    <div class="size-10 min-w-10 min-h-10 m-4 flex items-center justify-center rounded-2xl bg-success">
+  <div class="flex flex-row bg-base-100 border border-neutral-content rounded-3xl items-center h-fit w-full shadow-xl">
+    <div
+        :class="{
+          'bg-success': props.type=='success',
+          'bg-[var(--color-warning)]': props.type=='warn',
+          'bg-[var(--color-info)]': props.type=='info'
+        }"
+        class="size-10 min-w-10 min-h-10 m-4 flex items-center justify-center rounded-2xl ">
       <FontAwesomeIcon
           :class="{
-          'text-success-content': props.type=='success',
-          '': props.type=='warn',
-          '': props.type=='info'
-        }"
+            'text-success-content': props.type=='success',
+            'text-[var(--color-warning-content)]': props.type=='warn',
+            'text-[var(--color-info-content)]': props.type=='info'
+           }"
           :icon="messageIcon"
       />
     </div>

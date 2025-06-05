@@ -171,6 +171,25 @@
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"
   },
+  "settings": {
+    "language": {
+      "description": "App sprache auswählen",
+      "placeholder": "Sprache wählen...",
+      "title": "Sprache"
+    },
+    "modal": {
+      "student": {
+        "supervisionrequest": {
+          "description": "Zeige das Popup, wenn ein Supervisor angefragt wird.",
+          "title": "Supervisor Anfrage Popup"
+        }
+      }
+    },
+    "theme": {
+      "description": "App farbe wählen",
+      "title": "Farb Modus"
+    }
+  },
   "statusBar": {
     "confirmed": "Bestätigt",
     "matching": "Matching",

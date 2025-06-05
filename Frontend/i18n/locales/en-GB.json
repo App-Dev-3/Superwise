@@ -172,6 +172,25 @@
   "searchBar": {
     "noResults": "No results found"
   },
+  "settings": {
+    "language": {
+      "description": "Select app language",
+      "placeholder": "Select language...",
+      "title": "Language"
+    },
+    "modal": {
+      "student": {
+        "supervisionrequest": {
+          "description": "Show confirmation modal when swipe-requesting a supervisor",
+          "title": "Supervision Request modal"
+        }
+      }
+    },
+    "theme": {
+      "description": "Select app theme",
+      "title": "App Theme"
+    }
+  },
   "statusBar": {
     "confirmed": "Confirmed",
     "matching": "Matching",

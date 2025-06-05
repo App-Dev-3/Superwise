@@ -38,7 +38,7 @@
                   :last-name="matches[0].lastName || ''"
                   :max-capacity="matches[0].totalSpots"
                   :similarity-score="
-                  Math.round(matches[0].compatibilityScore as number * 100)
+                  Math.round((matches[0].compatibilityScore as number) * 100)
                 "
                   :tags="matches[0].tags"
                   name="Hello name"

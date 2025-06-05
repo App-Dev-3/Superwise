@@ -132,7 +132,7 @@
     "settings": "Einstellungen"
   },
   "onboarding": {
-    "completed": "",
+    "completed": "Du hast erfolgreich das Onboarding abgeschlossen!",
     "error": {
       "missingName": "Bitte fülle alle Informationen aus.",
       "missingTags": "Bitte wähle mindestens ein Tag aus."

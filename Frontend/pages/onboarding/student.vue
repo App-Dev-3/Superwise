@@ -199,8 +199,7 @@ async function handleSubmit() {
     if (data) {
       userProfileExists = true;
     }
-  }
-  catch (error: any) {
+  } catch {
     // User profile does not exist, we will create it
   }
 

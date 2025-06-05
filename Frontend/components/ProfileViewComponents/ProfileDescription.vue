@@ -11,6 +11,8 @@ const props = withDefaults(defineProps<Props>(), {
   maxLength: 150,
 });
 
+const { t } = useI18n();
+
 const isOpen = ref(false);
 
 </script>
@@ -33,7 +35,7 @@ const isOpen = ref(false);
       <CustomButton
           v-if="props.content.trim().length > props.maxLength"
           :left-icon="isOpen ? 'eye-slash' : 'eye'"
-          :text="isOpen ? 'Show all...' : 'Show more...'"
+          :text="isOpen ? t('profile.description.showLess') : t('profile.description.showMore')"
           class="p-0 m-0 opacity-75"
           color="default"
           size="xs"

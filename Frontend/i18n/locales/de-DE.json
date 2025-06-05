@@ -149,6 +149,10 @@
     "bioPlaceholder": "Erzählen Sie etwas über sich...",
     "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
     "changesSaved": "Änderungen gespeichert",
+    "description": {
+      "showLess": "Weniger anzeigen...",
+      "showMore": "Alles anzeigen..."
+    },
     "editProfile": "Profil bearbeiten",
     "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
     "errorSavingChanges": "Fehler beim Speichern der Änderungen, bitte versuchen Sie es später erneut",

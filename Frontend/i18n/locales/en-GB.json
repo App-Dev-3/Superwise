@@ -150,6 +150,10 @@
     "bioPlaceholder": "Tell us about yourself...",
     "bioVisibility": "Your bio will be visible to other users",
     "changesSaved": "Changes saved",
+    "description": {
+      "showLess": "Show less...",
+      "showMore": "Show more..."
+    },
     "editProfile": "Edit Profile",
     "errorOwnProfile": "You cannot send a supervision request to yourself",
     "errorSavingChanges": "Error saving changes, please try again later",

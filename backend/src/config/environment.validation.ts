@@ -103,7 +103,7 @@ export class EnvironmentVariables {
    */
   @Transform(({ value }) => parseInt(String(value), 10))
   @IsInt({ message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be an integer' })
-  @Min(1, { message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be at least 1 day' })
+  @Min(0, { message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be at least 0 days' })
   @Max(365, { message: 'SUPERVISION_REQUEST_COOLDOWN_DAYS must be less than 365 days' })
   SUPERVISION_REQUEST_COOLDOWN_DAYS: number;
 

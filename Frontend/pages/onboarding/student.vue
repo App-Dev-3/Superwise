@@ -78,6 +78,7 @@ import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import { useUserStore } from '~/stores/useUserStore';
 import { useRegistrationStore } from '~/stores/useRegistrationStore';
+import { HttpMethods } from '~/shared/enums/enums';
 
 const { t } = useI18n();
 const { user } = useUser();
@@ -184,10 +185,26 @@ async function handleStepChange(step: number): Promise<void> {
 
 async function handleSubmit() {
   processingData.value = true;
-  if (!userStore.user) {
+  let userProfileExists = false;
+  if (!userStore.user || !userStore.user.id) {
     await userStore.refetchCurrentUser();
   }
-  await useUserApi().createStudentProfile('');
+
+  try {
+    const data = await $fetch(`/api/students/user/${userStore.user?.id}`, {
+      method: HttpMethods.GET,
+    });
+    if (data) {
+      userProfileExists = true;
+    }
+  }
+  catch (error: any) {
+    // User profile does not exist, we will create it
+  }
+
+  if (!userProfileExists) {
+    await useUserApi().createStudentProfile('This is description');
+  }
   addUserTag({
     id: userStore.user?.id || '',
     tags: tags.value as tagData[],

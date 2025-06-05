@@ -1,8 +1,10 @@
 <script setup>
+import { useRouter } from "vue-router";
 import { useColorMode } from "#imports";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const colorMode = useColorMode();
+const router = useRouter();
 
 const { t } = useI18n();
 
@@ -66,7 +68,8 @@ const props = defineProps({
               ? '../images/appHeader_logo_dark.svg'
               : '../images/appHeader_logo_light.svg'
           "
-          class="h-6 mb-8"
+          class="h-6 mb-8 cursor-pointer"
+          @click="router.push('/')"
         >
 
         <ul class="space-y-3 flex-grow">

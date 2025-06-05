@@ -84,6 +84,7 @@ const goBack = () => {
             "
             alt="Logo image"
             class="h-6"
+            @click="router.push('/')"
         >
       </div>
     </ClientOnly>

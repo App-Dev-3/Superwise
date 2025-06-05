@@ -2,9 +2,9 @@
   "appHeader": {
     "back": "Back",
     "onboarding": {
-      "name": "Who are you?",
-      "priority": "Whats the priority?",
-      "tags": "What do you like?"
+      "name": "Welcome to SuperWise! What is your name?",
+      "priority": "Please sort the tags by priority.",
+      "tags": "Which tags describe your thesis topic?"
     },
     "searchPlaceholder": "Search..."
   },
@@ -99,7 +99,7 @@
   },
   "matching": {
     "existingSupervision": {
-      "headline": "You already have a supervisor",
+      "headline": "Congratulations, You already have a supervisor!",
       "actionButton": "Go back to dashboard"
     }
   },

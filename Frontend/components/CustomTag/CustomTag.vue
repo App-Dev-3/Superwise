@@ -56,6 +56,7 @@ const props = defineProps({
       return ["xs", "sm", "md", "lg", "xl"].includes(value);
     },
   },
+  capitalize: {type: Boolean, default: true},
   rightIcon: {type: String, default: ""},
   clickable: {type: Boolean, default: false},
   deletable: {type: Boolean, default: false},
@@ -169,7 +170,7 @@ const iconColorClass = computed(() => {
         data-test="delete-icon"
         icon="xmark"
     />
-    <span>
+    <span :class="{ 'capitalize': props.capitalize }">
       {{ props.text }}
       <FontAwesomeIcon
           v-if="props.rightIcon"

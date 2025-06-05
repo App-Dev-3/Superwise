@@ -1,54 +1,38 @@
-import {mount} from '@vue/test-utils';
-import {describe, expect, it} from 'vitest';
+import { mount } from '@vue/test-utils';
+import { describe, expect, it, vi } from 'vitest';
 import CustomSelect from './CustomSelect.vue';
+
+// Mock FontAwesomeIcon to avoid errors
+vi.mock('@fortawesome/vue-fontawesome', () => ({
+    FontAwesomeIcon: {
+        name: 'FontAwesomeIcon',
+        template: '<span class="mock-icon"></span>'
+    }
+}));
 
 describe('CustomSelect', () => {
     const options = [
-        {key: 'option1', value: 'Option 1'},
-        {key: 'option2', value: 'Option 2'},
-        {key: 'option3', value: 'Option 3'}
+        { key: 'option1', value: 'Option 1' },
+        { key: 'option2', value: 'Option 2' },
+        { key: 'option3', value: 'Option 3' }
     ];
 
     it('renders properly', () => {
         const wrapper = mount(CustomSelect);
-        expect(wrapper.find('select').exists()).toBe(true);
+        expect(wrapper.find('.dropdown').exists()).toBe(true);
     });
 
     it('renders placeholder when provided', () => {
         const placeholder = 'Select an option';
         const wrapper = mount(CustomSelect, {
-            props: {placeholder}
+            props: { placeholder }
         });
 
-        const placeholderOption = wrapper.find('option[value=""]');
-        expect(placeholderOption.exists()).toBe(true);
-        expect(placeholderOption.text()).toBe(placeholder);
+        const dropdownButton = wrapper.find('.btn');
+        expect(dropdownButton.text()).toContain(placeholder);
     });
 
-    it('does not render placeholder when empty string', () => {
-        const wrapper = mount(CustomSelect, {
-            props: {placeholder: ''}
-        });
-
-        const placeholderOption = wrapper.find('option[value=""]');
-        expect(placeholderOption.exists()).toBe(false);
-    });
-
-    it('renders all options when provided', () => {
-        const wrapper = mount(CustomSelect, {
-            props: {options}
-        });
-
-        const optionElements = wrapper.findAll('option:not([value=""])');
-        expect(optionElements.length).toBe(options.length);
-
-        options.forEach((option, index) => {
-            expect(optionElements[index].text()).toBe(option.value);
-            expect(optionElements[index].attributes('value')).toBe(String(option.key));
-        });
-    });
-
-    it('selects the option that matches modelValue', async () => {
+    it('renders modelValue option text when option is selected', () => {
         const wrapper = mount(CustomSelect, {
             props: {
                 options,
@@ -56,27 +40,53 @@ describe('CustomSelect', () => {
             }
         });
 
-        const selected = wrapper.find('option[value="option2"]');
-        expect(selected.element.selected).toBe(true);
+        const dropdownButton = wrapper.find('.btn');
+        expect(dropdownButton.text()).toContain('Option 2');
+    });
+
+    it('renders all options when provided', () => {
+        const wrapper = mount(CustomSelect, {
+            props: { options }
+        });
+
+        const menuItems = wrapper.findAll('.dropdown-content li');
+        expect(menuItems.length).toBe(options.length);
+
+        options.forEach((option, index) => {
+            expect(menuItems[index].text()).toContain(option.value);
+        });
+    });
+
+    it('marks the option that matches modelValue as selected', async () => {
+        const wrapper = mount(CustomSelect, {
+            props: {
+                options,
+                modelValue: 'option2'
+            }
+        });
+
+        const menuItems = wrapper.findAll('.dropdown-content li a');
+        const selectedItem = menuItems[1]; // option2 is the second item
+        expect(selectedItem.text()).toContain('✅');
     });
 
     it('emits update:modelValue event when an option is selected', async () => {
         const wrapper = mount(CustomSelect, {
-            props: {options}
+            props: { options }
         });
 
-        // Simulate selecting an option
-        await wrapper.find('select').setValue('option3');
+        // Simulate clicking on an option
+        await wrapper.findAll('.dropdown-content li')[2].trigger('click');
 
         const emittedEvents = wrapper.emitted('update:modelValue');
         expect(emittedEvents).toBeTruthy();
-        expect(emittedEvents?.[0]).toEqual(['option3']);
+        expect(emittedEvents?.[0]).toEqual([ 'option3' ]);
     });
 
     it('works with numeric values', async () => {
         const numericOptions = [
-            {key: 1, value: 'Option 1'},
-            {key: 2, value: 'Option 2'}
+            { key: 1, value: 'Option 1' },
+            { key: 2, value: 'Option 2' }
         ];
 
         const wrapper = mount(CustomSelect, {
@@ -86,13 +96,15 @@ describe('CustomSelect', () => {
             }
         });
 
-        const selected = wrapper.find('option[value="1"]');
-        expect(selected.element.selected).toBe(true);
+        // Check that the selected option is shown in the button
+        const dropdownButton = wrapper.find('.btn');
+        expect(dropdownButton.text()).toContain('Option 1');
 
-        await wrapper.find('select').setValue('2');
+        // Simulate clicking on the second option
+        await wrapper.findAll('.dropdown-content li')[1].trigger('click');
+
         const emittedEvents = wrapper.emitted('update:modelValue');
         expect(emittedEvents).toBeTruthy();
-        expect(emittedEvents?.[0]).toEqual([2]);
+        expect(emittedEvents?.[0]).toEqual([ 2 ]);
     });
 });
-

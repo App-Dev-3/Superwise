@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { computed } from "vue";
 
 interface Option {
   key: string | number;

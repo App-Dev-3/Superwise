@@ -7,7 +7,7 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
 
 
-    buildModules: ["@nuxtjs/i18n", "@vite-pwa/nuxt"],
+    buildModules: ["@nuxtjs/i18n"],
 
     modules: [
         "@vite-pwa/nuxt",
@@ -66,7 +66,10 @@ export default defineNuxtConfig({
                 name: "italian",
                 file: "it-IT.json",
             },
-        ]
+        ],
+        bundle: {
+            optimizeTranslationDirective: false
+        }
     },
 
     pwa: {
@@ -78,7 +81,8 @@ export default defineNuxtConfig({
             description:
                 "An application that allows students to find their perfect supervisor match",
             display: "standalone",
-            start_url: "/",
+            start_url: "./",
+            theme_color: "#ffffff",
             icons: [
                 {
                     src: "/icons/SS_512x512.svg",
@@ -90,6 +94,24 @@ export default defineNuxtConfig({
                     sizes: "192x192",
                     type: "image/svg",
                 },
+                {
+                    src: "/icons/SS_144x144.png",
+                    sizes: "144x144",
+                    type: "image/png",
+                    purpose: "any"
+                },
+                {
+                    "src": "/icons/SS_192x192.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any"
+                },
+                {
+                    "src": "/icons/SS_512x512.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any"
+                }
             ],
             screenshots: [
                 {
@@ -117,11 +139,10 @@ export default defineNuxtConfig({
         },
 
         workbox: {
-            navigateFallback: "/",
             globPatterns: ["**/*.{js,css,html,png,svg,ico,woff2}"],
         },
         devOptions: {
-            enabled: false,
+            enabled: true,
             type: "module",
         },
     },

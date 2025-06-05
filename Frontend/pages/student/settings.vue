@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import SettingsArea from "~/components/Settings/SettingsArea.vue";
 import ThemeToggle from "~/components/App/ThemeToggle/ThemeToggle.vue";
 import { useSettingsStore } from "~/stores/useSettingsStore";
 import app from "~/app.vue";
-import type {Locale} from "@intlify/core-base";
+import type { Locale } from "@intlify/core-base";
 
 // Language switching
 const { locale, locales, setLocale } = useI18n();
@@ -41,32 +41,32 @@ function onChangeLocale(newLocale: string) {
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AdminHeader :header-text="t('nav.settings')" />
+      <AdminHeader :header-text="t('nav.settings')"/>
       <div class="w-full flex flex-col gap-4 p-8 overflow-y-auto">
         <!-- App Settings -->
         <SettingsArea icon="eye" title="Appearance">
           <SettingsElement
-            :description="t('Select the theme of the app')"
-            :title="t('settings.theme')"
+              :description="t('settings.theme.description')"
+              :title="t('settings.theme.title')"
           >
-            <theme-toggle />
+            <theme-toggle/>
           </SettingsElement>
 
           <SettingsElement
-            :description="t('settings.select.language')"
-            :title="t('generic.language')"
+              :description="t('settings.language.description')"
+              :title="t('settings.language.title')"
           >
             <CustomSelect
-              :model-value="locale"
-              :options="
+                :label="t('settings.language.placeholder')"
+                :model-value="locale"
+                :options="
                 locales.map((l) => ({
                   key: l.code,
                   value: t('generic.' + l.name),
                 }))
               "
-              :label="t('settings.select.language')"
-              :placeholder="t('settings.select.language')"
-              @update:model-value="onChangeLocale"
+                :placeholder="t('settings.select.language')"
+                @update:model-value="(val) => onChangeLocale(val as string)"
             />
           </SettingsElement>
         </SettingsArea>
@@ -74,52 +74,52 @@ function onChangeLocale(newLocale: string) {
         <!-- Modal Settings -->
         <SettingsArea icon="phone" title="Modals">
           <SettingsElement
-            description="Show confirmation modal when swipe-requesting a supervisor"
-            title="Supervision Request Modal"
+              :description="t('settings.modal.student.supervisionrequest.description')"
+              :title="t('settings.modal.student.supervisionrequest.title')"
           >
             <CustomToggle
-              v-model:checked="settingsStore.showSupervisionRequestModal"
+                v-model:checked="settingsStore.showSupervisionRequestModal"
             />
           </SettingsElement>
 
           <SettingsElement
-            description="Show confirmation modal when swipe-dismissing a supervisor"
-            title="Dismiss Modal"
+              description="Show confirmation modal when swipe-dismissing a supervisor"
+              title="Dismiss Modal"
           >
-            <CustomToggle v-model:checked="settingsStore.showDismissModal" />
+            <CustomToggle v-model:checked="settingsStore.showDismissModal"/>
           </SettingsElement>
         </SettingsArea>
 
         <!-- App Info -->
         <SettingsArea
-          id="settingsArea"
-          icon="info-circle"
-          title="About SuperWise"
+            id="settingsArea"
+            icon="info-circle"
+            title="About SuperWise"
         >
           <SettingsElement :description="version" title="App Version">
             <CustomButton
-              class="copyButton"
-              color="default"
-              left-icon="copy"
-              size="lg"
-              text=""
-              variant="ghost"
-              @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
+                class="copyButton"
+                color="default"
+                left-icon="copy"
+                size="lg"
+                text=""
+                variant="ghost"
+                @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
             />
           </SettingsElement>
 
           <SettingsElement
-            :description="settingsStore.notificationId || 'Not available'"
-            title="Notification ID"
+              :description="settingsStore.notificationId || 'Not available'"
+              title="Notification ID"
           >
             <CustomButton
-              class="copyButton"
-              color="default"
-              left-icon="copy"
-              size="lg"
-              text=""
-              variant="ghost"
-              @click="
+                class="copyButton"
+                color="default"
+                left-icon="copy"
+                size="lg"
+                text=""
+                variant="ghost"
+                @click="
                 copyToClipboard(settingsStore.notificationId || 'Not available')
               "
             />

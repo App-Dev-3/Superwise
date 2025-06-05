@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import SettingsArea from "~/components/Settings/SettingsArea.vue";
 import ThemeToggle from "~/components/App/ThemeToggle/ThemeToggle.vue";
 import { useSettingsStore } from "~/stores/useSettingsStore";
 import app from "~/app.vue";
-import type {Locale} from "@intlify/core-base";
+import type { Locale } from "@intlify/core-base";
 
 // Language switching
 const { locale, locales, setLocale } = useI18n();
@@ -40,66 +40,66 @@ function onChangeLocale(newLocale: string) {
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AdminHeader :header-text="t('Settings')" />
+      <AdminHeader :header-text="t('Settings')"/>
       <div class="w-full flex flex-col gap-4 p-8 overflow-y-auto">
         <!-- App Settings -->
         <SettingsArea icon="eye" title="Appearance">
           <SettingsElement
-            description="Select the theme of the app"
-            title="Theme"
+              :description="t('settings.theme.description')"
+              :title="t('settings.theme.title')"
           >
-            <theme-toggle />
+            <theme-toggle/>
           </SettingsElement>
 
           <SettingsElement
-            :description="t('Select the language of the app')"
-            :title="t('language')"
+              :description="t('settings.language.description')"
+              :title="t('settings.language.title')"
           >
             <CustomSelect
-              :model-value="locale"
-              :options="
+                :model-value="locale"
+                :options="
                 locales.map((l) => ({
                   key: l.code,
                   value: t('generic.' + l.name),
                 }))
               "
-              label="Select Language"
-              placeholder="Select Language"
-              @update:model-value="onChangeLocale"
+                label="Select Language"
+                placeholder="Select Language"
+                @update:model-value="(val) => onChangeLocale(val as string)"
             />
           </SettingsElement>
         </SettingsArea>
 
         <!-- App Info -->
         <SettingsArea
-          id="settingsArea"
-          icon="info-circle"
-          title="About SuperWise"
+            id="settingsArea"
+            icon="info-circle"
+            title="About SuperWise"
         >
           <SettingsElement :description="version" title="App Version">
             <CustomButton
-              class="copyButton"
-              color="default"
-              left-icon="copy"
-              size="lg"
-              text=""
-              variant="ghost"
-              @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
+                class="copyButton"
+                color="default"
+                left-icon="copy"
+                size="lg"
+                text=""
+                variant="ghost"
+                @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
             />
           </SettingsElement>
 
           <SettingsElement
-            :description="settingsStore.notificationId || 'Not available'"
-            title="Notification ID"
+              :description="settingsStore.notificationId || 'Not available'"
+              title="Notification ID"
           >
             <CustomButton
-              class="copyButton"
-              color="default"
-              left-icon="copy"
-              size="lg"
-              text=""
-              variant="ghost"
-              @click="
+                class="copyButton"
+                color="default"
+                left-icon="copy"
+                size="lg"
+                text=""
+                variant="ghost"
+                @click="
                 copyToClipboard(settingsStore.notificationId || 'Not available')
               "
             />

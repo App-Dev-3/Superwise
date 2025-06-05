@@ -1,42 +1,47 @@
 <script lang="ts" setup>
-import {ref} from 'vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 interface Props {
-    headline: string;
-    content: string;
+  headline: string;
+  content: string;
+  maxLength?: number;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  maxLength: 150,
+});
+
+const { t } = useI18n();
 
 const isOpen = ref(false);
 
 </script>
 
 <template>
-    <div class="w-full">
-        <div class="flex flex-col gap-3 items-start">
-            <h3 class="text-large">{{ props.headline }}</h3>
+  <div class="w-full">
+    <div class="flex flex-col gap-3 items-start">
+      <h3 class="text-large">{{ props.headline }}</h3>
 
-            <p
-                :class="{ 'line-clamp-4': !isOpen}"
-                class="text-body opacity-75"
-            >
-                {{ props.content.trim() }}
-            </p>
+      <p class="text-body opacity-75 text-wrap wrap-anywhere">
+        {{
+          isOpen ? props.content.trim() : (props.content.trim().length > props.maxLength ? props.content.trim().substring(0, props.maxLength) + '...' : props.content.trim())
+        }}
+      </p>
 
-            <CustomButton
-                :left-icon="isOpen ? 'eye-slash' : 'eye'"
-                :text="isOpen ? 'Show all...' : 'Show more...'"
-                class="p-0 m-0 opacity-75"
-                color="default"
-                size="xs"
-                variant="ghost"
-                @click="isOpen = !isOpen"
-            />
-        </div>
+      <CustomButton
+          v-if="props.content.trim().length > props.maxLength"
+          :left-icon="isOpen ? 'eye-slash' : 'eye'"
+          :text="isOpen ? t('profile.description.showLess') : t('profile.description.showMore')"
+          class="p-0 m-0 opacity-75"
+          color="default"
+          size="xs"
+          variant="ghost"
+          @click="isOpen = !isOpen"
+      />
     </div>
+  </div>
 </template>
 
 <style scoped>
-
 </style>

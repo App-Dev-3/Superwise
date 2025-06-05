@@ -1,12 +1,19 @@
-import {mount} from '@vue/test-utils'
-import {beforeEach, describe, expect, it, vi} from 'vitest'
+import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import ProfileDescription from './ProfileDescription.vue'
-import {useMediaQuery} from '@vueuse/core'
+import { useMediaQuery } from '@vueuse/core'
+
+// Mock vue-i18n
+vi.mock('vue-i18n', () => ({
+    useI18n: () => ({
+        t: (key) => key // Return the key as is for testing
+    })
+}))
 
 // Mock useMediaQuery
 vi.mock('@vueuse/core', async () => {
     return {
-    useMediaQuery: vi.fn().mockReturnValue({value: false})
+        useMediaQuery: vi.fn().mockReturnValue({ value: false })
     }
 })
 
@@ -14,18 +21,18 @@ vi.mock('@vueuse/core', async () => {
 const CustomButton = {
     name: 'CustomButton',
     template: '<button :class="color" @click="$emit(\'click\')"><slot></slot></button>',
-    props: ['color', 'text', 'leftIcon', 'size', 'variant']
+    props: [ 'color', 'text', 'leftIcon', 'size', 'variant' ]
 }
 
 beforeEach(() => {
     // Reset all mocks before each test
     vi.clearAllMocks()
     // Reset useMediaQuery mock to default value
-    vi.mocked(useMediaQuery).mockImplementation(() => ({value: false}))
+    vi.mocked(useMediaQuery).mockImplementation(() => ({ value: false }))
 })
 
 describe('ProfileDescription', () => {
-        const defaultProps = {
+    const defaultProps = {
         headline: 'Test Headline',
         content: 'Test content'
     }
@@ -35,7 +42,7 @@ describe('ProfileDescription', () => {
             props,
             global: {
                 components: {
-                CustomButton
+                    CustomButton
                 }
             }
         })
@@ -47,42 +54,41 @@ describe('ProfileDescription', () => {
         expect(wrapper.find('p').text()).toBe('Test content')
     })
 
-    it('applies line-clamp-4 class when isOpen is false', () => {
-        const wrapper = mountComponent()
-        expect(wrapper.find('p').classes()).toContain('line-clamp-4')
+    it('does not show button when content is shorter than maxLength', () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(100)
+        })
+        expect(wrapper.findComponent(CustomButton).exists()).toBe(false)
     })
 
-    describe('buttonNeeded computed property', () => {
-        it('shows button for extra small screen with content > 100 chars', async () => {
-            // Setup mock to return true for extra small screen
-            const mockUseMediaQuery = vi.fn()
-            mockUseMediaQuery.mockImplementation((query: string) => ({
-            value: query === '(max-width: 639px)'
-            }))
-            vi.mocked(useMediaQuery).mockImplementation(mockUseMediaQuery)
-
-            const wrapper = mountComponent({
+    it('shows button when content is longer than maxLength', () => {
+        const wrapper = mountComponent({
             headline: 'Test',
-            content: 'a'.repeat(101)
-            })
+            content: 'a'.repeat(151)
+        })
+        expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
+    })
 
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
+    it('truncates content when not expanded and content is longer than maxLength', () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(200)
+        })
+        expect(wrapper.find('p').text()).toBe('a'.repeat(150) + '...')
+    })
+
+
+    it('toggles isOpen when button is clicked', async () => {
+        const wrapper = mountComponent({
+            headline: 'Test',
+            content: 'a'.repeat(200)
         })
 
-        it('shows button for small screen with content > 160 chars', async () => {
-            // Setup mock to return true for small screen
-            const mockUseMediaQuery = vi.fn()
-            mockUseMediaQuery.mockImplementation((query: string) => ({
-                value: query === '(max-width: 767px) and (min-width: 640px)'
-            }))
-            vi.mocked(useMediaQuery).mockImplementation(mockUseMediaQuery)
+        const button = wrapper.findComponent(CustomButton)
+        expect(button.props('leftIcon')).toBe('eye')
 
-            const wrapper = mountComponent({
-                headline: 'Test',
-                content: 'a'.repeat(161)
-            })
-
-            expect(wrapper.findComponent(CustomButton).exists()).toBe(true)
-        })
+        await button.trigger('click')
+        expect(button.props('leftIcon')).toBe('eye')
     })
 })

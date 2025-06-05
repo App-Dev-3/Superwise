@@ -2,43 +2,47 @@
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="min-h-screen flex flex-col max-w-7xl w-full">
       <AppHeader
-        show-search
-        show-user
-        :first-name="currentUser?.first_name"
-        :last-name="currentUser?.last_name"
-        :role="currentUser?.role"
-        :image="currentUser?.profile_image || ''"
+          :first-name="currentUser?.first_name"
+          :image="currentUser?.profile_image || ''"
+          :last-name="currentUser?.last_name"
+          :role="currentUser?.role"
+          show-search
+          show-user
       />
-      <StatusBar :step="dashboardState" class="mt-4" />
+      <StatusBar :step="dashboardState" class="mt-4"/>
 
       <div
-        v-if="dashboardState === 1"
-        class="my-auto mx-auto max-w-7xl w-full p-12"
+          v-if="dashboardState === 1"
+          class="my-auto mx-auto max-w-7xl w-full py-8 px-6 flex flex-col gap-8"
       >
+        <CustomMessage
+            :message="t('onboarding.completed')"
+            type="success"
+        />
         <ActionCard
-          v-if="matches.length"
-          :button-text="t('dashboard.student.startMatching')"
-          card-type="primary"
-          @action-button-clicked="navigate('/student/matching')"
+            v-if="matches.length"
+            :button-text="t('dashboard.student.startMatching')"
+            card-type="primary"
+            @action-button-clicked="navigate('/student/matching')"
         >
           <div class="flex flex-col w-full items-center p-3">
             <h2 class="text-xl mx-4 py-8">
               {{ t("dashboard.student.findSupervisor") }}
             </h2>
-            <CardStack :amount="3">
+            <CardStack :amount="3" @click="navigate('/student/matching')">
               <SupervisorCard
-                :current-capacity="matches[0].availableSpots"
-                :description="matches[0].bio"
-                :first-name="matches[0].firstName || ''"
-                :image="matches[0].profileImage"
-                :last-name="matches[0].lastName || ''"
-                :max-capacity="matches[0].totalSpots"
-                :similarity-score="
-                  Math.round(matches[0].compatibilityScore * 100)
+                  :current-capacity="matches[0].availableSpots"
+                  :description="matches[0].bio"
+                  :first-name="matches[0].firstName || ''"
+                  :image="matches[0].profileImage"
+                  :last-name="matches[0].lastName || ''"
+                  :max-capacity="matches[0].totalSpots"
+                  :similarity-score="
+                  Math.round((matches[0].compatibilityScore as number) * 100)
                 "
-                :tags="matches[0].tags"
-                name="Hello name"
-                size="sm"
+                  :tags="matches[0].tags"
+                  name="Hello name"
+                  size="sm"
               />
             </CardStack>
           </div>
@@ -46,26 +50,26 @@
       </div>
 
       <div
-        v-if="dashboardState === 2"
-        class="my-auto mx-auto max-w-7xl w-full p-12 flex flex-col gap-8"
+          v-if="dashboardState === 2"
+          class="my-auto mx-auto max-w-7xl w-full p-12 flex flex-col gap-8"
       >
         <ActionCard
-          :button-text="t('generic.showAll')"
-          :header-text="t('dashboard.student.yourRequests')"
-          card-type="ghost"
-          @action-button-clicked="navigate('/student/requests')"
+            :button-text="t('generic.showAll')"
+            :header-text="t('dashboard.student.yourRequests')"
+            card-type="ghost"
+            @action-button-clicked="navigate('/student/requests')"
         >
           <div class="h-96 lg:h-128">
             <div
-              class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
+                class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
             >
               <div
-                v-for="pendingRequest in pendingSupervisionRequests"
-                :key="pendingRequest.id"
-                class="mb-2 w-full"
+                  v-for="pendingRequest in pendingSupervisionRequests"
+                  :key="pendingRequest.id"
+                  class="mb-2 w-full"
               >
-                  <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
-                    <MiniCard
+                <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
+                  <MiniCard
                       :bottom-text="
                         new Date(pendingRequest.updated_at).toLocaleDateString()
                       "
@@ -74,8 +78,8 @@
                       :last-name="pendingRequest.supervisor.user.last_name"
                       :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
                       top-icon="user-group"
-                    />
-                  </NuxtLink>
+                  />
+                </NuxtLink>
               </div>
             </div>
           </div>
@@ -83,24 +87,24 @@
       </div>
 
       <div
-        v-if="dashboardState === 3"
-        class="my-auto mx-auto max-w-7xl w-full p-12"
+          v-if="dashboardState === 3"
+          class="my-auto mx-auto max-w-7xl w-full p-12"
       >
         <ConfirmationExport
-          :accepted-date="acceptedSupervisionRequests[0].updated_at"
-          :canvas-id="
+            :accepted-date="acceptedSupervisionRequests[0].updated_at"
+            :canvas-id="
             'confirmation-canvas-' + acceptedSupervisionRequests[0].id
           "
-          :student-email="acceptedSupervisionRequests[0].student.user.email"
-          :student-name="
+            :student-email="acceptedSupervisionRequests[0].student.user.email"
+            :student-name="
             acceptedSupervisionRequests[0].student.user.first_name +
             ' ' +
             acceptedSupervisionRequests[0].student.user.last_name
           "
-          :supervisor-email="
+            :supervisor-email="
             acceptedSupervisionRequests[0].supervisor.user.email
           "
-          :supervisor-name="
+            :supervisor-name="
             acceptedSupervisionRequests[0].supervisor.user.first_name +
             ' ' +
             acceptedSupervisionRequests[0].supervisor.user.last_name
@@ -108,19 +112,19 @@
         />
 
         <ConfirmationModal
-          :description="warning"
-          :linked-component-id="warningModalId"
-          confirm-button-color="warning"
-          confirm-button-text="OK"
-          headline="Warning - Multiple Supervisors"
-          hide-cancel-button
-          icon="triangle-exclamation"
+            :description="warning"
+            :linked-component-id="warningModalId"
+            confirm-button-color="warning"
+            confirm-button-text="OK"
+            headline="Warning - Multiple Supervisors"
+            hide-cancel-button
+            icon="triangle-exclamation"
         />
 
         <ActionCard
-          :button-text="t('dashboard.student.downloadConfirmation')"
-          card-type="primary"
-          @action-button-clicked="
+            :button-text="t('dashboard.student.downloadConfirmation')"
+            card-type="primary"
+            @action-button-clicked="
             downloadImageFromCanvas(
               'confirmation-canvas-' + acceptedSupervisionRequests[0].id
             )
@@ -129,19 +133,19 @@
           <div class="h-96 flex">
             <div class="flex flex-col w-full items-center justify-center p-3">
               <Avatar
-                :first-name="
+                  :first-name="
                   acceptedSupervisionRequests[0].supervisor.user.first_name
                 "
-                :last-name="
+                  :last-name="
                   acceptedSupervisionRequests[0].supervisor.user.last_name
                 "
-                :src="
+                  :src="
                   acceptedSupervisionRequests[0].supervisor.user.profile_image
                 "
-                alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
-                ring-color="success"
-                shape="circle"
-                size="xl"
+                  alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
+                  ring-color="success"
+                  shape="circle"
+                  size="xl"
               />
               <h2 class="text-xl mx-4 py-8 text-center">
                 {{ acceptedSupervisionRequests[0].supervisor.user.first_name }}
@@ -155,9 +159,9 @@
 
       <div>
         <BottomNav
-          :always-show-labels="false"
-          :bottom-nav-buttons="bottomNavButtons"
-          @navigate="navigate"
+            :always-show-labels="false"
+            :bottom-nav-buttons="bottomNavButtons"
+            @navigate="navigate"
         />
       </div>
     </div>
@@ -212,8 +216,8 @@ currentUser.value = userStore.user;
 const warning = computed(() => {
   if (acceptedSupervisionRequests.length > 1) {
     const namesOfAcceptedSupervisors = acceptedSupervisionRequests.map(
-      (request) =>
-        `${request.supervisor.user.first_name} ${request.supervisor.user.last_name}`
+        (request) =>
+            `${ request.supervisor.user.first_name } ${ request.supervisor.user.last_name }`
     );
     return t("dashboard.student.multipleAcceptedWarning", {
       count: acceptedSupervisionRequests.length,
@@ -225,7 +229,7 @@ const warning = computed(() => {
 
 const warningModalId = computed(() => {
   if (acceptedSupervisionRequests.length > 0) {
-    return `confirmation-modal-${acceptedSupervisionRequests[0].id}`;
+    return `confirmation-modal-${ acceptedSupervisionRequests[0].id }`;
   }
   return "confirmation-modal-warning";
 });
@@ -235,7 +239,7 @@ onMounted(() => {
   setTimeout(() => {
     if (acceptedSupervisionRequests.length > 1) {
       const modal = document.getElementById(
-        warningModalId.value
+          warningModalId.value
       ) as HTMLDialogElement;
       if (modal) {
         modal.showModal();
@@ -247,31 +251,31 @@ onMounted(() => {
 });
 
 watch(
-  () => acceptedSupervisionRequests.length,
-  (newLength) => {
-    if (newLength > 1) {
-      nextTick(() => {
-        setTimeout(() => {
-          const modal = document.getElementById(
-            warningModalId.value
-          ) as HTMLDialogElement;
-          if (modal) {
-            modal.showModal();
-          } else {
-            console.error("Modal element not found:", warningModalId.value);
-          }
-        }, 100);
-      });
-    }
-  },
-  { immediate: true }
+    () => acceptedSupervisionRequests.length,
+    (newLength) => {
+      if (newLength > 1) {
+        nextTick(() => {
+          setTimeout(() => {
+            const modal = document.getElementById(
+                warningModalId.value
+            ) as HTMLDialogElement;
+            if (modal) {
+              modal.showModal();
+            } else {
+              console.error("Modal element not found:", warningModalId.value);
+            }
+          }, 100);
+        });
+      }
+    },
+    { immediate: true }
 );
 
 const matches = ref([] as SupervisorData[]);
 
 if (userStore.user) {
   const res = (await getRecommendedSupervisors(
-    userStore.user.id
+      userStore.user.id
   )) as SupervisorData[];
   supervisorStore.setSupervisors(res);
   matches.value = res;

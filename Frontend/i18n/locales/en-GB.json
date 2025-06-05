@@ -132,36 +132,41 @@
     "settings": "Settings"
   },
   "onboarding": {
+    "completed": "You successfully completed the onboarding!",
+    "error": {
+      "missingName": "Please fill in all the information.",
+      "missingTags": "Please select at least one tag."
+    },
     "firstName": "First Name",
     "lastName": "Last Name",
     "maxSelection": "Maximum selection",
     "processing": "Processing information, please wait...",
     "name": {
       "title": "Enter your Name"
-    },
-    "error": {
-      "missingName": "Please fill in all the information.",
-      "missingTags": "Please select at least one tag."
     }
   },
   "profile": {
     "bio": "Bio",
     "bioPlaceholder": "Tell us about yourself...",
     "bioVisibility": "Your bio will be visible to other users",
-    "thesisTopic": "Thesis Topic",
-    "topicPlaceholder": "Describe your thesis idea...",
-    "topicVisibility": "Your thesis description will be visible to other users",
+    "changesSaved": "Changes saved",
+    "description": {
+      "showLess": "Show less...",
+      "showMore": "Show more..."
+    },
     "editProfile": "Edit Profile",
     "errorOwnProfile": "You cannot send a supervision request to yourself",
+    "errorSavingChanges": "Error saving changes, please try again later",
     "firstName": "First Name",
+    "imageUpdated": "Profile picture updated",
     "lastName": "Last Name",
     "pageHeader": "Your Profile",
     "preview": "Preview",
     "requestSent": "Request sent",
     "saveChanges": "Save Changes",
-    "changesSaved": "Changes saved",
-    "errorSavingChanges": "Error saving changes, please try again later",
-    "imageUpdated": "Profile picture updated"
+    "thesisTopic": "Thesis Topic",
+    "topicPlaceholder": "Describe your thesis idea...",
+    "topicVisibility": "Your thesis description will be visible to other users"
   },
   "role": {
     "admin": "Admin",
@@ -170,6 +175,25 @@
   },
   "searchBar": {
     "noResults": "No results found"
+  },
+  "settings": {
+    "language": {
+      "description": "Select app language",
+      "placeholder": "Select language...",
+      "title": "Language"
+    },
+    "modal": {
+      "student": {
+        "supervisionrequest": {
+          "description": "Show confirmation modal when swipe-requesting a supervisor",
+          "title": "Supervision Request modal"
+        }
+      }
+    },
+    "theme": {
+      "description": "Select app theme",
+      "title": "App Theme"
+    }
   },
   "statusBar": {
     "confirmed": "Confirmed",

@@ -27,7 +27,7 @@ const props = defineProps({
     >
 			<span class="step-icon">
 				<FontAwesomeIcon
-            icon="arrow-right-to-bracket"
+            :icon="props.step < 1 ? 'arrow-right-to-bracket': 'check'"
         />
 			</span>
       {{ t('statusBar.onboarding') }}
@@ -40,7 +40,9 @@ const props = defineProps({
         class="step text-base-content font-bold"
     >
 			<span class="step-icon">
-				<FontAwesomeIcon icon="message"/>
+				<FontAwesomeIcon
+            :icon="props.step < 2 ? 'message' : 'check'"
+        />
 			</span>
       {{ t('statusBar.matching') }}
     </li>
@@ -52,7 +54,8 @@ const props = defineProps({
         class="step text-base-content font-bold"
     >
 			<span class="step-icon">
-				<FontAwesomeIcon icon="user-group"/>
+				<FontAwesomeIcon
+            :icon="props.step < 3 ? 'user-group':'check'"/>
 			</span>
       {{ t('statusBar.confirmed') }}
     </li>

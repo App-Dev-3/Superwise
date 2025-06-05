@@ -1,6 +1,5 @@
 <template>
-  <div class="min-h-screen">
-
+  <div v-if="!processingData" class="min-h-screen">
     <toast
         v-if="toastInformation.visible"
         :message="toastInformation.message"
@@ -41,6 +40,11 @@
       </template>
     </multi-step-form>
   </div>
+  <div v-else>
+    <LoadingIndicator
+      :text="t('onboarding.processing')"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -66,6 +70,7 @@ const toastInformation = ref({
   message: '',
   type: 'success',
 });
+const processingData = ref(false);
 
 const buttonText = [
   t('multiStepForm.tagPriority'),
@@ -85,8 +90,11 @@ const headerText = [
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');
-  
+  await registrationStore.fetchRegistrationStatus(
+    user.value.primaryEmailAddress?.emailAddress
+  );
   if (registrationStore.status?.is_registered) {
+    console.log('User is already registered');
     DbTags.value = (await getTags()) as tagData[];
     return
   }
@@ -103,13 +111,6 @@ onMounted(async () => {
   }
 });
 
-onMounted(async() => {
-  if (registrationStore.status?.is_registered) {
-    await fetchAlldata();
-    multiStepFormRef.value.goToStep(2);
-  }
-});
-
 const handleStepChange = (step: number) => {
   if (step === 2) {
     if (tags.value.length === 0) {
@@ -123,7 +124,11 @@ const handleStepChange = (step: number) => {
   }
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
+  processingData.value = true;
+  if (!userStore.user) {
+    await userStore.refetchCurrentUser();
+  }
   addUserTag({
     id: userStore.user?.id,
     tags: tags.value as tagData[],

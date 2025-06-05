@@ -1,71 +1,71 @@
 <template>
-  <div class="min-h-screen">
+  <div v-if="!processingData" class="min-h-screen"> 
+    <toast
+        v-if="toastInformation.visible"
+        :message="toastInformation.message"
+        :type="toastInformation.type"
+        @close="toastInformation.visible = false"
+        @button-click="toastInformation.visible = false"
+    />
+    <multi-step-form
+        ref="multiStepFormRef"
+        :button-text="buttonText"
+        :description-text="descriptionText"
+        :header-text="headerText"
+        :total-steps="3"
+        class="size-full flex flex-col"
+        @submit="handleSubmit"
+        @step-changed="handleStepChange"
+    >
+      <template #step1>
+        <div class="flex flex-col gap-2 pb-4">
+          <p class="text-large">{{ t('onboarding.name.title') }}</p>
 
-  <toast
-      v-if="toastInformation.visible"
-      :message="toastInformation.message"
-      :type="toastInformation.type"
-      @close="toastInformation.visible = false"
-      @button-click="toastInformation.visible = false"
-  />
-  <multi-step-form
-      ref="multiStepFormRef"
-      :button-text="buttonText"
-      :description-text="descriptionText"
-      :header-text="headerText"
-      :total-steps="3"
-      class="size-full flex flex-col"
-      @submit="handleSubmit"
-      @step-changed="handleStepChange"
-  >
-    <template #step1>
-      <div class="flex flex-col gap-2 pb-4">
-        <p class="text-large">{{ t('onboarding.name.title') }}</p>
+          <p class="text-x-small opacity-50">
+            {{ descriptionText[0] }}
+          </p>
+        </div>
+        <input-field
+            v-model="userFormData.first_name"
+            :label="t('onboarding.firstName')"
+            placeholder="Max"
+        />
+        <input-field
+            v-model="
+                  userFormData.last_name
+                "
+            :label="t('onboarding.lastName')"
+            placeholder="Mustermann"
+        />
+      </template>
 
-        <p class="text-x-small opacity-50">
-          {{ descriptionText[0] }}
-        </p>
-      </div>
+      <template #step2>
+        <tag-selector
+            :all-tags="DbTags"
+            :description-text="descriptionText[1]"
+            :max-selection="10"
+            @update:selected-tags="
+                  tags = $event
+                "
+        />
+      </template>
 
-      <input-field
-          v-model="userFormData.first_name"
-          :label="t('onboarding.firstName')"
-          placeholder="Max"
-      />
-      <input-field
-          v-model="
-								userFormData.last_name
-							"
-          :label="t('onboarding.lastName')"
-          placeholder="Mustermann"
-      />
-    </template>
-
-    <template #step2>
-      <tag-selector
-          :all-tags="DbTags"
-          :description-text="descriptionText[1]"
-          :max-selection="10"
-          @update:selected-tags="
-								tags = $event
-							"
-      />
-
-    </template>
-
-    <template #step3>
-      <TagPriority
-          :description-text="descriptionText[2]"
-          :tags="tags"
-          @update:tags="
-								tags = $event
-							"
-      />
-    </template>
-  </multi-step-form>
-
-  
-</div>
+      <template #step3>
+        <TagPriority
+            :description-text="descriptionText[2]"
+            :tags="tags"
+            @update:tags="
+                  tags = $event
+                "
+        />
+      </template>
+    </multi-step-form>
+  </div>
+  <div v-else>
+    <LoadingIndicator
+      :text="t('onboarding.processing')"
+    />
+  </div>
   
 </template>
 
@@ -77,6 +77,7 @@ import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import { useUserStore } from '~/stores/useUserStore';
 import { useRegistrationStore } from '~/stores/useRegistrationStore';
+import { HttpMethods } from '~/shared/enums/enums';
 
 const { t } = useI18n();
 const { user } = useUser();
@@ -95,6 +96,7 @@ const toastInformation = ref({
   message: '',
   type: 'success',
 });
+const processingData = ref(false);
 
 const buttonText = [
   t('multiStepForm.selectTags'),
@@ -114,11 +116,22 @@ const headerText = [
   t('appHeader.onboarding.priority'),
 ];
 
+onMounted(async() => {
+  if (registrationStore.status?.is_registered) {
+    await fetchAlldata();
+    multiStepFormRef.value.goToStep(2);
+  }
+});
+
 async function handleStepChange(step: number): Promise<void> {
+  if (step == 1 && registrationStore.status?.is_registered) {
+    multiStepFormRef.value.goToStep(2);
+  }
   if (
     step == 2 && 
     user.value?.primaryEmailAddress && 
-    !userStore.user
+    !userStore.user &&
+    !registrationStore.status?.is_registered
   ) {
     if (!userFormData.value.first_name || !userFormData.value.last_name) {
       multiStepFormRef.value.goToStep(1);
@@ -173,12 +186,28 @@ async function handleStepChange(step: number): Promise<void> {
 }
 
 async function handleSubmit() {
-  if (!userStore.user) {
-    return;
+  processingData.value = true;
+  let userProfileExists = false;
+  if (!userStore.user || !userStore.user.id) {
+    await userStore.refetchCurrentUser();
   }
-  await useUserApi().createStudentProfile('');
+
+  try {
+    const data = await $fetch(`/api/students/user/${userStore.user?.id}`, {
+      method: HttpMethods.GET,
+    });
+    if (data) {
+      userProfileExists = true;
+    }
+  } catch {
+    // User profile does not exist, we will create it
+  }
+
+  if (!userProfileExists) {
+    await useUserApi().createStudentProfile('');
+  }
   addUserTag({
-    id: userStore.user.id,
+    id: userStore.user?.id || '',
     tags: tags.value as tagData[],
   });
   await registrationStore.fetchRegistrationStatus(

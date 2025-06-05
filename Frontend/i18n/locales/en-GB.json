@@ -97,6 +97,12 @@
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
     "here": "here"
   },
+  "matching": {
+    "existingSupervision": {
+      "headline": "You already have a supervisor",
+      "actionButton": "Go back to dashboard"
+    }
+  },
   "modal": {
     "cancel": "Cancel",
     "confirm": "Confirm",

@@ -9,26 +9,65 @@
         />
       </div>
       <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
-        <SwipeContainer
-            v-for="(supervisor, index) in recommendedSupervisors"
-            :key="supervisor.supervisor_userId || index"
-            :ref="el => setItemRef(el, supervisor.supervisor_userId)"
-            class="mb-4"
-            @swipe-left="handleSwipeLeft(supervisor)"
-            @swipe-right="handleSwipeRight(supervisor)"
-        >
-          <SupervisorCard
-              :current-capacity="supervisor.availableSpots"
-              :description="supervisor.bio"
-              :first-name="supervisor.firstName"
-              :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
-              :last-name="supervisor.lastName"
-              :max-capacity="supervisor.totalSpots"
-              :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-              :tags="supervisor.tags"
-              size="md"
-          />
-        </SwipeContainer>
+        <template v-if="!hasSupervisor">
+          <SwipeContainer
+              v-for="(supervisor, index) in recommendedSupervisors"
+              :key="supervisor.supervisor_userId || index"
+              :ref="el => setItemRef(el, supervisor.supervisor_userId)"
+              class="mb-4"
+              @swipe-left="handleSwipeLeft(supervisor)"
+              @swipe-right="handleSwipeRight(supervisor)"
+          >
+            <SupervisorCard
+                :current-capacity="supervisor.availableSpots"
+                :description="supervisor.bio"
+                :first-name="supervisor.firstName"
+                :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
+                :last-name="supervisor.lastName"
+                :max-capacity="supervisor.totalSpots"
+                :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
+                :tags="supervisor.tags"
+                size="md"
+            />
+          </SwipeContainer>
+        </template>
+        <template v-else>
+          <div class="my-auto mx-auto max-w-7xl w-full p-12 flex flex-col gap-8">
+            <ActionCard
+                :button-text="t('matching.existingSupervision.actionButton')"
+                :header-text="t('matching.existingSupervision.headline')"
+                card-type="primary"
+                @action-button-clicked="
+                  navigate('/student/dashboard')
+                "
+            >
+              <div class="h-96 flex">
+              <div class="flex flex-col w-full items-center justify-center p-3">
+                <Avatar
+                  :first-name="
+                    acceptedSupervisionRequests?.supervisor.user.first_name || ''
+                  "
+                  :last-name="
+                    acceptedSupervisionRequests?.supervisor.user.last_name || ''
+                  "
+                  :src="
+                    acceptedSupervisionRequests?.supervisor.user.profile_image || ''
+                  "
+                  alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
+                  ring-color="success"
+                  shape="circle"
+                  size="xl"
+                />
+                <h2 class="text-xl mx-4 py-8 text-center">
+                  {{ acceptedSupervisionRequests?.supervisor.user.first_name }}
+                  {{ acceptedSupervisionRequests?.supervisor.user.last_name }}
+                  is your supervisor!
+                </h2>
+              </div>
+            </div>
+          </ActionCard> 
+          </div>
+        </template>
       </div>
 
       <div class="">
@@ -74,6 +113,7 @@ import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
 import type { ConfirmationDialogData, SupervisionRequestResponseData, } from "~/shared/types/userInterfaces"
 import { HttpMethods, supervisionRequestType } from "~/shared/enums/enums"
 import type { SwipeContainer } from '#components';
+import type {SupervisionRequestsData} from "#shared/types/supervisorInterfaces";
 
 const { t } = useI18n()
 
@@ -85,6 +125,7 @@ const bottomNavButtons = [
 
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
+const studentStore = useStudentStore();
 const settingsStore = useSettingsStore();
 
 const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
@@ -95,6 +136,17 @@ const toast = ref({
   visible: false,
   type: "success",
   message: "This is a toast message",
+});
+const hasSupervisor = computed(() => {
+  return studentStore.acceptedSupervisionRequests.length > 0;
+});
+const acceptedSupervisionRequests = ref<SupervisionRequestsData | null>(null)
+
+onMounted(async()=> {
+  if (studentStore.acceptedSupervisionRequests[0] === undefined){
+    await studentStore.fetchSupervisionRequests()
+  }
+  acceptedSupervisionRequests.value = studentStore.acceptedSupervisionRequests[0];
 });
 
 if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {

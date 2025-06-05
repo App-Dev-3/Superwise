@@ -2,9 +2,9 @@
   "appHeader": {
     "back": "Zurück",
     "onboarding": {
-      "name": "",
-      "priority": "",
-      "tags": ""
+      "name": "Willkommen bei SuperWise! Wie heißen Sie?",
+      "priority": "Bitte sortieren Sie die Tags nach Priorität.",
+      "tags": "Welche Tags beschreiben Ihr Thesis Thema?"
     },
     "searchPlaceholder": "Suchen..."
   },
@@ -97,6 +97,12 @@
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
     "here": "hier"
   },
+  "matching": {
+    "existingSupervision": {
+      "headline": "Glückwunsch, du hast bereits einen Betreuer!",
+      "actionButton": "Zurück zum Dashboard"
+    }
+  },
   "modal": {
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
@@ -108,12 +114,12 @@
     "description": {
       "name": "Dein Name ist für jeden sichtbar, dem / der du anfragen sendest. Der Name kann später auf den Profil angepasst werden",
       "priority": {
-        "student": "",
-        "supervisor": ""
+        "student": "Tags helfen dabei, passende Betreuer für dich zu finden. Du kannst bis zu 10 Tags auswählen und sie nach Priorität sortieren.",
+        "supervisor": "Tags helfen dabei, deine Expertise zu beschreiben. Du kannst bis zu 10 Tags auswählen und sie nach Priorität sortieren."
       },
       "tag": {
-        "student": "",
-        "supervisor": ""
+        "student": "Tags helfen dabei, passende Betreuer für dich zu finden. Du kannst bis zu 10 Tags auswählen.",
+        "supervisor": "Tags helfen dabei, dein Fachgebiet zu beschreiben. Du kannst bis zu 10 Tags auswählen."
       }
     },
     "next": "Weiter",
@@ -190,8 +196,8 @@
       }
     },
     "theme": {
-      "description": "App farbe wählen",
-      "title": "Farb Modus"
+      "description": "App Design auswählen",
+      "title": "Design"
     }
   },
   "statusBar": {
@@ -210,10 +216,10 @@
     "unknownTag": "Unknown Tag '{tagNumber}'"
   },
   "tagSelector": {
-    "label": "",
+    "label": "Wähle bis zu 10 Tags, die zu deinem Thema / Interessen passen",
     "placeholder": "Ausgewählte Tags...",
-    "search": "",
+    "search": "Tag suchen...",
     "tagCount": "{current}/{max}",
-    "title": ""
+    "title": "Wähle deine Tags aus"
   }
 }

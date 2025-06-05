@@ -84,7 +84,8 @@ const goBack = () => {
                 : '../images/appHeader_logo_light.svg'
             "
             alt="Logo image"
-            class="h-6"
+            class="h-6 cursor-pointer"
+            @click="router.push('/')"
           >
         </div>
       </ClientOnly>

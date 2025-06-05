@@ -13,7 +13,7 @@
 
       <div
           v-if="dashboardState === 1"
-          class="my-auto mx-auto max-w-7xl w-full p-12"
+          class="my-auto mx-auto max-w-7xl w-full py-8 px-6 flex flex-col gap-8"
       >
         <CustomMessage
             :message="t('onboarding.completed')"
@@ -29,7 +29,7 @@
             <h2 class="text-xl mx-4 py-8">
               {{ t("dashboard.student.findSupervisor") }}
             </h2>
-            <CardStack :amount="3">
+            <CardStack :amount="3" @click="navigate('/student/matching')">
               <SupervisorCard
                   :current-capacity="matches[0].availableSpots"
                   :description="matches[0].bio"

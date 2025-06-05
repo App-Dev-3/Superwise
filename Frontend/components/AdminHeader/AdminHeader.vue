@@ -45,7 +45,7 @@ const emit = defineEmits([ 'right-button-click' ]);
 
   <div
       :class="headerBG"
-      class="w-full flex items-center p-4 gap-4 z-10 border-b border-b-neutral-content"
+      class="w-full flex items-center p-4 gap-4 z-10 border-b border-b-base-300"
   >
     <CustomButton
         v-if="props.variant !== 'text'"

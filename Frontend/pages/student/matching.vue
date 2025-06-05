@@ -1,8 +1,6 @@
 <template>
-  <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="flex flex-col max-w-7xl w-full">
-      <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
-        <template v-if="!hasSupervisor">
+  <div class="flex flex-col size-full items-center px-6 py-8 gap-8">
+      <template v-if="!hasSupervisor">
           <SwipeContainer
               v-for="(supervisor, index) in recommendedSupervisors"
               :key="supervisor.supervisor_userId || index"
@@ -61,14 +59,12 @@
           </ActionCard>
           </div>
         </template>
-      </div>
-    </div>
     <Toast
         v-if="toast.visible"
+        :button-text="t('generic.undo')"
         :duration="3000"
         :message="toast.message"
         :type="toast.type"
-        button-text="Undo"
         @close="handleToastClosed"
         @button-click="handleToastUndoClick"
     />

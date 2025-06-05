@@ -78,6 +78,7 @@
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
+    "language": "Language",
     "logoAlt": "logo",
     "mail": "Mail",
     "profile": "Profile",
@@ -91,7 +92,9 @@
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",
-    "thesisDescription": "Thesis description"
+    "thesisDescription": "Thesis description",
+    "undo": "Undo"
+
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",

@@ -78,6 +78,7 @@
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
+    "language": "Sprache",
     "logoAlt": "Logo",
     "mail": "E-Mail",
     "profile": "Profil",
@@ -91,7 +92,8 @@
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
-    "thesisDescription": "Thesis-Beschreibung"
+    "thesisDescription": "Thesis-Beschreibung",
+    "undo": "rückgängig machen"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",

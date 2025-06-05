@@ -49,7 +49,7 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="navbar bg-base-100 shadow z-10 border-b border-neutral-content w-full">
+  <div class="navbar bg-base-100 shadow z-10 border-b border-base-300 w-full">
     <div class="navbar-start ps-3">
       <button
           v-if="props.showBack"

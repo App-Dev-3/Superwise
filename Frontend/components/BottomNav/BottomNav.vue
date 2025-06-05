@@ -33,7 +33,7 @@ const isActiveRoute = (route: string) => {
 </script>
 
 <template>
-  <div class="dock static !border-t-neutral-content !border-t">
+  <div class="dock static !border-t-base-300 !border-t">
     <button
         v-for="button in bottomNavButtons"
         :key="button.route"

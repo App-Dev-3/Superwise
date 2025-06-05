@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
 interface Option {
   key: string | number;
   value: string;
@@ -17,24 +19,36 @@ const props = withDefaults(defineProps<CustomSelectProps>(), {
 });
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string | number];
+  'update:modelValue': [ value: string | number ];
 }>();
 
-const handleSelect = (event: Event) => {
-  const rawValue = (event.target as HTMLSelectElement).value;
-  const option = props.options?.find(opt => String(opt.key) === rawValue);
-  const value = option && typeof option.key === 'number' ? Number(rawValue) : rawValue;
+const handleSelect = (selectedValue: string | number) => {
+  const option = props.options?.find(opt => String(opt.key) === selectedValue);
+  const value = option && typeof option.key === 'number' ? Number(selectedValue) : selectedValue;
   emit('update:modelValue', value);
 };
+
+const getPlaceholder = computed(() => {
+  return props.options.find((val) => val.key === props.modelValue)?.value || props.placeholder
+});
+
 </script>
 
 <template>
-  <select class="select" @change="handleSelect">
-    <option v-if="props.placeholder !== ''" disabled :selected="props.modelValue === ''" value="">{{ props.placeholder }}</option>
-    <option
-        v-for="option in props.options" :key="option.key" :selected="props.modelValue === option.key"
-        :value="option.key">
-      {{ option.value }}
-    </option>
-  </select>
+  <!-- change popover-1 and --anchor-1 names. Use unique names for each dropdown -->
+  <div class="dropdown dropdown-end">
+    <div
+        class="btn min-w-fit text-nowrap !py-0 px-2 max-h-fit !bg-base-100 border-base-content m-0" role="button"
+        tabindex="0">
+      {{ getPlaceholder }}
+      <FontAwesomeIcon
+          icon="caret-down"
+      />
+    </div>
+    <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm" tabindex="0">
+      <li v-for="option in props.options" :key="option.key" @click="handleSelect(option.key)">
+        <a> {{ props.modelValue === option.key ? '✅' : '' }} {{ option.value }}</a>
+      </li>
+    </ul>
+  </div>
 </template>

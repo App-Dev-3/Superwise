@@ -124,6 +124,9 @@ onMounted(async() => {
 });
 
 async function handleStepChange(step: number): Promise<void> {
+  if (step == 1 && registrationStore.status?.is_registered) {
+    multiStepFormRef.value.goToStep(2);
+  }
   if (
     step == 2 && 
     user.value?.primaryEmailAddress && 

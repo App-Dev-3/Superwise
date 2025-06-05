@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 interface Option {
   key: string | number;
@@ -11,17 +11,22 @@ interface CustomSelectProps {
   placeholder?: string;
   options?: Option[];
   modelValue?: string | number;
+  id?: string; // Allow custom ID to be passed
 }
 
 const props = withDefaults(defineProps<CustomSelectProps>(), {
   placeholder: '',
   options: () => [],
-  modelValue: ''
+  modelValue: '',
+  id: ''
 });
 
 const emit = defineEmits<{
   'update:modelValue': [ value: string | number ];
 }>();
+
+// Generate a unique ID for this dropdown instance
+const uniqueId = ref(props.id || `dropdown-${ Math.random().toString(36).substring(2, 9) }`);
 
 const handleSelect = (selectedValue: string | number) => {
   const option = props.options?.find(opt => String(opt.key) === selectedValue);
@@ -36,8 +41,8 @@ const getPlaceholder = computed(() => {
 </script>
 
 <template>
-  <!-- change popover-1 and --anchor-1 names. Use unique names for each dropdown -->
-  <div class="dropdown dropdown-end">
+  <!-- Each dropdown now has a unique identifier -->
+  <div :data-dropdown-id="uniqueId" class="dropdown dropdown-end">
     <div
         class="btn min-w-fit text-nowrap !py-0 px-2 max-h-fit !bg-base-100 border-base-content m-0" role="button"
         tabindex="0">

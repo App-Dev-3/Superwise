@@ -72,7 +72,6 @@ const goBack = () => {
           />
         </div>
 
-      <AppThemeToggle class="ml-5"/>
     </div>
 
     <ClientOnly>

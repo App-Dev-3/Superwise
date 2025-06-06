@@ -1,19 +1,10 @@
 <template>
-  <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AppHeader
-          :first-name="currentUser?.first_name"
-          :image="currentUser?.profile_image || ''"
-          :last-name="currentUser?.last_name"
-          :role="currentUser?.role"
-          show-search
-          show-user
-      />
-      <StatusBar :step="dashboardState" class="mt-4"/>
+  <div class="flex flex-col w-full">
+    <StatusBar :step="dashboardState" class="my-4"/>
 
       <div
           v-if="dashboardState === 1"
-          class="my-auto mx-auto max-w-7xl w-full py-8 px-6 flex flex-col gap-8"
+          class="w-full px-6 py-8 flex flex-col gap-8"
       >
         <CustomMessage
             :message="t('onboarding.completed')"
@@ -40,18 +31,18 @@
                   :similarity-score="
                   Math.round((matches[0].compatibilityScore as number) * 100)
                 "
-                  :tags="matches[0].tags"
-                  name="Hello name"
-                  size="sm"
-              />
-            </CardStack>
-          </div>
-        </ActionCard>
-      </div>
+                :tags="matches[0].tags"
+                name="Hello name"
+                size="sm"
+            />
+          </CardStack>
+        </div>
+      </ActionCard>
+    </div>
 
       <div
           v-if="dashboardState === 2"
-          class="my-auto mx-auto max-w-7xl w-full p-12 flex flex-col gap-8"
+          class="w-full px-6 py-8 flex flex-col gap-8"
       >
         <ActionCard
             :button-text="t('generic.showAll')"
@@ -86,85 +77,78 @@
         </ActionCard>
       </div>
 
-      <div
-          v-if="dashboardState === 3"
-          class="my-auto mx-auto max-w-7xl w-full p-12"
-      >
-        <ConfirmationExport
-            :accepted-date="acceptedSupervisionRequests[0].updated_at"
-            :canvas-id="
+    <div
+        v-if="dashboardState === 3"
+        class="my-auto mx-auto w-full p-12"
+    >
+      <ConfirmationExport
+          :accepted-date="acceptedSupervisionRequests[0].updated_at"
+          :canvas-id="
             'confirmation-canvas-' + acceptedSupervisionRequests[0].id
           "
-            :student-email="acceptedSupervisionRequests[0].student.user.email"
-            :student-name="
+          :student-email="acceptedSupervisionRequests[0].student.user.email"
+          :student-name="
             acceptedSupervisionRequests[0].student.user.first_name +
             ' ' +
             acceptedSupervisionRequests[0].student.user.last_name
           "
-            :supervisor-email="
+          :supervisor-email="
             acceptedSupervisionRequests[0].supervisor.user.email
           "
-            :supervisor-name="
+          :supervisor-name="
             acceptedSupervisionRequests[0].supervisor.user.first_name +
             ' ' +
             acceptedSupervisionRequests[0].supervisor.user.last_name
           "
-        />
+      />
 
-        <ConfirmationModal
-            :description="warning"
-            :linked-component-id="warningModalId"
-            confirm-button-color="warning"
-            confirm-button-text="OK"
-            headline="Warning - Multiple Supervisors"
-            hide-cancel-button
-            icon="triangle-exclamation"
-        />
+      <ConfirmationModal
+          :description="warning"
+          :linked-component-id="warningModalId"
+          confirm-button-color="warning"
+          confirm-button-text="OK"
+          headline="Warning - Multiple Supervisors"
+          hide-cancel-button
+          icon="triangle-exclamation"
+      />
 
-        <ActionCard
-            :button-text="t('dashboard.student.downloadConfirmation')"
-            card-type="primary"
-            @action-button-clicked="
+      <ActionCard
+          :button-text="t('dashboard.student.downloadConfirmation')"
+          card-type="primary"
+          @action-button-clicked="
             downloadImageFromCanvas(
               'confirmation-canvas-' + acceptedSupervisionRequests[0].id
             )
           "
-        >
-          <div class="h-96 flex">
-            <div class="flex flex-col w-full items-center justify-center p-3">
-              <Avatar
-                  :first-name="
+      >
+        <div class="h-96 flex">
+          <div class="flex flex-col w-full items-center justify-center p-3">
+            <Avatar
+                :first-name="
                   acceptedSupervisionRequests[0].supervisor.user.first_name
                 "
-                  :last-name="
+                :last-name="
                   acceptedSupervisionRequests[0].supervisor.user.last_name
                 "
-                  :src="
+                :src="
                   acceptedSupervisionRequests[0].supervisor.user.profile_image
                 "
-                  alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
-                  ring-color="success"
-                  shape="circle"
-                  size="xl"
-              />
-              <h2 class="text-xl mx-4 py-8 text-center">
-                {{ acceptedSupervisionRequests[0].supervisor.user.first_name }}
-                {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}
-                is your supervisor!
-              </h2>
-            </div>
+                alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
+                ring-color="success"
+                shape="circle"
+                size="xl"
+            />
+            <h2 class="text-xl mx-4 py-8 text-center">
+              {{ acceptedSupervisionRequests[0].supervisor.user.first_name }}
+              {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}
+              is your supervisor!
+            </h2>
           </div>
-        </ActionCard>
-      </div>
-
-      <div>
-        <BottomNav
-            :bottom-nav-buttons="bottomNavButtons"
-            @navigate="navigate"
-        />
-      </div>
+        </div>
+      </ActionCard>
     </div>
   </div>
+
 </template>
 
 <script lang="ts" setup>
@@ -177,23 +161,6 @@ import { useStudentStore } from "~/stores/useStudentStore";
 
 const { t } = useI18n();
 
-const bottomNavButtons = [
-  {
-    label: t("nav.dashboard"),
-    icon: "house",
-    route: "/student/dashboard",
-  },
-  {
-    label: t("nav.matching"),
-    icon: "user-group",
-    route: "/student/matching",
-  },
-  {
-    label: t("generic.requests"),
-    icon: "message",
-    route: "/student/requests",
-  },
-];
 const { getRecommendedSupervisors } = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
@@ -285,4 +252,7 @@ function navigate(route: string) {
   navigateTo(route);
 }
 
+definePageMeta({
+  layout: "student-base-layout",
+});
 </script>

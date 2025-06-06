@@ -1,5 +1,9 @@
 {
   "appHeader": {
+    "admin": {
+      "download": "Daten herunterladen",
+      "upload": "Daten Importieren"
+    },
     "back": "Zurück",
     "onboarding": {
       "name": "Willkommen bei SuperWise! Wie heißen Sie?",
@@ -18,6 +22,7 @@
   },
   "confirmed": {
     "confirmedOn": "Bestätigt am {date}",
+    "noStudents": "Du hast noch keine Studenten angenommen...",
     "supervising": "Sie betreuen {firstName}"
   },
   "dashboard": {
@@ -31,6 +36,7 @@
     },
     "supervisor": {
       "manageStudents": "Studenten Verwalten",
+      "noRequests": "Es gibt keine offenen Anfragen...",
       "slotsFilled": "Belegte Slots"
     }
   },
@@ -78,6 +84,7 @@
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
+    "language": "Sprache",
     "logoAlt": "Logo",
     "mail": "E-Mail",
     "profile": "Profil",
@@ -91,7 +98,8 @@
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
-    "thesisDescription": "Thesis-Beschreibung"
+    "thesisDescription": "Thesis-Beschreibung",
+    "undo": "rückgängig machen"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
@@ -99,9 +107,15 @@
   },
   "matching": {
     "existingSupervision": {
-      "headline": "Glückwunsch, du hast bereits einen Betreuer!",
-      "actionButton": "Zurück zum Dashboard"
-    }
+      "actionButton": "Zurück zum Dashboard",
+      "headline": "Glückwunsch, du hast bereits einen Betreuer!"
+    },
+    "noRequests": "Es gibt keine neuen Anfragen...",
+    "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
+    "supervisionRequest": "{name} will von dir betreut werden!"
+  },
+  "requests": {
+    "noRequests": "Du hast noch keine Anfragen gesendet..."
   },
   "modal": {
     "cancel": "Abbrechen",
@@ -130,8 +144,10 @@
   "nav": {
     "appTour": "App Tour",
     "confirmed": "Bestätigt",
+    "currentlySupervising": "Betreuende Studenten",
     "dashboard": "Dashboard",
     "dataProtection": "Datenschutz",
+    "defaultHeader": "SuperWise",
     "logout": "Abmelden",
     "matching": "Matching",
     "profile": "Profil",
@@ -148,7 +164,8 @@
     "maxSelection": "Maximale Auswahl",
     "name": {
       "title": "Gib deinen Namen ein"
-    }
+    },
+    "processing": "Daten werden verarbeitet, bitte warten..."
   },
   "profile": {
     "bio": "Biografie",
@@ -204,6 +221,9 @@
     "confirmed": "Bestätigt",
     "matching": "Matching",
     "onboarding": "Onboarding"
+  },
+  "supervisor": {
+    "noStudents": "Du Betreust zur zeit niemanden..."
   },
   "supervisorCard": {
     "capacity": "Kapazität",

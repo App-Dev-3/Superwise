@@ -1,5 +1,9 @@
 {
   "appHeader": {
+    "admin": {
+      "download": "Download Data",
+      "upload": "Upload Data"
+    },
     "back": "Back",
     "onboarding": {
       "name": "Welcome to SuperWise! What is your name?",
@@ -18,6 +22,7 @@
   },
   "confirmed": {
     "confirmedOn": "Confirmed on {date}",
+    "noStudents": "You have no students confirmed yet...",
     "supervising": "You are supervising {firstName}"
   },
   "dashboard": {
@@ -31,6 +36,7 @@
     },
     "supervisor": {
       "manageStudents": "Manage Students",
+      "noRequests": "There are no open requests...",
       "slotsFilled": "Slots filled"
     }
   },
@@ -78,6 +84,7 @@
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
+    "language": "Language",
     "logoAlt": "logo",
     "mail": "Mail",
     "profile": "Profile",
@@ -91,7 +98,8 @@
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",
-    "thesisDescription": "Thesis description"
+    "thesisDescription": "Thesis description",
+    "undo": "Undo"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
@@ -99,9 +107,15 @@
   },
   "matching": {
     "existingSupervision": {
-      "headline": "Congratulations, You already have a supervisor!",
-      "actionButton": "Go back to dashboard"
-    }
+      "actionButton": "Go back to dashboard",
+      "headline": "Congratulations, You already have a supervisor!"
+    },
+    "noRequests": "There are no new requests...",
+    "noSupervisors": "There are no (more) supervisors that fit your tags...",
+    "supervisionRequest": "{name} wants to be supervised by you!"
+  },
+  "requests": {
+    "noRequests": "You have not sent any requests yet...",
   },
   "modal": {
     "cancel": "Cancel",
@@ -130,8 +144,10 @@
   "nav": {
     "appTour": "App Tour",
     "confirmed": "Confirmed",
+    "currentlySupervising": "Currently Supervising",
     "dashboard": "Dashboard",
     "dataProtection": "Data Protection",
+    "defaultHeader": "SuperWise",
     "logout": "Logout",
     "matching": "Matching",
     "profile": "Profile",
@@ -146,10 +162,10 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "maxSelection": "Maximum selection",
-    "processing": "Processing information, please wait...",
     "name": {
       "title": "Enter your Name"
-    }
+    },
+    "processing": "Processing information, please wait..."
   },
   "profile": {
     "bio": "Bio",
@@ -205,6 +221,9 @@
     "confirmed": "Confirmed",
     "matching": "Matching",
     "onboarding": "Onboarding"
+  },
+  "supervisor": {
+    "noStudents": "You are currently not supervising anyone..."
   },
   "supervisorCard": {
     "capacity": "Capacity",

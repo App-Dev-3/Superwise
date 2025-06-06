@@ -1,88 +1,76 @@
 <template>
-  <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <div class="fixed top-0 z-10 left-0 right-0 ">
-        <!-- Is this the header thats supposed to be used??-->
-        <AdminHeader
-            header-text="Matching"
-            variant="default"
+  <div class="flex flex-col size-full items-center px-6 py-8 gap-8">
+    <template v-if="!hasSupervisor">
+      <SwipeContainer
+          v-for="(supervisor, index) in recommendedSupervisors"
+          :key="supervisor.supervisor_userId || index"
+          :ref="el => setItemRef(el, supervisor.supervisor_userId)"
+          class="mb-4"
+          @swipe-left="handleSwipeLeft(supervisor)"
+          @swipe-right="handleSwipeRight(supervisor)"
+      >
+        <SupervisorCard
+            :current-capacity="supervisor.availableSpots"
+            :description="supervisor.bio"
+            :first-name="supervisor.firstName"
+            :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
+            :last-name="supervisor.lastName"
+            :max-capacity="supervisor.totalSpots"
+            :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
+            :tags="supervisor.tags"
+            size="md"
+        />
+      </SwipeContainer>
+      <div
+          v-if="!recommendedSupervisors || recommendedSupervisors.length === 0"
+          class="size-full flex flex-col justify-center items-center"
+      >
+        <EmptyPagePlaceholder
+            :text="t('matching.noSupervisors')"
         />
       </div>
-      <div class="mt-36 mb-16 flex flex-col items-center justify-center w-full">
-        <template v-if="!hasSupervisor">
-          <SwipeContainer
-              v-for="(supervisor, index) in recommendedSupervisors"
-              :key="supervisor.supervisor_userId || index"
-              :ref="el => setItemRef(el, supervisor.supervisor_userId)"
-              class="mb-4"
-              @swipe-left="handleSwipeLeft(supervisor)"
-              @swipe-right="handleSwipeRight(supervisor)"
-          >
-            <SupervisorCard
-                :current-capacity="supervisor.availableSpots"
-                :description="supervisor.bio"
-                :first-name="supervisor.firstName"
-                :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
-                :last-name="supervisor.lastName"
-                :max-capacity="supervisor.totalSpots"
-                :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-                :tags="supervisor.tags"
-                size="md"
-            />
-          </SwipeContainer>
-        </template>
-        <template v-else>
-          <div class="my-auto mx-auto max-w-7xl w-full p-12 flex flex-col gap-8">
-            <ActionCard
-                :button-text="t('matching.existingSupervision.actionButton')"
-                :header-text="t('matching.existingSupervision.headline')"
-                card-type="primary"
-                @action-button-clicked="
+    </template>
+    <template v-else>
+      <ActionCard
+          :button-text="t('matching.existingSupervision.actionButton')"
+          :header-text="t('matching.existingSupervision.headline')"
+          card-type="primary"
+          @action-button-clicked="
                   navigate('/student/dashboard')
                 "
-            >
-              <div class="h-96 flex">
-              <div class="flex flex-col w-full items-center justify-center p-3">
-                <Avatar
-                  :first-name="
+      >
+        <div class="h-96 flex">
+          <div class="flex flex-col w-full items-center justify-center p-3">
+            <Avatar
+                :first-name="
                     acceptedSupervisionRequests?.supervisor.user.first_name || ''
                   "
-                  :last-name="
+                :last-name="
                     acceptedSupervisionRequests?.supervisor.user.last_name || ''
                   "
-                  :src="
+                :src="
                     acceptedSupervisionRequests?.supervisor.user.profile_image || ''
                   "
-                  alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
-                  ring-color="success"
-                  shape="circle"
-                  size="xl"
-                />
-                <h2 class="text-xl mx-4 py-8 text-center">
-                  {{ acceptedSupervisionRequests?.supervisor.user.first_name }}
-                  {{ acceptedSupervisionRequests?.supervisor.user.last_name }}
-                  is your supervisor!
-                </h2>
-              </div>
-            </div>
-          </ActionCard> 
+                alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
+                ring-color="success"
+                shape="circle"
+                size="xl"
+            />
+            <h2 class="text-xl mx-4 py-8 text-center">
+              {{ acceptedSupervisionRequests?.supervisor.user.first_name }}
+              {{ acceptedSupervisionRequests?.supervisor.user.last_name }}
+              is your supervisor!
+            </h2>
           </div>
-        </template>
-      </div>
-
-      <div class="">
-        <BottomNav
-            :bottom-nav-buttons="bottomNavButtons"
-            @navigate="navigate"
-        />
-      </div>
-    </div>
+        </div>
+      </ActionCard>
+    </template>
     <Toast
         v-if="toast.visible"
+        :button-text="t('generic.undo')"
         :duration="3000"
         :message="toast.message"
         :type="toast.type"
-        button-text="Undo"
         @close="handleToastClosed"
         @button-click="handleToastUndoClick"
     />
@@ -112,15 +100,10 @@ import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
 import type { ConfirmationDialogData, SupervisionRequestResponseData, } from "~/shared/types/userInterfaces"
 import { HttpMethods, supervisionRequestType } from "~/shared/enums/enums"
 import type { SwipeContainer } from '#components';
-import type {SupervisionRequestsData} from "#shared/types/supervisorInterfaces";
+import type { SupervisionRequestsData } from "#shared/types/supervisorInterfaces";
+import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
 const { t } = useI18n()
-
-const bottomNavButtons = [
-  { label: t('nav.dashboard'), icon: 'house', route: '/student/dashboard' },
-  { label: t('nav.matching'), icon: 'user-group', route: '/student/matching' },
-  { label: t('generic.requests'), icon: 'message', route: '/student/requests' }
-]
 
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
@@ -141,8 +124,8 @@ const hasSupervisor = computed(() => {
 });
 const acceptedSupervisionRequests = ref<SupervisionRequestsData | null>(null)
 
-onMounted(async()=> {
-  if (studentStore.acceptedSupervisionRequests[0] === undefined){
+onMounted(async () => {
+  if (studentStore.acceptedSupervisionRequests[0] === undefined) {
     await studentStore.fetchSupervisionRequests()
   }
   acceptedSupervisionRequests.value = studentStore.acceptedSupervisionRequests[0];
@@ -265,23 +248,23 @@ const handleActionResetSwipe = (supervisor: SupervisorData) => {
 };
 
 const handleModalDontShowAgain = (type: supervisionRequestType) => {
-    console.log("handleModalDontShowAgain called with type:", type);
-    switch (type) {
-        case supervisionRequestType.CONFIRM:
-            settingsStore.setSettings({
-                ...settingsStore.settings,
-                showSupervisionRequestModal: false
-            });
-            break;
-        case supervisionRequestType.DISMISS:
-            settingsStore.setSettings({
-                ...settingsStore.settings,
-                showDismissModal: false
-            });
-            break;
-        default:
-            console.warn("Unknown type for handleModalDontShowAgain:", type);
-    }
+  console.log("handleModalDontShowAgain called with type:", type);
+  switch (type) {
+    case supervisionRequestType.CONFIRM:
+      settingsStore.setSettings({
+        ...settingsStore.settings,
+        showSupervisionRequestModal: false
+      });
+      break;
+    case supervisionRequestType.DISMISS:
+      settingsStore.setSettings({
+        ...settingsStore.settings,
+        showDismissModal: false
+      });
+      break;
+    default:
+      console.warn("Unknown type for handleModalDontShowAgain:", type);
+  }
 };
 const openModal = async () => {
   await nextTick();
@@ -320,5 +303,10 @@ function navigate(route: string) {
 }
 
 const dummyRoute = ref("/");
+
+
+definePageMeta({
+  layout: "student-base-layout",
+});
 
 </script>

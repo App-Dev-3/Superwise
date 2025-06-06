@@ -1,6 +1,6 @@
 <template>
   <div
-      class="w-full h-screen flex flex-col justify-center items-center p-8 gap-4"
+      class="size-full flex flex-col justify-center items-center gap-4"
   >
     <ClientOnly>
       <img
@@ -13,7 +13,7 @@
     <div
         class="w-full pt-16 flex flex-col gap-4 justify-between h-full"
     >
-      <div class="text-x-small max-w-md self-center">
+      <div class="text-body max-w-md self-center">
         <i18n-t
             keypath="landing.dataCollection"
             tag="label"
@@ -42,7 +42,13 @@
 <script setup>
 import {useColorMode} from '#imports';
 
-const { t } = useI18n();
+const {t} = useI18n();
 
 const colorMode = useColorMode();
+
+
+definePageMeta({
+  layout: "landing-layout",
+});
+
 </script>

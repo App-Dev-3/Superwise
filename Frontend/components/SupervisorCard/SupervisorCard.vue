@@ -143,7 +143,8 @@ const descriptionClasses = computed(() => ({
 </script>
 
 <template>
-  <div :class="cardSizeClasses" class="card bg-base-100 shadow-lg">
+  <div
+      :class="cardSizeClasses" class="card bg-base-100 shadow-lg border border-base-300">
     <div class="card-body">
       <h2 class="card-title font-bold">
         <div class="mask mask-squircle">

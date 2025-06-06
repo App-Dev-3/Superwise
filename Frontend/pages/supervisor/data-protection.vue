@@ -24,64 +24,64 @@ const deleteData = () => {
   // Implement the logic to delete data
   console.log('Delete data button clicked');
 };
+
+definePageMeta({
+  layout: "generic-back-layout",
+});
 </script>
 
 <template>
-  <div class="h-screen flex flex-col">
-    <AdminHeader :header-text="t('nav.dataProtection')"/>
-
+  <div
+      class="p-8 flex flex-col gap-2"
+  >
     <div
-        class="px-6 py-8 flex flex-col gap-2 h-full overflow-y-auto"
+        v-for="content in pageContent"
+        :key="content"
+        :class="getStyle(content)"
     >
-      <div
-          v-for="content in pageContent"
-          :key="content"
-          :class="getStyle(content)"
+      <ul
+          v-if="content.match(/List(\.\d+)?$/)"
+          class="list-disc pl-5"
       >
-        <ul
-            v-if="content.match(/List(\.\d+)?$/)"
-            class="list-disc pl-5"
-        >
-          <li
-              v-for="(item, index) in t(
+        <li
+            v-for="(item, index) in t(
 							content,
 						).split('\n')"
-              :key="index"
-          >
-            {{ item }}
-          </li>
-        </ul>
+            :key="index"
+        >
+          {{ item }}
+        </li>
+      </ul>
 
-        <h2
-            v-else-if="
+      <h2
+          v-else-if="
 						content.match(
 							/Subtitle(\.\d+)?$/,
 						)
 					"
-            class="text-large"
-        >
-          {{ t(content) }}
-        </h2>
+          class="text-large"
+      >
+        {{ t(content) }}
+      </h2>
 
-        <h1
-            v-else-if="
+      <h1
+          v-else-if="
 						content.match(/Title(\.\d+)?$/)
 					"
-            class="text-header"
-        >
-          {{ t(content) }}
-        </h1>
+          class="text-header"
+      >
+        {{ t(content) }}
+      </h1>
 
-        <p v-else class="text-body">{{ t(content) }}</p>
-      </div>
-      <CustomButton
-          :text="t('dataProtection.generic.deleteMyData')"
-          block
-          class="py-8"
-          color="error"
-          left-icon="trash-can"
-          @click="deleteData"
-      />
+      <p v-else class="text-body">{{ t(content) }}</p>
     </div>
+    <CustomButton
+        :text="t('dataProtection.generic.deleteMyData')"
+        block
+        class="py-8"
+        color="error"
+        left-icon="trash-can"
+        @click="deleteData"
+    />
   </div>
 </template>

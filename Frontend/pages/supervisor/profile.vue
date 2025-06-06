@@ -1,10 +1,7 @@
 <template>
-  <div class="w-full h-screen flex flex-col justify-center items-center">
-    <AdminHeader
-        :header-text="t('profile.pageHeader')"
-    />
+  <div class="size-full flex flex-col justify-center items-center">
     <div
-        class="w-full h-full overflow-y-auto p-6 flex flex-col gap-4"
+        class="size-full overflow-y-auto p-6 flex flex-col gap-4"
     >
       <div class="w-full flex justify-center py-16 px-8">
         <PictureUpload
@@ -49,8 +46,8 @@
 
       <hr class="border-base-300 text-base-300">
 
-        <!--        TODO:MAKE TAGS EDITABLE-->
-        <div class="w-full flex justify-center flex-col p-4 gap-3">
+      <!--        TODO:MAKE TAGS EDITABLE-->
+      <div class="w-full flex justify-center flex-col p-4 gap-3">
         <div class="w-full flex flex-row flex-wrap gap-2 justify-center">
           <CustomTag
               v-for="tag in tags"
@@ -81,31 +78,29 @@
           class="w-full"
           name="bio"
           @keyup.ctrl.enter="handleSave"
-          />
-
-      <hr class="border-base-300 text-base-300">
+      />
     </div>
     <div
-        class="w-full flex justify-center p-4 border-t border-t-base-300 shadow"
+        v-if="userHasChanged || supervisorProfileHasChanged"
+        class="w-full h-fit flex justify-center p-4 border-t border-t-base-300"
     >
       <CustomButton
-          v-if="userHasChanged || supervisorProfileHasChanged"
+          :is-loading="buttonIsLoading"
           :text="t('generic.saveChanges')"
           color="primary"
           left-icon="check"
           size="lg"
-          :is-loading="buttonIsLoading"
           @click="handleSave"
       />
     </div>
-      <Toast
-          v-if="toastData.visible"
-          :type="toastData.type"
-          :message="toastData.message"
-          :duration="3000"
-          @button-click="toastData.visible = false"
-          @close="toastData.visible = false"
-      />
+    <Toast
+        v-if="toastData.visible"
+        :duration="3000"
+        :message="toastData.message"
+        :type="toastData.type"
+        @close="toastData.visible = false"
+        @button-click="toastData.visible = false"
+    />
   </div>
 </template>
 
@@ -156,49 +151,49 @@ const bio = ref(userStore.supervisorProfile?.bio || '');
 const buttonIsLoading = ref(false);
 
 const toastData = ref({
-    visible: false,
-    type: 'success',
-    message: ''
+  visible: false,
+  type: 'success',
+  message: ''
 });
 
 const updateProfileImage = (base64: string) => {
-    $fetch('/api/users/' + userStore.user?.id, {
-        method: HttpMethods.PATCH,
-        body: {
-            profile_image: base64,
-        },
-    }).then(() => {
+  $fetch('/api/users/' + userStore.user?.id, {
+    method: HttpMethods.PATCH,
+    body: {
+      profile_image: base64,
+    },
+  }).then(() => {
+    userStore.refetchCurrentUser();
+    imgSrc.value = base64;
+    toastData.value = {
+      visible: true,
+      type: 'success',
+      message: t('profile.imageUpdated'),
+    };
+  })
+      .catch((error) => {
+        console.error('Error updating profile image:', error);
         userStore.refetchCurrentUser();
-        imgSrc.value = base64;
         toastData.value = {
-            visible: true,
-            type: 'success',
-            message: t('profile.imageUpdated'),
+          visible: true,
+          type: 'error',
+          message: t('profile.errorSavingChanges'),
         };
-    })
-        .catch((error) => {
-            console.error('Error updating profile image:', error);
-            userStore.refetchCurrentUser();
-            toastData.value = {
-                visible: true,
-                type: 'error',
-                message: t('profile.errorSavingChanges'),
-            };
-        })
+      })
 };
 
 const userHasChanged = computed(() => {
-    if(!userStore.user) return false;
-    return (
-        firstName.value !== userStore.user?.first_name ||
-        lastName.value !== userStore.user?.last_name ||
-        imgSrc.value !== userStore.user?.profile_image
-    )
+  if (!userStore.user) return false;
+  return (
+      firstName.value !== userStore.user?.first_name ||
+      lastName.value !== userStore.user?.last_name ||
+      imgSrc.value !== userStore.user?.profile_image
+  )
 })
 
 const supervisorProfileHasChanged = computed(() => {
-    if(!userStore.supervisorProfile) return false;
-    return (bio.value !== userStore.supervisorProfile?.bio)
+  if (!userStore.supervisorProfile) return false;
+  return (bio.value !== userStore.supervisorProfile?.bio)
 })
 
 // TODO: implement the logic to navigate to edit tags and edit them
@@ -207,81 +202,81 @@ const navigateToEditTags = () => {
 };
 
 const handleSave = async () => {
-    if (!userHasChanged.value && !supervisorProfileHasChanged.value) return;
-    buttonIsLoading.value = true;
-    if (!userStore.user) {
-        await userStore.refetchCurrentUser();
-    }
-    if (!userStore.supervisorProfile) {
-        await userStore.fetchSupervisorProfile(
-            userStore.user?.id || '',
+  if (!userHasChanged.value && !supervisorProfileHasChanged.value) return;
+  buttonIsLoading.value = true;
+  if (!userStore.user) {
+    await userStore.refetchCurrentUser();
+  }
+  if (!userStore.supervisorProfile) {
+    await userStore.fetchSupervisorProfile(
+        userStore.user?.id || '',
     );
-    }
+  }
 
-    if (userHasChanged.value) {
+  if (userHasChanged.value) {
     try {
-        useFetch(
-            '/api/users/' + userStore.user?.id,
-            {
-                method: HttpMethods.PATCH,
-                body: {
-                    first_name: firstName.value,
-                    last_name: lastName.value,
-                    profile_image: imgSrc.value,
-                },
+      useFetch(
+          '/api/users/' + userStore.user?.id,
+          {
+            method: HttpMethods.PATCH,
+            body: {
+              first_name: firstName.value,
+              last_name: lastName.value,
+              profile_image: imgSrc.value,
             },
-        );
-        await userStore.refetchCurrentUser();
-        firstName.value = userStore.user?.first_name || '';
-        lastName.value = userStore.user?.last_name || '';
-        imgSrc.value = userStore.user?.profile_image || '';
-        toastData.value = {
-            visible: true,
-            type: 'success',
-            message: t('profile.changesSaved'),
-        };
+          },
+      );
+      await userStore.refetchCurrentUser();
+      firstName.value = userStore.user?.first_name || '';
+      lastName.value = userStore.user?.last_name || '';
+      imgSrc.value = userStore.user?.profile_image || '';
+      toastData.value = {
+        visible: true,
+        type: 'success',
+        message: t('profile.changesSaved'),
+      };
     } catch (error) {
-        await userStore.refetchCurrentUser();
-        console.error('Error updating profile:', error);
-        toastData.value = {
-            visible: true,
-            type: 'error',
-            message: t('profile.errorSavingChanges'),
-        };
+      await userStore.refetchCurrentUser();
+      console.error('Error updating profile:', error);
+      toastData.value = {
+        visible: true,
+        type: 'error',
+        message: t('profile.errorSavingChanges'),
+      };
     }
+  }
+  if (supervisorProfileHasChanged.value) {
+    try {
+      useFetch(
+          '/api/supervisors/' + userStore.supervisorProfile?.id,
+          {
+            method: HttpMethods.PATCH,
+            body: {
+              bio: bio.value,
+            },
+          },
+      );
+      await userStore.fetchSupervisorProfile(
+          userStore.user?.id || '',
+      );
+      toastData.value = {
+        visible: true,
+        type: 'success',
+        message: t('profile.changesSaved'),
+      };
+    } catch (error) {
+      await userStore.fetchSupervisorProfile(
+          userStore.user?.id || '',
+      );
+      console.error('Error updating supervisor profile:', error);
+      toastData.value = {
+        visible: true,
+        type: 'error',
+        message: t('profile.errorSavingChanges'),
+      };
     }
-    if (supervisorProfileHasChanged.value) {
-        try {
-            useFetch(
-                '/api/supervisors/' + userStore.supervisorProfile?.id,
-                {
-                    method: HttpMethods.PATCH,
-                    body: {
-                        bio: bio.value,
-                    },
-                },
-            );
-            await userStore.fetchSupervisorProfile(
-                userStore.user?.id || '',
-            );
-            toastData.value = {
-                visible: true,
-                type: 'success',
-                message: t('profile.changesSaved'),
-            };
-        } catch (error) {
-            await userStore.fetchSupervisorProfile(
-                userStore.user?.id || '',
-            );
-            console.error('Error updating supervisor profile:', error);
-            toastData.value = {
-                visible: true,
-                type: 'error',
-                message: t('profile.errorSavingChanges'),
-            };
-        }
-    }
-    buttonIsLoading.value = false;
+  }
+  buttonIsLoading.value = false;
 }
 
 
@@ -304,4 +299,9 @@ const { data } = useFetch<Array<unknown>>(
 watch(data, () => {
   tags.value = data.value || [];
 });
+
+definePageMeta({
+  layout: "generic-back-layout",
+});
+
 </script>

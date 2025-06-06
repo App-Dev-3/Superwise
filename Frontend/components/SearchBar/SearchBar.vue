@@ -48,7 +48,11 @@ const expandSearch = () => {
 };
 
 const clearSearch = () => {
-  searchQuery.value = '';
+    if (searchQuery.value) {
+    searchQuery.value = '';
+    } else {
+    isSearching.value = false;
+    }
 };
 
 function hasExactlyOneSpace(str) {

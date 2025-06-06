@@ -6,6 +6,7 @@ import { UpdateSupervisionRequestDto } from './dto/update-supervision-request.dt
 import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto';
 import { SupervisionRequestEntity } from './entities/supervision-request.entity';
 import { SupervisionRequestWithUsersEntity } from './entities/supervision-request-with-users.entity';
+import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { RequestState, User } from '@prisma/client';
 
@@ -134,5 +135,37 @@ export class SupervisionRequestsController {
       updateDto.request_state,
       currentUser,
     );
+  }
+
+  @Get('pending-count/:userId')
+  @ApiOperation({
+    summary: 'Get pending supervision request count for a user',
+    description:
+      'Returns the count of pending supervision requests for a specific user. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.',
+  })
+  @ApiParam({
+    name: 'userId',
+    description: 'ID of the user to get pending request count for',
+    type: String,
+    format: 'uuid',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the count of pending supervision requests',
+    type: PendingRequestCountEntity,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request - Invalid UUID or admin user requested',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
+  async getPendingRequestCountForUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<PendingRequestCountEntity> {
+    return this.supervisionRequestsService.countPendingRequestsForUser(userId);
   }
 }

@@ -57,7 +57,7 @@ const emit = defineEmits([ 'right-button-click' ]);
         @click="goBack()"
     />
 
-    <ClientOnly>
+    <ClientOnly v-else>
       <div class="navbar-center">
         <img
             :src="

@@ -1,5 +1,9 @@
 {
   "appHeader": {
+    "admin": {
+      "download": "Daten herunterladen",
+      "upload": "Daten Importieren"
+    },
     "back": "Zurück",
     "onboarding": {
       "name": "Willkommen bei SuperWise! Wie heißen Sie?",

@@ -18,14 +18,35 @@ const headerText = computed(() => {
     settings: t('nav.settings'),
     profile: t('profile.pageHeader'),
     'currently-supervising': t('nav.currentlySupervising'),
+    download: t('appHeader.admin.download'),
+    upload: t('appHeader.admin.upload'),
+    delete: t('appHeader.admin.delete'),
   }[currentPage] || t("nav.defaultHeader");
 })
+
+const getVariant = computed((): "default" | "upload" | "download" | "delete" | "text" | undefined => {
+  const breadCrumbs: string[] = route.path.substring(1).split('/');
+  const currentPage = breadCrumbs.pop() || '';
+  if (breadCrumbs[0].includes('admin')) {
+    const variant = {
+      download: 'download',
+      upload: 'upload',
+      delete: 'delete',
+    }[currentPage] as "download" | "upload" | "delete" | undefined;
+
+    return variant || 'default';
+  }
+  return 'default';
+});
 </script>
 
 <template>
 
   <div class="w-full h-screen flex max-w-xl m-auto flex-col">
-    <AdminHeader :header-text="headerText"/>
+    <AdminHeader
+        :header-text="headerText"
+        :variant="getVariant"
+    />
     <div class="size-full overflow-y-auto flex flex-col">
       <slot/>
     </div>

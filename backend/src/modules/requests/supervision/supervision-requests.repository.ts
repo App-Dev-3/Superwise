@@ -91,6 +91,25 @@ export class SupervisionRequestsRepository {
   }
 
   /**
+   * Count supervision requests with filtering options
+   */
+  async countRequests(params: {
+    request_state?: RequestState;
+    student_id?: string;
+    supervisor_id?: string;
+  }): Promise<number> {
+    const { request_state, student_id, supervisor_id } = params;
+
+    return this.prisma.supervisionRequest.count({
+      where: {
+        ...(request_state && { request_state }),
+        ...(student_id && { student_id }),
+        ...(supervisor_id && { supervisor_id }),
+      },
+    });
+  }
+
+  /**
    * Create or find a student by email
    * @param email Student email
    * @param tx Optional transaction client

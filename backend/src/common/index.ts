@@ -17,6 +17,7 @@ export * from './exceptions/custom-exceptions/request-already-exists.exception';
 export * from './exceptions/custom-exceptions/supervision-request-state-conflict.exception';
 export * from './exceptions/custom-exceptions/supervision-request-too-early.exception';
 export * from './exceptions/custom-exceptions/invalid-request-state-transition.exception';
+export * from './exceptions/custom-exceptions/admin-supervision-request.exception';
 
 // Validators
 export * from './validators/allowed-email-domains.validator';

@@ -92,6 +92,10 @@ export class SupervisionRequestsRepository {
 
   /**
    * Count supervision requests with filtering options
+   * @param request_state Optional request state filter
+   * @param student_id Optional student ID filter
+   * @param supervisor_id Optional supervisor ID filter
+   * @returns The total count of matching supervision requests
    */
   async countRequests(params: {
     request_state?: RequestState;

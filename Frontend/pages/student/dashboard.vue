@@ -161,23 +161,6 @@ import { useStudentStore } from "~/stores/useStudentStore";
 
 const { t } = useI18n();
 
-const bottomNavButtons = [
-  {
-    label: t("nav.dashboard"),
-    icon: "house",
-    route: "/student/dashboard",
-  },
-  {
-    label: t("nav.matching"),
-    icon: "user-group",
-    route: "/student/matching",
-  },
-  {
-    label: t("generic.requests"),
-    icon: "message",
-    route: "/student/requests",
-  },
-];
 const { getRecommendedSupervisors } = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();

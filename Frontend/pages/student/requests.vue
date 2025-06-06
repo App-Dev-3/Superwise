@@ -1,13 +1,6 @@
 <script lang="ts" setup>
 import { useStudentStore } from "~/stores/useStudentStore";
 
-const { t } = useI18n();
-
-const bottomNavButtons = [
-  { label: t('nav.dashboard'), icon: 'house', route: '/student/dashboard' },
-  { label: t('nav.matching'), icon: 'user-group', route: '/student/matching' },
-  { label: t('generic.requests'), icon: 'message', route: '/student/requests' }
-]
 const studentStore = useStudentStore();
 
 await callOnce(() => studentStore.fetchSupervisionRequests(), { mode: 'navigation' })
@@ -17,7 +10,6 @@ function navigate(route: string) {
   navigateTo(route);
 }
 
-
 definePageMeta({
   layout: "student-base-layout",
 });
@@ -26,7 +18,7 @@ definePageMeta({
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
     <div class="flex flex-col max-w-7xl w-full">
-      <div class="h-96 lg:h-128">
+      <div class="h-full">
         <div class="flex flex-col w-full items-center p-3 overflow-y-auto h-full">
           <div v-for="pendingRequest in pendingSupervisionRequests" :key="pendingRequest.id" class="mb-2 w-full">
             <MiniCard
@@ -37,6 +29,8 @@ definePageMeta({
                 :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
                 bottom-icon="tag"
                 top-icon="user-group"
+                class="cursor-pointer"
+                @click="navigate(`/profiles/${pendingRequest.supervisor.user_id}`)"
             />
           </div>
         </div>

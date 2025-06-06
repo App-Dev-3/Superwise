@@ -249,20 +249,7 @@ const showToastInformation = (type: string) => {
 };
 
 
-function navigate(route: string) {
-  dummyRoute.value = route;
-  navigateTo(route);
-}
-
 const { t } = useI18n();
-
-const bottomNavButtons = [
-  { label: t('nav.dashboard'), icon: 'house', route: '/supervisor/dashboard' },
-  { label: t('nav.matching'), icon: 'user-group', route: '/supervisor/matching' },
-  { label: t('nav.confirmed'), icon: 'message', route: '/supervisor/confirmed' }
-]
-
-const dummyRoute = ref("/");
 
 definePageMeta({
   layout: "supervisor-base-layout",

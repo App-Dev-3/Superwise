@@ -105,12 +105,6 @@ import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.
 
 const { t } = useI18n()
 
-const bottomNavButtons = [
-  { label: t('nav.dashboard'), icon: 'house', route: '/student/dashboard' },
-  { label: t('nav.matching'), icon: 'user-group', route: '/student/matching' },
-  { label: t('generic.requests'), icon: 'message', route: '/student/requests' }
-]
-
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
 const studentStore = useStudentStore();

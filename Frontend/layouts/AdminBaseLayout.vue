@@ -2,10 +2,7 @@
 
 import { ref } from "vue";
 import type { UserData } from "#shared/types/userInterfaces";
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
-const { t } = useI18n();
 
 const userStore = useUserStore();
 const currentUser = ref<UserData | null>(null);

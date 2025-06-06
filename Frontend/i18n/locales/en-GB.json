@@ -114,6 +114,9 @@
     "noSupervisors": "There are no (more) supervisors that fit your tags...",
     "supervisionRequest": "{name} wants to be supervised by you!"
   },
+  "requests": {
+    "noRequests": "You have not sent any requests yet...",
+  },
   "modal": {
     "cancel": "Cancel",
     "confirm": "Confirm",

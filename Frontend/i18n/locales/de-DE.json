@@ -114,6 +114,9 @@
     "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
     "supervisionRequest": "{name} will von dir betreut werden!"
   },
+  "requests": {
+    "noRequests": "Du hast noch keine Anfragen gesendet..."
+  },
   "modal": {
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useStudentStore } from "~/stores/useStudentStore";
+import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
+const { t } = useI18n();
 const studentStore = useStudentStore();
 
 await callOnce(() => studentStore.fetchSupervisionRequests(), { mode: 'navigation' })
@@ -17,7 +19,7 @@ definePageMeta({
 
 <template>
   <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="flex flex-col max-w-7xl w-full">
+    <div v-if="pendingSupervisionRequests.length" class="flex flex-col max-w-7xl w-full">
       <div class="h-full">
         <div class="flex flex-col w-full items-center p-3 overflow-y-auto h-full">
           <div v-for="pendingRequest in pendingSupervisionRequests" :key="pendingRequest.id" class="mb-2 w-full">
@@ -36,6 +38,11 @@ definePageMeta({
         </div>
       </div>
     </div>
+      <div v-else class="size-full flex flex-col justify-center items-center">
+          <EmptyPagePlaceholder
+              :text="t('requests.noRequests')"
+          />
+      </div>
   </div>
 </template>
 

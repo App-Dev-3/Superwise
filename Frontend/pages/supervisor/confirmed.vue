@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { supervisionRequestStatus } from '#shared/enums/enums';
+import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
 const acceptedSupervisionRequests = ref<Array<unknown>>([]);
 
@@ -18,49 +19,29 @@ watch(
     { immediate: true },
 );
 
-function navigate(route: string) {
-  navigateTo(route);
-}
 
 const { t } = useI18n();
 
-const bottomNavButtons = [
-  {
-    label: t('nav.dashboard'),
-    icon: 'house',
-    route: '/supervisor/dashboard',
-  },
-  {
-    label: t('nav.matching'),
-    icon: 'user-group',
-    route: '/supervisor/matching',
-  },
-  {
-    label: t('nav.confirmed'),
-    icon: 'message',
-    route: '/supervisor/confirmed',
-  },
-];
+definePageMeta({
+  layout: "supervisor-base-layout",
+});
 </script>
 
 <template>
-  <div class="flex flex-col items-center px-2 max-w-full">
-    <div class="min-h-screen flex flex-col max-w-7xl w-full">
-      <AppHeader :show-search="false"/>
+  <div
+      class="flex flex-col size-full p-6"
+  >
+    <div
+        v-if="acceptedSupervisionRequests.length"
+        class="flex flex-col items-center p-3 overflow-y-auto size-full"
+    >
       <div
-          v-if="acceptedSupervisionRequests.length"
-          class="h-96 lg:h-128"
+          v-for="acceptedRequest in acceptedSupervisionRequests"
+          :key="acceptedRequest.id"
+          class="mb-2 w-full"
       >
-        <div
-            class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
-        >
-          <div
-              v-for="acceptedRequest in acceptedSupervisionRequests"
-              :key="acceptedRequest.id"
-              class="mb-2 w-full"
-          >
-            <MiniCard
-                :bottom-text="
+        <MiniCard
+            :bottom-text="
 								t(
 									'confirmed.confirmedOn',
 									{
@@ -70,26 +51,26 @@ const bottomNavButtons = [
 									},
 								)
 							"
-                :first-name="
+            :first-name="
 								acceptedRequest
 									?.student
 									?.user
 									?.first_name
 							"
-                :image="
+            :image="
 								acceptedRequest
 									?.student
 									?.user
 									?.profile_image ??
 								''
 							"
-                :last-name="
+            :last-name="
 								acceptedRequest
 									?.student
 									?.user
 									?.last_name
 							"
-                :preview-text="
+            :preview-text="
 								t(
 									'confirmed.supervising',
 									{
@@ -100,18 +81,15 @@ const bottomNavButtons = [
 									},
 								)
 							"
-                bottom-icon="tag"
-                top-icon="user-group"
-            />
-          </div>
-        </div>
-      </div>
-      <div>
-        <BottomNav
-            :bottom-nav-buttons="bottomNavButtons"
-            @navigate="navigate"
+            bottom-icon="tag"
+            top-icon="user-group"
         />
       </div>
+    </div>
+    <div v-else class="size-full flex justify-center items-center gap-6">
+      <EmptyPagePlaceholder
+          :text="t('confirmed.noStudents')"
+      />
     </div>
   </div>
 </template>

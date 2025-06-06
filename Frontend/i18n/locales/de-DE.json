@@ -18,6 +18,7 @@
   },
   "confirmed": {
     "confirmedOn": "Bestätigt am {date}",
+    "noStudents": "Du hast noch keine Studenten angenommen...",
     "supervising": "Sie betreuen {firstName}"
   },
   "dashboard": {
@@ -101,8 +102,8 @@
   },
   "matching": {
     "existingSupervision": {
-      "headline": "Glückwunsch, du hast bereits einen Betreuer!",
-      "actionButton": "Zurück zum Dashboard"
+      "actionButton": "Zurück zum Dashboard",
+      "headline": "Glückwunsch, du hast bereits einen Betreuer!"
     }
   },
   "modal": {
@@ -134,6 +135,7 @@
     "confirmed": "Bestätigt",
     "dashboard": "Dashboard",
     "dataProtection": "Datenschutz",
+    "defaultHeader": "SuperWise",
     "logout": "Abmelden",
     "matching": "Matching",
     "profile": "Profil",
@@ -150,7 +152,8 @@
     "maxSelection": "Maximale Auswahl",
     "name": {
       "title": "Gib deinen Namen ein"
-    }
+    },
+    "processing": "Daten werden verarbeitet, bitte warten..."
   },
   "profile": {
     "bio": "Biografie",

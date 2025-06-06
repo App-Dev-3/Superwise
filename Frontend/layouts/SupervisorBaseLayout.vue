@@ -10,18 +10,18 @@ const { t } = useI18n();
 const bottomNavButtons = [
   {
     label: t("nav.dashboard"),
-    icon: "dashboard",
-    route: "/student/dashboard",
+    icon: "house",
+    route: "/supervisor/dashboard",
   },
   {
     label: t("nav.matching"),
     icon: "user-group",
-    route: "/student/matching",
+    route: "/supervisor/matching",
   },
   {
-    label: t("generic.requests"),
+    label: t("nav.confirmed"),
     icon: "message",
-    route: "/student/requests",
+    route: "/supervisor/confirmed",
   },
 ];
 
@@ -45,7 +45,7 @@ const headerText = computed(() => {
   return {
     dashboard: t("nav.dashboard"),
     matching: t("nav.matching"),
-    requests: t("generic.requests"),
+    confirmed: t("nav.confirmed"),
   }[currentPage] || t("nav.defaultHeader");
 })
 

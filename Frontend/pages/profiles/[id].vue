@@ -1,8 +1,5 @@
 <template>
-  <div class="w-full h-screen flex flex-col justify-center items-center">
-    <AdminHeader
-        :header-text="t('generic.profile')"
-    />
+  <div class="size-full flex flex-col justify-center items-center">
     <div v-if="pending" class="w-full h-full flex flex-col items-center gap-4 pt-6 px-4">
       <div class="skeleton h-24 w-24 shrink-0 rounded-full"/>
       <div class="skeleton h-4 w-20"/>
@@ -326,4 +323,8 @@ if (currentUser?.id) {
 // TODO: make these values dynamic
 const compatability = ref(75);
 const pendingRequests = ref(1);
+
+definePageMeta({
+  layout: "generic-back-layout",
+});
 </script>

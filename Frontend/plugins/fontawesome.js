@@ -11,6 +11,7 @@ import {
     faCloudArrowDown,
     faCloudArrowUp,
     faCopy,
+    faDashboard,
     faEdit,
     faEnvelope,
     faEye,
@@ -89,7 +90,8 @@ library.add(
     faStar,
     faGripLines,
     faCaretDown,
-    faCaretUp
+    faCaretUp,
+    faDashboard,
 );
 
 export default defineNuxtPlugin((nuxtApp) => {

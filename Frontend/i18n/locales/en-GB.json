@@ -18,6 +18,7 @@
   },
   "confirmed": {
     "confirmedOn": "Confirmed on {date}",
+    "noStudents": "You have no students confirmed yet...",
     "supervising": "You are supervising {firstName}"
   },
   "dashboard": {
@@ -94,7 +95,6 @@
     "supervisor": "Supervisor",
     "thesisDescription": "Thesis description",
     "undo": "Undo"
-
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",
@@ -102,8 +102,8 @@
   },
   "matching": {
     "existingSupervision": {
-      "headline": "Congratulations, You already have a supervisor!",
-      "actionButton": "Go back to dashboard"
+      "actionButton": "Go back to dashboard",
+      "headline": "Congratulations, You already have a supervisor!"
     }
   },
   "modal": {
@@ -135,6 +135,7 @@
     "confirmed": "Confirmed",
     "dashboard": "Dashboard",
     "dataProtection": "Data Protection",
+    "defaultHeader": "SuperWise",
     "logout": "Logout",
     "matching": "Matching",
     "profile": "Profile",
@@ -149,10 +150,10 @@
     "firstName": "First Name",
     "lastName": "Last Name",
     "maxSelection": "Maximum selection",
-    "processing": "Processing information, please wait...",
     "name": {
       "title": "Enter your Name"
-    }
+    },
+    "processing": "Processing information, please wait..."
   },
   "profile": {
     "bio": "Bio",

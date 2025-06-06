@@ -6,7 +6,7 @@ const route = useRoute();
 </script>
 
 <template>
-  <div class="w-full h-screen flex max-w-xl m-auto flex-col p-6">
+  <div class="w-full h-screen flex max-w-xl m-auto flex-col">
     <slot/>
   </div>
 </template>

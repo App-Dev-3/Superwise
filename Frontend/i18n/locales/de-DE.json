@@ -32,6 +32,7 @@
     },
     "supervisor": {
       "manageStudents": "Studenten Verwalten",
+      "noRequests": "Es gibt keine offenen Anfragen...",
       "slotsFilled": "Belegte Slots"
     }
   },
@@ -104,7 +105,10 @@
     "existingSupervision": {
       "actionButton": "Zurück zum Dashboard",
       "headline": "Glückwunsch, du hast bereits einen Betreuer!"
-    }
+    },
+    "noRequests": "Es gibt keine neuen Anfragen...",
+    "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
+    "supervisionRequest": "{name} will von dir betreut werden!"
   },
   "modal": {
     "cancel": "Abbrechen",
@@ -133,6 +137,7 @@
   "nav": {
     "appTour": "App Tour",
     "confirmed": "Bestätigt",
+    "currentlySupervising": "Betreuende Studenten",
     "dashboard": "Dashboard",
     "dataProtection": "Datenschutz",
     "defaultHeader": "SuperWise",
@@ -209,6 +214,9 @@
     "confirmed": "Bestätigt",
     "matching": "Matching",
     "onboarding": "Onboarding"
+  },
+  "supervisor": {
+    "noStudents": "Du Betreust zur zeit niemanden..."
   },
   "supervisorCard": {
     "capacity": "Kapazität",

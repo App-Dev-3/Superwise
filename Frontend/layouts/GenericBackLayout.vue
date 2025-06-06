@@ -17,6 +17,7 @@ const headerText = computed(() => {
     'data-protection': t('nav.dataProtection'),
     settings: t('nav.settings'),
     profile: t('profile.pageHeader'),
+    'currently-supervising': t('nav.currentlySupervising'),
   }[currentPage] || t("nav.defaultHeader");
 })
 </script>

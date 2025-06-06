@@ -32,6 +32,7 @@
     },
     "supervisor": {
       "manageStudents": "Manage Students",
+      "noRequests": "There are no open requests...",
       "slotsFilled": "Slots filled"
     }
   },
@@ -104,7 +105,10 @@
     "existingSupervision": {
       "actionButton": "Go back to dashboard",
       "headline": "Congratulations, You already have a supervisor!"
-    }
+    },
+    "noRequests": "There are no new requests...",
+    "noSupervisors": "There are no (more) supervisors that fit your tags...",
+    "supervisionRequest": "{name} wants to be supervised by you!"
   },
   "modal": {
     "cancel": "Cancel",
@@ -133,6 +137,7 @@
   "nav": {
     "appTour": "App Tour",
     "confirmed": "Confirmed",
+    "currentlySupervising": "Currently Supervising",
     "dashboard": "Dashboard",
     "dataProtection": "Data Protection",
     "defaultHeader": "SuperWise",
@@ -209,6 +214,9 @@
     "confirmed": "Confirmed",
     "matching": "Matching",
     "onboarding": "Onboarding"
+  },
+  "supervisor": {
+    "noStudents": "You are currently not supervising anyone..."
   },
   "supervisorCard": {
     "capacity": "Capacity",

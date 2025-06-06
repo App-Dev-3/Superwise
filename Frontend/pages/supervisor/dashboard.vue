@@ -5,6 +5,7 @@ import type { UserData } from "#shared/types/userInterfaces";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
 const { user } = useUser();
 const { getUserByEmail } = useUserApi();
@@ -102,6 +103,14 @@ definePageMeta({
           :preview-text="request.student.thesis_description"
           top-icon="message"
       />
+      <div
+          v-if="!visibleRequests || visibleRequests.length === 0"
+          class="size-full flex flex-col justify-center items-center"
+      >
+        <EmptyPagePlaceholder
+            :text="t('dashboard.supervisor.noRequests')"
+        />
+      </div>
     </ActionCard>
   </div>
 </template>

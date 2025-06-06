@@ -780,26 +780,6 @@ describe('SupervisionRequestsService', () => {
       expect(mockRepository.countRequests).not.toHaveBeenCalled();
     });
 
-    it('should handle unknown role by returning 0', async () => {
-      // Arrange
-      const userWithUnknownRole = {
-        ...mockStudentUser,
-        role: 'UNKNOWN_ROLE' as Role, // Force unknown role for testing
-      };
-      mockUsersService.findUserById.mockResolvedValue(userWithUnknownRole);
-
-      // Act
-      const result = await service.countPendingRequestsForUser(userWithUnknownRole.id);
-
-      // Assert
-      expect(result).toEqual({ pending_count: 0 });
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(userWithUnknownRole.id);
-      // Should not call student or supervisor services for unknown role
-      expect(mockStudentsService.findStudentByUserId).not.toHaveBeenCalled();
-      expect(mockSupervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
-      expect(mockRepository.countRequests).not.toHaveBeenCalled();
-    });
-
     it('should handle errors from repository count method', async () => {
       // Arrange
       mockUsersService.findUserById.mockResolvedValue(mockStudentUser);

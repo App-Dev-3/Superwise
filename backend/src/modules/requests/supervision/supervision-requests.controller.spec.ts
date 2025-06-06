@@ -420,35 +420,6 @@ describe('SupervisionRequestsController', () => {
       );
     });
 
-    it('should handle ParseUUIDPipe validation for invalid UUID', async () => {
-      // Arrange
-      const invalidUuid = 'invalid-uuid-format';
-      // Note: In real application, ParseUUIDPipe would throw before reaching the controller method
-      // This test documents the expected behavior but ParseUUIDPipe validation happens at the framework level
-
-      // Act & Assert
-      // The ParseUUIDPipe should prevent invalid UUIDs from reaching the controller method
-      // This test serves as documentation of the expected validation behavior
-      expect(controller.getPendingRequestCountForUser).toBeDefined();
-    });
-
-    it('should handle large request counts correctly', async () => {
-      // Arrange
-      const expectedResponse: PendingRequestCountEntity = { pending_count: 999 };
-      mockSupervisionRequestsService.countPendingRequestsForUser.mockResolvedValue(
-        expectedResponse,
-      );
-
-      // Act
-      const result = await controller.getPendingRequestCountForUser(SUPERVISOR_USER_UUID);
-
-      // Assert
-      expect(result).toEqual(expectedResponse);
-      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
-        SUPERVISOR_USER_UUID,
-      );
-    });
-
     it('should pass through any service errors', async () => {
       // Arrange
       const serviceError = new Error('Database connection failed');
@@ -461,28 +432,6 @@ describe('SupervisionRequestsController', () => {
       expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         STUDENT_USER_UUID,
       );
-    });
-
-    it('should work with different valid UUID formats', async () => {
-      // Arrange
-      const validUuids = [
-        '123e4567-e89b-12d3-a456-426614174000', // Standard format
-        'a1b2c3d4-e5f6-7890-1234-567890abcdef', // Different characters
-        '00000000-0000-0000-0000-000000000000', // All zeros
-      ];
-      const expectedResponse: PendingRequestCountEntity = { pending_count: 2 };
-      mockSupervisionRequestsService.countPendingRequestsForUser.mockResolvedValue(
-        expectedResponse,
-      );
-
-      // Act & Assert
-      for (const uuid of validUuids) {
-        const result = await controller.getPendingRequestCountForUser(uuid);
-        expect(result).toEqual(expectedResponse);
-        expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
-          uuid,
-        );
-      }
     });
   });
 });

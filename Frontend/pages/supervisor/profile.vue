@@ -104,12 +104,14 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import PictureUpload from '~/components/Profile/PictureUpload.vue';
 import CustomButton from '~/components/CustomButton/CustomButton.vue';
 import TextArea from '~/components/inputField/TextArea.vue';
 import { HttpMethods } from '#shared/enums/enums';
 
 const { t } = useI18n();
+const router = useRouter();
 
 const userStore = useUserStore();
 if (!userStore.user) {
@@ -195,7 +197,7 @@ const supervisorProfileHasChanged = computed(() => {
 })
 
 const navigateToEditTags = () => {
-  navigateTo('/supervisor/edit-tags');
+  router.replace('/supervisor/edit-tags');
 };
 
 const handleSave = async () => {

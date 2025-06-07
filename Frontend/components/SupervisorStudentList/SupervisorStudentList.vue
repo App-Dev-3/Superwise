@@ -170,16 +170,10 @@ watch(
             :last-name="student.lastName"
             @click="removeStudent(student.id)"
         />
-
-
-        <div
-            v-if="!students || students.length === 0"
-            class="size-full flex flex-col justify-center items-center"
-        >
-          <EmptyPagePlaceholder
-              :text="t('supervisor.noStudents')"
-          />
-        </div>
+        <EmptyPagePlaceholder
+            :render-condition="students"
+            :text="t('supervisor.noStudents')"
+        />
       </div>
 
       <div v-if="isEditing" class="flex flex-row gap-3 w-full">

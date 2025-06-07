@@ -103,14 +103,10 @@ definePageMeta({
           :preview-text="request.student.thesis_description"
           top-icon="message"
       />
-      <div
-          v-if="!visibleRequests || visibleRequests.length === 0"
-          class="size-full flex flex-col justify-center items-center"
-      >
-        <EmptyPagePlaceholder
-            :text="t('dashboard.supervisor.noRequests')"
-        />
-      </div>
+      <EmptyPagePlaceholder
+          :render-condition="visibleRequests"
+          :text="t('dashboard.supervisor.noRequests')"
+      />
     </ActionCard>
   </div>
 </template>

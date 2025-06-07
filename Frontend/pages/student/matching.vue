@@ -21,14 +21,10 @@
             size="md"
         />
       </SwipeContainer>
-      <div
-          v-if="!recommendedSupervisors || recommendedSupervisors.length === 0"
-          class="size-full flex flex-col justify-center items-center"
-      >
-        <EmptyPagePlaceholder
-            :text="t('matching.noSupervisors')"
-        />
-      </div>
+      <EmptyPagePlaceholder
+          :render-condition="recommendedSupervisors"
+          :text="t('matching.noSupervisors')"
+      />
     </template>
     <template v-else>
       <ActionCard

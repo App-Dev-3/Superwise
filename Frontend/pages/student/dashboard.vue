@@ -2,33 +2,33 @@
   <div class="flex flex-col w-full">
     <StatusBar :step="dashboardState" class="my-4"/>
 
-      <div
-          v-if="dashboardState === 1"
-          class="w-full px-6 py-8 flex flex-col gap-8"
+    <div
+        v-if="dashboardState === 1"
+        class="w-full px-6 py-8 flex flex-col gap-8"
+    >
+      <CustomMessage
+          :message="t('onboarding.completed')"
+          type="success"
+      />
+      <ActionCard
+          v-if="matches.length"
+          :button-text="t('dashboard.student.startMatching')"
+          card-type="primary"
+          @action-button-clicked="navigate('/student/matching')"
       >
-        <CustomMessage
-            :message="t('onboarding.completed')"
-            type="success"
-        />
-        <ActionCard
-            v-if="matches.length"
-            :button-text="t('dashboard.student.startMatching')"
-            card-type="primary"
-            @action-button-clicked="navigate('/student/matching')"
-        >
-          <div class="flex flex-col w-full items-center p-3">
-            <h2 class="text-xl mx-4 py-8">
-              {{ t("dashboard.student.findSupervisor") }}
-            </h2>
-            <CardStack :amount="3" @click="navigate('/student/matching')">
-              <SupervisorCard
-                  :current-capacity="matches[0].availableSpots"
-                  :description="matches[0].bio"
-                  :first-name="matches[0].firstName || ''"
-                  :image="matches[0].profileImage"
-                  :last-name="matches[0].lastName || ''"
-                  :max-capacity="matches[0].totalSpots"
-                  :similarity-score="
+        <div class="flex flex-col w-full items-center p-3">
+          <h2 class="text-xl mx-4 py-8">
+            {{ t("dashboard.student.findSupervisor") }}
+          </h2>
+          <CardStack :amount="3" @click="navigate('/student/matching')">
+            <SupervisorCard
+                :current-capacity="matches[0].availableSpots"
+                :description="matches[0].bio"
+                :first-name="matches[0].firstName || ''"
+                :image="matches[0].profileImage"
+                :last-name="matches[0].lastName || ''"
+                :max-capacity="matches[0].totalSpots"
+                :similarity-score="
                   Math.round((matches[0].compatibilityScore as number) * 100)
                 "
                 :tags="matches[0].tags"
@@ -40,42 +40,44 @@
       </ActionCard>
     </div>
 
-      <div
-          v-if="dashboardState === 2"
-          class="w-full px-6 py-8 flex flex-col gap-8"
+    <div
+        v-if="dashboardState === 2"
+        class="w-full px-6 py-8 flex flex-col gap-8"
+    >
+      <ActionCard
+          :button-text="t('generic.showAll')"
+          :header-text="t('dashboard.student.yourRequests')"
+          card-type="ghost"
+          @action-button-clicked="navigate('/student/requests')"
       >
-        <ActionCard
-            :button-text="t('generic.showAll')"
-            :header-text="t('dashboard.student.yourRequests')"
-            card-type="ghost"
-            @action-button-clicked="navigate('/student/requests')"
+        <div
+            class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
         >
-          <div class="h-96 lg:h-128">
-            <div
-                class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
-            >
-              <div
-                  v-for="pendingRequest in pendingSupervisionRequests"
-                  :key="pendingRequest.id"
-                  class="mb-2 w-full"
-              >
-                <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
-                  <MiniCard
-                      :bottom-text="
+          <div
+              v-for="pendingRequest in pendingSupervisionRequests"
+              :key="pendingRequest.id"
+              class="mb-2 w-full"
+          >
+            <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
+              <MiniCard
+                  :bottom-text="
                         new Date(pendingRequest.updated_at).toLocaleDateString()
                       "
-                      :first-name="pendingRequest.supervisor.user.first_name"
-                      :image="pendingRequest.supervisor.user.profile_image"
-                      :last-name="pendingRequest.supervisor.user.last_name"
-                      :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-                      top-icon="user-group"
-                  />
-                </NuxtLink>
-              </div>
-            </div>
+                  :first-name="pendingRequest.supervisor.user.first_name"
+                  :image="pendingRequest.supervisor.user.profile_image"
+                  :last-name="pendingRequest.supervisor.user.last_name"
+                  :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
+                  top-icon="user-group"
+              />
+            </NuxtLink>
           </div>
-        </ActionCard>
-      </div>
+          <EmptyPagePlaceholder
+              :render-condition="pendingSupervisionRequests"
+              :text="t('dashboard.student.noRequests')"
+          />
+        </div>
+      </ActionCard>
+    </div>
 
     <div
         v-if="dashboardState === 3"
@@ -158,6 +160,7 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { UserData } from "#shared/types/userInterfaces";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useStudentStore } from "~/stores/useStudentStore";
+import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
 const { t } = useI18n();
 

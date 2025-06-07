@@ -86,10 +86,9 @@ definePageMeta({
         />
       </div>
     </div>
-    <div v-else class="size-full flex justify-center items-center gap-6">
-      <EmptyPagePlaceholder
-          :text="t('confirmed.noStudents')"
-      />
-    </div>
+    <EmptyPagePlaceholder
+        v-else
+        :text="t('confirmed.noStudents')"
+    />
   </div>
 </template>

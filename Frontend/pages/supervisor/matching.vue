@@ -20,14 +20,11 @@
       />
     </SwipeContainer>
 
-    <div
-        v-if="!sortedRequests || sortedRequests.length === 0"
-        class="size-full flex flex-col justify-center items-center"
-    >
-      <EmptyPagePlaceholder
-          :text="t('matching.noRequests')"
-      />
-    </div>
+
+    <EmptyPagePlaceholder
+        :render-condition="sortedRequests"
+        :text="t('matching.noRequests')"
+    />
 
     <Toast
         v-if="toast.visible"

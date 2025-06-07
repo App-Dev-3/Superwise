@@ -30,6 +30,7 @@
       "downloadConfirmation": "Bestätigung herunterladen",
       "findSupervisor": "Finde jetzt deinen Betreuer!",
       "multipleAcceptedWarning": "Du hast {count} Betreuungsanfragen akzeptiert, benötigst aber nur einen Betreuer. Bitte sprich mit {supervisors} und löse den Konflikt.",
+      "noRequests": "Du hast keine offenen Anfragen...",
       "startMatching": "Beginne zu Matchen!",
       "suggestedMatches": "Vorgeschlagene Matches",
       "yourRequests": "Deine Anfragen"

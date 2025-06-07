@@ -30,6 +30,7 @@
       "downloadConfirmation": "Download Confirmation",
       "findSupervisor": "Find your supervisor now!",
       "multipleAcceptedWarning": "You accepted {count} supervision requests, but you only need one supervisor. Please talk to {supervisors} and resolve the conflict.",
+      "noRequests": "You have no open requests...",
       "startMatching": "Start Matching!",
       "suggestedMatches": "Suggested Matches",
       "yourRequests": "Your Requests"

@@ -65,8 +65,6 @@ import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.
 
 const supervisorStore = useSupervisorStore();
 const settingsStore = useSettingsStore();
-
-
 const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
 const modalInformation = ref<ConfirmationDialogData | null>(null)
 const currentActionRequest = ref<SupervisionRequestsData | null>(null);
@@ -75,6 +73,14 @@ const toast = ref({
   type: "success",
   message: "This is a toast message",
 });
+
+onUnmounted(async() => {
+  if (toast.value.visible) {
+    await handleToastClosed();
+    window.location.reload(); // manually reload the page to ensure the dashboard state is updated
+  }
+});
+
 
 if (!supervisorStore.supervisionRequests || !supervisorStore.supervisionRequests.length) {
   const { data, error } = await useFetch<SupervisionRequestsData[]>('/api/supervision-requests', {
@@ -98,10 +104,10 @@ const sortedRequests = computed(() => {
 });
 console.log('Supervisor Store:', sortedRequests.value);
 
-const handleSwipeRight = (request: SupervisionRequestsData) => {
+const handleSwipeRight = async (request: SupervisionRequestsData) => {
   // quickest solution in the wild west for the bug where spamming the slider wont send old requests
-  if (toast.value.visible) {
-    handleToastClosed();
+  if (toast.value.visible && modalInformation.value) {
+    await handleToastClosed();
   }
   currentActionRequest.value = request;
   modalInformation.value = {
@@ -123,10 +129,10 @@ const handleSwipeRight = (request: SupervisionRequestsData) => {
   }
 };
 
-const handleSwipeLeft = (request: SupervisionRequestsData) => {
+const handleSwipeLeft = async (request: SupervisionRequestsData) => {
   // quickest solution in the wild west for the bug where spamming the slider wont send old requests
-  if (toast.value.visible) {
-    handleToastClosed();
+  if (toast.value.visible && modalInformation.value) {
+    await handleToastClosed();
   }
   currentActionRequest.value = request;
   modalInformation.value = {

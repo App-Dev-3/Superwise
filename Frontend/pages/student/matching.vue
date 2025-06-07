@@ -131,6 +131,13 @@ onMounted(async () => {
   acceptedSupervisionRequests.value = studentStore.acceptedSupervisionRequests[0];
 });
 
+onUnmounted(async() => {
+  if (toast.value.visible) {
+    await handleToastClosed();
+    window.location.reload(); // manually reload the page to ensure the dashboard state is updated
+  }
+});
+
 if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
   const { data, error } = await useFetch(`/api/match/${ userStore.user?.id }`, {
     method: HttpMethods.GET,
@@ -150,10 +157,10 @@ const recommendedSupervisors = computed(() => {
       })
 });
 
-const handleSwipeRight = (supervisor: SupervisorData) => {
+const handleSwipeRight = async(supervisor: SupervisorData) => {
   // quickest solution in the wild west for the bug where spamming the slider wont send old requests
-  if (toast.value.visible) {
-    handleToastClosed();
+  if (toast.value.visible && modalInformation.value) {
+    await handleToastClosed();
   }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
@@ -176,8 +183,8 @@ const handleSwipeRight = (supervisor: SupervisorData) => {
 };
 
 const handleSwipeLeft = async (supervisor: SupervisorData) => {
-  if (toast.value.visible) {
-    handleToastClosed();
+  if (toast.value.visible && modalInformation.value) {
+    await handleToastClosed();
   }
   removedSupervisor.value = supervisor;
   modalInformation.value = {
@@ -215,7 +222,6 @@ const handleToastUndoClick = async () => {
  * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
  */
 const handleToastClosed = () => {
-  console.log('closing toast for: ', modalInformation.value?.supervisor?.firstName);
   toast.value.visible = false;
   if (modalInformation.value?.supervisor) {
     handleActionConfirmation(modalInformation.value.supervisor);

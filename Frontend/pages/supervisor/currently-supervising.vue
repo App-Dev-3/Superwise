@@ -6,7 +6,9 @@ import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 import type { UserData } from "~/shared/types/userInterfaces";
 import { supervisionRequestStatus } from "#shared/enums/enums";
 
-const { user } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { user } = storeToRefs(authStore)
 const userStore = useUserStore();
 const { getSupervisorByUserId } = useSupervisorApi();
 const { getUserByEmail } = useUserApi();

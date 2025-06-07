@@ -1,9 +1,10 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { until } from "@vueuse/core";
 import { onMounted } from "vue";
 
-
-const { isLoaded, user } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { user, isLoaded } = storeToRefs(authStore)
 const registrationStore = useRegistrationStore();
 
 onMounted(async () => {
@@ -14,8 +15,10 @@ onMounted(async () => {
   let role = "student"; // default to student
   if (!userEmail) return;
   try {
-    await registrationStore.fetchRegistrationStatus(userEmail)
-    if (registrationStore.status?.exists) {
+      if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+          await registrationStore.fetchRegistrationStatus(userEmail)
+      }
+    if (registrationStore.status?.exists){
       role = determineRole(registrationStore.status?.exists)
     }
   } catch (error) {

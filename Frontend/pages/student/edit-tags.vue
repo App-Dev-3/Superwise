@@ -50,13 +50,14 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useUser } from '@clerk/nuxt/composables';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
 import { HttpMethods } from "#shared/enums/enums";
 
 const { t } = useI18n();
-
+const router = useRouter();
 
 const { user } = useUser();
 const { createUser, addUserTag } = useUserApi();
@@ -136,7 +137,7 @@ const handleSubmit = async () => {
       tags: tags.value as tagData[],
   });
   processingData.value = false;
-  navigateTo('/student/profile');
+  router.replace('/student/profile');
 };
 
 

@@ -104,6 +104,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import PictureUpload from '~/components/Profile/PictureUpload.vue';
 import CustomButton from '~/components/CustomButton/CustomButton.vue';
 import TextArea from '~/components/inputField/TextArea.vue';
@@ -113,6 +114,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const userStore = useUserStore();
+const router = useRouter();
 if (!userStore.user) {
   userStore
       .refetchCurrentUser()
@@ -228,7 +230,7 @@ const studentProfileHasChanged = computed(() => {
 });
 
 const navigateToEditTags = () => {
-  navigateTo('/student/edit-tags');
+  router.replace('/student/edit-tags');
 };
 
 const handleSave = async () => {

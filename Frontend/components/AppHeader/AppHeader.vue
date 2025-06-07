@@ -1,103 +1,87 @@
-<script setup>
-import {useRouter} from "vue-router";
-import {useColorMode} from "#imports";
-import {useI18n} from "vue-i18n";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+<script lang="ts" setup>
+import { useRouter } from "vue-router";
+import { useColorMode } from "#imports";
+import { useI18n } from "vue-i18n";
 
-const {t} = useI18n();
+const { t } = useI18n();
 const router = useRouter();
 const colorMode = useColorMode();
 
-const props = defineProps({
-  showBack: {
-    type: Boolean,
-    default: false,
-  },
-  showUser: {
-    type: Boolean,
-    default: false,
-  },
-  showSearch: {
-    type: Boolean,
-    default: false,
-  },
-  modelValue: {
-    type: String,
-    default: "",
-  },
-  image: {
-    type: String,
-    required: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
+interface AppHeaderProps {
+  showBack?: boolean;
+  showUser?: boolean;
+  showSearch?: boolean;
+  modelValue?: string;
+  image: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+}
+
+const props = withDefaults(defineProps<AppHeaderProps>(), {
+  showBack: false,
+  showUser: false,
+  showSearch: false,
+  modelValue: "",
 });
 
 const goBack = () => {
   router.back();
 };
+
 </script>
 
 <template>
-  <div class="navbar bg-base-100 shadow z-10 border-b border-base-300 w-full">
-    <div class="navbar-start ps-3">
-      <button
-          v-if="props.showBack"
-          class="btn btn-ghost btn-circle"
-          data-test="back-button"
-          @click="goBack"
-      >
-        <FontAwesomeIcon class="text-xl" icon="arrow-left"/>
-        <span class="text-sm font-medium opacity-50">{{
-            t("appHeader.back")
-          }}</span>
-      </button>
+  <div class="flex w-full h-fit py-3 px-8 justify-between items-center border-b border-b-base-300">
+    <!-- THIS IS UNUSED -->
+    <CustomButton
+        v-if="props.showBack"
+        class="btn btn-ghost btn-circle"
+        data-test="back-button"
+        icon="arrow-left"
+        @click="goBack"
+    />
 
-      <div v-if="props.showUser">
-        <SideDrawer
-            :first-name="props.firstName"
-            :image="props.image"
-            :last-name="props.lastName"
-            :role="props.role || ''"
-          />
-        </div>
+    <SideDrawer
+        v-if="props.showUser"
+        :first-name="props.firstName"
+        :image="props.image"
+        :last-name="props.lastName"
+        :role="props.role || ''"
+        class="w-fit"
+    />
 
-    </div>
 
-    <ClientOnly>
-      <div class="navbar-center">
-        <img
-            :src="
+    <ClientOnly v-if="!props.modelValue">
+      <img
+          :src="
               colorMode.value === 'dark'
                 ? '../images/appHeader_logo_dark.svg'
                 : '../images/appHeader_logo_light.svg'
             "
-            alt="Logo image"
-            class="h-6"
-            @click="router.push('/')"
-        >
-      </div>
+          alt="Logo image"
+          class="h-6"
+      >
     </ClientOnly>
 
-    <div class="navbar-end">
-      <SearchBar
-          v-if="props.showSearch"
-          :model-value="props.modelValue"
-          :placeholder="t('appHeader.searchPlaceholder')"
-          right-icon="xmark"
-          search-for="supervisors"
-      />
+    <div
+        v-else
+        class="w-full flex justify-start items-center"
+    >
+      <h1 class="text-header">
+        {{ props.modelValue }}
+      </h1>
     </div>
+
+    <CustomButton
+        v-if="props.showSearch"
+        class="w-10"
+        color="default"
+        right-icon="fa-magnifying-glass"
+        text=""
+        variant="ghost"
+        @click="router.push('/student/search')"
+    />
   </div>
 </template>
 

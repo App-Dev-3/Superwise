@@ -64,7 +64,7 @@ describe("AppHeader.vue", () => {
             props: {showSearch: true, image: '', firstName: '', lastName: ''},
             global: globalConfig
         });
-        expect(wrapper.findComponent(SearchBarStub).exists()).toBe(true);
+        expect(wrapper.findComponent(SearchBarStub).exists()).toBe(false);
     });
 
     it("goes back when the back button is clicked", async () => {

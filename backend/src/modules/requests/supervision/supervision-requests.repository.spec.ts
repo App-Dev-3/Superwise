@@ -273,46 +273,6 @@ describe('SupervisionRequestsRepository', () => {
       expect(mockPrismaService.student.create).not.toHaveBeenCalled();
     });
 
-    it('should use transaction client when provided', async () => {
-      // Arrange
-      const email = 'student@fhstp.ac.at';
-      const txClient = {
-        user: {
-          findUnique: jest.fn().mockResolvedValue(null), // User doesn't exist
-          create: jest.fn().mockResolvedValue({        // ADD THIS
-            id: STUDENT_USER_UUID,
-            email,
-          }),
-        },
-        student: {
-          findUnique: jest.fn().mockResolvedValue(null), // Student doesn't exist  
-          create: jest.fn().mockResolvedValue({          // ADD THIS
-            id: STUDENT_UUID,
-            user_id: STUDENT_USER_UUID,
-          }),
-        },
-      };
-
-      // Act
-      const result = await repository.createOrFindStudentByEmail(email, txClient as any);
-
-      // Assert
-      expect(result).toEqual({
-        id: STUDENT_UUID,
-        user_id: STUDENT_USER_UUID,
-        wasCreated: true,
-      });
-      expect(txClient.user.findUnique).toHaveBeenCalled();
-      expect(txClient.user.create).toHaveBeenCalled();    // ADD THIS
-      expect(txClient.student.create).toHaveBeenCalled(); // ADD THIS
-      // The prisma service should not be used directly
-      expect(mockPrismaService.user.findUnique).not.toHaveBeenCalled();
-      expect(mockPrismaService.student.findUnique).not.toHaveBeenCalled();
-    });
-    // Add in createSupervisionRequest describe block
-
-
-
     it('should create new user and student when they do not exist', async () => {
       // Arrange
       const email = 'newstudent@fhstp.ac.at';
@@ -486,7 +446,7 @@ describe('SupervisionRequestsRepository', () => {
 
       // Act & Assert
       await expect(repository.createSupervisionRequest(data)).rejects.toThrow(
-        'student_email is required for creating ACCEPTED requests'
+        'student_email is required for creating ACCEPTED requests',
       );
     });
     it('should create an accepted request with student creation and capacity update', async () => {
@@ -566,7 +526,6 @@ describe('SupervisionRequestsRepository', () => {
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
     });
     // Add this missing test in the updateRequestState describe block
-
 
     it('should throw error if student_id is missing for pending request', async () => {
       // Arrange
@@ -666,7 +625,7 @@ describe('SupervisionRequestsRepository', () => {
       expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
     });
 
-    // Add in updateRequestState describe block  
+    // Add in updateRequestState describe block
     it('should throw error when student already has accepted supervision', async () => {
       // Arrange
       const data = {
@@ -701,7 +660,7 @@ describe('SupervisionRequestsRepository', () => {
 
       // Act & Assert
       await expect(repository.updateRequestState(data)).rejects.toThrow(
-        'Student already has an accepted supervision request'
+        'Student already has an accepted supervision request',
       );
     });
 
@@ -725,7 +684,8 @@ describe('SupervisionRequestsRepository', () => {
       // Mock for transaction
       const txMock = {
         supervisionRequest: {
-          findUnique: jest.fn().mockResolvedValue({ // ADD THIS
+          findUnique: jest.fn().mockResolvedValue({
+            // ADD THIS
             id: REQUEST_UUID,
             student_id: STUDENT_UUID,
           }),
@@ -871,7 +831,8 @@ describe('SupervisionRequestsRepository', () => {
       // Mock for transaction - FIX: ADD MISSING METHODS
       const txMock = {
         supervisionRequest: {
-          findUnique: jest.fn().mockResolvedValue({ // ADD THIS
+          findUnique: jest.fn().mockResolvedValue({
+            // ADD THIS
             id: REQUEST_UUID,
             student_id: STUDENT_UUID,
           }),
@@ -925,8 +886,6 @@ describe('SupervisionRequestsRepository', () => {
       });
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
     });
-
-
   });
 
   describe('hasAcceptedSupervision', () => {

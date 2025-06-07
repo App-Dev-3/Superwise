@@ -156,9 +156,12 @@ export class SupervisionRequestsService {
       return result;
     } catch (error) {
       // Handle validation errors for manual supervisor assignment
-      if (error.message && error.message.includes('already has an accepted supervision request')) {
+      if (
+        error instanceof Error &&
+        error.message.includes('already has an accepted supervision request')
+      ) {
         throw new BadRequestException(
-          'Student already has an accepted supervision request. Manual assignment not allowed.'
+          'Student already has an accepted supervision request. Manual assignment not allowed.',
         );
       }
       throw error;
@@ -279,7 +282,7 @@ export class SupervisionRequestsService {
         if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
           this.logger.log(
             `Request ${id} accepted, competing requests auto-withdrawn`,
-            'SupervisionRequestsService'
+            'SupervisionRequestsService',
           );
         }
 
@@ -296,10 +299,13 @@ export class SupervisionRequestsService {
         total_spots: 0, // Not used for non-capacity affecting changes
       });
     } catch (error) {
-      // NEW: Handle validation errors gracefully
-      if (error.message && error.message.includes('already has an accepted supervision request')) {
+      // Handle validation errors gracefully
+      if (
+        error instanceof Error &&
+        error.message.includes('already has an accepted supervision request')
+      ) {
         throw new BadRequestException(
-          'Student already has an accepted supervision request. Only one accepted request is allowed per student.'
+          'Student already has an accepted supervision request. Only one accepted request is allowed per student.',
         );
       }
       throw error;

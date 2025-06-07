@@ -231,7 +231,7 @@ const studentProfileHasChanged = computed(() => {
 
 // TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
-  console.log('Navigate to edit tags');
+  navigateTo('/student/edit-tags');
 };
 
 const handleSave = async () => {

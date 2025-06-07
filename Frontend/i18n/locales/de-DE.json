@@ -114,9 +114,6 @@
     "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
     "supervisionRequest": "{name} will von dir betreut werden!"
   },
-  "requests": {
-    "noRequests": "Du hast noch keine Anfragen gesendet..."
-  },
   "modal": {
     "cancel": "Abbrechen",
     "confirm": "Bestätigen",
@@ -137,6 +134,7 @@
       }
     },
     "next": "Weiter",
+    "saveTags": "Tags speichern",
     "selectTags": "Tags Auswählen",
     "startMatching": "Matching starten",
     "tagPriority": "Tags Sortieren"
@@ -189,6 +187,9 @@
     "thesisTopic": "Thesis-Thema",
     "topicPlaceholder": "Beschreibe deine Thesis-Idee...",
     "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein"
+  },
+  "requests": {
+    "noRequests": "Du hast noch keine Anfragen gesendet..."
   },
   "role": {
     "admin": "Admin",

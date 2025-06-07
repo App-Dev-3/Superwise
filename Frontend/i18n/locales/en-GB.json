@@ -114,9 +114,6 @@
     "noSupervisors": "There are no (more) supervisors that fit your tags...",
     "supervisionRequest": "{name} wants to be supervised by you!"
   },
-  "requests": {
-    "noRequests": "You have not sent any requests yet...",
-  },
   "modal": {
     "cancel": "Cancel",
     "confirm": "Confirm",
@@ -137,6 +134,7 @@
       }
     },
     "next": "Next",
+    "saveTags": "Save Tags",
     "selectTags": "Select Tags",
     "startMatching": "Start Matching",
     "tagPriority": "Tag Priority"
@@ -189,6 +187,9 @@
     "thesisTopic": "Thesis Topic",
     "topicPlaceholder": "Describe your thesis idea...",
     "topicVisibility": "Your thesis description will be visible to other users"
+  },
+  "requests": {
+    "noRequests": "You have not sent any requests yet..."
   },
   "role": {
     "admin": "Admin",

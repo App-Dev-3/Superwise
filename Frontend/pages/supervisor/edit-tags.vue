@@ -74,7 +74,7 @@ const processingData = ref(false);
 
 const buttonText = [
   t('multiStepForm.tagPriority'),
-  t('multiStepForm.seeMatches'),
+  t('multiStepForm.saveTags'),
 ];
 
 const descriptionText = [
@@ -133,7 +133,7 @@ const handleSubmit = async () => {
     id: userStore.user?.id,
     tags: tags.value as tagData[],
   });
-  navigateTo('/supervisor/dashboard');
+  navigateTo('/supervisor/profile');
 };
 
 

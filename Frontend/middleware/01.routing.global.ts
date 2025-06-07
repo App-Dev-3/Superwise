@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // Register user if is not already registered
 
-  if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+  if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
     console.log('🍍🍍🍍🍍🍍🍍[ROUTING MIDDLEWARE]: Fetching registration status for user:', userEmail)
     await registrationStore.fetchRegistrationStatus(userEmail)
   }

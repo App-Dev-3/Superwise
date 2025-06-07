@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
 const authStore = useAuthStore()
-await authStore.initialize()
 const { user } = storeToRefs(authStore)
 const { getUserByEmail } = useUserApi();
 const { getSupervisorByUserId } = useSupervisorApi();

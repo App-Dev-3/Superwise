@@ -15,7 +15,7 @@ onMounted(async () => {
   let role = "student"; // default to student
   if (!userEmail) return;
   try {
-      if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+      if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
           await registrationStore.fetchRegistrationStatus(userEmail)
       }
     if (registrationStore.status?.exists){

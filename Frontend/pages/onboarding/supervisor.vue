@@ -90,7 +90,7 @@ const headerText = [
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');
-    if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+    if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
         await registrationStore.fetchRegistrationStatus(user.value.primaryEmailAddress?.emailAddress)
     }
   if (registrationStore.status?.is_registered) {

@@ -212,7 +212,7 @@ async function handleSubmit() {
     id: userStore.user?.id || '',
     tags: tags.value as tagData[],
   });
-    if (!registrationStore.status || !registrationStore.status.exists || registrationStore.status.is_registered) {
+    if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
         await registrationStore.fetchRegistrationStatus(userStore.user?.email)
     }
   return navigateTo('/student/dashboard');

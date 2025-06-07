@@ -13,6 +13,7 @@ describe('SupervisionRequestsRepository', () => {
       findUnique: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
+      count: jest.fn(),
     },
     user: {
       findUnique: jest.fn(),
@@ -775,6 +776,131 @@ describe('SupervisionRequestsRepository', () => {
         data: { available_spots: 0 }, // Available spots should be 0 after using the last spot
       });
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
+    });
+  });
+
+  describe('countRequests', () => {
+    it('should count all requests matching filter criteria', async () => {
+      // Arrange
+      const params = {
+        student_id: STUDENT_UUID,
+        supervisor_id: SUPERVISOR_UUID,
+        request_state: RequestState.PENDING,
+      };
+      const expectedCount = 3;
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {
+          student_id: STUDENT_UUID,
+          supervisor_id: SUPERVISOR_UUID,
+          request_state: RequestState.PENDING,
+        },
+      });
+    });
+
+    it('should omit undefined parameters from where clause', async () => {
+      // Arrange
+      const params = {
+        student_id: STUDENT_UUID,
+        // No supervisor_id or request_state provided
+      };
+      const expectedCount = 5;
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {
+          student_id: STUDENT_UUID,
+          // Other params should not be in the where clause
+        },
+      });
+    });
+
+    it('should count all requests when no filters are provided', async () => {
+      // Arrange
+      const params = {};
+      const expectedCount = 10;
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {},
+      });
+    });
+
+    it('should return 0 when no matching requests exist', async () => {
+      // Arrange
+      const params = {
+        student_id: 'non-existent-student-id',
+        request_state: RequestState.PENDING,
+      };
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(0);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(0);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {
+          student_id: 'non-existent-student-id',
+          request_state: RequestState.PENDING,
+        },
+      });
+    });
+
+    it('should handle only supervisor_id filter', async () => {
+      // Arrange
+      const params = {
+        supervisor_id: SUPERVISOR_UUID,
+      };
+      const expectedCount = 7;
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {
+          supervisor_id: SUPERVISOR_UUID,
+        },
+      });
+    });
+
+    it('should handle only request_state filter', async () => {
+      // Arrange
+      const params = {
+        request_state: RequestState.ACCEPTED,
+      };
+      const expectedCount = 15;
+      mockPrismaService.supervisionRequest.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countRequests(params);
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.supervisionRequest.count).toHaveBeenCalledWith({
+        where: {
+          request_state: RequestState.ACCEPTED,
+        },
+      });
     });
   });
 });

@@ -15,6 +15,7 @@ import { SupervisorCapacityException } from '../../../common/exceptions/custom-e
 import { SelfSupervisionException } from '../../../common/exceptions/custom-exceptions/self-supervision.exception';
 import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
+import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 
 describe('SupervisionRequestsService', () => {
   let service: SupervisionRequestsService;
@@ -25,6 +26,7 @@ describe('SupervisionRequestsService', () => {
     findRequestById: jest.fn(),
     createSupervisionRequest: jest.fn(),
     updateRequestState: jest.fn(),
+    countRequests: jest.fn(),
   };
 
   const mockStudentsService = {
@@ -661,6 +663,172 @@ describe('SupervisionRequestsService', () => {
       await expect(
         service.updateRequestState(REQUEST_UUID, RequestState.WITHDRAWN, mockStudentUser),
       ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('countPendingRequestsForUser', () => {
+    it('should count pending requests for a student', async () => {
+      // Arrange
+      const expectedCount = 3;
+      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
+      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mockRepository.countRequests.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await service.countPendingRequestsForUser(mockStudentUser.id);
+
+      // Assert
+      expect(result).toEqual({ pending_count: expectedCount });
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockRepository.countRequests).toHaveBeenCalledWith({
+        student_id: mockStudent.id,
+        request_state: RequestState.PENDING,
+      });
+    });
+
+    it('should count pending requests for a supervisor', async () => {
+      // Arrange
+      const expectedCount = 5;
+      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
+      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mockRepository.countRequests.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await service.countPendingRequestsForUser(mockSupervisorUser.id);
+
+      // Assert
+      expect(result).toEqual({ pending_count: expectedCount });
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
+      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        mockSupervisorUser.id,
+      );
+      expect(mockRepository.countRequests).toHaveBeenCalledWith({
+        supervisor_id: mockSupervisor.id,
+        request_state: RequestState.PENDING,
+      });
+    });
+
+    it('should return 0 for a student with no pending requests', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
+      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mockRepository.countRequests.mockResolvedValue(0);
+
+      // Act
+      const result = await service.countPendingRequestsForUser(mockStudentUser.id);
+
+      // Assert
+      expect(result).toEqual({ pending_count: 0 });
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockRepository.countRequests).toHaveBeenCalledWith({
+        student_id: mockStudent.id,
+        request_state: RequestState.PENDING,
+      });
+    });
+
+    it('should return 0 for a supervisor with no pending requests', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
+      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mockRepository.countRequests.mockResolvedValue(0);
+
+      // Act
+      const result = await service.countPendingRequestsForUser(mockSupervisorUser.id);
+
+      // Assert
+      expect(result).toEqual({ pending_count: 0 });
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
+      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        mockSupervisorUser.id,
+      );
+      expect(mockRepository.countRequests).toHaveBeenCalledWith({
+        supervisor_id: mockSupervisor.id,
+        request_state: RequestState.PENDING,
+      });
+    });
+
+    it('should throw NotFoundException if user does not exist', async () => {
+      // Arrange
+      const nonExistentUserId = 'non-existent-user-id';
+      mockUsersService.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.countPendingRequestsForUser(nonExistentUserId)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(nonExistentUserId);
+      // Should not call other services if user doesn't exist
+      expect(mockStudentsService.findStudentByUserId).not.toHaveBeenCalled();
+      expect(mockSupervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
+      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+    });
+
+    it('should throw AdminSupervisionRequestException if user is an admin', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockAdminUser);
+
+      // Act & Assert
+      await expect(service.countPendingRequestsForUser(mockAdminUser.id)).rejects.toThrow(
+        AdminSupervisionRequestException,
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockAdminUser.id);
+      // Should not call other services if user is admin
+      expect(mockStudentsService.findStudentByUserId).not.toHaveBeenCalled();
+      expect(mockSupervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
+      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+    });
+
+    it('should handle errors from repository count method', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
+      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      const repositoryError = new Error('Database connection error');
+      mockRepository.countRequests.mockRejectedValue(repositoryError);
+
+      // Act & Assert
+      await expect(service.countPendingRequestsForUser(mockStudentUser.id)).rejects.toThrow(
+        'Database connection error',
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockRepository.countRequests).toHaveBeenCalledWith({
+        student_id: mockStudent.id,
+        request_state: RequestState.PENDING,
+      });
+    });
+
+    it('should handle errors from students service', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
+      const studentsServiceError = new NotFoundException('Student profile not found');
+      mockStudentsService.findStudentByUserId.mockRejectedValue(studentsServiceError);
+
+      // Act & Assert
+      await expect(service.countPendingRequestsForUser(mockStudentUser.id)).rejects.toThrow(
+        'Student profile not found',
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+    });
+
+    it('should handle errors from supervisors service', async () => {
+      // Arrange
+      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
+      const supervisorsServiceError = new NotFoundException('Supervisor profile not found');
+      mockSupervisorsService.findSupervisorByUserId.mockRejectedValue(supervisorsServiceError);
+
+      // Act & Assert
+      await expect(service.countPendingRequestsForUser(mockSupervisorUser.id)).rejects.toThrow(
+        'Supervisor profile not found',
+      );
+      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
+      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        mockSupervisorUser.id,
+      );
+      expect(mockRepository.countRequests).not.toHaveBeenCalled();
     });
   });
 });

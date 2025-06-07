@@ -1,27 +1,21 @@
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const props = defineProps({
-  allTags: {
-    type: Array,
-    default: () => [],
-  },
-  initialSelected: {
-    type: Array,
-    default: () => [],
-  },
-  maxSelection: {
-    type: Number,
-    default: 10,
-  },
-  descriptionText: {
-    type: String,
-    required: true,
-  },
+interface TagSelectorProps {
+  allTags: Array<{ tag_name: string }>;
+  initialSelected: Array<{ tag_name: string }>;
+  maxSelection?: number;
+  descriptionText: string;
+}
+
+
+const props = withDefaults(defineProps<TagSelectorProps>(), {
+  maxSelection: 10,
 });
+
 
 const emit = defineEmits([ 'update:selectedTags' ]);
 
@@ -30,13 +24,23 @@ const initialVisibleTags = 5;
 
 const selectedTags = ref([ ...props.initialSelected ]);
 
+// Watch for changes in initialSelected prop and update the selectedTags accordingly
+watch(() => props.initialSelected, (newValue) => {
+  console.log("initialSelected changed:", newValue);
+  selectedTags.value = [ ...newValue ];
+  emit('update:selectedTags', selectedTags.value);
+}, { deep: true });
+
 const searchValue = ref('');
 
 const availableTags = computed(() => {
   const query = searchValue.value.trim().toLowerCase();
+  // Get array of selected tag names for easier comparison
+  const selectedTagNames = selectedTags.value.map(tag => tag.tag_name?.toLowerCase());
+
   return props.allTags.filter(tag => {
     const name = (tag.tag_name as string).toLowerCase();
-    return !selectedTags.value.includes(tag) &&
+    return !selectedTagNames.includes(name) &&
         (query === '' || name.includes(query));
   });
 });

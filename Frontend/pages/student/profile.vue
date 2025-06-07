@@ -52,7 +52,6 @@
               v-for="tag in tags"
               :key="tag.tag.tag_id"
               :text="tag.tag.tag_name"
-              @delete="removeTag(tag.tag.tag_id)"
           />
         </div>
         <CustomButton
@@ -107,7 +106,6 @@
 import { ref } from 'vue';
 import PictureUpload from '~/components/Profile/PictureUpload.vue';
 import CustomButton from '~/components/CustomButton/CustomButton.vue';
-import type { tagData } from '#shared/types/tagInterfaces';
 import TextArea from '~/components/inputField/TextArea.vue';
 import { HttpMethods } from '#shared/enums/enums';
 import { useI18n } from "vue-i18n";
@@ -229,9 +227,8 @@ const studentProfileHasChanged = computed(() => {
   return (topicDescription.value !== studentStore.studentProfile?.thesis_description)
 });
 
-// TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
-  console.log('Navigate to edit tags');
+  navigateTo('/student/edit-tags');
 };
 
 const handleSave = async () => {
@@ -312,12 +309,6 @@ const handleSave = async () => {
   }
   buttonIsLoading.value = false;
 }
-
-// TODO: IMPLEMENT THIS
-const removeTag = (tag: tagData) => {
-  console.log('Removing tag:', tag);
-  // tags.value = tags.value.filter(t => t.id !== tag.id);
-};
 
 if (!userStore.user) {
   await userStore.refetchCurrentUser();

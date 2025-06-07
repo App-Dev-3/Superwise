@@ -1,5 +1,5 @@
 <template>
-  <div v-if="!processingData" class="min-h-screen"> 
+  <div v-if="!processingData" class="size-full flex flex-col">
     <toast
         v-if="toastInformation.visible"
         :message="toastInformation.message"
@@ -63,10 +63,10 @@
   </div>
   <div v-else>
     <LoadingIndicator
-      :text="t('onboarding.processing')"
+        :text="t('onboarding.processing')"
     />
   </div>
-  
+
 </template>
 
 <script lang="ts" setup>
@@ -116,7 +116,7 @@ const headerText = [
   t('appHeader.onboarding.priority'),
 ];
 
-onMounted(async() => {
+onMounted(async () => {
   if (registrationStore.status?.is_registered) {
     await fetchAlldata();
     multiStepFormRef.value.goToStep(2);
@@ -128,10 +128,10 @@ async function handleStepChange(step: number): Promise<void> {
     multiStepFormRef.value.goToStep(2);
   }
   if (
-    step == 2 && 
-    user.value?.primaryEmailAddress && 
-    !userStore.user &&
-    !registrationStore.status?.is_registered
+      step == 2 &&
+      user.value?.primaryEmailAddress &&
+      !userStore.user &&
+      !registrationStore.status?.is_registered
   ) {
     if (!userFormData.value.first_name || !userFormData.value.last_name) {
       multiStepFormRef.value.goToStep(1);
@@ -173,7 +173,7 @@ async function handleStepChange(step: number): Promise<void> {
       }
     }
   }
-  if (step == 3){
+  if (step == 3) {
     if (tags.value.length === 0) {
       multiStepFormRef.value.goToStep(2);
       toastInformation.value = {
@@ -193,7 +193,7 @@ async function handleSubmit() {
   }
 
   try {
-    const data = await $fetch(`/api/students/user/${userStore.user?.id}`, {
+    const data = await $fetch(`/api/students/user/${ userStore.user?.id }`, {
       method: HttpMethods.GET,
     });
     if (data) {
@@ -219,4 +219,8 @@ async function handleSubmit() {
 const fetchAlldata = async () => {
   DbTags.value = await getTags();
 };
+
+definePageMeta({
+  layout: "onboarding-layout",
+});
 </script>

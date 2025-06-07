@@ -18,7 +18,10 @@
             @swipe-left="handleSwipeLeft(request)"
             @swipe-right="handleSwipeRight(request)"
         >
-          <MiniCard
+          <NuxtLink 
+            :to="`/profiles/${request.student.user_id}`"
+          >
+            <MiniCard
               :bottom-text="new Date(request.updated_at).toLocaleDateString()"
               :first-name="request.student.user.first_name"
               :image="request.student.user.profile_image"
@@ -26,7 +29,8 @@
               :preview-text="`${request.student.user.first_name} wants to be supervised by you`"
               bottom-icon="tag"
               top-icon="user-group"
-          />
+            />
+          </NuxtLink>
         </SwipeContainer>
       </div>
 

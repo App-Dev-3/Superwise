@@ -120,17 +120,21 @@ const bottomNavButtons = [
                 <p class="text-base-content-60">No requests yet</p>
               </div>
           </div>
-          <MiniCard
-            v-for="request in visibleRequests"
-            v-else
-            :key="request.id"
-            :bottom-text="formatTimeString(request.updated_at, undefined)"
-            :first-name="request.student.user.first_name"
-            :last-name="request.student.user.last_name"
-            :preview-text="request.student.thesis_description"
-            :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
-            top-icon="message"
-          />
+            <NuxtLink 
+              v-else
+              v-for="request in visibleRequests"
+              :key="request.id"
+              :to="`/profiles/${request.student.user_id}`"
+            >
+              <MiniCard
+                :bottom-text="formatTimeString(request.updated_at, undefined)"
+                :first-name="request.student.user.first_name"
+                :last-name="request.student.user.last_name"
+                :preview-text="request.student.thesis_description"
+                :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
+                top-icon="message"
+              />
+            </NuxtLink>
         </ActionCard>
 
         <BottomNav

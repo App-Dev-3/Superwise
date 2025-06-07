@@ -59,6 +59,9 @@ const bottomNavButtons = [
               :key="acceptedRequest.id"
               class="mb-2 w-full"
           >
+          <NuxtLink 
+            :to="`/profiles/${acceptedRequest.student.user_id}`"
+          >
             <MiniCard
                 :bottom-text="
 								t(
@@ -103,6 +106,7 @@ const bottomNavButtons = [
                 bottom-icon="tag"
                 top-icon="user-group"
             />
+          </NuxtLink>
           </div>
         </div>
       </div>

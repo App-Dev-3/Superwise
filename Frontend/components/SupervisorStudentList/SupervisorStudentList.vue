@@ -155,16 +155,20 @@ watch(
         class="min-h-64 max-h-96 overflow-y-auto flex flex-col gap-2 border-t border-b border-base-300"
       >
         <!-- Student List -->
-        <StudentCard
+        <NuxtLink 
           v-for="student in students"
           :key="student.id"
-          :edit-mode="isEditing"
-          :email="student.email"
-          :first-name="student.firstName"
-          :img-src="student.src"
-          :last-name="student.lastName"
-          @click="removeStudent(student.id)"
-        />
+          :to="`/profiles/${student.id}`"
+        >
+          <StudentCard
+            :edit-mode="isEditing"
+            :email="student.email"
+            :first-name="student.firstName"
+            :img-src="student.src"
+            :last-name="student.lastName"
+            @click="removeStudent(student.id)"
+          />
+        </NuxtLink>
       </div>
 
       <div v-if="isEditing" class="flex flex-row gap-3 w-full">

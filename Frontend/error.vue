@@ -1,18 +1,16 @@
 <template>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50">
-        <div class="max-w-md w-full p-8 bg-white shadow-lg rounded-lg text-center">
-            <div class="flex justify-center mb-6">
-                <div class="text-6xl text-red-500">
-                    <span v-if="error.statusCode">{{ error.statusCode }}</span>
-                    <span v-else>Error</span>
-                </div>
-            </div>
+    <div class="w-full h-screen flex max-w-3xl m-auto flex-col p-8 justify-center items-center">
 
-            <h1 class="text-2xl font-bold mb-4">
+                    <span v-if="error.statusCode" class="text-2xl font-bold mb-4">{{ error.statusCode }}</span>
+
+
+
+
+            <h1 class="text-sm text-base-content/60 mb-4">
                 {{ error.statusMessage || 'Something went wrong' }}
             </h1>
 
-            <p class="text-gray-600 mb-6">
+            <p class="text-base-content mb-6">
                 {{ errorDescription }}
             </p>
 
@@ -24,7 +22,6 @@
                     Back to Home
                 </button>
             </div>
-        </div>
     </div>
 </template>
 
@@ -42,19 +39,24 @@ const props = defineProps({
 console.error(props.error)
 
 const errorDescription = computed(() => {
-    if (props.error.statusCode === 404) {
-        return "The page you're looking for doesn't exist."
+    // make switch case for all error codes
+    switch (props.error.statusCode) {
+        case 400:
+            return "Bad Request. Please check your input.";
+        case 401:
+            return "You need to log in to access this page.";
+        case 403:
+            return "You don't have permission to access this page.";
+        case 404:
+            return "The page you're looking for doesn't exist.";
+        case 500:
+            return "Internal Server Error. Please try again later.";
+        default:
+            return "An unexpected error occurred.";
     }
-
-    if (props.error.statusCode === 401) {
-        return "You need to be logged in to access this page."
-    }
-
-    return "We're sorry, but something went wrong on our end."
 })
 
 const handleError = () => {
-    // Clear the error and redirect to home page
     clearError({ redirect: '/' })
 }
 </script>

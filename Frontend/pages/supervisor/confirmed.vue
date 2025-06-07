@@ -40,50 +40,55 @@ definePageMeta({
           :key="acceptedRequest.id"
           class="mb-2 w-full"
       >
-        <MiniCard
-            :bottom-text="
-								t(
-									'confirmed.confirmedOn',
-									{
-										date: new Date(
-											acceptedRequest.updated_at,
-										).toLocaleDateString(),
-									},
-								)
-							"
-            :first-name="
-								acceptedRequest
-									?.student
-									?.user
-									?.first_name
-							"
-            :image="
-								acceptedRequest
-									?.student
-									?.user
-									?.profile_image ??
-								''
-							"
-            :last-name="
-								acceptedRequest
-									?.student
-									?.user
-									?.last_name
-							"
-            :preview-text="
-								t(
-									'confirmed.supervising',
-									{
-										firstName: acceptedRequest
-											?.student
-											?.user
-											?.first_name,
-									},
-								)
-							"
-            bottom-icon="tag"
-            top-icon="user-group"
-        />
+        <NuxtLink
+            v-if="acceptedRequest.student.user_id"
+            :to="`/profiles/${acceptedRequest.student.user_id}`"
+        >
+          <MiniCard
+              :bottom-text="
+                  t(
+                    'confirmed.confirmedOn',
+                    {
+                      date: new Date(
+                        acceptedRequest.updated_at,
+                      ).toLocaleDateString(),
+                    },
+                  )
+                "
+              :first-name="
+                  acceptedRequest
+                    ?.student
+                    ?.user
+                    ?.first_name
+                "
+              :image="
+                  acceptedRequest
+                    ?.student
+                    ?.user
+                    ?.profile_image ??
+                  ''
+                "
+              :last-name="
+                  acceptedRequest
+                    ?.student
+                    ?.user
+                    ?.last_name
+                "
+              :preview-text="
+                  t(
+                    'confirmed.supervising',
+                    {
+                      firstName: acceptedRequest
+                        ?.student
+                        ?.user
+                        ?.first_name,
+                    },
+                  )
+                "
+              bottom-icon="tag"
+              top-icon="user-group"
+          />
+        </NuxtLink>
       </div>
     </div>
     <div v-else class="size-full flex justify-center items-center gap-6">

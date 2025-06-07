@@ -7,7 +7,8 @@ import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
-const { user } = useUser();
+const authStore = useAuthStore()
+const { user } = storeToRefs(authStore)
 const { getUserByEmail } = useUserApi();
 const { getSupervisorByUserId } = useSupervisorApi();
 const userStore = useUserStore();

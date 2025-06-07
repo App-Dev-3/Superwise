@@ -70,6 +70,21 @@
           v-if="routeParamUser.is_registered && !routeParamUser.is_deleted"
           class="w-full h-full flex flex-col gap-4">
 
+          <hr v-if="!isAdmin" class="border-base-300 text-base-300">
+
+
+          <div v-if="!isAdmin" class="w-full flex justify-center flex-col p-4 gap-3">
+              <div
+                  class="w-full flex flex-row flex-wrap gap-2 justify-center">
+                  <CustomTag
+                      v-for="(tag, index) in routeParamUser.tags"
+                      :key="`selected-${index}`"
+                      :color="currentUserTags.some(currUserTag => currUserTag.id === tag.id) ? 'primary' : 'default'"
+                      :text="tag.tag.tag_name"
+                  />
+              </div>
+          </div>
+
         <hr v-if="!isAdmin" class="border-base-300 text-base-300">
 
         <SupervisorStatistics
@@ -91,19 +106,8 @@
           />
         </div>
 
-        <hr v-if="!isAdmin" class="border-base-300 text-base-300">
 
-        <div v-if="!isAdmin" class="w-full flex justify-center flex-col p-4 gap-3">
-          <div
-              class="w-full flex flex-row flex-wrap gap-2 justify-center">
-            <CustomTag
-                v-for="(tag, index) in routeParamUser.tags"
-                :key="`selected-${index}`"
-                :color="currentUserTags.some(currUserTag => currUserTag.id === tag.id) ? 'primary' : 'default'"
-                :text="tag.tag.tag_name"
-            />
-          </div>
-        </div>
+
       </div>
 
       <div

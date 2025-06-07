@@ -39,7 +39,7 @@
                   navigate('/student/dashboard')
                 "
       >
-        <div class="h-96 flex">
+        <div class="h-64 flex">
           <div class="flex flex-col w-full items-center justify-center p-3">
             <Avatar
                 :first-name="
@@ -109,6 +109,10 @@ const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
 const studentStore = useStudentStore();
 const settingsStore = useSettingsStore();
+
+if (!userStore.user) {
+    await userStore.refetchCurrentUser()
+}
 
 const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
 const modalInformation = ref<ConfirmationDialogData | null>(null)
@@ -304,11 +308,9 @@ const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) 
 }
 
 function navigate(route: string) {
-  dummyRoute.value = route;
   navigateTo(route);
 }
 
-const dummyRoute = ref("/");
 
 
 definePageMeta({

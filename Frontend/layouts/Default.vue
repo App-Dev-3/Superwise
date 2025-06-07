@@ -28,15 +28,18 @@
 <script lang="ts" setup>
 import { until } from "@vueuse/core";
 import { onMounted } from "vue";
-
 import { useColorMode } from "#imports";
 
 const colorMode = useColorMode();
 
-const { isLoaded } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { isLoaded } = storeToRefs(authStore)
 const isLoading = ref(true);
+
 onMounted(async () => {
-  await until(isLoaded).toBe(true);
-  isLoading.value = false;
+    await authStore.initialize();
+    await until(isLoaded).toBe(true);
+    isLoading.value = false;
 });
 </script>

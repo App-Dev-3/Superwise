@@ -3,25 +3,29 @@ import {UserRoles} from "#shared/enums/enums";
 
 const { getUserRegistrationStatus } = useUserApi();
 
-export const useRegistrationStore = defineStore('registration', {
-  state: () => ({
-    status: null as UserRegistrationData | null,
-  }),
-  actions: {
-    async fetchRegistrationStatus(userEmail?: string) {
-        if (!userEmail) {
-          this.status = {
-            exists: false,
-            is_registered: false,
-            role: UserRoles.STUDENT
-          } as UserRegistrationData;
-          return;
-        }
-      try {
-        this.status = await getUserRegistrationStatus(userEmail);
-      } catch (e) {
-        console.error('Failed to fetch onboarding status:', e)
-      }
+export const useRegistrationStore = defineStore('registration', () => {
+  const status = ref<UserRegistrationData | null>(null)
+  const defaultValue: UserRegistrationData = {
+    exists: false,
+    is_registered: false,
+    role: UserRoles.STUDENT,
+    tags: false
+  }
+
+  const fetchRegistrationStatus = async (userEmail?: string) => {
+    if (!userEmail) {
+      status.value = defaultValue
+      return;
     }
+    try {
+      status.value = await getUserRegistrationStatus(userEmail);
+    } catch (e) {
+        console.error('Failed to fetch registration status:', e);
+        status.value = null
+    }
+  }
+  return {
+    status,
+    fetchRegistrationStatus
   }
 })

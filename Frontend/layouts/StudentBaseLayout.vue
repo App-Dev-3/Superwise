@@ -56,9 +56,9 @@ const headerText = computed(() => {
   <div class="w-full h-screen flex max-w-xl m-auto flex-col">
     <AppHeader
         v-if="route.path?.endsWith('dashboard')"
-        :first-name="currentUser?.first_name"
-        :image="currentUser?.profile_image || ''"
-        :last-name="currentUser?.last_name"
+        :first-name="currentUser?.first_name || ''"
+        :image="currentUser?.profile_image || getPlaceholderImage(currentUser?.first_name || '', currentUser?.last_name || '')"
+        :last-name="currentUser?.last_name || ''"
         :role="UserRoles.STUDENT"
         show-search
         show-user

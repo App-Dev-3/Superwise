@@ -49,14 +49,14 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { useUser } from '@clerk/nuxt/composables';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
 
 const { t } = useI18n();
 
-
-const { user } = useUser();
+const authStore = useAuthStore()
+await authStore.initialize()
+const { user } = storeToRefs(authStore)
 const { createUser, addUserTag } = useUserApi();
 const registrationStore = useRegistrationStore();
 const { getTags } = useTagApi();
@@ -90,9 +90,9 @@ const headerText = [
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');
-  await registrationStore.fetchRegistrationStatus(
-      user.value.primaryEmailAddress?.emailAddress
-  );
+    if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
+        await registrationStore.fetchRegistrationStatus(user.value.primaryEmailAddress?.emailAddress)
+    }
   if (registrationStore.status?.is_registered) {
     console.log('User is already registered');
     DbTags.value = (await getTags()) as tagData[];

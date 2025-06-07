@@ -169,7 +169,9 @@ const descriptionClasses = computed(() => ({
               class="rounded-box"
           >
         </div>
-        {{ props.firstName }} {{ props.lastName }}
+        <p class="text-large capitalize">
+          {{ props.firstName }} {{ props.lastName }}
+        </p>
       </h2>
 
       <p

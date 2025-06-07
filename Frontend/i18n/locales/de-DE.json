@@ -198,11 +198,13 @@
     "supervisor": "Betreuende"
   },
   "search": {
+    "empty": "Suche nach einem Betreuer...",
     "filter": {
       "availability": "Verfügbarkeit",
       "bestMatch": "Größte Übereinstimmung",
       "name": "Namen"
     },
+    "noResults": "Keine Suchergebnisse...",
     "placeholder": "Betreuer suchen..."
   },
   "searchBar": {

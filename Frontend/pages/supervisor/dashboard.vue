@@ -85,16 +85,6 @@ definePageMeta({
         card-type="ghost"
         @action-button-clicked="navigateTo('/supervisor/matching')"
     >
-      <MiniCard
-          v-for="request in visibleRequests"
-          :key="request.id"
-          :bottom-text="formatTimeString(request.updated_at, undefined)"
-          :first-name="request.student.user.first_name"
-          :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
-          :last-name="request.student.user.last_name"
-          :preview-text="request.student.thesis_description"
-          top-icon="message"
-      />
       <div
           v-if="!visibleRequests || visibleRequests.length === 0"
           class="size-full flex flex-col justify-center items-center"
@@ -103,6 +93,24 @@ definePageMeta({
             :text="t('dashboard.supervisor.noRequests')"
         />
       </div>
+      <NuxtLink
+        v-else
+        v-for="request in visibleRequests"
+        :key="request.id"
+        :to="`/profiles/${request.student.user_id}`"
+      >
+        <MiniCard
+            v-for="request in visibleRequests"
+            :key="request.id"
+            :bottom-text="formatTimeString(request.updated_at, undefined)"
+            :first-name="request.student.user.first_name"
+            :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"
+            :last-name="request.student.user.last_name"
+            :preview-text="request.student.thesis_description"
+            top-icon="message"
+        />
+      </NuxtLink>
+      
     </ActionCard>
   </div>
 </template>

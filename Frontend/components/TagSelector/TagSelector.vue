@@ -17,9 +17,6 @@ const props = withDefaults(defineProps<TagSelectorProps>(), {
 });
 
 
-console.log("Tags:", props.allTags);
-console.log("Selected Tags:", props.initialSelected);
-
 const emit = defineEmits([ 'update:selectedTags' ]);
 
 const showAll = ref(false);

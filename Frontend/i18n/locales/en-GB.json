@@ -10,6 +10,7 @@
       "priority": "Please sort the tags by priority.",
       "tags": "Which tags describe your thesis topic?"
     },
+    "search": "Search",
     "searchPlaceholder": "Search..."
   },
   "confirmation": {

@@ -39,7 +39,7 @@ const searchValue = ref('');
 const availableTags = computed(() => {
   const query = searchValue.value.trim().toLowerCase();
   // Get array of selected tag names for easier comparison
-  const selectedTagNames = selectedTags.value.map(tag => tag.tag_name.toLowerCase());
+  const selectedTagNames = selectedTags.value.map(tag => tag.tag_name?.toLowerCase());
 
   return props.allTags.filter(tag => {
     const name = (tag.tag_name as string).toLowerCase();

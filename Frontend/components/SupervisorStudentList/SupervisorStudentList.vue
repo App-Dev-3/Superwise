@@ -162,17 +162,21 @@ watch(
       >
 
         <!-- Student List -->
-        <StudentCard
-            v-for="student in students"
-            :key="student.id"
+        <NuxtLink
+          v-for="student in students" :key="student.id"
+          comment-more
+          actions
+          :to="`/profiles/${student.id}`"
+        >
+          <StudentCard
             :edit-mode="isEditing"
             :email="student.email"
             :first-name="student.firstName"
             :img-src="student.src"
             :last-name="student.lastName"
             @click="removeStudent(student.id)"
-        />
-
+          />
+        </NuxtLink>
 
         <div
             v-if="!students || students.length === 0"

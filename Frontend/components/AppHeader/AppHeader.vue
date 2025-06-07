@@ -45,7 +45,7 @@ const goBack = () => {
         :first-name="props.firstName"
         :image="props.image"
         :last-name="props.lastName"
-        :role="props.role || ''"
+        :role="props.role"
         class="w-fit"
     />
 
@@ -78,7 +78,7 @@ const goBack = () => {
         right-icon="fa-magnifying-glass"
         text=""
         variant="ghost"
-        @click="router.push('/student/search')"
+        @click="router.push(`/${props.role.toLowerCase()}/search`)"
     />
   </div>
 </template>

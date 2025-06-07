@@ -2,6 +2,7 @@
 
 import { ref } from "vue";
 import type { UserData } from "#shared/types/userInterfaces";
+import {UserRoles} from "#shared/enums/enums";
 
 
 const userStore = useUserStore();
@@ -23,7 +24,7 @@ if (userStore.user) {
         :first-name="currentUser?.first_name || 'Admin'"
         :image="currentUser?.profile_image || ''"
         :last-name="currentUser?.last_name || 'Admin'"
-        :role="currentUser?.role || 'admin'"
+        :role="UserRoles.ADMIN"
         show-search
         show-user
     />

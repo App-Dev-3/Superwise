@@ -198,14 +198,16 @@
     "supervisor": "Supervisor"
   },
   "search": {
-    "empty": "Search for a supervisor...",
+    "emptyForSupervisors": "Search for a student...",
+    "emptyForStudents": "Search for a supervisor...",
     "filter": {
       "availability": "Availability",
       "bestMatch": "Best Match",
       "name": "Name"
     },
     "noResults": "No search results...",
-    "placeholder": "Search supervisor..."
+    "placeholderForSupervisors": "Search student...",
+    "placeholderForStudents": "Search supervisor..."
   },
   "searchBar": {
     "noResults": "No results found"

@@ -57,6 +57,11 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+    dontShowStatistics: {
+    type: Boolean,
+    default: false,
+    required: false,
+    }
 });
 
 const limitedTags = computed(() =>
@@ -149,23 +154,9 @@ const descriptionClasses = computed(() => ({
       <h2 class="card-title font-bold">
         <div class="mask mask-squircle">
           <img
-              :alt="
-							t(
-								'supervisorCard.profilePictureAlt',
-								{
-									firstName: props.firstName,
-									lastName: props.lastName,
-								},
-							)
-						"
+              :alt="t('supervisorCard.profilePictureAlt',{firstName: props.firstName,lastName: props.lastName})"
               :class="imageSizeClasses"
-              :src="
-							props.image ||
-							getPlaceholderImage(
-								props.firstName,
-								props.lastName,
-							)
-						"
+              :src="props.image || getPlaceholderImage(props.firstName,props.lastName)"
               class="rounded-box"
           >
         </div>
@@ -174,10 +165,7 @@ const descriptionClasses = computed(() => ({
         </p>
       </h2>
 
-      <p
-          :class="descriptionClasses"
-          class="text-base-content/75 leading-tight"
-      >
+      <p :class="descriptionClasses" class="text-base-content/75 leading-tight">
         {{ description.trim() }}
       </p>
       <div>
@@ -189,15 +177,11 @@ const descriptionClasses = computed(() => ({
             variant="outline"
         />
       </div>
-      <div class="card-actions w-full flex justify-between">
+      <div v-if="!dontShowStatistics" class="card-actions w-full flex justify-between">
         <CustomTag
             :size="metricTagSize"
             :text="props.similarityScore + '%'"
-            :title="
-						t(
-							'supervisorCard.similarityScore',
-						)
-					"
+            :title="t('supervisorCard.similarityScore')"
             color="base-content"
             muted
             variant="clear"
@@ -205,17 +189,8 @@ const descriptionClasses = computed(() => ({
         <div>
           <CustomTag
               :size="metricTagSize"
-              :text="
-							props.currentCapacity +
-							'/' +
-							props.maxCapacity +
-							' '
-						"
-              :title="
-							t(
-								'supervisorCard.capacity',
-							)
-						"
+              :text="props.currentCapacity + '/' + props.maxCapacity + ' '"
+              :title="t('supervisorCard.capacity')"
               color="base-content"
               muted
               right-icon="user-group"
@@ -223,15 +198,8 @@ const descriptionClasses = computed(() => ({
           />
           <CustomTag
               :size="metricTagSize"
-              :text="
-							props.pendingAmount +
-							' '
-						"
-              :title="
-							t(
-								'supervisorCard.pending',
-							)
-						"
+              :text="props.pendingAmount + ' '"
+              :title="t('supervisorCard.pending',)"
               color="base-content"
               muted
               right-icon="hourglass"
@@ -243,4 +211,3 @@ const descriptionClasses = computed(() => ({
   </div>
 </template>
 
-<style scoped></style>

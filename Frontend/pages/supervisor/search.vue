@@ -3,7 +3,6 @@ import { useI18n } from 'vue-i18n';
 import { useDebounceFn } from "@vueuse/core";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 import SkeletonSupervisorCard from "~/components/Skeleton/SkeletonSupervisorCard.vue";
-import SupervisorCard from "~/components/SupervisorCard/SupervisorCard.vue";
 import {UserRoles} from "#shared/enums/enums";
 
 const { t } = useI18n();
@@ -23,7 +22,7 @@ const debouncedSearch = useDebounceFn(async () => {
 
   isLoading.value = true;
   try {
-    await searchSupervisors(searchQuery.value);
+    await searchStudents(searchQuery.value);
   } catch (error) {
     console.error('Error searching for supervisors:', error);
     searchResults.value = [];
@@ -33,16 +32,14 @@ const debouncedSearch = useDebounceFn(async () => {
 }, 300);
 
 const filterOptions = ref([
-  // { text: t('search.filter.bestMatch'), key: 'best-match', state: 'ascending' },
   { text: t('search.filter.name'), key: 'name', state: 'inactive' },
-  { text: t('search.filter.availability'), key: 'availability', state: 'inactive' },
 ]);
 
 function hasExactlyOneSpace(str) {
   return /^[^\s]+\s[^\s]+$/.test(str);
 }
 
-async function searchSupervisors(query) {
+async function searchStudents(query) {
   let results = [];
 
   if (query.includes('@')) {
@@ -73,8 +70,8 @@ async function searchSupervisors(query) {
     results = [ ...firstNameUsers, ...lastNameUsers ];
   }
 
-// Filter to only show SUPERVISOR users
-  searchResults.value = results.filter(user => user.role === UserRoles.SUPERVISOR);
+// Filter to only show STUDENT users
+  searchResults.value = results.filter(user => user.role === UserRoles.STUDENT);
 }
 
 const clearFilter = () => {
@@ -148,7 +145,7 @@ definePageMeta({
       />
       <InputField
           v-model="searchQuery"
-          :placeholder="t('search.placeholderForStudents')"
+          :placeholder="t('search.placeholderForSupervisors')"
           class="w-full"
           right-icon="xmark"
           @input="debouncedSearch"
@@ -186,20 +183,14 @@ definePageMeta({
           v-if="isLoading"
       />
 
-      <SupervisorCard
+      <MiniCard
           v-for="result in searchResults"
           v-else-if="searchQuery.length > 0 && !isLoading && searchResults.length > 0"
           :key="result.id"
-          dont-show-statistics
-          :current-capacity="result.current_capacity || 0"
-          :description="result.bio?.substring(0, 30) || ''"
+          :preview-text="result.thesis_description?.substring(0, 30) || ''"
           :first-name="result.first_name"
           :image="result.profile_image"
           :last-name="result.last_name"
-          :max-capacity="result.max_capacity || 5"
-          :pending-amount="result.pending_requests_count || 0"
-          :similarity-score="result.similarity_score || 0"
-          :tags="result.tags ? result.tags.map(tag => tag.tag_name) : []"
           class="w-full cursor-pointer"
           @click="navigateTo(`/profiles/${result.id}`)"
       />
@@ -211,7 +202,7 @@ definePageMeta({
       </div>
 
       <div v-else class="flex justify-center items-center h-full">
-        <EmptyPagePlaceholder :text="t('search.emptyForStudents')"/>
+        <EmptyPagePlaceholder :text="t('search.emptyForSupervisors')"/>
       </div>
     </div>
   </div>

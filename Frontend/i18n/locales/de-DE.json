@@ -198,14 +198,16 @@
     "supervisor": "Betreuende"
   },
   "search": {
-    "empty": "Suche nach einem Betreuer...",
+    "emptyForStudents": "Suche nach einem Betreuer...",
+    "emptyForSupervisors": "Suche nach einem Studenten...",
     "filter": {
       "availability": "Verfügbarkeit",
       "bestMatch": "Größte Übereinstimmung",
       "name": "Namen"
     },
     "noResults": "Keine Suchergebnisse...",
-    "placeholder": "Betreuer suchen..."
+    "placeholderForStudents": "Betreuer suchen...",
+    "placeholderForSupervisors": "Studenten suchen..."
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"

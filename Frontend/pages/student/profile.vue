@@ -227,7 +227,6 @@ const studentProfileHasChanged = computed(() => {
   return (topicDescription.value !== studentStore.studentProfile?.thesis_description)
 });
 
-// TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
   navigateTo('/student/edit-tags');
 };

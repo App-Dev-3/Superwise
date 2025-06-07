@@ -131,10 +131,11 @@ const handleSubmit = async () => {
   if (!userStore.user) {
     await userStore.refetchCurrentUser();
   }
-  addUserTag({
-    id: userStore.user?.id,
-    tags: tags.value as tagData[],
+  await addUserTag({
+      id: userStore.user?.id,
+      tags: tags.value as tagData[],
   });
+  processingData.value = false;
   navigateTo('/student/profile');
 };
 

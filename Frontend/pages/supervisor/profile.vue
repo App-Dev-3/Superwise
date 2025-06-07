@@ -194,7 +194,6 @@ const supervisorProfileHasChanged = computed(() => {
   return (bio.value !== userStore.supervisorProfile?.bio)
 })
 
-// TODO: implement the logic to navigate to edit tags and edit them
 const navigateToEditTags = () => {
   navigateTo('/supervisor/edit-tags');
 };

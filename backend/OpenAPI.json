@@ -1616,6 +1616,47 @@
           "supervision-requests"
         ]
       }
+    },
+    "/supervision-requests/pending-count/{userId}": {
+      "get": {
+        "description": "Returns the count of pending supervision requests for a specific user. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.",
+        "operationId": "SupervisionRequestsController_getPendingRequestCountForUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "ID of the user to get pending request count for",
+            "schema": {
+              "format": "uuid",
+              "example": "123e4567-e89b-12d3-a456-426614174000",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the count of pending supervision requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PendingRequestCountEntity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - Invalid UUID or admin user requested"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "summary": "Get pending supervision request count for a user",
+        "tags": [
+          "supervision-requests"
+        ]
+      }
     }
   },
   "info": {
@@ -2834,6 +2875,20 @@
         },
         "required": [
           "request_state"
+        ]
+      },
+      "PendingRequestCountEntity": {
+        "type": "object",
+        "properties": {
+          "pending_count": {
+            "type": "number",
+            "description": "Number of pending supervision requests for the user",
+            "example": 5,
+            "minimum": 0
+          }
+        },
+        "required": [
+          "pending_count"
         ]
       }
     }

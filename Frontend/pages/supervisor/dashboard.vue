@@ -94,14 +94,12 @@ definePageMeta({
         />
       </div>
       <NuxtLink
-        v-else
         v-for="request in visibleRequests"
+        v-else
         :key="request.id"
         :to="`/profiles/${request.student.user_id}`"
       >
         <MiniCard
-            v-for="request in visibleRequests"
-            :key="request.id"
             :bottom-text="formatTimeString(request.updated_at, undefined)"
             :first-name="request.student.user.first_name"
             :image="request.student.user.profile_image || getPlaceholderImage(request.student.user.first_name, request.student.user.last_name) || ''"

@@ -72,7 +72,7 @@ const emit = defineEmits([ 'right-button-click' ]);
     </ClientOnly>
 
     <span
-        :class="{colorText}"
+        :class="colorText"
         class="text-header bg-info-soft w-full"
     >
       {{ props.headerText }}

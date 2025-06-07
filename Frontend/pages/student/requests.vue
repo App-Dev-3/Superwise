@@ -5,8 +5,11 @@ import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.
 const { t } = useI18n();
 const studentStore = useStudentStore();
 
-await callOnce(() => studentStore.fetchSupervisionRequests(), { mode: 'navigation' })
-const pendingSupervisionRequests = studentStore.pendingSupervisionRequests
+const {pendingSupervisionRequests} = storeToRefs(studentStore)
+
+onMounted(() => {
+    studentStore.fetchSupervisionRequests()
+})
 
 function navigate(route: string) {
   navigateTo(route);

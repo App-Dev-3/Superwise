@@ -39,7 +39,7 @@
                   navigate('/student/dashboard')
                 "
       >
-        <div class="h-96 flex">
+        <div class="h-64 flex">
           <div class="flex flex-col w-full items-center justify-center p-3">
             <Avatar
                 :first-name="

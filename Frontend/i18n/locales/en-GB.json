@@ -135,6 +135,7 @@
       }
     },
     "next": "Next",
+    "saveNewTags": "Save new Tags",
     "selectTags": "Select Tags",
     "startMatching": "Start Matching",
     "tagPriority": "Tag Priority"

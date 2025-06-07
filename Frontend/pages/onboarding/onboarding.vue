@@ -34,6 +34,11 @@ function determineRole(exists: boolean) {
     return 'student';
   }
 }
+
+definePageMeta({
+  layout: "onboarding-layout",
+});
+
 </script>
 
 <template>

@@ -135,6 +135,7 @@
       }
     },
     "next": "Weiter",
+    "saveNewTags": "Neue Tags speichern",
     "selectTags": "Tags Auswählen",
     "startMatching": "Matching starten",
     "tagPriority": "Tags Sortieren"

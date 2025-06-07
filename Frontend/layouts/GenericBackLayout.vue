@@ -7,7 +7,6 @@ const { t } = useI18n();
 
 const headerText = computed(() => {
   const breadCrumbs: string[] = route.path.substring(1).split('/');
-  console.log('breadCrumbs', breadCrumbs);
   if (breadCrumbs[0].includes('profiles')) {
     return t("nav.profile");
   }

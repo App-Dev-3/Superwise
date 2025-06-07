@@ -197,6 +197,14 @@
     "student": "Studierende",
     "supervisor": "Betreuende"
   },
+  "search": {
+    "filter": {
+      "availability": "Verfügbarkeit",
+      "bestMatch": "Größte Übereinstimmung",
+      "name": "Namen"
+    },
+    "placeholder": "Betreuer suchen..."
+  },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"
   },

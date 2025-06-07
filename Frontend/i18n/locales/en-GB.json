@@ -197,6 +197,14 @@
     "student": "Student",
     "supervisor": "Supervisor"
   },
+  "search": {
+    "filter": {
+      "availability": "Availability",
+      "bestMatch": "Best Match",
+      "name": "Name"
+    },
+    "placeholder": "Search supervisor..."
+  },
   "searchBar": {
     "noResults": "No results found"
   },

@@ -22,6 +22,7 @@
         <tag-selector
             :all-tags="DbTags"
             :description-text="descriptionText[0]"
+            :initial-selected="userTags"
             :max-selection="10"
             @update:selected-tags="
                   tags = $event
@@ -52,6 +53,7 @@ import { onMounted, ref } from 'vue';
 import { useUser } from '@clerk/nuxt/composables';
 import type { tagData } from '~/shared/types/tagInterfaces';
 import type { UserCreateData, UserData, } from '~/shared/types/userInterfaces';
+import { HttpMethods } from "#shared/enums/enums";
 
 const { t } = useI18n();
 
@@ -136,6 +138,19 @@ const handleSubmit = async () => {
   navigateTo('/supervisor/profile');
 };
 
+if (!userStore.user) {
+  await userStore.refetchCurrentUser();
+}
+const userTags = ref<Array<unknown>>([]);
+const { data } = useFetch<Array<unknown>>(
+    '/api/users/' + userStore.user?.id + '/tags',
+    {
+      method: HttpMethods.GET,
+    },
+);
+watch(data, () => {
+  userTags.value = data.value?.map((tag) => tag.tag) || [];
+});
 
 definePageMeta({
   layout: "onboarding-layout",

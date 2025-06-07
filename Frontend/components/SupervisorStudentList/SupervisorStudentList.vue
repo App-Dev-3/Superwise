@@ -160,9 +160,10 @@ watch(
       >
 
         <!-- Student List -->
-        <NuxtLink Add commentMore actions
-          v-for="student in students"
-          :key="student.id"
+        <NuxtLink
+          v-for="student in students" :key="student.id"
+          comment-more
+          actions
           :to="`/profiles/${student.id}`"
         >
           <StudentCard

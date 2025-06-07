@@ -52,7 +52,7 @@ const props = defineProps({
       class="flex flex-row gap-3 items-center p-2 w-full bg-base-100 rounded-3xl"
   >
     <div class="avatar">
-      <div class="mask mask-squircle w-20">
+      <div class="mask mask-squircle w-16">
         <img
             :src="props.image || getPlaceholderImage(props.firstName, props.lastName)"
             alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"

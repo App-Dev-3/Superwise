@@ -3,6 +3,7 @@
 import { ref } from "vue";
 import type { UserData } from "#shared/types/userInterfaces";
 import { useRoute } from 'vue-router';
+import {UserRoles} from "#shared/enums/enums";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -58,7 +59,7 @@ const headerText = computed(() => {
         :first-name="currentUser?.first_name"
         :image="currentUser?.profile_image || ''"
         :last-name="currentUser?.last_name"
-        :role="currentUser?.role"
+        :role="UserRoles.STUDENT"
         show-search
         show-user
     />

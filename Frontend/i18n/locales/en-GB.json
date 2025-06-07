@@ -10,6 +10,7 @@
       "priority": "Please sort the tags by priority.",
       "tags": "Which tags describe your thesis topic?"
     },
+    "search": "Search",
     "searchPlaceholder": "Search..."
   },
   "confirmation": {
@@ -195,6 +196,18 @@
     "admin": "Admin",
     "student": "Student",
     "supervisor": "Supervisor"
+  },
+  "search": {
+    "emptyForSupervisors": "Search for a student...",
+    "emptyForStudents": "Search for a supervisor...",
+    "filter": {
+      "availability": "Availability",
+      "bestMatch": "Best Match",
+      "name": "Name"
+    },
+    "noResults": "No search results...",
+    "placeholderForSupervisors": "Search student...",
+    "placeholderForStudents": "Search supervisor..."
   },
   "searchBar": {
     "noResults": "No results found"

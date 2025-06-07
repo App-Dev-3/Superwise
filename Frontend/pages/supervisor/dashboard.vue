@@ -17,8 +17,6 @@ const supervisor_data = ref<SupervisorData | null>(null);
 
 const {
   data: pendingRequests,
-  pending,
-  error,
 } = useSupervisionRequests("PENDING");
 
 function navigate(route: string) {
@@ -58,11 +56,11 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="flex flex-col w-full p-6">
+  <div class="flex flex-col w-full gap-8">
     <ActionCard
         :button-text="t('dashboard.supervisor.manageStudents')"
         card-type="primary"
-        class="w-full p-8 text-center"
+        class="w-full text-center"
         @action-button-clicked="navigate('/supervisor/currently-supervising')"
     >
       <div class="py-8 px-16 w-full">
@@ -86,15 +84,8 @@ definePageMeta({
         card-type="ghost"
         @action-button-clicked="navigateTo('/supervisor/matching')"
     >
-      <div v-if="pending" class="p-6 text-body opacity-50">Loading…</div>
-      <div v-else-if="error" class="p-6 opacity-50">
-        <div v-if="error.statusCode === 404">
-          <p class="text-body">No requests yet</p>
-        </div>
-      </div>
       <MiniCard
           v-for="request in visibleRequests"
-          v-else
           :key="request.id"
           :bottom-text="formatTimeString(request.updated_at, undefined)"
           :first-name="request.student.user.first_name"

@@ -84,7 +84,6 @@ const emit = defineEmits([ 'right-button-click' ]);
         :right-icon="props.rightIcon"
         :text="props.rightButton"
         class="opacity-75"
-        clickable
         color="default"
         size="xs"
         variant="ghost"

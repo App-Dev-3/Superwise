@@ -17,6 +17,8 @@ import {
     faEye,
     faEyeSlash,
     faFileDownload,
+    faFilter,
+    faFilterCircleXmark,
     faGear,
     faGripLines,
     faHandshakeSimple,
@@ -39,6 +41,7 @@ import {
     faTag,
     faTrashCan,
     faTriangleExclamation,
+    faUpDown,
     faUser,
     faUserGroup,
     faUserShield,
@@ -91,7 +94,10 @@ library.add(
     faGripLines,
     faCaretDown,
     faCaretUp,
+    faUpDown,
     faDashboard,
+    faFilter,
+    faFilterCircleXmark
 );
 
 export default defineNuxtPlugin((nuxtApp) => {

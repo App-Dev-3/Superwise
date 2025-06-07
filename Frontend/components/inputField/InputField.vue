@@ -104,12 +104,12 @@ function handleRightIconClick() {
           v-if="rightIcon"
           :class="{ 'input-container__rightIcon--clickable': isClearIcon }"
           :icon="rightIcon"
-          class="input-container__rightIcon"
+          class="input-container__rightIcon cursor-pointer"
           @click="handleRightIconClick"
       />
     </div>
 
-    <p class="text-xs text-gray-500 mt-1">
+    <p v-if="note" class="text-xs opacity-50">
       {{ note }}
     </p>
   </fieldset>

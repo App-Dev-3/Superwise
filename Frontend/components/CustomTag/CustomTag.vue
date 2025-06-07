@@ -58,6 +58,7 @@ const props = defineProps({
   },
   capitalize: {type: Boolean, default: true},
   rightIcon: {type: String, default: ""},
+  leftIcon: {type: String, default: ""},
   clickable: {type: Boolean, default: false},
   deletable: {type: Boolean, default: false},
 });
@@ -170,14 +171,22 @@ const iconColorClass = computed(() => {
         data-test="delete-icon"
         icon="xmark"
     />
-    <span :class="{ 'capitalize': props.capitalize }">
+    <FontAwesomeIcon
+        v-if="props.leftIcon"
+        :class="iconColorClass"
+        :icon="props.leftIcon"
+        class="mr-1"
+        data-test="left-icon"
+    />
+    <span :class="{ 'capitalize': props.capitalize }" class="select-none w-fit text-nowrap">
       {{ props.text }}
-      <FontAwesomeIcon
-          v-if="props.rightIcon"
-          :class="iconColorClass"
-          :icon="props.rightIcon"
-          data-test="prop-icon"
-      />
-      </span>
+    </span>
+    <FontAwesomeIcon
+        v-if="props.rightIcon"
+        :class="iconColorClass"
+        :icon="props.rightIcon"
+        class="ml-1"
+        data-test="prop-icon"
+    />
   </div>
 </template>

@@ -137,14 +137,14 @@ export class SupervisionRequestsService {
       throw new SupervisorCapacityException(supervisor.id);
     }
 
-      const student = await this.studentsService.findStudentByUserId(targetUser.id);
-      if (student) {
-        const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
-        if (hasAccepted) {
-          throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
-        }
+    const student = await this.studentsService.findStudentByUserId(targetUser.id);
+    if (student) {
+      const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
+      if (hasAccepted) {
+        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
       }
-    
+    }
+
     const result = await this.repository.createSupervisionRequest({
       supervisor_id: supervisor.id,
       student_email: dto.student_email,

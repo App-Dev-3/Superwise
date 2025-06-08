@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { Prisma, RequestState, Role, SupervisionRequest } from '@prisma/client';
 import { SupervisionRequestWithUsersEntity } from './entities/supervision-request-with-users.entity';
@@ -213,15 +213,6 @@ export class SupervisionRequestsRepository {
     student_email?: string;
     available_spots?: number;
   }): Promise<SupervisionRequest & { studentWasCreated?: boolean }> {
-    if (data.request_state === RequestState.ACCEPTED) {
-      if (!data.student_email) {
-        throw new BadRequestException('student_email is required for creating ACCEPTED requests');
-      }
-      if (typeof data.available_spots !== 'number') {
-        throw new BadRequestException('available_spots is required for creating ACCEPTED requests');
-      }
-    }
-
     // Handle ACCEPTED requests with student email (supervisor creating)
     if (
       data.request_state === RequestState.ACCEPTED &&

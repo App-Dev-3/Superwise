@@ -1,9 +1,16 @@
 <template>
+  <!-- <header>
+    <SignedOut>
+      <SignInButton />
+    </SignedOut>
+    <SignedIn>
+      <UserButton />
+    </SignedIn>
+  </header> -->
+  
   <div>
-    <VitePwaManifest/>
-    <NuxtLayout>
-      <NuxtPage/>
-    </NuxtLayout>
+    <VitePwaManifest />
+    <NuxtPage />    
     <!-- <NuxtRouteAnnouncer />
     <NuxtWelcome /> -->
   </div>

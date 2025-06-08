@@ -1,7 +1,7 @@
 <template>
   <div
       v-if="isLoading"
-      class="w-full h-screen flex max-w-3xl m-auto flex-col p-8 justify-center items-center"
+      class="w-full h-screen flex max-w-xl m-auto flex-col p-8 justify-center items-center"
   >
     <ClientOnly>
       <img
@@ -20,7 +20,7 @@
     </span>
   </div>
 
-  <div v-else class="w-full h-screen flex max-w-3xl m-auto flex-col">
+  <div v-else class="w-full h-screen flex max-w-xl m-auto flex-col">
     <slot/>
   </div>
 </template>
@@ -38,8 +38,8 @@ const { isLoaded } = storeToRefs(authStore)
 const isLoading = ref(true);
 
 onMounted(async () => {
-    await authStore.initialize();
-    await until(isLoaded).toBe(true);
-    isLoading.value = false;
+  await authStore.initialize();
+  await until(isLoaded).toBe(true);
+  isLoading.value = false;
 });
 </script>

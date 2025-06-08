@@ -131,4 +131,22 @@ export default defineNuxtConfig({
             type: "module",
         },
     },
+    app: {
+        head: {
+            link: [
+                {
+                    rel: 'icon',
+                    type: 'image/svg+xml',
+                    href: '/favicon/favicon_light.svg',
+                    media: '(prefers-color-scheme: light)'
+                },
+                {
+                    rel: 'icon',
+                    type: 'image/svg+xml',
+                    href: '/favicon/favicon_dark.svg',
+                    media: '(prefers-color-scheme: dark)'
+                }
+            ]
+        },
+    },
 });

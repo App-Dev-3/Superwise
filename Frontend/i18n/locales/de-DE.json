@@ -190,7 +190,8 @@
     "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein"
   },
   "requests": {
-    "noRequests": "Du hast noch keine Anfragen gesendet..."
+    "noRequests": "Du hast noch keine Anfragen gesendet...",
+    "rejectedRequests": "Abgelehnte Anfragen"
   },
   "role": {
     "admin": "Admin",

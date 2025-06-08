@@ -85,19 +85,14 @@ definePageMeta({
         card-type="ghost"
         @action-button-clicked="navigateTo('/supervisor/matching')"
     >
-      <div
-          v-if="!visibleRequests || visibleRequests.length === 0"
-          class="size-full flex flex-col justify-center items-center"
-      >
-        <EmptyPagePlaceholder
-            :text="t('dashboard.supervisor.noRequests')"
-        />
-      </div>
+      <EmptyPagePlaceholder
+          :render-condition="visibleRequests"
+          :text="t('dashboard.supervisor.noRequests')"
+      />
       <NuxtLink
-        v-for="request in visibleRequests"
-        v-else
-        :key="request.id"
-        :to="`/profiles/${request.student.user_id}`"
+          v-for="request in visibleRequests"
+          :key="request.id"
+          :to="`/profiles/${request.student.user_id}`"
       >
         <MiniCard
             :bottom-text="formatTimeString(request.updated_at, undefined)"
@@ -108,7 +103,7 @@ definePageMeta({
             top-icon="message"
         />
       </NuxtLink>
-      
+
     </ActionCard>
   </div>
 </template>

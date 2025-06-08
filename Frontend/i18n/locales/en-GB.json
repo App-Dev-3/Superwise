@@ -190,7 +190,8 @@
     "topicVisibility": "Your thesis description will be visible to other users"
   },
   "requests": {
-    "noRequests": "You have not sent any requests yet..."
+    "noRequests": "You have not sent any requests yet...",
+    "rejectedRequests": "Rejected Requests"
   },
   "role": {
     "admin": "Admin",
@@ -198,16 +199,16 @@
     "supervisor": "Supervisor"
   },
   "search": {
-    "emptyForSupervisors": "Search for a student...",
     "emptyForStudents": "Search for a supervisor...",
+    "emptyForSupervisors": "Search for a student...",
     "filter": {
       "availability": "Availability",
       "bestMatch": "Best Match",
       "name": "Name"
     },
     "noResults": "No search results...",
-    "placeholderForSupervisors": "Search student...",
-    "placeholderForStudents": "Search supervisor..."
+    "placeholderForStudents": "Search supervisor...",
+    "placeholderForSupervisors": "Search student..."
   },
   "searchBar": {
     "noResults": "No results found"

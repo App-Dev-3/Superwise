@@ -19,16 +19,10 @@
           top-icon="user-group"
       />
     </SwipeContainer>
-
-    <div
-        v-if="!sortedRequests || sortedRequests.length === 0"
-        class="size-full flex flex-col justify-center items-center"
-    >
-      <EmptyPagePlaceholder
-          :text="t('matching.noRequests')"
-      />
-    </div>
-
+    <EmptyPagePlaceholder
+        :render-condition="sortedRequests"
+        :text="t('matching.noRequests')"
+    />
     <Toast
         v-if="toast.visible"
         :duration="3000"
@@ -74,7 +68,7 @@ const toast = ref({
   message: "This is a toast message",
 });
 
-onUnmounted(async() => {
+onUnmounted(async () => {
   if (toast.value.visible) {
     await handleToastClosed();
     window.location.reload(); // manually reload the page to ensure the dashboard state is updated

@@ -1,6 +1,6 @@
 <template>
   <div
-      class="size-full flex flex-col justify-center items-center gap-4"
+      class="w-full h-screen flex max-w-xl m-auto flex-col p-6"
   >
     <ClientOnly>
       <img
@@ -45,10 +45,5 @@ import {useColorMode} from '#imports';
 const {t} = useI18n();
 
 const colorMode = useColorMode();
-
-
-definePageMeta({
-  layout: "landing-layout",
-});
 
 </script>

@@ -8,6 +8,7 @@ import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto'
 import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 describe('SupervisionRequestsController', () => {
   let controller: SupervisionRequestsController;
@@ -174,6 +175,24 @@ describe('SupervisionRequestsController', () => {
       );
     });
 
+    it('should handle StudentAlreadyHasAnAcceptedSupervisionRequestException', async () => {
+      // Arrange
+      const createRequestDto: CreateSupervisionRequestDto = {
+        student_email: 'existing@fhstp.ac.at',
+      };
+      const customError = new StudentAlreadyHasAnAcceptedSupervisionRequestException('student-id');
+      mockSupervisionRequestsService.createSupervisionRequest.mockRejectedValue(customError);
+
+      // Act & Assert
+      await expect(
+        controller.createSupervisionRequest(createRequestDto, mockSupervisorUser),
+      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+
+      expect(mockSupervisionRequestsService.createSupervisionRequest).toHaveBeenCalledWith(
+        createRequestDto,
+        mockSupervisorUser,
+      );
+    });
     it('should pass through exceptions from the service', async () => {
       // Arrange
       const createRequestDto: CreateSupervisionRequestDto = {};
@@ -315,6 +334,25 @@ describe('SupervisionRequestsController', () => {
 
       // Assert
       expect(result).toEqual(updatedRequest);
+      expect(mockSupervisionRequestsService.updateRequestState).toHaveBeenCalledWith(
+        REQUEST_UUID,
+        RequestState.ACCEPTED,
+        mockSupervisorUser,
+      );
+    });
+    it('should handle StudentAlreadyHasAnAcceptedSupervisionRequestException during state update', async () => {
+      // Arrange
+      const updateDto: UpdateSupervisionRequestDto = {
+        request_state: RequestState.ACCEPTED,
+      };
+      const customError = new StudentAlreadyHasAnAcceptedSupervisionRequestException('student-id');
+      mockSupervisionRequestsService.updateRequestState.mockRejectedValue(customError);
+
+      // Act & Assert
+      await expect(
+        controller.updateSupervisionRequestState(REQUEST_UUID, updateDto, mockSupervisorUser),
+      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+
       expect(mockSupervisionRequestsService.updateRequestState).toHaveBeenCalledWith(
         REQUEST_UUID,
         RequestState.ACCEPTED,

@@ -180,13 +180,15 @@ describe('SupervisionRequestsController', () => {
       const createRequestDto: CreateSupervisionRequestDto = {
         student_email: 'existing@fhstp.ac.at',
       };
-      const customError = new StudentAlreadyHasAnAcceptedSupervisionRequestException('student-id');
-      mockSupervisionRequestsService.createSupervisionRequest.mockRejectedValue(customError);
+      const expectedError = new StudentAlreadyHasAnAcceptedSupervisionRequestException(
+        'student-id',
+      );
+      mockSupervisionRequestsService.createSupervisionRequest.mockRejectedValue(expectedError);
 
       // Act & Assert
       await expect(
         controller.createSupervisionRequest(createRequestDto, mockSupervisorUser),
-      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+      ).rejects.toThrow(expectedError);
 
       expect(mockSupervisionRequestsService.createSupervisionRequest).toHaveBeenCalledWith(
         createRequestDto,
@@ -345,13 +347,15 @@ describe('SupervisionRequestsController', () => {
       const updateDto: UpdateSupervisionRequestDto = {
         request_state: RequestState.ACCEPTED,
       };
-      const customError = new StudentAlreadyHasAnAcceptedSupervisionRequestException('student-id');
-      mockSupervisionRequestsService.updateRequestState.mockRejectedValue(customError);
+      const expectedError = new StudentAlreadyHasAnAcceptedSupervisionRequestException(
+        'student-id',
+      );
+      mockSupervisionRequestsService.updateRequestState.mockRejectedValue(expectedError);
 
       // Act & Assert
       await expect(
         controller.updateSupervisionRequestState(REQUEST_UUID, updateDto, mockSupervisorUser),
-      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+      ).rejects.toThrow(expectedError);
 
       expect(mockSupervisionRequestsService.updateRequestState).toHaveBeenCalledWith(
         REQUEST_UUID,

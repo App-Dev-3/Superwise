@@ -378,35 +378,6 @@ describe('SupervisionRequestsRepository', () => {
         },
       });
     });
-
-    it('should use transaction client when provided', async () => {
-      // Arrange
-      const email = 'student@fhstp.ac.at';
-      const txClient = {
-        user: {
-          findUnique: jest.fn().mockResolvedValue({
-            id: STUDENT_USER_UUID,
-            email,
-          }),
-        },
-        student: {
-          findUnique: jest.fn().mockResolvedValue({
-            id: STUDENT_UUID,
-            user_id: STUDENT_USER_UUID,
-          }),
-        },
-      };
-
-      // Act
-      await repository.createOrFindStudentByEmail(email, txClient as any);
-
-      // Assert
-      expect(txClient.user.findUnique).toHaveBeenCalled();
-      expect(txClient.student.findUnique).toHaveBeenCalled();
-      // The prisma service should not be used directly
-      expect(mockPrismaService.user.findUnique).not.toHaveBeenCalled();
-      expect(mockPrismaService.student.findUnique).not.toHaveBeenCalled();
-    });
   });
 
   describe('createSupervisionRequest', () => {

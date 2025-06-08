@@ -31,7 +31,7 @@ export class SupervisionRequestsService {
     private readonly usersService: UsersService,
     private readonly logger: WinstonLoggerService,
     private readonly appConfig: AppConfigService,
-  ) { }
+  ) {}
 
   /**
    * Create a supervision request

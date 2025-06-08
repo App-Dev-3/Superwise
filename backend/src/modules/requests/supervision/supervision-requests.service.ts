@@ -20,6 +20,7 @@ import { MissingStudentEmailException } from '../../../common/exceptions/custom-
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { AppConfigService } from '@config';
 import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
+import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 @Injectable()
 export class SupervisionRequestsService {
@@ -30,7 +31,7 @@ export class SupervisionRequestsService {
     private readonly usersService: UsersService,
     private readonly logger: WinstonLoggerService,
     private readonly appConfig: AppConfigService,
-  ) {}
+  ) { }
 
   /**
    * Create a supervision request
@@ -141,9 +142,7 @@ export class SupervisionRequestsService {
       if (student) {
         const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
         if (hasAccepted) {
-          throw new BadRequestException(
-            'Student already has an accepted supervision request. Manual assignment not allowed.',
-          );
+          throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
         }
       }
     }
@@ -256,9 +255,7 @@ export class SupervisionRequestsService {
     if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
       const hasAccepted = await this.repository.hasAcceptedSupervision(request.student_id);
       if (hasAccepted) {
-        throw new BadRequestException(
-          'Student already has an accepted supervision request. Only one accepted request is allowed per student.',
-        );
+        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(request.student_id);
       }
     }
 

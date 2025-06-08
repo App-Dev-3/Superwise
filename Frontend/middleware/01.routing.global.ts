@@ -1,4 +1,5 @@
 import {UserRoles} from "#shared/enums/enums";
+import {until} from "@vueuse/core";
 
 export default defineNuxtRouteMiddleware(async (to) => {
   // ============ USER IS NOT AUTHENTICATED YET ============
@@ -8,7 +9,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   const authStore = useAuthStore()
   await authStore.initialize()
-  const { user, isSignedIn } = storeToRefs(authStore)
+  const { user, isSignedIn, isLoaded } = storeToRefs(authStore)
+  if (!isLoaded.value) {
+    await until(isLoaded).toBe(true)
+  }
   const registrationStore = useRegistrationStore()
 
   // Only allow access to public paths if not signed in

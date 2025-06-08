@@ -594,8 +594,8 @@ describe('SupervisionRequestsService', () => {
         newState: RequestState.WITHDRAWN,
         currentState: mockSupervisionRequest.request_state,
         supervisor_id: mockSupervisionRequest.supervisor_id,
-        available_spots: 0, // Not used for non-capacity affecting changes
-        total_spots: 0, // Not used for non-capacity affecting changes
+        available_spots: 0, 
+        total_spots: 0, 
       });
     });
 

@@ -233,7 +233,7 @@ export class SupervisionRequestsRepository {
       return this.prisma.$transaction(async tx => {
         // Find or create student using our helper method
         const studentResult = await this.createOrFindStudentByEmail(
-          data.student_email as string, // Safe assertion as we've checked it exists above
+          data.student_email as string, 
           tx,
         );
 

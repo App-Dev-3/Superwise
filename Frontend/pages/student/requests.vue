@@ -33,19 +33,41 @@ definePageMeta({
                 :last-name="pendingRequest.supervisor.user.last_name"
                 :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
                 bottom-icon="tag"
-                top-icon="user-group"
                 class="cursor-pointer"
+                top-icon="user-group"
                 @click="navigate(`/profiles/${pendingRequest.supervisor.user_id}`)"
             />
           </div>
+          <CustomAccordion
+              :icon="['fas', 'clock']"
+              :icon-class="'text-yellow-500'"
+              :title="t('requests.pendingRequests')"
+              class="w-full"
+          >
+            <div class="flex flex-col">
+              <div v-for="pendingRequest in pendingSupervisionRequests" :key="pendingRequest.id" class="mb-2">
+                <MiniCard
+                    :bottom-text="new Date(pendingRequest.updated_at).toLocaleDateString()"
+                    :first-name="pendingRequest.supervisor.user.first_name"
+                    :image="pendingRequest.supervisor.user.profile_image"
+                    :last-name="pendingRequest.supervisor.user.last_name"
+                    :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
+                    bottom-icon="tag"
+                    class="cursor-pointer"
+                    top-icon="user-group"
+                    @click="navigate(`/profiles/${pendingRequest.supervisor.user_id}`)"
+                />
+              </div>
+            </div>
+          </CustomAccordion>
         </div>
       </div>
     </div>
-      <div v-else class="size-full flex flex-col justify-center items-center">
-          <EmptyPagePlaceholder
-              :text="t('requests.noRequests')"
-          />
-      </div>
+    <div v-else class="size-full flex flex-col justify-center items-center">
+      <EmptyPagePlaceholder
+          :text="t('requests.noRequests')"
+      />
+    </div>
   </div>
 </template>
 

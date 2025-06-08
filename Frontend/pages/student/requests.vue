@@ -1,11 +1,19 @@
 <script lang="ts" setup>
 import { useStudentStore } from "~/stores/useStudentStore";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
+import { supervisionRequestStatus, supervisionRequestType } from "~/shared/enums/enums";
+import type { ConfirmationDialogData } from "~/shared/types/userInterfaces";
+import { nextTick, ref } from "vue";
+import type { SupervisionRequestsData } from "~/shared/types/supervisorInterfaces";
+import { getPlaceholderImage } from "~/utils/uiHelpers";
 
 const { t } = useI18n();
 const studentStore = useStudentStore();
+const settingsStore = useSettingsStore();
 
 const { pendingSupervisionRequests, rejectedSupervisionRequests } = storeToRefs(studentStore)
+const modalInformation = ref<ConfirmationDialogData | null>(null)
+
 
 onMounted(() => {
   studentStore.fetchSupervisionRequests()
@@ -13,6 +21,43 @@ onMounted(() => {
 
 function navigate(route: string) {
   navigateTo(route);
+}
+
+async function handleWithdrawRequest(request: SupervisionRequestsData) {
+
+  console.log('handleWithdrawRequest called with request:', request);
+   modalInformation.value = {
+    type: supervisionRequestType.DISMISS,
+    headline: `Withdraw Supervision Request`,
+    icon: '',
+    warning: '',
+    description: `Would you like to withdraw the supervision request from
+        ${ request.student.user.first_name } ${ request.student.user.last_name }? Once withdrawn, the supervisor will no longer see this request.`,
+    confirmButtonText: 'Withdraw Request',
+    confirmButtonColor: 'error',
+    request: request,
+  };
+  if (settingsStore.settings?.showSupervisionRejectModal) {
+    openModal();
+  } else {
+    // supervisorStore.removeSupervisionRequest(request.id);
+    // showToastInformation(supervisionRequestType.DISMISS);
+  }
+  // await $fetch(`/api/supervision-requests/${request.id}`, {
+  //   method: "PATCH",
+  //   body: {
+  //     request_state: supervisionRequestStatus.WITHDRAWN,
+  //   },
+  // });
+}
+
+
+
+
+const openModal = async () => {
+  await nextTick();
+  const modal = document.getElementById('confirmationModal') as HTMLDialogElement
+  modal?.showModal()
 }
 
 definePageMeta({
@@ -33,7 +78,9 @@ definePageMeta({
         bottom-icon="tag"
         class="cursor-pointer"
         top-icon="user-group"
-        @click="navigate(`/profiles/${pendingRequest.supervisor.user_id}`)"
+        :show-delete="true"
+        @cardClicked="console.log('Card clicked')"
+        @deleteClicked="handleWithdrawRequest(pendingRequest)"
     />
 
     <EmptyPagePlaceholder
@@ -61,7 +108,21 @@ definePageMeta({
           @click="navigate(`/profiles/${rejectedRequest.supervisor.user_id}`)"
       />
     </CustomAccordion>
+    <ConfirmationModal
+        v-if="modalInformation && modalInformation.request"
+        :confirm-button-color="modalInformation.confirmButtonColor"
+        :confirm-button-text="modalInformation.confirmButtonText"
+        :description="modalInformation.description"
+        :headline="modalInformation.headline"
+        :icon="modalInformation.icon"
+        :image="modalInformation.request.student.user.profile_image || getPlaceholderImage(modalInformation.request.student.user.first_name, modalInformation.request.student.user.last_name)"
+        linked-component-id="confirmationModal"
+        @abort="console.log('Dont show again clicked')"
+        @confirm="showToastInformation(modalInformation.type)"
+        @dont-show-again="console.log('Dont show again clicked')"
+    />
   </div>
+  
 </template>
 
 <style scoped>

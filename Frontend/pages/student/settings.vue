@@ -73,7 +73,7 @@ definePageMeta({
     </SettingsArea>
 
     <!-- Modal Settings -->
-    <SettingsArea icon="phone" title="Modals">
+    <SettingsArea icon="up-right-from-square" title="Modals">
       <SettingsElement
           :description="t('settings.modal.student.supervisionrequest.description')"
           :title="t('settings.modal.student.supervisionrequest.title')"

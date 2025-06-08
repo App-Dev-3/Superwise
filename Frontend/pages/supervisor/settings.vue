@@ -73,7 +73,7 @@ definePageMeta({
     </SettingsArea>
 
     <!-- Modal Settings -->
-    <SettingsArea icon="phone" title="Modals">
+    <SettingsArea icon="up-right-from-square" title="Modals">
       <SettingsElement
           description="Show confirmation modal when accepting a supervision request"
           title="Supervision request Accept Modal"

@@ -11,15 +11,15 @@ const props = defineProps<SettingsAreaProps>();
 
 <template>
   <div class="w-full flex flex-col gap-1 max-w-md self-center">
-    <span class="text-large px-6 opacity-75 flex flex-row gap-2 items-center">
-      <FontAwesomeIcon :icon="icon" class="text-body" />
+    <span class="text-large !px-6 opacity-75 flex flex-row gap-2 items-center">
+      <FontAwesomeIcon :icon="icon" class="text-body"/>
       {{ props.title }}
     </span>
 
     <div
-      class="border border-base-300 bg-base-100 p-8 rounded-3xl flex flex-col gap-4"
+        class="border border-base-300 bg-base-100 p-8 rounded-3xl flex flex-col gap-4"
     >
-      <slot />
+      <slot/>
     </div>
   </div>
 </template>

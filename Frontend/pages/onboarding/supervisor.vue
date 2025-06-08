@@ -21,6 +21,7 @@
       <template #step1>
         <tag-selector
             :all-tags="DbTags"
+            :initial-selected="[]"
             :description-text="descriptionText[0]"
             :max-selection="10"
             @update:selected-tags="

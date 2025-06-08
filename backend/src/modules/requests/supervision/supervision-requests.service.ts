@@ -129,19 +129,19 @@ export class SupervisionRequestsService {
       throw new SupervisorTargetException();
     }
 
+    const student = await this.studentsService.findStudentByUserId(targetUser.id);
+
+    const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
+    if (hasAccepted) {
+      throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
+    }
+
     // Get supervisor profile
     const supervisor = await this.supervisorsService.findSupervisorByUserId(currentUser.id);
 
     // Check if supervisor has available spots
     if (supervisor.available_spots <= 0) {
       throw new SupervisorCapacityException(supervisor.id);
-    }
-
-    const student = await this.studentsService.findStudentByUserId(targetUser.id);
-
-    const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
-    if (hasAccepted) {
-      throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
     }
 
     const result = await this.repository.createSupervisionRequest({

@@ -16,6 +16,7 @@ import { SelfSupervisionException } from '../../../common/exceptions/custom-exce
 import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
+import { mock } from 'node:test';
 
 describe('SupervisionRequestsService', () => {
   let service: SupervisionRequestsService;
@@ -302,7 +303,7 @@ describe('SupervisionRequestsService', () => {
     describe('as a supervisor', () => {
       it('should create an accepted request with an existing student', async () => {
         // Arrange
-        const dto = { student_email: 'student@fhstp.ac.at' };
+        const dto = { student_email: mockStudentUser.email };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
 
         mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user

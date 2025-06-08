@@ -9,6 +9,7 @@ import { PendingRequestCountEntity } from './entities/pending-request-count.enti
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
+import { mock } from 'node:test';
 
 describe('SupervisionRequestsController', () => {
   let controller: SupervisionRequestsController;
@@ -151,7 +152,7 @@ describe('SupervisionRequestsController', () => {
     it('should create a request as a supervisor', async () => {
       // Arrange
       const createRequestDto: CreateSupervisionRequestDto = {
-        student_email: 'student@fhstp.ac.at',
+        student_email: mockSupervisionRequestWithUsers.student.user.email,  
       };
       const supervisionRequestWithStudentCreated = {
         ...mockSupervisionRequest,
@@ -178,10 +179,10 @@ describe('SupervisionRequestsController', () => {
     it('should handle StudentAlreadyHasAnAcceptedSupervisionRequestException', async () => {
       // Arrange
       const createRequestDto: CreateSupervisionRequestDto = {
-        student_email: 'existing@fhstp.ac.at',
+        student_email: mockSupervisionRequestWithUsers.student.user.email,
       };
       const expectedError = new StudentAlreadyHasAnAcceptedSupervisionRequestException(
-        'student-id',
+        mockSupervisionRequestWithUsers.student.id,
       );
       mockSupervisionRequestsService.createSupervisionRequest.mockRejectedValue(expectedError);
 
@@ -348,7 +349,7 @@ describe('SupervisionRequestsController', () => {
         request_state: RequestState.ACCEPTED,
       };
       const expectedError = new StudentAlreadyHasAnAcceptedSupervisionRequestException(
-        'student-id',
+        mockSupervisionRequestWithUsers.student.id,
       );
       mockSupervisionRequestsService.updateRequestState.mockRejectedValue(expectedError);
 

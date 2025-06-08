@@ -54,7 +54,7 @@ definePageMeta({
           :first-name="rejectedRequest.supervisor.user.first_name"
           :image="rejectedRequest.supervisor.user.profile_image"
           :last-name="rejectedRequest.supervisor.user.last_name"
-          :preview-text="`Pending Request to ${rejectedRequest.supervisor.user.first_name}`"
+          :preview-text="`Rejected request to ${rejectedRequest.supervisor.user.first_name}`"
           bottom-icon="tag"
           class="cursor-pointer opacity-75"
           top-icon="user-group"

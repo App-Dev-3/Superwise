@@ -5,14 +5,19 @@ const colorMode = useColorMode();
 
 interface EmptyPagePlaceholderProps {
   text: string
+  renderCondition?: Array<unknown>
 }
 
-const props = defineProps<EmptyPagePlaceholderProps>();
+const props = withDefaults(defineProps<EmptyPagePlaceholderProps>(), {
+  renderCondition: () => []
+});
 
 </script>
 
 <template>
-  <div class="flex flex-col w-full h-fit opacity-50 items-center p-6">
+  <div
+      v-if="!renderCondition || renderCondition.length === 0"
+      class="size-full flex flex-col justify-center items-center opacity-50 p-6">
     <ClientOnly>
       <div class="navbar-center">
         <img

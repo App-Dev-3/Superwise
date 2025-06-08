@@ -5,10 +5,10 @@ import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.
 const { t } = useI18n();
 const studentStore = useStudentStore();
 
-const {pendingSupervisionRequests} = storeToRefs(studentStore)
+const { pendingSupervisionRequests } = storeToRefs(studentStore)
 
 onMounted(() => {
-    studentStore.fetchSupervisionRequests()
+  studentStore.fetchSupervisionRequests()
 })
 
 function navigate(route: string) {
@@ -63,11 +63,10 @@ definePageMeta({
         </div>
       </div>
     </div>
-    <div v-else class="size-full flex flex-col justify-center items-center">
-      <EmptyPagePlaceholder
-          :text="t('requests.noRequests')"
-      />
-    </div>
+    <EmptyPagePlaceholder
+        v-else
+        :text="t('requests.noRequests')"
+    />
   </div>
 </template>
 

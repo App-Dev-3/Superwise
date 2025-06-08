@@ -3,7 +3,7 @@ import { useI18n } from 'vue-i18n';
 import { useDebounceFn } from "@vueuse/core";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 import SkeletonSupervisorCard from "~/components/Skeleton/SkeletonSupervisorCard.vue";
-import {UserRoles} from "#shared/enums/enums";
+import { UserRoles } from "#shared/enums/enums";
 
 const { t } = useI18n();
 
@@ -187,23 +187,21 @@ definePageMeta({
           v-for="result in searchResults"
           v-else-if="searchQuery.length > 0 && !isLoading && searchResults.length > 0"
           :key="result.id"
-          :preview-text="result.thesis_description?.substring(0, 30) || ''"
           :first-name="result.first_name"
           :image="result.profile_image"
           :last-name="result.last_name"
+          :preview-text="result.thesis_description?.substring(0, 30) || ''"
           class="w-full cursor-pointer"
           @click="navigateTo(`/profiles/${result.id}`)"
       />
 
-      <div
+      <EmptyPagePlaceholder
           v-else-if="searchQuery && searchQuery.length > 0 && !isLoading"
-          class="flex justify-center items-center size-full">
-        <EmptyPagePlaceholder :text="t('search.noResults')"/>
-      </div>
-
-      <div v-else class="flex justify-center items-center h-full">
-        <EmptyPagePlaceholder :text="t('search.emptyForSupervisors')"/>
-      </div>
+          :text="t('search.noResults')"/>
+      <EmptyPagePlaceholder
+          v-else
+          :text="t('search.emptyForSupervisors')"
+      />
     </div>
   </div>
 </template>

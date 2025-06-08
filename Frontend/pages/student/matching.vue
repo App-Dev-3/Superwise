@@ -21,14 +21,10 @@
             size="md"
         />
       </SwipeContainer>
-      <div
-          v-if="!recommendedSupervisors || recommendedSupervisors.length === 0"
-          class="size-full flex flex-col justify-center items-center"
-      >
-        <EmptyPagePlaceholder
-            :text="t('matching.noSupervisors')"
-        />
-      </div>
+      <EmptyPagePlaceholder
+          :render-condition="recommendedSupervisors"
+          :text="t('matching.noSupervisors')"
+      />
     </template>
     <template v-else>
       <ActionCard
@@ -111,7 +107,7 @@ const studentStore = useStudentStore();
 const settingsStore = useSettingsStore();
 
 if (!userStore.user) {
-    await userStore.refetchCurrentUser()
+  await userStore.refetchCurrentUser()
 }
 
 const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
@@ -135,7 +131,7 @@ onMounted(async () => {
   acceptedSupervisionRequests.value = studentStore.acceptedSupervisionRequests[0];
 });
 
-onUnmounted(async() => {
+onUnmounted(async () => {
   if (toast.value.visible) {
     await handleToastClosed();
     window.location.reload(); // manually reload the page to ensure the dashboard state is updated
@@ -161,7 +157,7 @@ const recommendedSupervisors = computed(() => {
       })
 });
 
-const handleSwipeRight = async(supervisor: SupervisorData) => {
+const handleSwipeRight = async (supervisor: SupervisorData) => {
   // quickest solution in the wild west for the bug where spamming the slider wont send old requests
   if (toast.value.visible && modalInformation.value) {
     await handleToastClosed();
@@ -310,7 +306,6 @@ const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) 
 function navigate(route: string) {
   navigateTo(route);
 }
-
 
 
 definePageMeta({

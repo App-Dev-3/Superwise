@@ -19,7 +19,6 @@ export const useStudentStore = defineStore('student', () => {
                     'Accept': 'application/json',
                 },
             })
-            console.log("Supervision Requests Sent:", supervisionRequestsSentByCurrentStudent.value);
         } catch (error) {
             console.error(error)
         }

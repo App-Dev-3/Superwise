@@ -233,7 +233,7 @@ export class SupervisionRequestsRepository {
       return this.prisma.$transaction(async tx => {
         // Find or create student using our helper method
         const studentResult = await this.createOrFindStudentByEmail(
-          data.student_email as string, 
+          data.student_email as string,
           tx,
         );
 
@@ -261,12 +261,6 @@ export class SupervisionRequestsRepository {
           studentWasCreated: studentResult.wasCreated,
         };
       });
-    }
-
-    if (data.request_state === RequestState.PENDING) {
-      if (!data.student_id) {
-        throw new BadRequestException('student_id is required for creating PENDING requests');
-      }
     }
 
     // For simple request creation (PENDING from students)

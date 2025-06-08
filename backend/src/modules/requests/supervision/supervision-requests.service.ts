@@ -30,7 +30,7 @@ export class SupervisionRequestsService {
     private readonly usersService: UsersService,
     private readonly logger: WinstonLoggerService,
     private readonly appConfig: AppConfigService,
-  ) { }
+  ) {}
 
   /**
    * Create a supervision request
@@ -142,12 +142,11 @@ export class SupervisionRequestsService {
         const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
         if (hasAccepted) {
           throw new BadRequestException(
-            'Student already has an accepted supervision request. Manual assignment not allowed.'
+            'Student already has an accepted supervision request. Manual assignment not allowed.',
           );
         }
       }
     }
-
 
     const result = await this.repository.createSupervisionRequest({
       supervisor_id: supervisor.id,
@@ -164,7 +163,6 @@ export class SupervisionRequestsService {
     }
 
     return result;
-
   }
 
   /**
@@ -243,7 +241,6 @@ export class SupervisionRequestsService {
       throw new NotFoundException(`Supervision request with ID ${id} not found`);
     }
 
-
     const hasPermission = await this.userHasRequestPermission(
       currentUser,
       request.student_id,
@@ -265,17 +262,14 @@ export class SupervisionRequestsService {
       }
     }
 
-
     if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
       const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
-
 
       if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
         if (supervisor.available_spots <= 0) {
           throw new SupervisorCapacityException(request.supervisor_id);
         }
       }
-
 
       const result = await this.repository.updateRequestState({
         id,
@@ -295,7 +289,6 @@ export class SupervisionRequestsService {
 
       return result;
     }
-
 
     return this.repository.updateRequestState({
       id,

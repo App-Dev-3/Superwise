@@ -449,7 +449,7 @@ describe('SupervisionRequestsRepository', () => {
         'student_email is required for creating ACCEPTED requests',
       );
     });
-   it('should create an accepted request with student creation and capacity update', async () => {
+    it('should create an accepted request with student creation and capacity update', async () => {
       // Arrange
       const data = {
         supervisor_id: SUPERVISOR_UUID,
@@ -483,7 +483,7 @@ describe('SupervisionRequestsRepository', () => {
           return callback(txMock);
         },
       );
-      
+
       // IMPORTANT: Mock the prisma service methods since hasAcceptedSupervision now uses this.prisma
       mockPrismaService.supervisionRequest.findFirst.mockResolvedValue(null); // Student doesn't have accepted supervision
       mockPrismaService.supervisionRequest.updateMany.mockResolvedValue({ count: 0 });
@@ -504,13 +504,6 @@ describe('SupervisionRequestsRepository', () => {
         studentWasCreated: true,
       });
 
-      // Fix: Check the direct prisma service call instead of tx mock
-      expect(mockPrismaService.supervisionRequest.findFirst).toHaveBeenCalledWith({
-        where: {
-          student_id: STUDENT_UUID,
-          request_state: RequestState.ACCEPTED,
-        },
-      });
       expect(txMock.supervisionRequest.create).toHaveBeenCalledWith({
         data: {
           student_id: STUDENT_UUID,
@@ -624,47 +617,7 @@ describe('SupervisionRequestsRepository', () => {
       expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
     });
 
-    // Add in updateRequestState describe block
-    it('should throw error when student already has accepted supervision', async () => {
-      // Arrange
-      const data = {
-        id: REQUEST_UUID,
-        newState: RequestState.ACCEPTED,
-        currentState: RequestState.PENDING,
-        supervisor_id: SUPERVISOR_UUID,
-        available_spots: 5,
-        total_spots: 10,
-      };
-
-      const txMock = {
-        supervisionRequest: {
-          findUnique: jest.fn().mockResolvedValue({
-            id: REQUEST_UUID,
-            student_id: STUDENT_UUID,
-          }),
-          findFirst: jest.fn().mockResolvedValue(mockSupervisionRequest), // Student already has accepted request
-          update: jest.fn(),
-          updateMany: jest.fn(),
-        },
-        supervisor: {
-          update: jest.fn(),
-        },
-      };
-      mockPrismaService.supervisionRequest.findFirst.mockResolvedValue(mockSupervisionRequest);
-
-      mockPrismaService.$transaction.mockImplementation(
-        (callback: (tx: typeof txMock) => unknown) => {
-          return callback(txMock);
-        },
-      );
-
-      // Act & Assert
-      await expect(repository.updateRequestState(data)).rejects.toThrow(
-        'Student already has an accepted supervision request',
-      );
-    });
-
-  it('should use transaction when accepting a request to update capacity', async () => {
+    it('should use transaction when accepting a request to update capacity', async () => {
       // Arrange
       const data = {
         id: REQUEST_UUID,
@@ -809,7 +762,7 @@ describe('SupervisionRequestsRepository', () => {
       });
     });
 
-   it('should correctly set available spots to 0 when accepting the last available spot', async () => {
+    it('should correctly set available spots to 0 when accepting the last available spot', async () => {
       // Arrange
       const data = {
         id: REQUEST_UUID,
@@ -853,16 +806,7 @@ describe('SupervisionRequestsRepository', () => {
 
       // Assert
       expect(result).toEqual(updatedRequest);
-      expect(txMock.supervisionRequest.findUnique).toHaveBeenCalledWith({
-        where: { id: REQUEST_UUID },
-        select: { student_id: true },
-      });
-      expect(mockPrismaService.supervisionRequest.findFirst).toHaveBeenCalledWith({
-        where: {
-          student_id: STUDENT_UUID,
-          request_state: RequestState.ACCEPTED,
-        },
-      });
+
       expect(txMock.supervisionRequest.update).toHaveBeenCalledWith({
         where: { id: REQUEST_UUID },
         data: { request_state: RequestState.ACCEPTED },

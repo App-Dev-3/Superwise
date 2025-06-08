@@ -5,7 +5,7 @@ import { SupervisionRequestWithUsersEntity } from './entities/supervision-reques
 
 @Injectable()
 export class SupervisionRequestsRepository {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Find all supervision requests with filtering options
@@ -90,7 +90,7 @@ export class SupervisionRequestsRepository {
     });
   }
 
-  async hasAcceptedSupervision(studentId: string,): Promise<boolean> {
+  async hasAcceptedSupervision(studentId: string): Promise<boolean> {
     const client = this.prisma;
 
     const existingAccepted = await client.supervisionRequest.findFirst({
@@ -103,11 +103,7 @@ export class SupervisionRequestsRepository {
     return !!existingAccepted;
   }
 
-  async withdrawCompetingRequests(
-    studentId: string,
-    excludeRequestId: string,
-
-  ): Promise<number> {
+  async withdrawCompetingRequests(studentId: string, excludeRequestId: string): Promise<number> {
     const client = this.prisma;
 
     const result = await client.supervisionRequest.updateMany({
@@ -217,8 +213,6 @@ export class SupervisionRequestsRepository {
     student_email?: string;
     available_spots?: number;
   }): Promise<SupervisionRequest & { studentWasCreated?: boolean }> {
-
-
     if (data.request_state === RequestState.ACCEPTED) {
       if (!data.student_email) {
         throw new BadRequestException('student_email is required for creating ACCEPTED requests');
@@ -242,8 +236,6 @@ export class SupervisionRequestsRepository {
           data.student_email as string, // Safe assertion as we've checked it exists above
           tx,
         );
-
-
 
         // Create the supervision request
         const request = await tx.supervisionRequest.create({
@@ -270,7 +262,6 @@ export class SupervisionRequestsRepository {
         };
       });
     }
-
 
     if (data.request_state === RequestState.PENDING) {
       if (!data.student_id) {
@@ -318,8 +309,6 @@ export class SupervisionRequestsRepository {
 
     if (isBecomingAccepted || isLeavingAccepted) {
       return this.prisma.$transaction(async tx => {
-
-
         // Update the request state
         const updatedRequest = await tx.supervisionRequest.update({
           where: { id },

@@ -1,6 +1,7 @@
 <script setup>
 import {computed} from 'vue';
 import CustomTag from '../CustomTag/CustomTag.vue';
+import Avatar from '../Avatar/Avatar.vue'; // Import the Avatar component
 
 const {t} = useI18n();
 
@@ -19,7 +20,8 @@ const props = defineProps({
   },
   image: {
     type: String,
-    required: true,
+    required: false,
+    default: '',
   },
   firstName: {
     type: String,
@@ -57,11 +59,11 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-    dontShowStatistics: {
+  dontShowStatistics: {
     type: Boolean,
     default: false,
     required: false,
-    }
+  }
 });
 
 const limitedTags = computed(() =>
@@ -80,14 +82,6 @@ const cardSizeClasses = computed(() => ({
   'card-md': props.fullWidth && props.size === 'md',
   'card-lg': props.fullWidth && props.size === 'lg',
   'card-xl': props.fullWidth && props.size === 'xl',
-}));
-
-const imageSizeClasses = computed(() => ({
-  'size-8': props.size === 'xs',
-  'size-10': props.size === 'sm',
-  'size-12': props.size === 'md',
-  'size-14': props.size === 'lg',
-  'size-16': props.size === 'xl',
 }));
 
 // Regular tag size based on card size
@@ -152,14 +146,14 @@ const descriptionClasses = computed(() => ({
       :class="cardSizeClasses" class="card bg-base-100 shadow-lg border border-base-300">
     <div class="card-body">
       <h2 class="card-title font-bold">
-        <div class="mask mask-squircle">
-          <img
-              :alt="t('supervisorCard.profilePictureAlt',{firstName: props.firstName,lastName: props.lastName})"
-              :class="imageSizeClasses"
-              :src="props.image || getPlaceholderImage(props.firstName,props.lastName)"
-              class="rounded-box"
-          >
-        </div>
+        <Avatar
+            :alt="t('supervisorCard.profilePictureAlt', {firstName: props.firstName, lastName: props.lastName})"
+            :first-name="props.firstName"
+            :last-name="props.lastName"
+            :size="props.size"
+            :src="props.image"
+            shape="squircle"
+        />
         <p class="text-large capitalize">
           {{ props.firstName }} {{ props.lastName }}
         </p>

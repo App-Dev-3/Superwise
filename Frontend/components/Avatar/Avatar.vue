@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, onMounted, ref, watchEffect} from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 
 /**
  * Avatar component displays a user's profile image with various customization options.
@@ -16,10 +16,10 @@ import {computed, onMounted, ref, watchEffect} from 'vue';
 interface AvatarProps {
   src?: string;
   alt?: string;
-  size?: "xs" | "sm" | "md" | "lg" | "xl";
-  shape?: "squircle" | "rounded" | "circle";
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  shape?: 'squircle' | 'rounded' | 'circle';
   online?: boolean;
-  ringColor?: "primary" | "secondary" | "accent" | "neutral" | "info" | "success" | "warning" | "error" | '';
+  ringColor?: | 'primary' | 'secondary' | 'accent' | 'neutral' | 'info' | 'success' | 'warning' | 'error' | '';
   firstName: string;
   lastName: string;
   emoji?: string;
@@ -117,7 +117,7 @@ const ringClass = computed(() => {
       return 'ring-primary ring-offset-base-100 ring-2 ring-offset-2';
     case 'error':
       return 'ring-error ring-offset-base-100 ring-2 ring-offset-2';
-    case "secondary":
+    case 'secondary':
       return 'ring-secondary ring-offset-base-100 ring-2 ring-offset-2';
     case 'success':
       return 'ring-success ring-offset-base-100 ring-2 ring-offset-2';
@@ -140,7 +140,7 @@ const emojiStyle = computed(() => {
       return 'btn-primary';
     case 'error':
       return 'btn-primary';
-    case "secondary":
+    case 'secondary':
       return 'btn-primary';
     case 'success':
       return 'btn-primary';
@@ -163,7 +163,7 @@ const buttonStyle = computed(() => {
       return 'btn-primary';
     case 'error':
       return 'btn-error';
-    case "secondary":
+    case 'secondary':
       return 'btn-secondary';
     case 'success':
       return 'btn-success';
@@ -214,44 +214,60 @@ const addPosition = computed(() => {
 
 // Handle image loading errors
 const handleImageError = () => {
-  console.log(`Image Error: ${props.src}`);
+  console.log(`Image Error: ${ props.src }`);
   imgError.value = true;
 };
-
 </script>
 
 <template>
   <div :class="onlineStatus" class="avatar">
     <div :class="[imgSize, shapeClass, ringClass]">
-      <img
-        :key="imgKey"
-        :alt="props.alt"
-        :src="(props.src && !imgError)
-              ? props.src
-              : getPlaceholderImage(props.firstName, props.lastName)"
-        class="object-cover w-full h-full"
-        loading="lazy"
-        @error="handleImageError"
-      >
+      <ClientOnly>
+        <img
+            :key="imgKey"
+            :alt="props.alt"
+            :src="
+						props.src && !imgError
+							? props.src
+							: getPlaceholderImage(
+									props.firstName,
+									props.lastName,
+							  )
+					"
+            class="object-cover w-full h-full"
+            loading="lazy"
+            @error="handleImageError"
+        >
+        <template #fallback>
+          <div
+              :class="[
+							imgSize,
+							shapeClass,
+							ringClass,
+						]"
+              class="bg-base-300"
+          />
+        </template>
+      </ClientOnly>
     </div>
-    <button
-      v-if="props.emoji"
-      :class="[emojiPosition, emojiStyle]"
-      class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
-    >
-      {{ props.emoji }}
-    </button>
+    <ClientOnly>
+      <button
+          v-if="props.emoji"
+          :class="[emojiPosition, emojiStyle]"
+          class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+      >
+        {{ props.emoji }}
+      </button>
 
-    <button
-      v-if="props.addButton"
-      :class="[addPosition, buttonStyle]"
-      class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
-    >+
-    </button>
-
+      <button
+          v-if="props.addButton"
+          :class="[addPosition, buttonStyle]"
+          class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+      >
+        +
+      </button>
+    </ClientOnly>
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

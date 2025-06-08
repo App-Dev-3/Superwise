@@ -60,20 +60,18 @@ const headerText = computed(() => {
 
 <template>
   <div class="w-full h-screen flex max-w-xl m-auto flex-col">
-    <ClientOnly>
-      <AppHeader
-          v-if="route.path?.endsWith('dashboard')"
-          :first-name="currentUser?.first_name || ''"
-          :image="currentUser?.profile_image || getPlaceholderImage(currentUser?.first_name || '', currentUser?.last_name || '')"
-          :last-name="currentUser?.last_name || ''"
-          :role="UserRoles.STUDENT"
-      />
-      <AdminHeader
-          v-else
-          :header-text="headerText"
-          variant="text"
-      />
-    </ClientOnly>
+    <AppHeader
+        v-if="route.path?.endsWith('dashboard')"
+        :first-name="currentUser?.first_name || ''"
+        :image="currentUser?.profile_image || getPlaceholderImage(currentUser?.first_name || '', currentUser?.last_name || '')"
+        :last-name="currentUser?.last_name || ''"
+        :role="UserRoles.STUDENT"
+    />
+    <AdminHeader
+        v-else
+        :header-text="headerText"
+        variant="text"
+    />
 
     <div class="size-full overflow-y-auto flex flex-col">
       <slot/>

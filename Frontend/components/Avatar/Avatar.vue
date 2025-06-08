@@ -226,47 +226,31 @@ const handleImageError = () => {
         <img
             :key="imgKey"
             :alt="props.alt"
-            :src="
-						props.src && !imgError
+            :src="(props.src && !imgError)
 							? props.src
-							: getPlaceholderImage(
-									props.firstName,
-									props.lastName,
-							  )
-					"
+							: getPlaceholderImage(props.firstName,  props.lastName)"
             class="object-cover w-full h-full"
             loading="lazy"
             @error="handleImageError"
         >
-        <template #fallback>
-          <div
-              :class="[
-							imgSize,
-							shapeClass,
-							ringClass,
-						]"
-              class="bg-base-300"
-          />
-        </template>
       </ClientOnly>
     </div>
-    <ClientOnly>
-      <button
-          v-if="props.emoji"
-          :class="[emojiPosition, emojiStyle]"
-          class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
-      >
-        {{ props.emoji }}
-      </button>
+    <button
+        v-if="props.emoji"
+        :class="[emojiPosition, emojiStyle]"
+        class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+    >
+      {{ props.emoji }}
+    </button>
 
-      <button
-          v-if="props.addButton"
-          :class="[addPosition, buttonStyle]"
-          class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
-      >
-        +
-      </button>
-    </ClientOnly>
+    <button
+        v-if="props.addButton"
+        :class="[addPosition, buttonStyle]"
+        class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+    >
+      +
+    </button>
+
   </div>
 </template>
 

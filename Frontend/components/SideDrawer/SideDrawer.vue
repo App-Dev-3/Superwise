@@ -61,21 +61,19 @@ const logoPath = computed(() => {
         <div
             class="menu py-16 px-8 bg-base-200 text-base-content min-h-full w-80 flex flex-col"
         >
-          <img
-              :alt="t('generic.logoAlt')"
-              :src="logoPath"
-              class="h-6 mb-8 cursor-pointer"
-              @click="router.push('/')"
-          >
+          <ClientOnly>
+            <img
+                :alt="t('generic.logoAlt')"
+                :src="logoPath"
+                class="h-6 mb-8 cursor-pointer"
+                @click="router.push('/')"
+            >
+          </ClientOnly>
 
           <ul class="space-y-3 flex-grow">
             <li>
               <NuxtLink
-                  :to="
-									props.role
-										? `/${props.role.toLowerCase()}/profile`
-										: `/`
-								"
+                  :to="props.role? `/${props.role.toLowerCase()}/profile`: `/`"
               >
                 <FontAwesomeIcon
                     class="text-xl mr-3"
@@ -88,8 +86,7 @@ const logoPath = computed(() => {
             </li>
             <li>
               <NuxtLink
-                  :to="
-									props.role
+                  :to="props.role
 										? `/${props.role.toLowerCase()}/settings`
 										: `/`
 								"

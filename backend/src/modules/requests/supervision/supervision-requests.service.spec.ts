@@ -27,6 +27,8 @@ describe('SupervisionRequestsService', () => {
     createSupervisionRequest: jest.fn(),
     updateRequestState: jest.fn(),
     countRequests: jest.fn(),
+    hasAcceptedSupervision: jest.fn(),
+    withdrawCompetingRequests: jest.fn(),
   };
 
   const mockStudentsService = {
@@ -302,7 +304,10 @@ describe('SupervisionRequestsService', () => {
         // Arrange
         const dto = { student_email: 'student@fhstp.ac.at' };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+
         mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
+        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+        mockRepository.hasAcceptedSupervision.mockResolvedValue(false);
         mockRepository.createSupervisionRequest.mockResolvedValue({
           ...mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
@@ -318,6 +323,8 @@ describe('SupervisionRequestsService', () => {
           request_state: RequestState.ACCEPTED,
           studentWasCreated: false,
         });
+        expect(mockRepository.hasAcceptedSupervision).toHaveBeenCalledWith(mockStudent.id);
+
         expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
           mockSupervisorUser.id,
         );
@@ -563,6 +570,8 @@ describe('SupervisionRequestsService', () => {
       mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
       mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
 
+      mockRepository.hasAcceptedSupervision.mockResolvedValue(false);
+
       const updatedRequest = {
         ...mockSupervisionRequest,
         request_state: RequestState.WITHDRAWN,
@@ -632,6 +641,8 @@ describe('SupervisionRequestsService', () => {
       // Arrange
       mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
       mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mockRepository.hasAcceptedSupervision.mockResolvedValue(false);
+
       // Supervisor with no available spots
       mockSupervisorsService.findSupervisorById.mockResolvedValue({
         ...mockSupervisor,

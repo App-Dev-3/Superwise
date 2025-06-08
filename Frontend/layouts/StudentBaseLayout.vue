@@ -60,8 +60,6 @@ const headerText = computed(() => {
         :image="currentUser?.profile_image || getPlaceholderImage(currentUser?.first_name || '', currentUser?.last_name || '')"
         :last-name="currentUser?.last_name || ''"
         :role="UserRoles.STUDENT"
-        show-search
-        show-user
     />
     <AdminHeader
         v-else

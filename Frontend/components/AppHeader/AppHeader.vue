@@ -14,6 +14,10 @@ interface AppHeaderProps {
 
 const props = defineProps<AppHeaderProps>();
 
+const getLogo = computed(() => {
+  return (colorMode.value === 'dark' ? '../images/appHeader_logo_dark.svg' : '../images/appHeader_logo_light.svg');
+});
+
 </script>
 
 <template>
@@ -27,14 +31,9 @@ const props = defineProps<AppHeaderProps>();
         class="w-fit"
     />
 
-
     <ClientOnly>
       <img
-          :src="
-              colorMode.value === 'dark'
-                ? '../images/appHeader_logo_dark.svg'
-                : '../images/appHeader_logo_light.svg'
-            "
+          :src="getLogo"
           alt="Logo image"
           class="h-6"
       >

@@ -1,7 +1,7 @@
 <template>
   <div
       v-if="isLoading"
-      class="w-full h-screen flex max-w-xl m-auto flex-col p-8 justify-center items-center"
+      class="w-full h-screen flex max-w-xl m-auto flex-col justify-center items-center p-8"
   >
     <LoadingIndicator
         :text="t('generic.loading')"

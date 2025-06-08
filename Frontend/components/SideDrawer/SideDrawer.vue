@@ -8,13 +8,6 @@ const router = useRouter();
 
 const {t} = useI18n();
 
-// Add ref to track client-side rendering
-const isClient = ref(false);
-
-onMounted(() => {
-  isClient.value = true;
-});
-
 const props = defineProps({
   image: {
     type: String,
@@ -47,22 +40,14 @@ const logoPath = computed(() => {
     <input id="my-drawer" class="drawer-toggle" type="checkbox">
     <div class="drawer-content">
       <label class="drawer-button" for="my-drawer">
-        <div class="avatar">
-          <div class="mask mask-squircle w-8 rounded-full">
-            <img
-                :alt="
-                t('generic.profilePictureAlt', {
-                  firstName: props.firstName,
-                  lastName: props.lastName,
-                })
-              "
-                :src="
-                props.image ||
-                getPlaceholderImage(props.firstName, props.lastName)
-              "
-            >
-          </div>
-        </div>
+        <Avatar
+            :first-name="props.firstName"
+            :image="props.image"
+            :last-name="props.lastName"
+            :role="props.role"
+            shape="circle"
+            size="xs"
+        />
       </label>
     </div>
 
@@ -83,10 +68,6 @@ const logoPath = computed(() => {
               class="h-6 mb-8 cursor-pointer"
               @click="router.push('/')"
           >
-          <template #fallback>
-            <!-- Fallback with a placeholder during SSR -->
-            <div class="h-6 mb-8 w-32 bg-base-300 animate-pulse"/>
-          </template>
         </ClientOnly>
 
         <ul class="space-y-3 flex-grow">

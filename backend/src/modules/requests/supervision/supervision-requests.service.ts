@@ -124,16 +124,18 @@ export class SupervisionRequestsService {
     }
 
     // Check if target email belongs to a supervisor
-    const targetUser = await this.usersService.findUserByEmail(dto.student_email);
+    const targetUser = await this.usersService.findUserByEmailOrNull(dto.student_email);
     if (targetUser?.role === Role.SUPERVISOR) {
       throw new SupervisorTargetException();
     }
 
-    const student = await this.studentsService.findStudentByUserId(targetUser.id);
-
-    const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
-    if (hasAccepted) {
-      throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
+    // If user exists, check if they already have an accepted supervision
+    if (targetUser) {
+      const student = await this.studentsService.findStudentByUserId(targetUser.id);
+      const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
+      if (hasAccepted) {
+        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
+      }
     }
 
     // Get supervisor profile

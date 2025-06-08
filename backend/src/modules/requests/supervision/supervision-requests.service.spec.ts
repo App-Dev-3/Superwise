@@ -16,7 +16,7 @@ import { SelfSupervisionException } from '../../../common/exceptions/custom-exce
 import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
-import { mock } from 'node:test';
+import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 describe('SupervisionRequestsService', () => {
   let service: SupervisionRequestsService;
@@ -45,6 +45,7 @@ describe('SupervisionRequestsService', () => {
   const mockUsersService = {
     findUserById: jest.fn(),
     findUserByEmail: jest.fn(),
+    findUserByEmailOrNull: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -306,7 +307,7 @@ describe('SupervisionRequestsService', () => {
         const dto = { student_email: mockStudentUser.email };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
 
-        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
+        mockUsersService.findUserByEmailOrNull.mockResolvedValue(mockStudentUser); // Return student user
         mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
         mockRepository.hasAcceptedSupervision.mockResolvedValue(false);
         mockRepository.createSupervisionRequest.mockResolvedValue({
@@ -329,7 +330,7 @@ describe('SupervisionRequestsService', () => {
         expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
           mockSupervisorUser.id,
         );
-        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
+        expect(mockUsersService.findUserByEmailOrNull).toHaveBeenCalledWith(dto.student_email);
         expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
           supervisor_id: mockSupervisor.id,
           student_email: dto.student_email,
@@ -342,7 +343,7 @@ describe('SupervisionRequestsService', () => {
         // Arrange
         const dto = { student_email: 'newstudent@fhstp.ac.at' };
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-        mockUsersService.findUserByEmail.mockResolvedValue(null); // User doesn't exist
+        mockUsersService.findUserByEmailOrNull.mockResolvedValue(null); // User doesn't exist
         mockRepository.createSupervisionRequest.mockResolvedValue({
           ...mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
@@ -361,7 +362,7 @@ describe('SupervisionRequestsService', () => {
         expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
           mockSupervisorUser.id,
         );
-        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
+        expect(mockUsersService.findUserByEmailOrNull).toHaveBeenCalledWith(dto.student_email);
         expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
           supervisor_id: mockSupervisor.id,
           student_email: dto.student_email,
@@ -369,6 +370,22 @@ describe('SupervisionRequestsService', () => {
           request_state: RequestState.ACCEPTED,
         });
         expect(mockLoggerService.log).toHaveBeenCalled();
+      });
+
+      it('should throw StudentAlreadyHasAnAcceptedSupervisionRequestException if student already has accepted supervision', async () => {
+        // Arrange
+        const dto = { student_email: 'existingstudent@fhstp.ac.at' };
+        const existingUser = { ...mockStudentUser, email: dto.student_email };
+        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+        mockUsersService.findUserByEmailOrNull.mockResolvedValue(existingUser);
+        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+        mockRepository.hasAcceptedSupervision.mockResolvedValue(true); // Already has accepted
+
+        // Act & Assert
+        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
+          StudentAlreadyHasAnAcceptedSupervisionRequestException,
+        );
+        expect(mockRepository.createSupervisionRequest).not.toHaveBeenCalled();
       });
 
       it('should throw MissingStudentEmailException if student_email is missing', async () => {
@@ -384,7 +401,9 @@ describe('SupervisionRequestsService', () => {
       it('should throw SupervisorCapacityException if no spots available', async () => {
         // Arrange
         const dto = { student_email: 'student@fhstp.ac.at' };
-        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
+        mockUsersService.findUserByEmailOrNull.mockResolvedValue(mockStudentUser); // Return student user
+        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+        mockRepository.hasAcceptedSupervision.mockResolvedValue(false);
         // Supervisor with no available spots
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue({
           ...mockSupervisor,
@@ -415,7 +434,7 @@ describe('SupervisionRequestsService', () => {
           id: ANOTHER_SUPERVISOR_USER_UUID,
           email: 'anothersupervisor@fhstp.ac.at',
         };
-        mockUsersService.findUserByEmail.mockResolvedValue(anotherSupervisorUser); // Return supervisor user
+        mockUsersService.findUserByEmailOrNull.mockResolvedValue(anotherSupervisorUser); // Return supervisor user
         mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
 
         // Act & Assert
@@ -605,6 +624,7 @@ describe('SupervisionRequestsService', () => {
       mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
       mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
       mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+      mockRepository.hasAcceptedSupervision.mockResolvedValue(false); // No existing accepted supervision
 
       const updatedRequest = {
         ...mockSupervisionRequest,
@@ -628,6 +648,9 @@ describe('SupervisionRequestsService', () => {
       expect(mockSupervisorsService.findSupervisorById).toHaveBeenCalledWith(
         mockSupervisionRequest.supervisor_id,
       );
+      expect(mockRepository.hasAcceptedSupervision).toHaveBeenCalledWith(
+        mockSupervisionRequestWithUsers.student_id,
+      );
       expect(mockRepository.updateRequestState).toHaveBeenCalledWith({
         id: REQUEST_UUID,
         newState: RequestState.ACCEPTED,
@@ -636,6 +659,24 @@ describe('SupervisionRequestsService', () => {
         available_spots: mockSupervisor.available_spots,
         total_spots: mockSupervisor.total_spots,
       });
+    });
+
+    it('should throw StudentAlreadyHasAnAcceptedSupervisionRequestException when accepting if student already has accepted supervision', async () => {
+      // Arrange
+      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+      mockRepository.hasAcceptedSupervision.mockResolvedValue(true); // Already has accepted supervision
+
+      // Act & Assert
+      await expect(
+        service.updateRequestState(REQUEST_UUID, RequestState.ACCEPTED, mockSupervisorUser),
+      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+
+      expect(mockRepository.hasAcceptedSupervision).toHaveBeenCalledWith(
+        mockSupervisionRequestWithUsers.student_id,
+      );
+      expect(mockRepository.updateRequestState).not.toHaveBeenCalled();
     });
 
     it('should throw SupervisorCapacityException if accepting with no available spots', async () => {

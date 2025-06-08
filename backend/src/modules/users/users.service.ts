@@ -183,6 +183,10 @@ export class UsersService {
     return user;
   }
 
+  async findUserByEmailOrNull(email: string): Promise<User | null> {
+    return this.usersRepository.findUserByEmail(email);
+  }
+
   async findUserByClerkId(clerkId: string): Promise<User> {
     const user = await this.usersRepository.findUserByClerkId(clerkId);
     if (!user) {

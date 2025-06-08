@@ -90,8 +90,8 @@ export class SupervisionRequestsRepository {
     });
   }
 
-  async hasAcceptedSupervision(studentId: string): Promise<boolean> {
-    const client = this.prisma;
+  async hasAcceptedSupervision(studentId: string, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx || this.prisma;
 
     const existingAccepted = await client.supervisionRequest.findFirst({
       where: {
@@ -103,8 +103,12 @@ export class SupervisionRequestsRepository {
     return !!existingAccepted;
   }
 
-  async withdrawCompetingRequests(studentId: string, excludeRequestId: string): Promise<number> {
-    const client = this.prisma;
+  async withdrawCompetingRequests(
+    studentId: string,
+    excludeRequestId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const client = tx || this.prisma;
 
     const result = await client.supervisionRequest.updateMany({
       where: {
@@ -245,7 +249,7 @@ export class SupervisionRequestsRepository {
           },
         });
 
-        await this.withdrawCompetingRequests(studentResult.id, request.id);
+        await this.withdrawCompetingRequests(studentResult.id, request.id, tx);
 
         return {
           ...request,
@@ -309,7 +313,7 @@ export class SupervisionRequestsRepository {
           });
 
           // Withdraw competing requests
-          await this.withdrawCompetingRequests(updatedRequest.student_id, id);
+          await this.withdrawCompetingRequests(updatedRequest.student_id, id, tx);
         } else {
           // When withdrawing/rejecting an accepted request, increase available spots
           const newSpots = Math.min(available_spots + 1, total_spots);

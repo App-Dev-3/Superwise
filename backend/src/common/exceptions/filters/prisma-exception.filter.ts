@@ -106,6 +106,18 @@ export class PrismaExceptionFilter extends BaseExceptionFilter {
         case 'P2002': {
           // Unique constraint violation
           const target = (exception.meta?.target as string[]) || [];
+
+          // Check if it's our unique accepted supervision constraint
+          if (exception.message.includes('unique_student_accepted_request')) {
+            return this.formatError(
+              HttpStatus.CONFLICT,
+              'Student already has an accepted supervision',
+              'This student already has an accepted supervision request and cannot have another one',
+              request.url,
+            );
+          }
+
+          // Generic unique constraint message
           return this.formatError(
             HttpStatus.CONFLICT,
             'Unique constraint violation',

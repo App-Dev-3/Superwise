@@ -406,19 +406,31 @@ describe('SupervisionRequestsRepository', () => {
       expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
     });
 
-    it('should throw error when trying to create accepted request without student_email', async () => {
+    it('should create a simple supervision request when student_email is missing for ACCEPTED state', async () => {
       // Arrange
       const data = {
+        student_id: STUDENT_UUID, // Provide student_id for simple creation path
         supervisor_id: SUPERVISOR_UUID,
         request_state: RequestState.ACCEPTED,
         available_spots: 5,
-        // Missing student_email
+        // Missing student_email - should fall through to simple creation
       };
+      mockPrismaService.supervisionRequest.create.mockResolvedValue(mockSupervisionRequest);
 
-      // Act & Assert
-      await expect(repository.createSupervisionRequest(data)).rejects.toThrow(
-        'student_email is required for creating ACCEPTED requests',
-      );
+      // Act
+      const result = await repository.createSupervisionRequest(data);
+
+      // Assert
+      expect(result).toEqual(mockSupervisionRequest);
+      expect(mockPrismaService.supervisionRequest.create).toHaveBeenCalledWith({
+        data: {
+          student_id: STUDENT_UUID,
+          supervisor_id: SUPERVISOR_UUID,
+          request_state: RequestState.ACCEPTED,
+        },
+      });
+      // Should NOT use transaction for simple creation
+      expect(mockPrismaService.$transaction).not.toHaveBeenCalled();
     });
     it('should create an accepted request with student creation and capacity update', async () => {
       // Arrange
@@ -597,6 +609,8 @@ describe('SupervisionRequestsRepository', () => {
             student_id: STUDENT_UUID,
           }),
           update: jest.fn().mockResolvedValue(updatedRequest),
+          updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+          findFirst: jest.fn().mockResolvedValue(null),
         },
         supervisor: {
           update: jest.fn(),
@@ -742,6 +756,8 @@ describe('SupervisionRequestsRepository', () => {
             student_id: STUDENT_UUID,
           }),
           update: jest.fn().mockResolvedValue(updatedRequest),
+          updateMany: jest.fn().mockResolvedValue({ count: 0 }),
+          findFirst: jest.fn().mockResolvedValue(null),
         },
         supervisor: {
           update: jest.fn(),
@@ -772,7 +788,7 @@ describe('SupervisionRequestsRepository', () => {
         where: { id: SUPERVISOR_UUID },
         data: { available_spots: 0 }, // Should be 0 after using the last spot
       });
-      expect(mockPrismaService.supervisionRequest.updateMany).toHaveBeenCalledWith({
+      expect(txMock.supervisionRequest.updateMany).toHaveBeenCalledWith({
         where: {
           student_id: STUDENT_UUID,
           request_state: RequestState.PENDING,

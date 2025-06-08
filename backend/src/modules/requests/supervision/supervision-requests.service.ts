@@ -138,11 +138,10 @@ export class SupervisionRequestsService {
     }
 
     const student = await this.studentsService.findStudentByUserId(targetUser.id);
-    if (student) {
-      const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
-      if (hasAccepted) {
-        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
-      }
+
+    const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
+    if (hasAccepted) {
+      throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
     }
 
     const result = await this.repository.createSupervisionRequest({

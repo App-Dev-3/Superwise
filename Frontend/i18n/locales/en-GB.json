@@ -100,7 +100,10 @@
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",
     "thesisDescription": "Thesis description",
-    "undo": "Undo"
+    "undo": "Undo",
+    "rejectedRequestTo": "Rejected request to",
+    "acceptedRequestTo": "Accepted request to",
+    "pendingRequestTo": "Pending request to"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",

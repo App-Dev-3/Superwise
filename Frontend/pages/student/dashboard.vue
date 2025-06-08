@@ -44,7 +44,7 @@
                     "
                     :tags="matches[0].tags"
                     name="Hello name"
-                    size="sm"
+                    size="xs"
                 />
               </CardStack>
             </div>
@@ -66,19 +66,21 @@
                     class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
                 >
                   <div
-                      v-for="pendingRequest in pendingSupervisionRequests"
-                      :key="pendingRequest.id"
+                      v-for="sentRequest in supervisionRequestsSentByCurrentStudent"
+                      :key="sentRequest.id"
                       class="mb-2 w-full"
                   >
-                    <NuxtLink :to="`/profiles/${pendingRequest.supervisor.user_id}`">
+                    <NuxtLink :to="`/profiles/${sentRequest.supervisor.user_id}`">
                       <MiniCard
                           :bottom-text="
-                            new Date(pendingRequest.updated_at).toLocaleDateString()
+                            new Date(sentRequest.updated_at).toLocaleDateString()
                           "
-                          :first-name="pendingRequest.supervisor.user.first_name"
-                          :image="pendingRequest.supervisor.user.profile_image"
-                          :last-name="pendingRequest.supervisor.user.last_name"
-                          :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
+                          :first-name="sentRequest.supervisor.user.first_name"
+                          :image="sentRequest.supervisor.user.profile_image"
+                          :last-name="sentRequest.supervisor.user.last_name"
+                          :preview-text="sentRequest.request_state === supervisionRequestStatus.REJECTED ?
+                          t('generic.rejectedRequestTo') + ' ' + sentRequest.supervisor.user.first_name + ' ' + sentRequest.supervisor.user.last_name
+                          : t('generic.pendingRequestTo') + ' ' + sentRequest.supervisor.user.first_name + ' ' + sentRequest.supervisor.user.last_name"
                           top-icon="user-group"
                       />
                     </NuxtLink>
@@ -169,6 +171,7 @@ import { useUserStore } from "~/stores/useUserStore";
 import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useStudentStore } from "~/stores/useStudentStore";
+import {supervisionRequestStatus} from "#shared/enums/enums";
 
 const { t } = useI18n();
 
@@ -180,7 +183,7 @@ const studentStore = useStudentStore();
 const isLoading = ref(true);
 
 const dashboardState = studentStore.dashboardState;
-const pendingSupervisionRequests = studentStore.pendingSupervisionRequests;
+const supervisionRequestsSentByCurrentStudent = studentStore.supervisionRequestsSentByCurrentStudent;
 const acceptedSupervisionRequests = studentStore.acceptedSupervisionRequests;
 
 // if for some reason the user has more than one accepted supervision request, we will show a warning

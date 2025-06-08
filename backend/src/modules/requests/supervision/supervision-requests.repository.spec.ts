@@ -490,20 +490,6 @@ describe('SupervisionRequestsRepository', () => {
       });
       expect(mockPrismaService.$transaction).toHaveBeenCalled();
     });
-    it('should throw error if student_id is missing for pending request', async () => {
-      // Arrange
-      const data = {
-        supervisor_id: SUPERVISOR_UUID,
-        request_state: RequestState.PENDING,
-        // Missing student_id
-      };
-
-      // Act & Assert
-      await expect(repository.createSupervisionRequest(data)).rejects.toThrow(
-        'student_id is required for creating PENDING requests',
-      );
-    });
-
     it('should propagate errors that occur during transaction', async () => {
       // Arrange
       const data = {

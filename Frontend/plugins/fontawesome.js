@@ -42,6 +42,7 @@ import {
     faTrashCan,
     faTriangleExclamation,
     faUpDown,
+    faUpRightFromSquare,
     faUser,
     faUserGroup,
     faUserShield,
@@ -97,7 +98,8 @@ library.add(
     faUpDown,
     faDashboard,
     faFilter,
-    faFilterCircleXmark
+    faFilterCircleXmark,
+    faUpRightFromSquare
 );
 
 export default defineNuxtPlugin((nuxtApp) => {

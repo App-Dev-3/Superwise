@@ -175,6 +175,15 @@ export class UsersService {
     return this.usersRepository.searchUsers(searchQuery);
   }
 
+  /**
+   * Finds a user by their email address and throws if not found
+   *
+   * This is the standard method for finding users when their existence is required.
+   * Used throughout the application where a missing user should cause an error.
+   * @param email - The email address to search for
+   * @returns Promise resolving to the found User
+   * @throws NotFoundException if no user exists with the given email
+   */
   async findUserByEmail(email: string): Promise<User> {
     const user = await this.usersRepository.findUserByEmail(email);
     if (!user) {
@@ -183,6 +192,16 @@ export class UsersService {
     return user;
   }
 
+  /**
+   * Finds a user by their email address and returns null if not found
+   *
+   * This method is specifically designed for cases where the absence of a user
+   * is a valid scenario and should not throw an error. Used in supervisor
+   * request creation where new student accounts may need to be created if no existing
+   * user is found for the provided email address.
+   * @param email - The email address to search for
+   * @returns Promise resolving to the found User or null if no user exists
+   */
   async findUserByEmailOrNull(email: string): Promise<User | null> {
     return this.usersRepository.findUserByEmail(email);
   }

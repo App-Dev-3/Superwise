@@ -251,6 +251,7 @@ export class SupervisionRequestsRepository {
 
         await this.withdrawCompetingRequests(studentResult.id, request.id, tx);
 
+        // Add the flag indicating if a student was created
         return {
           ...request,
           studentWasCreated: studentResult.wasCreated,

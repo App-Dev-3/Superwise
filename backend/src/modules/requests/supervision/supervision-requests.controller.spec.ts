@@ -9,7 +9,6 @@ import { PendingRequestCountEntity } from './entities/pending-request-count.enti
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
-import { mock } from 'node:test';
 
 describe('SupervisionRequestsController', () => {
   let controller: SupervisionRequestsController;
@@ -152,7 +151,7 @@ describe('SupervisionRequestsController', () => {
     it('should create a request as a supervisor', async () => {
       // Arrange
       const createRequestDto: CreateSupervisionRequestDto = {
-        student_email: mockSupervisionRequestWithUsers.student.user.email,  
+        student_email: mockSupervisionRequestWithUsers.student.user.email,
       };
       const supervisionRequestWithStudentCreated = {
         ...mockSupervisionRequest,

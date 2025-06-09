@@ -176,9 +176,9 @@ export class UsersService {
   }
 
   /**
-   * Finds a user by their email address and throws if not found
+   * Finds a user by email and throws if not found
    *
-   * This is the standard method for finding users when their existence is required.
+   * Standard method when user existence is required.
    * Used throughout the application where a missing user should cause an error.
    * @param email - The email address to search for
    * @returns Promise resolving to the found User
@@ -193,14 +193,12 @@ export class UsersService {
   }
 
   /**
-   * Finds a user by their email address and returns null if not found
+   * Finds a user by email or returns null if not found
    *
-   * This method is specifically designed for cases where the absence of a user
-   * is a valid scenario and should not throw an error. Used in supervisor
-   * request creation where new student accounts may need to be created if no existing
-   * user is found for the provided email address.
+   * Used when missing users should NOT cause errors (e.g., createSupervisorRequest
+   * where we check existence before potentially creating a new student).
    * @param email - The email address to search for
-   * @returns Promise resolving to the found User or null if no user exists
+   * @returns Promise resolving to the found User or null if not found
    */
   async findUserByEmailOrNull(email: string): Promise<User | null> {
     return this.usersRepository.findUserByEmail(email);

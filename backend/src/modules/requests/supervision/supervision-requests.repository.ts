@@ -90,40 +90,6 @@ export class SupervisionRequestsRepository {
     });
   }
 
-  async hasAcceptedSupervision(studentId: string, tx?: Prisma.TransactionClient): Promise<boolean> {
-    const client = tx || this.prisma;
-
-    const existingAccepted = await client.supervisionRequest.findFirst({
-      where: {
-        student_id: studentId,
-        request_state: RequestState.ACCEPTED,
-      },
-    });
-
-    return !!existingAccepted;
-  }
-
-  async withdrawCompetingRequests(
-    studentId: string,
-    excludeRequestId: string,
-    tx?: Prisma.TransactionClient,
-  ): Promise<number> {
-    const client = tx || this.prisma;
-
-    const result = await client.supervisionRequest.updateMany({
-      where: {
-        student_id: studentId,
-        request_state: RequestState.PENDING,
-        id: { not: excludeRequestId },
-      },
-      data: {
-        request_state: RequestState.WITHDRAWN,
-      },
-    });
-
-    return result.count;
-  }
-
   /**
    * Count supervision requests with filtering options
    * @param request_state Optional request state filter
@@ -333,5 +299,59 @@ export class SupervisionRequestsRepository {
       where: { id },
       data: { request_state: newState },
     });
+  }
+
+  // =================== UTILITY METHODS ===================
+
+  /**
+   * Checks if a student already has an accepted supervision request
+   *
+   * Enforces the one-accepted-supervision-per-student business rule.
+   * @param studentId - The ID of the student to check
+   * @param tx - Optional transaction client for atomicity
+   * @returns Promise resolving to true if student has accepted supervision
+   */
+  async hasAcceptedSupervision(studentId: string, tx?: Prisma.TransactionClient): Promise<boolean> {
+    const client = tx || this.prisma;
+
+    const existingAccepted = await client.supervisionRequest.findFirst({
+      where: {
+        student_id: studentId,
+        request_state: RequestState.ACCEPTED,
+      },
+    });
+
+    return !!existingAccepted;
+  }
+
+  /**
+   * Withdraws all pending requests for a student except the specified one
+   *
+   * When a request is accepted, automatically withdraws competing requests
+   * to prevent multiple simultaneous supervisions.
+   * @param studentId - The ID of the student whose competing requests should be withdrawn
+   * @param excludeRequestId - The ID of the request to exclude (typically the accepted one)
+   * @param tx - Optional transaction client for atomicity
+   * @returns Promise resolving to the number of requests withdrawn
+   */
+  async withdrawCompetingRequests(
+    studentId: string,
+    excludeRequestId: string,
+    tx?: Prisma.TransactionClient,
+  ): Promise<number> {
+    const client = tx || this.prisma;
+
+    const result = await client.supervisionRequest.updateMany({
+      where: {
+        student_id: studentId,
+        request_state: RequestState.PENDING,
+        id: { not: excludeRequestId },
+      },
+      data: {
+        request_state: RequestState.WITHDRAWN,
+      },
+    });
+
+    return result.count;
   }
 }

@@ -1,11 +1,12 @@
 import { ConflictException } from '@nestjs/common';
 
 /**
- * Should be thrown when a supervisor tries to add a student to their supervision
+ * Exception thrown when a supervisor tries to add a student to their supervision
  * list who already has an accepted supervision request.
  *
- * @param studentId - Optional ID of the student with an existing accepted request
- * @returns A new instance of the exception with a message indicating the error
+ * Enforces the one-accepted-supervision-per-student business rule.
+ * @param studentId - Optional ID of the student who already has accepted supervision
+ * @returns A new instance of the Custom Exception with a message indicating the error
  */
 export class StudentAlreadyHasAnAcceptedSupervisionRequestException extends ConflictException {
   constructor(studentId?: string) {

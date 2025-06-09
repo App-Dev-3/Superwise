@@ -1,8 +1,6 @@
 <template>
   <div class="size-full flex flex-col justify-center items-center">
-    <div
-        class="size-full overflow-y-auto p-6 flex flex-col gap-4"
-    >
+    <div class="size-full overflow-y-auto p-6 flex flex-col gap-4">
       <div class="w-full flex justify-center py-16 px-8">
         <PictureUpload
             :first-name="firstName"
@@ -45,7 +43,6 @@
       </div>
       <hr class="border-base-300 text-base-300">
 
-      <!--        TODO:MAKE TAGS EDITABLE-->
       <div class="w-full flex justify-center flex-col p-4 gap-3">
         <div class="w-full flex flex-row flex-wrap gap-2 justify-center">
           <CustomTag

@@ -62,7 +62,6 @@ function selectTag(tag) {
 }
 
 function removeTag(tag) {
-  console.log("Removing tag", tag);
   selectedTags.value = selectedTags.value.filter(
       (t) => t !== tag,
   );

@@ -18,7 +18,7 @@
             :max-capacity="supervisor.totalSpots"
             :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
             :tags="supervisor.tags"
-            size="md"
+            size="sm"
         />
       </SwipeContainer>
       <EmptyPagePlaceholder

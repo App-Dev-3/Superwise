@@ -100,7 +100,10 @@
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
     "thesisDescription": "Thesis-Beschreibung",
-    "undo": "rückgängig machen"
+    "undo": "rückgängig machen",
+    "rejectedRequestTo": "Abgelehnte Anfrage an",
+    "acceptedRequestTo": "Akzeptierte Anfrage an",
+    "pendingRequestTo": "Ausstehende Anfrage an"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",

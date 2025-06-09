@@ -58,9 +58,9 @@ const updateValue = (event: Event) => {
       @input="updateValue"
     />
     <div v-if="showBottomArea" class="flex gap-2 justify-end items-center w-full flex-row opacity-50">
-      <div v-if="props.labelBottom?.length > 0" class="label text-xs w-full">{{ props.labelBottom }}</div>
+      <p v-if="props.labelBottom?.length > 0" class="label text-xs w-full text-wrap">{{ props.labelBottom }}</p>
 
-      <div v-if="props.maxlength>0" class="self-end text-xs">{{ currentLength }}/{{ props.maxlength }}</div>
+      <p v-if="props.maxlength>0" class="self-end text-xs">{{ currentLength }}/{{ props.maxlength }}</p>
     </div>
   </fieldset>
 </template>

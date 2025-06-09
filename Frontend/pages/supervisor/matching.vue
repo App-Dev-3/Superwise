@@ -70,7 +70,6 @@ const toast = ref({
 onUnmounted(async () => {
   if (toast.value.visible) {
     await handleToastClosed();
-    window.location.reload(); // manually reload the page to ensure the dashboard state is updated
   }
 });
 

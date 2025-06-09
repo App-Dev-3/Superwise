@@ -1,8 +1,21 @@
 {
+  "admin": {
+    "supervisorAmount": "Betreuer verwenden die App",
+    "availableSpots": "Verfügbare Plätze",
+    "studentsWithSupervisor": "Studenten haben einen Betreuer",
+    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung",
+    "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
+    "downloadTitle": "Bestätigte Betreuungen herunterladen",
+    "invalidCSV": "Ungültiges CSV-Format. Bitte prüfen Sie, ob alle Spalten korrekt sind.",
+    "invalidJSON": "Ungültiges JSON-Format",
+    "uploadSupervisorsDescription": "Dies aktualisiert die Betreuer und ihre verfügbaren Plätze",
+    "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte"
+  },
   "appHeader": {
     "admin": {
-      "download": "Daten herunterladen",
-      "upload": "Daten Importieren"
+      "downloadData": "Daten herunterladen",
+      "uploadData": "Daten Importieren",
+      "deleteData": "Delete Data"
     },
     "back": "Zurück",
     "onboarding": {
@@ -33,7 +46,8 @@
       "multipleAcceptedWarning": "Du hast {count} Betreuungsanfragen akzeptiert, benötigst aber nur einen Betreuer. Bitte sprich mit {supervisors} und löse den Konflikt.",
       "startMatching": "Beginne zu Matchen!",
       "suggestedMatches": "Vorgeschlagene Matches",
-      "yourRequests": "Deine Anfragen"
+      "yourRequests": "Deine Anfragen",
+      "yourSupervisor": "ist dein Betreuer!"
     },
     "supervisor": {
       "manageStudents": "Studenten Verwalten",
@@ -80,12 +94,15 @@
     "cancel": "Abbrechen",
     "chatRequest": "Chat-Anfrage",
     "continue": "Weiter",
+    "delete": "löschen",
+    "download": "herunterladen",
     "edit": "Bearbeiten",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "language": "Sprache",
+    "loading": "Lädt",
     "logoAlt": "Logo",
     "mail": "E-Mail",
     "profile": "Profil",
@@ -99,8 +116,11 @@
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
+    "supervisors": "Betreuer",
+    "tags": "Gebiete",
     "thesisDescription": "Thesis-Beschreibung",
     "undo": "rückgängig machen",
+    "upload": "Importieren",
     "rejectedRequestTo": "Abgelehnte Anfrage an",
     "acceptedRequestTo": "Akzeptierte Anfrage an",
     "pendingRequestTo": "Ausstehende Anfrage an"
@@ -116,7 +136,25 @@
     },
     "noRequests": "Es gibt keine neuen Anfragen...",
     "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
-    "supervisionRequest": "{name} will von dir betreut werden!"
+    "supervisionRequest": "{name} will von dir betreut werden!",
+    "sentRequest": "Betreuungsanfrage wurde gesendet",
+    "supervisorDismissed": "Betreuer wurde abgelehnt",
+    "swipeLeft": {
+      "headline": "Betreuer entfernen",
+      "warning": "Entfernte Betreuer sind weiterhin in der Suche zu finden",
+      "description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?"
+    },
+    "acceptRequest": "Betreuungsanfrage annehmen",
+    "acceptRequestButton": "Anfrage annehmen",
+    "acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
+    "rejectRequest": "Betreuungsanfrage ablehnen",
+    "rejectRequestButton": "Anfrage ablehnen",
+    "rejectRequestDescription": "Sind Sie sicher, dass Sie die Betreuungsanfrage von {firstName} {lastName} ablehnen möchten?",
+    "confirmationToast": "Sie haben die Betreuungsanfrage {type}"
+  },
+  "miniCard": {
+    "pending": "Ausstehende Anfrage an {firstName}",
+    "rejected": "Abgelehnte Anfrage an {firstName}"
   },
   "modal": {
     "cancel": "Abbrechen",
@@ -194,7 +232,9 @@
     "saveChanges": "Änderungen speichern",
     "thesisTopic": "Thesis-Thema",
     "topicPlaceholder": "Beschreibe deine Thesis-Idee...",
-    "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein"
+    "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein",
+    "warning": "Warnung",
+    "warningMessage": "{firstName} ist noch nicht registriert. Bitte kontaktieren Sie {firstName} per E-Mail oder über Microsoft Teams."
   },
   "requests": {
     "noRequests": "Du hast noch keine Anfragen gesendet...",
@@ -233,6 +273,24 @@
           "title": "Supervisor Anfrage Popup"
         }
       }
+    },
+    "student": {
+      "dismissingTitle": "Entfernungs-Modal",
+      "dismissingDescription": "Bestätigungs-Modal anzeigen, wenn ein Betreuer per Wischgeste entfernt wird"
+    },
+    "supervisor": {
+      "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
+      "acceptingDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage angenommen wird",
+      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage",
+      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
+      "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
+      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird"
+    },
+    "title": {
+      "appearance": "Erscheinungsbild",
+      "about": "Über SuperWise",
+      "appVersion": "App-Version",
+      "notificationId": "Benachrichtigungs-ID"
     },
     "theme": {
       "description": "App Design auswählen",

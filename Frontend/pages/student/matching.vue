@@ -2,104 +2,106 @@
   <div class="flex flex-col size-full items-center px-6 py-8 gap-8">
     <template v-if="!hasSupervisor">
       <SwipeContainer
-          v-for="(supervisor, index) in recommendedSupervisors"
-          :key="supervisor.supervisor_userId || index"
-          :ref="el => setItemRef(el, supervisor.supervisor_userId)"
-          class="mb-4"
-          @swipe-left="handleSwipeLeft(supervisor)"
-          @swipe-right="handleSwipeRight(supervisor)"
+        v-for="(supervisor, index) in recommendedSupervisors"
+        :key="supervisor.supervisor_userId || index"
+        :ref="(el) => setItemRef(el, supervisor.supervisor_userId)"
+        class="mb-4"
+        @swipe-left="handleSwipeLeft(supervisor)"
+        @swipe-right="handleSwipeRight(supervisor)"
       >
         <SupervisorCard
-            :current-capacity="supervisor.availableSpots"
-            :description="supervisor.bio"
-            :first-name="supervisor.firstName"
-            :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
-            :last-name="supervisor.lastName"
-            :max-capacity="supervisor.totalSpots"
-            :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-            :tags="supervisor.tags"
-            size="sm"
+          :current-capacity="supervisor.availableSpots"
+          :description="supervisor.bio"
+          :first-name="supervisor.firstName"
+          :image="
+            supervisor.profileImage ||
+            getPlaceholderImage(supervisor.firstName, supervisor.lastName)
+          "
+          :last-name="supervisor.lastName"
+          :max-capacity="supervisor.totalSpots"
+          :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
+          :tags="supervisor.tags"
+          size="sm"
         />
       </SwipeContainer>
       <EmptyPagePlaceholder
-          :render-condition="recommendedSupervisors"
-          :text="t('matching.noSupervisors')"
+        :render-condition="recommendedSupervisors"
+        :text="t('matching.noSupervisors')"
       />
     </template>
     <template v-else>
       <ActionCard
-          :button-text="t('matching.existingSupervision.actionButton')"
-          :header-text="t('matching.existingSupervision.headline')"
-          card-type="primary"
-          @action-button-clicked="
-                  navigate('/student/dashboard')
-                "
+        :button-text="t('matching.existingSupervision.actionButton')"
+        :header-text="t('matching.existingSupervision.headline')"
+        card-type="primary"
+        @action-button-clicked="navigate('/student/dashboard')"
       >
         <div class="h-64 flex">
           <div class="flex flex-col w-full items-center justify-center p-3">
             <Avatar
-                :first-name="
-                    acceptedSupervisionRequests?.supervisor.user.first_name || ''
-                  "
-                :last-name="
-                    acceptedSupervisionRequests?.supervisor.user.last_name || ''
-                  "
-                :src="
-                    acceptedSupervisionRequests?.supervisor.user.profile_image || ''
-                  "
-                alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
-                ring-color="success"
-                shape="circle"
-                size="xl"
+              :first-name="
+                acceptedSupervisionRequests?.supervisor.user.first_name || ''
+              "
+              :last-name="
+                acceptedSupervisionRequests?.supervisor.user.last_name || ''
+              "
+              :src="
+                acceptedSupervisionRequests?.supervisor.user.profile_image || ''
+              "
+              alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
+              ring-color="success"
+              shape="circle"
+              size="xl"
             />
             <h2 class="text-xl mx-4 py-8 text-center">
               {{ acceptedSupervisionRequests?.supervisor.user.first_name }}
               {{ acceptedSupervisionRequests?.supervisor.user.last_name }}
-              is your supervisor!
+              {{ t("dashboard.student.yourSupervisor") }}
             </h2>
           </div>
         </div>
       </ActionCard>
     </template>
     <Toast
-        v-if="toast.visible"
-        :button-text="t('generic.undo')"
-        :duration="3000"
-        :message="toast.message"
-        :type="toast.type"
-        @close="handleToastClosed"
-        @button-click="handleToastUndoClick"
+      v-if="toast.visible"
+      :button-text="t('generic.undo')"
+      :duration="3000"
+      :message="toast.message"
+      :type="toast.type"
+      @close="handleToastClosed"
+      @button-click="handleToastUndoClick"
     />
     <ConfirmationModal
-        v-if="modalInformation"
-        :confirm-button-color="modalInformation.confirmButtonColor"
-        :confirm-button-text="modalInformation.confirmButtonText"
-        :description="modalInformation.description"
-        :headline="modalInformation.headline"
-        :icon="modalInformation.icon"
-        :image="modalInformation.supervisor?.profileImage"
-        linked-component-id="confirmationModal"
-        @abort="handleActionResetSwipe(modalInformation.supervisor)"
-        @confirm="showToastInformation(modalInformation.type)"
-        @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
+      v-if="modalInformation"
+      :confirm-button-color="modalInformation.confirmButtonColor"
+      :confirm-button-text="modalInformation.confirmButtonText"
+      :description="modalInformation.description"
+      :headline="modalInformation.headline"
+      :icon="modalInformation.icon"
+      :image="modalInformation.supervisor?.profileImage"
+      linked-component-id="confirmationModal"
+      @abort="handleActionResetSwipe(modalInformation.supervisor)"
+      @confirm="showToastInformation(modalInformation.type)"
+      @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
-
-
-import { useSupervisorStore } from '~/stores/useSupervisorStore'
-import { useSettingsStore } from '~/stores/useSettingsStore'
-import { computed, nextTick, ref } from 'vue';
-import type { SupervisorData } from "~/shared/types/supervisorInterfaces"
-import type { ConfirmationDialogData, SupervisionRequestResponseData, } from "~/shared/types/userInterfaces"
-import { HttpMethods, supervisionRequestType } from "~/shared/enums/enums"
-import type { SwipeContainer } from '#components';
+import { useSupervisorStore } from "~/stores/useSupervisorStore";
+import { useSettingsStore } from "~/stores/useSettingsStore";
+import { computed, nextTick, ref } from "vue";
+import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
+import type {
+  ConfirmationDialogData,
+  SupervisionRequestResponseData,
+} from "~/shared/types/userInterfaces";
+import { HttpMethods, supervisionRequestType } from "~/shared/enums/enums";
+import type { SwipeContainer } from "#components";
 import type { SupervisionRequestsData } from "#shared/types/supervisorInterfaces";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
-const { t } = useI18n()
+const { t } = useI18n();
 
 const supervisorStore = useSupervisorStore();
 const userStore = useUserStore();
@@ -107,12 +109,16 @@ const studentStore = useStudentStore();
 const settingsStore = useSettingsStore();
 
 if (!userStore.user) {
-  await userStore.refetchCurrentUser()
+  await userStore.refetchCurrentUser();
 }
 
-const swipeContainerRefs = ref<Record<string, InstanceType<typeof SwipeContainer> | null>>({})
-const modalInformation = ref<ConfirmationDialogData | null>(null)
-const supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(null);
+const swipeContainerRefs = ref<
+  Record<string, InstanceType<typeof SwipeContainer> | null>
+>({});
+const modalInformation = ref<ConfirmationDialogData | null>(null);
+const supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(
+  null
+);
 const removedSupervisor = ref<SupervisorData | null>(null);
 const toast = ref({
   visible: false,
@@ -122,13 +128,14 @@ const toast = ref({
 const hasSupervisor = computed(() => {
   return studentStore.acceptedSupervisionRequests.length > 0;
 });
-const acceptedSupervisionRequests = ref<SupervisionRequestsData | null>(null)
+const acceptedSupervisionRequests = ref<SupervisionRequestsData | null>(null);
 
 onMounted(async () => {
   if (studentStore.acceptedSupervisionRequests[0] === undefined) {
-    await studentStore.fetchSupervisionRequests()
+    await studentStore.fetchSupervisionRequests();
   }
-  acceptedSupervisionRequests.value = studentStore.acceptedSupervisionRequests[0];
+  acceptedSupervisionRequests.value =
+    studentStore.acceptedSupervisionRequests[0];
 });
 
 onUnmounted(async () => {
@@ -138,22 +145,21 @@ onUnmounted(async () => {
 });
 
 if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
-  const { data, error } = await useFetch(`/api/match/${ userStore.user?.id }`, {
+  const { data, error } = await useFetch(`/api/match/${userStore.user?.id}`, {
     method: HttpMethods.GET,
   });
   if (error.value) {
     console.error("Error fetching supervisors:", error.value);
-    navigate('/student/dashboard');
+    navigate("/student/dashboard");
   } else {
     supervisorStore.setSupervisors(data.value);
   }
 }
 
 const recommendedSupervisors = computed(() => {
-  return [ ...supervisorStore.supervisors ]
-      .sort((a, b) => {
-        return b.compatibilityScore - a.compatibilityScore;
-      })
+  return [...supervisorStore.supervisors].sort((a, b) => {
+    return b.compatibilityScore - a.compatibilityScore;
+  });
 });
 
 const handleSwipeRight = async (supervisor: SupervisorData) => {
@@ -164,13 +170,13 @@ const handleSwipeRight = async (supervisor: SupervisorData) => {
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.CONFIRM,
-    headline: `Request ${ supervisor.firstName } ${ supervisor.lastName }`,
-    icon: '',
-    warning: '',
-    description: t('modal.supervisionInfo'),
-    confirmButtonText: t('modal.confirm'),
-    confirmButtonColor: 'primary',
-    supervisor: supervisor
+    headline: `Request ${supervisor.firstName} ${supervisor.lastName}`,
+    icon: "",
+    warning: "",
+    description: t("modal.supervisionInfo"),
+    confirmButtonText: t("modal.confirm"),
+    confirmButtonColor: "primary",
+    supervisor: supervisor,
   };
 
   if (settingsStore.settings?.showSupervisionRequestModal) {
@@ -188,13 +194,16 @@ const handleSwipeLeft = async (supervisor: SupervisorData) => {
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.DISMISS,
-    headline: `Dismiss Supervisor`,
-    icon: 'ban',
-    warning: 'Dismissed supervisors can still be found in the search',
-    description: `By dismissing ${ supervisor.firstName } ${ supervisor.lastName }, they will never get suggested again, but you can still search for them. Are you sure you want to do this?`,
-    confirmButtonText: t('modal.confirm'),
-    confirmButtonColor: 'error',
-    supervisor: supervisor
+    headline: t("matching.swipeLeft.headline"),
+    icon: "ban",
+    warning: t("matching.swipeLeft.warning"),
+    description: t("matching.swipeLeft.description", {
+      firstName: supervisor.firstName,
+      lastName: supervisor.lastName,
+    }),
+    confirmButtonText: t("modal.confirm"),
+    confirmButtonColor: "error",
+    supervisor: supervisor,
   };
 
   if (settingsStore.settings?.showDismissModal) {
@@ -229,15 +238,18 @@ const handleToastClosed = () => {
 
 const handleActionConfirmation = async (supervisor: SupervisorData) => {
   if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
-    const { data } = await useFetch<SupervisionRequestResponseData>(`/api/supervision-requests`, {
-      method: HttpMethods.POST,
-      body: {
-        supervisor_id: supervisor.supervisorId,
-      },
-    });
+    const { data } = await useFetch<SupervisionRequestResponseData>(
+      `/api/supervision-requests`,
+      {
+        method: HttpMethods.POST,
+        body: {
+          supervisor_id: supervisor.supervisorId,
+        },
+      }
+    );
     supervisionRequestReturnData.value = data.value;
   } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
-    await useFetch(`/api/users/${ userStore.user?.id }/blocks`, {
+    await useFetch(`/api/users/${userStore.user?.id}/blocks`, {
       method: HttpMethods.POST,
       body: {
         blocked_id: supervisor.supervisor_userId,
@@ -248,8 +260,8 @@ const handleActionConfirmation = async (supervisor: SupervisorData) => {
 };
 
 const handleActionResetSwipe = (supervisor: SupervisorData) => {
-  const ref = swipeContainerRefs.value[supervisor.supervisor_userId]
-  ref?.reset?.()
+  const ref = swipeContainerRefs.value[supervisor.supervisor_userId];
+  ref?.reset?.();
 };
 
 const handleModalDontShowAgain = (type: supervisionRequestType) => {
@@ -258,13 +270,13 @@ const handleModalDontShowAgain = (type: supervisionRequestType) => {
     case supervisionRequestType.CONFIRM:
       settingsStore.setSettings({
         ...settingsStore.settings,
-        showSupervisionRequestModal: false
+        showSupervisionRequestModal: false,
       });
       break;
     case supervisionRequestType.DISMISS:
       settingsStore.setSettings({
         ...settingsStore.settings,
-        showDismissModal: false
+        showDismissModal: false,
       });
       break;
     default:
@@ -273,42 +285,47 @@ const handleModalDontShowAgain = (type: supervisionRequestType) => {
 };
 const openModal = async () => {
   await nextTick();
-  const modal = document.getElementById('confirmationModal') as HTMLDialogElement
-  modal?.showModal()
-}
+  const modal = document.getElementById(
+    "confirmationModal"
+  ) as HTMLDialogElement;
+  modal?.showModal();
+};
 
 const showToastInformation = (type: string) => {
   if (modalInformation.value?.supervisor?.supervisor_userId) {
-    supervisorStore.removeSupervisor(modalInformation.value?.supervisor?.supervisor_userId);
+    supervisorStore.removeSupervisor(
+      modalInformation.value?.supervisor?.supervisor_userId
+    );
   }
   if (type === supervisionRequestType.CONFIRM) {
     toast.value = {
       visible: true,
       type: "success",
-      message: "Supervision request has been sent",
+      message: t("matching.sentRequest"),
     };
   } else if (type === supervisionRequestType.DISMISS) {
     toast.value = {
       visible: true,
       type: "error",
-      message: "Supervisor has been dismissed",
+      message: t("matching.supervisorDismissed"),
     };
   }
 };
 
-const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) => {
+const setItemRef = (
+  el: InstanceType<typeof SwipeContainer> | null,
+  id: string
+) => {
   if (el) {
-    swipeContainerRefs.value[id] = el
+    swipeContainerRefs.value[id] = el;
   }
-}
+};
 
 function navigate(route: string) {
   navigateTo(route);
 }
 
-
 definePageMeta({
   layout: "student-base-layout",
 });
-
 </script>

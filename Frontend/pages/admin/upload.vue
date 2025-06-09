@@ -1,7 +1,12 @@
 <script lang="ts" setup>
-import type { ParsedCsv, TagSimilarityData } from "#shared/types/fileUploadTypes";
+import type {
+  ParsedCsv,
+  TagSimilarityData,
+} from "#shared/types/fileUploadTypes";
 import { transformCsvDataToImportFormat } from "~/utils/csvHelpers";
 import { HttpMethods } from "#shared/enums/enums";
+
+const { t } = useI18n();
 
 const handleCsvUpload = (filename: string, content: ParsedCsv) => {
   const transformedData = transformCsvDataToImportFormat(content);
@@ -12,33 +17,35 @@ const handleCsvUpload = (filename: string, content: ParsedCsv) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((res) => {
-    feedbackToast.value = {
-      visible: true,
-      type: "success",
-      message: res.message,
-    }
-    setTimeout(() => {
-      feedbackToast.value.visible = false;
-    }, 8000);
-  }).catch((error) => {
-    if (error.status === 400) {
-      feedbackToast.value = {
-        visible: true,
-        type: "error",
-        message: "Invalid CSV format. Please check the if all the columns are correct.",
-      }
-    } else {
-      feedbackToast.value = {
-        visible: true,
-        type: "error",
-        message: error.message
-      }
-    }
-    setTimeout(() => {
-      feedbackToast.value.visible = false;
-    }, 8000);
   })
+    .then((res) => {
+      feedbackToast.value = {
+        visible: true,
+        type: "success",
+        message: res.message,
+      };
+      setTimeout(() => {
+        feedbackToast.value.visible = false;
+      }, 8000);
+    })
+    .catch((error) => {
+      if (error.status === 400) {
+        feedbackToast.value = {
+          visible: true,
+          type: "error",
+          message: t("admin.invalidCSV"),
+        };
+      } else {
+        feedbackToast.value = {
+          visible: true,
+          type: "error",
+          message: error.message,
+        };
+      }
+      setTimeout(() => {
+        feedbackToast.value.visible = false;
+      }, 8000);
+    });
 };
 const handleJsonUpload = (filename: string, content: TagSimilarityData) => {
   $fetch("/api/admin/tags/bulk-import", {
@@ -47,40 +54,42 @@ const handleJsonUpload = (filename: string, content: TagSimilarityData) => {
     headers: {
       "Content-Type": "application/json",
     },
-  }).then((res) => {
-    feedbackToast.value = {
-      visible: true,
-      type: "success",
-      message: res.message,
-    }
-    setTimeout(() => {
-      feedbackToast.value.visible = false;
-    }, 8000);
-  }).catch((error) => {
-    if (error.status === 400) {
-      feedbackToast.value = {
-        visible: true,
-        type: "error",
-        message: "Invalid JSON format",
-      }
-    } else {
-      feedbackToast.value = {
-        visible: true,
-        type: "error",
-        message: error.message,
-      }
-    }
-    setTimeout(() => {
-      feedbackToast.value.visible = false;
-    }, 8000);
   })
+    .then((res) => {
+      feedbackToast.value = {
+        visible: true,
+        type: "success",
+        message: res.message,
+      };
+      setTimeout(() => {
+        feedbackToast.value.visible = false;
+      }, 8000);
+    })
+    .catch((error) => {
+      if (error.status === 400) {
+        feedbackToast.value = {
+          visible: true,
+          type: "error",
+          message: t("admin.invalidJSON"),
+        };
+      } else {
+        feedbackToast.value = {
+          visible: true,
+          type: "error",
+          message: error.message,
+        };
+      }
+      setTimeout(() => {
+        feedbackToast.value.visible = false;
+      }, 8000);
+    });
 };
 
 const feedbackToast = ref({
   visible: false,
   type: "success",
   message: "",
-})
+});
 
 definePageMeta({
   layout: "generic-back-layout",
@@ -90,32 +99,32 @@ definePageMeta({
 <template>
   <div class="flex flex-col gap-4 p-8">
     <UnsafeFileInput
-        button-color="info"
-        button-text="Upload"
-        button-width="block"
-        description="This updates the supervisors & their available slots"
-        file-type="csv"
-        title="Supervisors"
-        @file-uploaded="handleCsvUpload"
+      button-color="info"
+      :button-text="t('admin.upload')"
+      button-width="block"
+      :description="t('admin.uploadSupervisorsDescription')"
+      file-type="csv"
+      :title="t('generic.supervisors')"
+      @file-uploaded="handleCsvUpload"
     />
 
     <UnsafeFileInput
-        button-color="info"
-        button-text="Upload"
-        button-width="block"
-        description="This updates the tags and the similarity scores"
-        file-name="select updated_tag_list.json"
-        file-type="json"
-        title="Tags"
-        @file-uploaded="handleJsonUpload"
+      button-color="info"
+      :button-text="t('admin.upload')"
+      button-width="block"
+      :description="t('admin.uploadTagsDescription')"
+      file-name="select updated_tag_list.json"
+      file-type="json"
+      :title="t('generic.tags')"
+      @file-uploaded="handleJsonUpload"
     />
     <Toast
-        v-if="feedbackToast.visible"
-        :duration="8000"
-        :message="feedbackToast.message"
-        :type="feedbackToast.type"
-        @close="feedbackToast.visible = false"
-        @button-click="feedbackToast.visible = false"
+      v-if="feedbackToast.visible"
+      :duration="8000"
+      :message="feedbackToast.message"
+      :type="feedbackToast.type"
+      @close="feedbackToast.visible = false"
+      @button-click="feedbackToast.visible = false"
     />
   </div>
 </template>

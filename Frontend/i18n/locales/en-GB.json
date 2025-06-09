@@ -1,8 +1,21 @@
 {
+  "admin": {
+    "supervisorAmount": "Supervisors are using the app",
+    "availableSpots": "Available spots",
+    "studentsWithSupervisor": "students have a supervisor",
+    "waitingStudents": "are currently waiting for supervision approval",
+    "downloadDescription": "Download the confirmed Supervisor - Student pairs",
+    "downloadTitle": "Download confirmed Supervisions",
+    "invalidCSV": "Invalid CSV format. Please check the if all the columns are correct.",
+    "invalidJSON": "Invalid JSON format",
+    "uploadSupervisorsDescription": "This updates the supervisors & their available slots",
+    "uploadTagsDescription": "This updates the tags and the similarity scores"
+  },
   "appHeader": {
     "admin": {
-      "download": "Download Data",
-      "upload": "Upload Data"
+      "downloadData": "Download Data",
+      "uploadData": "Upload Data",
+      "deleteData": "Delete Data"
     },
     "back": "Back",
     "onboarding": {
@@ -33,7 +46,8 @@
       "multipleAcceptedWarning": "You accepted {count} supervision requests, but you only need one supervisor. Please talk to {supervisors} and resolve the conflict.",
       "startMatching": "Start Matching!",
       "suggestedMatches": "Suggested Matches",
-      "yourRequests": "Your Requests"
+      "yourRequests": "Your Requests",
+      "yourSupervisor": "is your supervisor!"
     },
     "supervisor": {
       "manageStudents": "Manage Students",
@@ -80,12 +94,15 @@
     "cancel": "Cancel",
     "chatRequest": "Chat request",
     "continue": "Continue",
+    "delete": "delete",
+    "download": "download",
     "edit": "Edit",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
     "italian": "🇮🇹 Italiano",
     "language": "Language",
+    "loading": "Loading",
     "logoAlt": "logo",
     "mail": "Mail",
     "profile": "Profile",
@@ -99,8 +116,11 @@
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",
+    "supervisors": "Supervisors",
+    "tags": "Tags",
     "thesisDescription": "Thesis description",
     "undo": "Undo",
+    "upload": "Upload",
     "rejectedRequestTo": "Rejected request to",
     "acceptedRequestTo": "Accepted request to",
     "pendingRequestTo": "Pending request to"
@@ -116,7 +136,25 @@
     },
     "noRequests": "There are no new requests...",
     "noSupervisors": "There are no (more) supervisors that fit your tags...",
-    "supervisionRequest": "{name} wants to be supervised by you!"
+    "supervisionRequest": "{name} wants to be supervised by you!",
+    "sentRequest": "Supervision request has been sent",
+    "supervisorDismissed": "Supervisor has been dismissed",
+    "swipeLeft": {
+      "headline": "Dismiss Supervisor",
+      "warning": "Dismissed supervisors can still be found in the search",
+      "description": "By dismissing {firstName} {lastName}, they will never get suggested again, but you can still search for them. Are you sure you want to do this?"
+    },
+    "acceptRequest": "Accept Supervision Request",
+    "acceptRequestButton": "Accept Request",
+    "acceptRequestDescription": "Would you like to accept the supervision request from {firstName} {lastName}? Once accepted You will officially be a supervisor-student pair",
+    "rejectRequest": "Reject Supervision Request",
+    "rejectRequestButton": "Reject Request",
+    "rejectRequestDescription": "Are you sure you want to reject the supervision request sent by {firstName} {lastName}",
+    "confirmationToast": "You {type} the supervision request"
+  },
+  "miniCard": {
+    "pending": "Pending request to {firstName}",
+    "rejected": "Rejected request to {firstName}"
   },
   "modal": {
     "cancel": "Cancel",
@@ -193,7 +231,9 @@
     "saveChanges": "Save Changes",
     "thesisTopic": "Thesis Topic",
     "topicPlaceholder": "Describe your thesis idea...",
-    "topicVisibility": "Your thesis description will be visible to other users"
+    "topicVisibility": "Your thesis description will be visible to other users",
+    "warning": "Warning",
+    "warningMessage": "is not registered yet. Please either contact them via email or Microsoft Teams."
   },
   "requests": {
     "noRequests": "You have not sent any requests yet...",
@@ -232,6 +272,24 @@
           "title": "Supervision Request modal"
         }
       }
+    },
+    "student": {
+      "dismissingTitle": "Dismiss Modal",
+      "dismissingDescription": "Show confirmation modal when swipe-dismissing a supervisor"
+    },
+    "supervisor": {
+      "acceptingTitle": "Supervision request Accept Modal",
+      "acceptingDescription": "Show confirmation modal when accepting a supervision request",
+      "rejectTitle": "Supervision request Reject Modal",
+      "rejectDescription": "Show confirmation modal when rejecting a supervision request",
+      "addStudentTitle": "Add Student to Supervise Modal",
+      "addStudentDescription": "Show confirmation modal when adding a student to supervise in the add view."
+    },
+    "title": {
+      "appearance": "Appearance",
+      "about": "About SuperWise",
+      "appVersion": "App Version",
+      "notificationId": "Notification ID"
     },
     "theme": {
       "description": "Select app theme",

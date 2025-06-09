@@ -20,8 +20,8 @@ const toast = ref({
 });
 
 onMounted(() => {
-  studentStore.fetchSupervisionRequests()
-})
+  studentStore.fetchSupervisionRequests();
+});
 
 onUnmounted(async () => {
   if (toast.value.visible) {
@@ -155,28 +155,33 @@ definePageMeta({
     />
 
     <EmptyPagePlaceholder
-        :render-condition="pendingSupervisionRequests"
-        :text="t('requests.noRequests')"
-        class="w-full"
+      :render-condition="pendingSupervisionRequests"
+      :text="t('requests.noRequests')"
+      class="w-full"
     />
     <CustomAccordion
-        v-if="rejectedSupervisionRequests.length > 0"
-        :icon="['fas', 'clock']"
-        :icon-class="'text-yellow-500'"
-        :title="t('requests.rejectedRequests')"
-        class="size-full mt-4"
+      v-if="rejectedSupervisionRequests.length > 0"
+      :icon="['fas', 'clock']"
+      :icon-class="'text-yellow-500'"
+      :title="t('requests.rejectedRequests')"
+      class="size-full mt-4"
     >
       <MiniCard
-          v-for="rejectedRequest in rejectedSupervisionRequests" :key="rejectedRequest.id"
-          :bottom-text="new Date(rejectedRequest.updated_at).toLocaleDateString()"
-          :first-name="rejectedRequest.supervisor.user.first_name"
-          :image="rejectedRequest.supervisor.user.profile_image"
-          :last-name="rejectedRequest.supervisor.user.last_name"
-          :preview-text="`Rejected request to ${rejectedRequest.supervisor.user.first_name}`"
-          bottom-icon="tag"
-          class="cursor-pointer opacity-75"
-          top-icon="user-group"
-          @click="navigate(`/profiles/${rejectedRequest.supervisor.user_id}`)"
+        v-for="rejectedRequest in rejectedSupervisionRequests"
+        :key="rejectedRequest.id"
+        :bottom-text="new Date(rejectedRequest.updated_at).toLocaleDateString()"
+        :first-name="rejectedRequest.supervisor.user.first_name"
+        :image="rejectedRequest.supervisor.user.profile_image"
+        :last-name="rejectedRequest.supervisor.user.last_name"
+        :preview-text="
+          t('miniCard.rejected', {
+            firstName: rejectedRequest.supervisor.user.first_name,
+          })
+        "
+        bottom-icon="tag"
+        class="cursor-pointer opacity-75"
+        top-icon="user-group"
+        @click="navigate(`/profiles/${rejectedRequest.supervisor.user_id}`)"
       />
     </CustomAccordion>
     <Toast
@@ -201,9 +206,7 @@ definePageMeta({
         @dont-show-again="handleModalDontShowAgain"
     />
   </div>
-  
+
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

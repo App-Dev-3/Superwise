@@ -1,54 +1,54 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
-import { useRoute } from 'vue-router';
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
 const route = useRoute();
 const { t } = useI18n();
 
 const headerText = computed(() => {
-  const breadCrumbs: string[] = route.path.substring(1).split('/');
-  console.log('breadCrumbs', breadCrumbs);
-  if (breadCrumbs[0].includes('profiles')) {
+  const breadCrumbs: string[] = route.path.substring(1).split("/");
+  console.log("breadCrumbs", breadCrumbs);
+  if (breadCrumbs[0].includes("profiles")) {
     return t("nav.profile");
   }
 
-  const currentPage: string = breadCrumbs.pop() || '';
-  return {
-    'data-protection': t('nav.dataProtection'),
-    settings: t('nav.settings'),
-    profile: t('profile.pageHeader'),
-    'currently-supervising': t('nav.currentlySupervising'),
-    download: t('appHeader.admin.download'),
-    upload: t('appHeader.admin.upload'),
-    delete: t('appHeader.admin.delete'),
-  }[currentPage] || t("nav.defaultHeader");
-})
-
-const getVariant = computed((): "default" | "upload" | "download" | "delete" | "text" | undefined => {
-  const breadCrumbs: string[] = route.path.substring(1).split('/');
-  const currentPage = breadCrumbs.pop() || '';
-  if (breadCrumbs[0].includes('admin')) {
-    const variant = {
-      download: 'download',
-      upload: 'upload',
-      delete: 'delete',
-    }[currentPage] as "download" | "upload" | "delete" | undefined;
-
-    return variant || 'default';
-  }
-  return 'default';
+  const currentPage: string = breadCrumbs.pop() || "";
+  return (
+    {
+      "data-protection": t("nav.dataProtection"),
+      settings: t("nav.settings"),
+      profile: t("profile.pageHeader"),
+      "currently-supervising": t("nav.currentlySupervising"),
+      download: t("appHeader.admin.downloadData"),
+      upload: t("appHeader.admin.uploadData"),
+      delete: t("appHeader.admin.deleteData"),
+    }[currentPage] || t("nav.defaultHeader")
+  );
 });
+
+const getVariant = computed(
+  (): "default" | "upload" | "download" | "delete" | "text" | undefined => {
+    const breadCrumbs: string[] = route.path.substring(1).split("/");
+    const currentPage = breadCrumbs.pop() || "";
+    if (breadCrumbs[0].includes("admin")) {
+      const variant = {
+        download: "download",
+        upload: "upload",
+        delete: "delete",
+      }[currentPage] as "download" | "upload" | "delete" | undefined;
+
+      return variant || "default";
+    }
+    return "default";
+  }
+);
 </script>
 
 <template>
-
   <div class="w-full h-screen flex max-w-xl m-auto flex-col">
-    <AdminHeader
-        :header-text="headerText"
-        :variant="getVariant"
-    />
+    <AdminHeader :header-text="headerText" :variant="getVariant" />
     <div class="size-full overflow-y-auto flex flex-col">
-      <slot/>
+      <slot />
     </div>
   </div>
 </template>

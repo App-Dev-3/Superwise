@@ -15,7 +15,7 @@
 
           <div
               v-if="dashboardState === 1"
-              class="w-full px-6 py-8 flex flex-col gap-8"
+              class="w-full px-4 py-8 flex flex-col gap-8"
           >
             <CustomMessage
                 :message="t('onboarding.completed')"
@@ -53,7 +53,7 @@
 
           <div
               v-if="dashboardState === 2"
-              class="w-full px-6 py-8 flex flex-col gap-8"
+              class="w-full px-4 py-8 flex flex-col gap-8"
           >
             <ActionCard
                 :button-text="t('generic.showAll')"
@@ -92,7 +92,7 @@
 
         <div
             v-if="dashboardState === 3"
-            class="my-auto mx-auto w-full p-12"
+            class="my-auto mx-auto w-full px-4 py-8"
         >
           <ConfirmationExport
               :accepted-date="acceptedSupervisionRequests[0].updated_at"

@@ -6,7 +6,7 @@
       <img
           :src="colorMode.value === 'dark'? 'images/appLanding_logo_dark.svg': 'images/appLanding_logo_light.svg'"
           alt="Logo image"
-          class="w-full max-w-96"
+          class="w-full max-w-96 mx-auto"
       >
     </ClientOnly>
 

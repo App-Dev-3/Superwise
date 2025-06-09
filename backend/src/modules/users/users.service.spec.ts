@@ -237,6 +237,34 @@ describe('UsersService', () => {
     });
   });
 
+  describe('findUserByEmailOrNull', () => {
+    it('should return a user when found by email', async () => {
+      // Arrange
+      const email = mockStudent.email;
+      mockUsersRepository.findUserByEmail.mockResolvedValue(mockUser);
+
+      // Act
+      const result = await service.findUserByEmailOrNull(email);
+
+      // Assert
+      expect(result).toEqual(mockUser);
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
+    });
+
+    it('should return null when user not found by email', async () => {
+      // Arrange
+      const email = 'nonexistent@fhstp.ac.at';
+      mockUsersRepository.findUserByEmail.mockResolvedValue(null);
+
+      // Act
+      const result = await service.findUserByEmailOrNull(email);
+
+      // Assert
+      expect(result).toBeNull();
+      expect(mockUsersRepository.findUserByEmail).toHaveBeenCalledWith(email);
+    });
+  });
+
   describe('findUsersByFirstName', () => {
     it('should return users by first name', async () => {
       mockUsersRepository.findUsersByFirstName.mockResolvedValue(expectedUsers);

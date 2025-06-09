@@ -20,6 +20,7 @@ import { MissingStudentEmailException } from '../../../common/exceptions/custom-
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { AppConfigService } from '@config';
 import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
+import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 @Injectable()
 export class SupervisionRequestsService {
@@ -123,9 +124,18 @@ export class SupervisionRequestsService {
     }
 
     // Check if target email belongs to a supervisor
-    const targetUser = await this.usersService.findUserByEmail(dto.student_email);
+    const targetUser = await this.usersService.findUserByEmailOrNull(dto.student_email);
     if (targetUser?.role === Role.SUPERVISOR) {
       throw new SupervisorTargetException();
+    }
+
+    // If user exists, check if they already have an accepted supervision
+    if (targetUser) {
+      const student = await this.studentsService.findStudentByUserId(targetUser.id);
+      const hasAccepted = await this.repository.hasAcceptedSupervision(student.id);
+      if (hasAccepted) {
+        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(student.id);
+      }
     }
 
     // Get supervisor profile
@@ -152,7 +162,6 @@ export class SupervisionRequestsService {
       );
     }
 
-    // Return the result directly
     return result;
   }
 
@@ -246,11 +255,19 @@ export class SupervisionRequestsService {
     // Validate state transition based on user role
     this.validateStateTransition(request.request_state, newState, currentUser.role);
 
+    // Check if student already has an accepted supervision request
+    if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
+      const hasAccepted = await this.repository.hasAcceptedSupervision(request.student_id);
+      if (hasAccepted) {
+        throw new StudentAlreadyHasAnAcceptedSupervisionRequestException(request.student_id);
+      }
+    }
+
     // For transitions affecting supervisor capacity, get supervisor details
     if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
       const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
 
-      // Check capacity if accepting a request
+      // Check if supervisor has available spots
       if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
         if (supervisor.available_spots <= 0) {
           throw new SupervisorCapacityException(request.supervisor_id);
@@ -258,7 +275,7 @@ export class SupervisionRequestsService {
       }
 
       // Update with transaction for capacity management
-      return this.repository.updateRequestState({
+      const result = await this.repository.updateRequestState({
         id,
         newState,
         currentState: request.request_state,
@@ -266,6 +283,15 @@ export class SupervisionRequestsService {
         available_spots: supervisor.available_spots,
         total_spots: supervisor.total_spots,
       });
+
+      if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
+        this.logger.log(
+          `Request ${id} accepted, competing requests auto-withdrawn`,
+          'SupervisionRequestsService',
+        );
+      }
+
+      return result;
     }
 
     // For other state transitions that don't affect capacity
@@ -274,8 +300,8 @@ export class SupervisionRequestsService {
       newState,
       currentState: request.request_state,
       supervisor_id: request.supervisor_id,
-      available_spots: 0, // Not used for non-capacity affecting changes
-      total_spots: 0, // Not used for non-capacity affecting changes
+      available_spots: 0,
+      total_spots: 0,
     });
   }
 

@@ -16,139 +16,145 @@ import { SelfSupervisionException } from '../../../common/exceptions/custom-exce
 import { SupervisorTargetException } from '../../../common/exceptions/custom-exceptions/supervisor-target.exception';
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
+import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 describe('SupervisionRequestsService', () => {
   let service: SupervisionRequestsService;
 
-  // Mock dependencies
-  const mockRepository = {
-    findAllRequests: jest.fn(),
-    findRequestById: jest.fn(),
-    createSupervisionRequest: jest.fn(),
-    updateRequestState: jest.fn(),
-    countRequests: jest.fn(),
+  // Test UUIDs
+  const TEST_IDS = {
+    REQUEST_UUID: '123e4567-e89b-12d3-a456-426614174000',
+    STUDENT_UUID: '123e4567-e89b-12d3-a456-426614174001',
+    SUPERVISOR_UUID: '123e4567-e89b-12d3-a456-426614174002',
+    STUDENT_USER_UUID: '123e4567-e89b-12d3-a456-426614174003',
+    SUPERVISOR_USER_UUID: '123e4567-e89b-12d3-a456-426614174004',
+    ADMIN_USER_UUID: '123e4567-e89b-12d3-a456-426614174005',
+    ANOTHER_SUPERVISOR_USER_UUID: '123e4567-e89b-12d3-a456-426614174006',
+    STUDENT_CLERK_ID: 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM',
+    SUPERVISOR_CLERK_ID: 'user_1AUj8tGhSFhTLD9sdP0q4P7VoXY',
+    ADMIN_CLERK_ID: 'user_3CUj8tGhSFhTLD9sdP0q4P7VoZW',
   };
 
-  const mockStudentsService = {
-    findStudentByUserId: jest.fn(),
-    findStudentById: jest.fn(),
-  };
+  // Factory function for creating mock services
+  const createMockServices = () => ({
+    repository: {
+      findAllRequests: jest.fn(),
+      findRequestById: jest.fn(),
+      createSupervisionRequest: jest.fn(),
+      updateRequestState: jest.fn(),
+      countRequests: jest.fn(),
+      hasAcceptedSupervision: jest.fn(),
+      withdrawCompetingRequests: jest.fn(),
+    },
+    studentsService: {
+      findStudentByUserId: jest.fn(),
+      findStudentById: jest.fn(),
+    },
+    supervisorsService: {
+      findSupervisorByUserId: jest.fn(),
+      findSupervisorById: jest.fn(),
+    },
+    usersService: {
+      findUserById: jest.fn(),
+      findUserByEmail: jest.fn(),
+      findUserByEmailOrNull: jest.fn(),
+    },
+    loggerService: {
+      log: jest.fn(),
+      debug: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
+    appConfigService: {
+      supervisionRequestCooldownDays: 2,
+      isDevelopment: true,
+      isProduction: false,
+      isTest: true,
+      nodeEnv: 'test',
+      port: 3000,
+      frontendHost: 'http://localhost:3000',
+      allowedEmailDomains: ['fhstp.ac.at'],
+    },
+  });
 
-  const mockSupervisorsService = {
-    findSupervisorByUserId: jest.fn(),
-    findSupervisorById: jest.fn(),
-  };
+  // Factory function for creating test data
+  const createTestData = () => ({
+    mockStudentUser: {
+      id: TEST_IDS.STUDENT_USER_UUID,
+      email: 'student@fhstp.ac.at',
+      first_name: 'Student',
+      last_name: 'User',
+      role: Role.STUDENT,
+      profile_image: 'https://superwise.at/images/student-profile.jpg',
+      is_registered: true,
+      is_deleted: false,
+      clerk_id: TEST_IDS.STUDENT_CLERK_ID,
+      created_at: new Date('2023-01-15T10:30:00Z'),
+      updated_at: new Date('2023-01-15T10:30:00Z'),
+    } as User,
 
-  const mockUsersService = {
-    findUserById: jest.fn(),
-    findUserByEmail: jest.fn(),
-  };
+    mockSupervisorUser: {
+      id: TEST_IDS.SUPERVISOR_USER_UUID,
+      email: 'supervisor@fhstp.ac.at',
+      first_name: 'Supervisor',
+      last_name: 'User',
+      role: Role.SUPERVISOR,
+      profile_image: 'https://superwise.at/images/supervisor-profile.jpg',
+      is_registered: true,
+      is_deleted: false,
+      clerk_id: TEST_IDS.SUPERVISOR_CLERK_ID,
+      created_at: new Date('2023-01-15T10:30:00Z'),
+      updated_at: new Date('2023-01-15T10:30:00Z'),
+    } as User,
 
-  const mockLoggerService = {
-    log: jest.fn(),
-    debug: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  };
+    mockAdminUser: {
+      id: TEST_IDS.ADMIN_USER_UUID,
+      email: 'admin@fhstp.ac.at',
+      first_name: 'Admin',
+      last_name: 'User',
+      role: Role.ADMIN,
+      profile_image: 'https://superwise.at/images/admin-profile.jpg',
+      is_registered: true,
+      is_deleted: false,
+      clerk_id: TEST_IDS.ADMIN_CLERK_ID,
+      created_at: new Date('2023-01-15T10:30:00Z'),
+      updated_at: new Date('2023-01-15T10:30:00Z'),
+    } as User,
 
-  const mockAppConfigService = {
-    supervisionRequestCooldownDays: 2, // Default cooldown period for tests
-    isDevelopment: true,
-    isProduction: false,
-    isTest: true,
-    nodeEnv: 'test',
-    port: 3000,
-    frontendHost: 'http://localhost:3000',
-    allowedEmailDomains: ['fhstp.ac.at'],
-  };
+    mockStudent: {
+      id: TEST_IDS.STUDENT_UUID,
+      user_id: TEST_IDS.STUDENT_USER_UUID,
+      thesis_description: null,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
 
-  // Test data
-  const REQUEST_UUID = '123e4567-e89b-12d3-a456-426614174000';
-  const STUDENT_UUID = '123e4567-e89b-12d3-a456-426614174001';
-  const SUPERVISOR_UUID = '123e4567-e89b-12d3-a456-426614174002';
-  const STUDENT_USER_UUID = '123e4567-e89b-12d3-a456-426614174003';
-  const SUPERVISOR_USER_UUID = '123e4567-e89b-12d3-a456-426614174004';
-  const ADMIN_USER_UUID = '123e4567-e89b-12d3-a456-426614174005';
-  const ANOTHER_SUPERVISOR_USER_UUID = '123e4567-e89b-12d3-a456-426614174006';
-  const STUDENT_CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
-  const SUPERVISOR_CLERK_ID = 'user_1AUj8tGhSFhTLD9sdP0q4P7VoXY';
-  const ADMIN_CLERK_ID = 'user_3CUj8tGhSFhTLD9sdP0q4P7VoZW';
+    mockSupervisor: {
+      id: TEST_IDS.SUPERVISOR_UUID,
+      user_id: TEST_IDS.SUPERVISOR_USER_UUID,
+      bio: 'Experienced supervisor',
+      available_spots: 5,
+      total_spots: 10,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
 
-  const mockStudentUser: User = {
-    id: STUDENT_USER_UUID,
-    email: 'student@fhstp.ac.at',
-    first_name: 'Student',
-    last_name: 'User',
-    role: Role.STUDENT,
-    profile_image: 'https://superwise.at/images/student-profile.jpg',
-    is_registered: true,
-    is_deleted: false,
-    clerk_id: STUDENT_CLERK_ID,
-    created_at: new Date('2023-01-15T10:30:00Z'),
-    updated_at: new Date('2023-01-15T10:30:00Z'),
-  };
+    mockSupervisionRequest: {
+      id: TEST_IDS.REQUEST_UUID,
+      student_id: TEST_IDS.STUDENT_UUID,
+      supervisor_id: TEST_IDS.SUPERVISOR_UUID,
+      request_state: RequestState.PENDING,
+      created_at: new Date('2023-01-15T10:30:00Z'),
+      updated_at: new Date('2023-01-15T10:30:00Z'),
+    },
+  });
 
-  const mockSupervisorUser: User = {
-    id: SUPERVISOR_USER_UUID,
-    email: 'supervisor@fhstp.ac.at',
-    first_name: 'Supervisor',
-    last_name: 'User',
-    role: Role.SUPERVISOR,
-    profile_image: 'https://superwise.at/images/supervisor-profile.jpg',
-    is_registered: true,
-    is_deleted: false,
-    clerk_id: SUPERVISOR_CLERK_ID,
-    created_at: new Date('2023-01-15T10:30:00Z'),
-    updated_at: new Date('2023-01-15T10:30:00Z'),
-  };
-
-  const mockAdminUser: User = {
-    id: ADMIN_USER_UUID,
-    email: 'admin@fhstp.ac.at',
-    first_name: 'Admin',
-    last_name: 'User',
-    role: Role.ADMIN,
-    profile_image: 'https://superwise.at/images/admin-profile.jpg',
-    is_registered: true,
-    is_deleted: false,
-    clerk_id: ADMIN_CLERK_ID,
-    created_at: new Date('2023-01-15T10:30:00Z'),
-    updated_at: new Date('2023-01-15T10:30:00Z'),
-  };
-
-  const mockStudent = {
-    id: STUDENT_UUID,
-    user_id: STUDENT_USER_UUID,
-    thesis_description: null,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const mockSupervisor = {
-    id: SUPERVISOR_UUID,
-    user_id: SUPERVISOR_USER_UUID,
-    bio: 'Experienced supervisor',
-    available_spots: 5,
-    total_spots: 10,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
-
-  const mockSupervisionRequest = {
-    id: REQUEST_UUID,
-    student_id: STUDENT_UUID,
-    supervisor_id: SUPERVISOR_UUID,
-    request_state: RequestState.PENDING,
-    created_at: new Date('2023-01-15T10:30:00Z'),
-    updated_at: new Date('2023-01-15T10:30:00Z'),
-  };
-
-  // Mock supervision request with users
-  const mockSupervisionRequestWithUsers = {
-    ...mockSupervisionRequest,
+  // Create mock supervision request with users
+  const createMockSupervisionRequestWithUsers = (testData: ReturnType<typeof createTestData>) => ({
+    ...testData.mockSupervisionRequest,
     student: {
-      id: STUDENT_UUID,
-      user_id: STUDENT_USER_UUID,
+      id: TEST_IDS.STUDENT_UUID,
+      user_id: TEST_IDS.STUDENT_USER_UUID,
       user: {
         first_name: 'Student',
         last_name: 'User',
@@ -157,8 +163,8 @@ describe('SupervisionRequestsService', () => {
       },
     },
     supervisor: {
-      id: SUPERVISOR_UUID,
-      user_id: SUPERVISOR_USER_UUID,
+      id: TEST_IDS.SUPERVISOR_UUID,
+      user_id: TEST_IDS.SUPERVISOR_USER_UUID,
       user: {
         first_name: 'Supervisor',
         last_name: 'User',
@@ -166,23 +172,37 @@ describe('SupervisionRequestsService', () => {
         profile_image: null,
       },
     },
+  });
+
+  // Function to reset all mocks
+  const resetAllMocks = (mocks: ReturnType<typeof createMockServices>) => {
+    Object.values(mocks.repository).forEach(mock => mock.mockReset());
+    Object.values(mocks.studentsService).forEach(mock => mock.mockReset());
+    Object.values(mocks.supervisorsService).forEach(mock => mock.mockReset());
+    Object.values(mocks.usersService).forEach(mock => mock.mockReset());
+    Object.values(mocks.loggerService).forEach(mock => mock.mockReset());
   };
+
+  // Create instances for the test suite
+  const mocks = createMockServices();
+  const testData = createTestData();
+  const mockSupervisionRequestWithUsers = createMockSupervisionRequestWithUsers(testData);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         SupervisionRequestsService,
-        { provide: SupervisionRequestsRepository, useValue: mockRepository },
-        { provide: StudentsService, useValue: mockStudentsService },
-        { provide: SupervisorsService, useValue: mockSupervisorsService },
-        { provide: UsersService, useValue: mockUsersService },
-        { provide: WinstonLoggerService, useValue: mockLoggerService },
-        { provide: AppConfigService, useValue: mockAppConfigService },
+        { provide: SupervisionRequestsRepository, useValue: mocks.repository },
+        { provide: StudentsService, useValue: mocks.studentsService },
+        { provide: SupervisorsService, useValue: mocks.supervisorsService },
+        { provide: UsersService, useValue: mocks.usersService },
+        { provide: WinstonLoggerService, useValue: mocks.loggerService },
+        { provide: AppConfigService, useValue: mocks.appConfigService },
       ],
     }).compile();
 
     service = module.get<SupervisionRequestsService>(SupervisionRequestsService);
-    jest.clearAllMocks();
+    resetAllMocks(mocks);
   });
 
   it('should be defined', () => {
@@ -193,26 +213,32 @@ describe('SupervisionRequestsService', () => {
     describe('as a student', () => {
       it('should create a pending request to a supervisor', async () => {
         // Arrange
-        const dto = { supervisor_id: SUPERVISOR_UUID };
-        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-        mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
-        mockRepository.findAllRequests.mockResolvedValue([]); // No existing requests
-        mockRepository.createSupervisionRequest.mockResolvedValue(mockSupervisionRequest);
+        const dto = { supervisor_id: TEST_IDS.SUPERVISOR_UUID };
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
+        mocks.repository.findAllRequests.mockResolvedValue([]); // No existing requests
+        mocks.repository.createSupervisionRequest.mockResolvedValue(
+          testData.mockSupervisionRequest,
+        );
 
         // Act
-        const result = await service.createSupervisionRequest(dto, mockStudentUser);
+        const result = await service.createSupervisionRequest(dto, testData.mockStudentUser);
 
         // Assert
-        expect(result).toEqual(mockSupervisionRequest);
-        expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-        expect(mockSupervisorsService.findSupervisorById).toHaveBeenCalledWith(SUPERVISOR_UUID);
-        expect(mockRepository.findAllRequests).toHaveBeenCalledWith({
-          student_id: mockStudent.id,
-          supervisor_id: SUPERVISOR_UUID,
+        expect(result).toEqual(testData.mockSupervisionRequest);
+        expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+          testData.mockStudentUser.id,
+        );
+        expect(mocks.supervisorsService.findSupervisorById).toHaveBeenCalledWith(
+          TEST_IDS.SUPERVISOR_UUID,
+        );
+        expect(mocks.repository.findAllRequests).toHaveBeenCalledWith({
+          student_id: testData.mockStudent.id,
+          supervisor_id: TEST_IDS.SUPERVISOR_UUID,
         });
-        expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
-          student_id: mockStudent.id,
-          supervisor_id: SUPERVISOR_UUID,
+        expect(mocks.repository.createSupervisionRequest).toHaveBeenCalledWith({
+          student_id: testData.mockStudent.id,
+          supervisor_id: TEST_IDS.SUPERVISOR_UUID,
           request_state: RequestState.PENDING,
         });
       });
@@ -222,76 +248,78 @@ describe('SupervisionRequestsService', () => {
         const dto = {};
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockStudentUser)).rejects.toThrow(
-          BadRequestException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockStudentUser),
+        ).rejects.toThrow(BadRequestException);
       });
 
       it('should throw StateConflictException if a pending request already exists', async () => {
         // Arrange
-        const dto = { supervisor_id: SUPERVISOR_UUID };
-        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-        mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+        const dto = { supervisor_id: TEST_IDS.SUPERVISOR_UUID };
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
         // Existing pending request
-        mockRepository.findAllRequests.mockResolvedValue([
-          { ...mockSupervisionRequest, request_state: RequestState.PENDING },
+        mocks.repository.findAllRequests.mockResolvedValue([
+          { ...testData.mockSupervisionRequest, request_state: RequestState.PENDING },
         ]);
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockStudentUser)).rejects.toThrow(
-          SupervisionRequestStateConflictException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockStudentUser),
+        ).rejects.toThrow(SupervisionRequestStateConflictException);
       });
 
       it('should throw TooEarlyException if rejected request is within waiting period', async () => {
         // Arrange
-        const dto = { supervisor_id: SUPERVISOR_UUID };
-        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-        mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+        const dto = { supervisor_id: TEST_IDS.SUPERVISOR_UUID };
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
 
         // Recent rejected request (within waiting period)
         const recentDate = new Date();
         recentDate.setHours(recentDate.getHours() - 12); // 12 hours ago (less than 2 days)
-        mockRepository.findAllRequests.mockResolvedValue([
+        mocks.repository.findAllRequests.mockResolvedValue([
           {
-            ...mockSupervisionRequest,
+            ...testData.mockSupervisionRequest,
             request_state: RequestState.REJECTED,
             updated_at: recentDate,
           },
         ]);
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockStudentUser)).rejects.toThrow(
-          SupervisionRequestTooEarlyException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockStudentUser),
+        ).rejects.toThrow(SupervisionRequestTooEarlyException);
       });
 
       it('should allow creation of a new request after waiting period', async () => {
         // Arrange
-        const dto = { supervisor_id: SUPERVISOR_UUID };
-        mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-        mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+        const dto = { supervisor_id: TEST_IDS.SUPERVISOR_UUID };
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
 
         // Rejected request but more than 2 days ago (outside waiting period)
         const oldDate = new Date();
         oldDate.setDate(oldDate.getDate() - 3); // 3 days ago (more than 2 days)
-        mockRepository.findAllRequests.mockResolvedValue([
+        mocks.repository.findAllRequests.mockResolvedValue([
           {
-            ...mockSupervisionRequest,
+            ...testData.mockSupervisionRequest,
             request_state: RequestState.REJECTED,
             updated_at: oldDate,
           },
         ]);
-        mockRepository.createSupervisionRequest.mockResolvedValue(mockSupervisionRequest);
+        mocks.repository.createSupervisionRequest.mockResolvedValue(
+          testData.mockSupervisionRequest,
+        );
 
         // Act
-        const result = await service.createSupervisionRequest(dto, mockStudentUser);
+        const result = await service.createSupervisionRequest(dto, testData.mockStudentUser);
 
         // Assert
-        expect(result).toEqual(mockSupervisionRequest);
-        expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
-          student_id: mockStudent.id,
-          supervisor_id: SUPERVISOR_UUID,
+        expect(result).toEqual(testData.mockSupervisionRequest);
+        expect(mocks.repository.createSupervisionRequest).toHaveBeenCalledWith({
+          student_id: testData.mockStudent.id,
+          supervisor_id: TEST_IDS.SUPERVISOR_UUID,
           request_state: RequestState.PENDING,
         });
       });
@@ -300,32 +328,39 @@ describe('SupervisionRequestsService', () => {
     describe('as a supervisor', () => {
       it('should create an accepted request with an existing student', async () => {
         // Arrange
-        const dto = { student_email: 'student@fhstp.ac.at' };
-        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
-        mockRepository.createSupervisionRequest.mockResolvedValue({
-          ...mockSupervisionRequest,
+        const dto = { student_email: testData.mockStudentUser.email };
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(testData.mockStudentUser); // Return student user
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.repository.hasAcceptedSupervision.mockResolvedValue(false);
+        mocks.repository.createSupervisionRequest.mockResolvedValue({
+          ...testData.mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
           studentWasCreated: false,
         });
 
         // Act
-        const result = await service.createSupervisionRequest(dto, mockSupervisorUser);
+        const result = await service.createSupervisionRequest(dto, testData.mockSupervisorUser);
 
         // Assert
         expect(result).toEqual({
-          ...mockSupervisionRequest,
+          ...testData.mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
           studentWasCreated: false,
         });
-        expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-          mockSupervisorUser.id,
+        expect(mocks.repository.hasAcceptedSupervision).toHaveBeenCalledWith(
+          testData.mockStudent.id,
         );
-        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
-        expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
-          supervisor_id: mockSupervisor.id,
+
+        expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+          testData.mockSupervisorUser.id,
+        );
+        expect(mocks.usersService.findUserByEmailOrNull).toHaveBeenCalledWith(dto.student_email);
+        expect(mocks.repository.createSupervisionRequest).toHaveBeenCalledWith({
+          supervisor_id: testData.mockSupervisor.id,
           student_email: dto.student_email,
-          available_spots: mockSupervisor.available_spots,
+          available_spots: testData.mockSupervisor.available_spots,
           request_state: RequestState.ACCEPTED,
         });
       });
@@ -333,34 +368,50 @@ describe('SupervisionRequestsService', () => {
       it('should create an accepted request and create a new student', async () => {
         // Arrange
         const dto = { student_email: 'newstudent@fhstp.ac.at' };
-        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-        mockUsersService.findUserByEmail.mockResolvedValue(null); // User doesn't exist
-        mockRepository.createSupervisionRequest.mockResolvedValue({
-          ...mockSupervisionRequest,
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(null); // User doesn't exist
+        mocks.repository.createSupervisionRequest.mockResolvedValue({
+          ...testData.mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
           studentWasCreated: true,
         });
 
         // Act
-        const result = await service.createSupervisionRequest(dto, mockSupervisorUser);
+        const result = await service.createSupervisionRequest(dto, testData.mockSupervisorUser);
 
         // Assert
         expect(result).toEqual({
-          ...mockSupervisionRequest,
+          ...testData.mockSupervisionRequest,
           request_state: RequestState.ACCEPTED,
           studentWasCreated: true,
         });
-        expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-          mockSupervisorUser.id,
+        expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+          testData.mockSupervisorUser.id,
         );
-        expect(mockUsersService.findUserByEmail).toHaveBeenCalledWith(dto.student_email);
-        expect(mockRepository.createSupervisionRequest).toHaveBeenCalledWith({
-          supervisor_id: mockSupervisor.id,
+        expect(mocks.usersService.findUserByEmailOrNull).toHaveBeenCalledWith(dto.student_email);
+        expect(mocks.repository.createSupervisionRequest).toHaveBeenCalledWith({
+          supervisor_id: testData.mockSupervisor.id,
           student_email: dto.student_email,
-          available_spots: mockSupervisor.available_spots,
+          available_spots: testData.mockSupervisor.available_spots,
           request_state: RequestState.ACCEPTED,
         });
-        expect(mockLoggerService.log).toHaveBeenCalled();
+        expect(mocks.loggerService.log).toHaveBeenCalled();
+      });
+
+      it('should throw StudentAlreadyHasAnAcceptedSupervisionRequestException if student already has accepted supervision', async () => {
+        // Arrange
+        const dto = { student_email: 'existingstudent@fhstp.ac.at' };
+        const existingUser = { ...testData.mockStudentUser, email: dto.student_email };
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(existingUser);
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.repository.hasAcceptedSupervision.mockResolvedValue(true); // Already has accepted
+
+        // Act & Assert
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockSupervisorUser),
+        ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+        expect(mocks.repository.createSupervisionRequest).not.toHaveBeenCalled();
       });
 
       it('should throw MissingStudentEmailException if student_email is missing', async () => {
@@ -368,52 +419,95 @@ describe('SupervisionRequestsService', () => {
         const dto = {};
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
-          MissingStudentEmailException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockSupervisorUser),
+        ).rejects.toThrow(MissingStudentEmailException);
       });
 
       it('should throw SupervisorCapacityException if no spots available', async () => {
         // Arrange
         const dto = { student_email: 'student@fhstp.ac.at' };
-        mockUsersService.findUserByEmail.mockResolvedValue(mockStudentUser); // Return student user
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(testData.mockStudentUser); // Return student user
+        mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+        mocks.repository.hasAcceptedSupervision.mockResolvedValue(false);
         // Supervisor with no available spots
-        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue({
-          ...mockSupervisor,
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue({
+          ...testData.mockSupervisor,
           available_spots: 0,
         });
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
-          SupervisorCapacityException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockSupervisorUser),
+        ).rejects.toThrow(SupervisorCapacityException);
       });
 
       it('should throw SelfSupervisionException if supervisor tries to supervise themselves', async () => {
         // Arrange
-        const dto = { student_email: mockSupervisorUser.email }; // Same email as supervisor
+        const dto = { student_email: testData.mockSupervisorUser.email }; // Same email as supervisor
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
-          SelfSupervisionException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockSupervisorUser),
+        ).rejects.toThrow(SelfSupervisionException);
       });
 
       it('should throw SupervisorTargetException if trying to create request for another supervisor', async () => {
         // Arrange
         const dto = { student_email: 'anothersupervisor@fhstp.ac.at' };
         const anotherSupervisorUser = {
-          ...mockSupervisorUser,
-          id: ANOTHER_SUPERVISOR_USER_UUID,
+          ...testData.mockSupervisorUser,
+          id: TEST_IDS.ANOTHER_SUPERVISOR_USER_UUID,
           email: 'anothersupervisor@fhstp.ac.at',
         };
-        mockUsersService.findUserByEmail.mockResolvedValue(anotherSupervisorUser); // Return supervisor user
-        mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(anotherSupervisorUser); // Return supervisor user
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
 
         // Act & Assert
-        await expect(service.createSupervisionRequest(dto, mockSupervisorUser)).rejects.toThrow(
-          SupervisorTargetException,
-        );
+        await expect(
+          service.createSupervisionRequest(dto, testData.mockSupervisorUser),
+        ).rejects.toThrow(SupervisorTargetException);
+      });
+
+      it('should handle race condition properly when accepting a supervision request concurrently', async () => {
+        // Arrange
+        const dto = { student_email: 'newstudent@fhstp.ac.at' };
+        mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+        mocks.usersService.findUserByEmailOrNull.mockResolvedValue(null); // User doesn't exist
+
+        // Simulate the database constraint handling race condition:
+        // First call succeeds, second call would fail with unique constraint violation
+        mocks.repository.createSupervisionRequest
+          .mockResolvedValueOnce({
+            ...testData.mockSupervisionRequest,
+            request_state: RequestState.ACCEPTED,
+            studentWasCreated: true,
+          })
+          .mockRejectedValueOnce({
+            message:
+              'Unique constraint failed on the constraint: `unique_student_accepted_request`',
+            code: 'P2002',
+          });
+
+        // Act - Simulate two concurrent calls
+        const result1 = service.createSupervisionRequest(dto, testData.mockSupervisorUser);
+        const result2 = service.createSupervisionRequest(dto, testData.mockSupervisorUser);
+
+        // Assert - First call succeeds
+        await expect(result1).resolves.toEqual({
+          ...testData.mockSupervisionRequest,
+          request_state: RequestState.ACCEPTED,
+          studentWasCreated: true,
+        });
+
+        // Second call should fail due to the unique constraint (handled by Prisma)
+        await expect(result2).rejects.toMatchObject({
+          message: 'Unique constraint failed on the constraint: `unique_student_accepted_request`',
+          code: 'P2002',
+        });
+
+        // Verify both calls were made to the repository (race condition scenario)
+        expect(mocks.repository.createSupervisionRequest).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -422,7 +516,7 @@ describe('SupervisionRequestsService', () => {
       const dto = {}; // Empty dto
 
       // Act & Assert
-      await expect(service.createSupervisionRequest(dto, mockAdminUser)) // Admin role
+      await expect(service.createSupervisionRequest(dto, testData.mockAdminUser)) // Admin role
         .rejects.toThrow(ForbiddenException);
     });
   });
@@ -430,71 +524,84 @@ describe('SupervisionRequestsService', () => {
   describe('findAllRequests', () => {
     it('should return all requests for a student', async () => {
       // Arrange
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-      mockRepository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+      mocks.repository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
 
       // Act
-      const result = await service.findAllRequests(mockStudentUser.id, mockStudentUser.role);
+      const result = await service.findAllRequests(
+        testData.mockStudentUser.id,
+        testData.mockStudentUser.role,
+      );
 
       // Assert
       expect(result).toEqual([mockSupervisionRequestWithUsers]);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.findAllRequests).toHaveBeenCalledWith({
-        student_id: mockStudent.id,
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
+      expect(mocks.repository.findAllRequests).toHaveBeenCalledWith({
+        student_id: testData.mockStudent.id,
         request_state: undefined,
       });
     });
 
     it('should return all requests for a supervisor', async () => {
       // Arrange
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-      mockRepository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
 
       // Act
-      const result = await service.findAllRequests(mockSupervisorUser.id, mockSupervisorUser.role);
+      const result = await service.findAllRequests(
+        testData.mockSupervisorUser.id,
+        testData.mockSupervisorUser.role,
+      );
 
       // Assert
       expect(result).toEqual([mockSupervisionRequestWithUsers]);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
-      expect(mockRepository.findAllRequests).toHaveBeenCalledWith({
-        supervisor_id: mockSupervisor.id,
+      expect(mocks.repository.findAllRequests).toHaveBeenCalledWith({
+        supervisor_id: testData.mockSupervisor.id,
         request_state: undefined,
       });
     });
 
     it('should return all requests for an admin', async () => {
       // Arrange
-      mockRepository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
+      mocks.repository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
 
       // Act
-      const result = await service.findAllRequests(mockAdminUser.id, mockAdminUser.role);
+      const result = await service.findAllRequests(
+        testData.mockAdminUser.id,
+        testData.mockAdminUser.role,
+      );
 
       // Assert
       expect(result).toEqual([mockSupervisionRequestWithUsers]);
-      expect(mockRepository.findAllRequests).toHaveBeenCalledWith({
+      expect(mocks.repository.findAllRequests).toHaveBeenCalledWith({
         request_state: undefined,
       });
     });
 
     it('should filter requests by state when specified', async () => {
       // Arrange
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-      mockRepository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+      mocks.repository.findAllRequests.mockResolvedValue([mockSupervisionRequestWithUsers]);
 
       // Act
       const result = await service.findAllRequests(
-        mockStudentUser.id,
-        mockStudentUser.role,
+        testData.mockStudentUser.id,
+        testData.mockStudentUser.role,
         RequestState.PENDING,
       );
 
       // Assert
       expect(result).toEqual([mockSupervisionRequestWithUsers]);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.findAllRequests).toHaveBeenCalledWith({
-        student_id: mockStudent.id,
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
+      expect(mocks.repository.findAllRequests).toHaveBeenCalledWith({
+        student_id: testData.mockStudent.id,
         request_state: RequestState.PENDING,
       });
     });
@@ -503,165 +610,214 @@ describe('SupervisionRequestsService', () => {
   describe('findRequestById', () => {
     it('should return a request by ID for student owner', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
 
       // Act
-      const result = await service.findRequestById(REQUEST_UUID, mockStudentUser);
+      const result = await service.findRequestById(TEST_IDS.REQUEST_UUID, testData.mockStudentUser);
 
       // Assert
       expect(result).toEqual(mockSupervisionRequestWithUsers);
-      expect(mockRepository.findRequestById).toHaveBeenCalledWith(REQUEST_UUID);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
+      expect(mocks.repository.findRequestById).toHaveBeenCalledWith(TEST_IDS.REQUEST_UUID);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
     });
 
     it('should return a request by ID for supervisor owner', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
 
       // Act
-      const result = await service.findRequestById(REQUEST_UUID, mockSupervisorUser);
+      const result = await service.findRequestById(
+        TEST_IDS.REQUEST_UUID,
+        testData.mockSupervisorUser,
+      );
 
       // Assert
       expect(result).toEqual(mockSupervisionRequestWithUsers);
-      expect(mockRepository.findRequestById).toHaveBeenCalledWith(REQUEST_UUID);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
+      expect(mocks.repository.findRequestById).toHaveBeenCalledWith(TEST_IDS.REQUEST_UUID);
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
     });
 
     it('should throw NotFoundException if request not found', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(null);
+      mocks.repository.findRequestById.mockResolvedValue(null);
 
       // Act & Assert
-      await expect(service.findRequestById(REQUEST_UUID, mockStudentUser)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.findRequestById(TEST_IDS.REQUEST_UUID, testData.mockStudentUser),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it("should throw ForbiddenException if student tries to access another student's request", async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
       // Student profile with different ID than the request's student_id
-      mockStudentsService.findStudentByUserId.mockResolvedValue({
-        ...mockStudent,
+      mocks.studentsService.findStudentByUserId.mockResolvedValue({
+        ...testData.mockStudent,
         id: 'different-student-id',
       });
 
       // Act & Assert
-      await expect(service.findRequestById(REQUEST_UUID, mockStudentUser)).rejects.toThrow(
-        ForbiddenException,
-      );
+      await expect(
+        service.findRequestById(TEST_IDS.REQUEST_UUID, testData.mockStudentUser),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 
   describe('updateRequestState', () => {
     it('should allow a student to withdraw their request', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+
+      mocks.repository.hasAcceptedSupervision.mockResolvedValue(false);
 
       const updatedRequest = {
-        ...mockSupervisionRequest,
+        ...testData.mockSupervisionRequest,
         request_state: RequestState.WITHDRAWN,
       };
-      mockRepository.updateRequestState.mockResolvedValue(updatedRequest);
+      mocks.repository.updateRequestState.mockResolvedValue(updatedRequest);
 
       // Act
       const result = await service.updateRequestState(
-        REQUEST_UUID,
+        TEST_IDS.REQUEST_UUID,
         RequestState.WITHDRAWN,
-        mockStudentUser,
+        testData.mockStudentUser,
       );
 
       // Assert
       expect(result).toEqual(updatedRequest);
-      expect(mockRepository.findRequestById).toHaveBeenCalledWith(REQUEST_UUID);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.updateRequestState).toHaveBeenCalledWith({
-        id: REQUEST_UUID,
+      expect(mocks.repository.findRequestById).toHaveBeenCalledWith(TEST_IDS.REQUEST_UUID);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
+      expect(mocks.repository.updateRequestState).toHaveBeenCalledWith({
+        id: TEST_IDS.REQUEST_UUID,
         newState: RequestState.WITHDRAWN,
-        currentState: mockSupervisionRequest.request_state,
-        supervisor_id: mockSupervisionRequest.supervisor_id,
-        available_spots: 0, // Not used for non-capacity affecting changes
-        total_spots: 0, // Not used for non-capacity affecting changes
+        currentState: testData.mockSupervisionRequest.request_state,
+        supervisor_id: testData.mockSupervisionRequest.supervisor_id,
+        available_spots: 0,
+        total_spots: 0,
       });
     });
 
     it('should allow a supervisor to accept a request', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-      mockSupervisorsService.findSupervisorById.mockResolvedValue(mockSupervisor);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.hasAcceptedSupervision.mockResolvedValue(false); // No existing accepted supervision
 
       const updatedRequest = {
-        ...mockSupervisionRequest,
+        ...testData.mockSupervisionRequest,
         request_state: RequestState.ACCEPTED,
       };
-      mockRepository.updateRequestState.mockResolvedValue(updatedRequest);
+      mocks.repository.updateRequestState.mockResolvedValue(updatedRequest);
 
       // Act
       const result = await service.updateRequestState(
-        REQUEST_UUID,
+        TEST_IDS.REQUEST_UUID,
         RequestState.ACCEPTED,
-        mockSupervisorUser,
+        testData.mockSupervisorUser,
       );
 
       // Assert
       expect(result).toEqual(updatedRequest);
-      expect(mockRepository.findRequestById).toHaveBeenCalledWith(REQUEST_UUID);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
+      expect(mocks.repository.findRequestById).toHaveBeenCalledWith(TEST_IDS.REQUEST_UUID);
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
-      expect(mockSupervisorsService.findSupervisorById).toHaveBeenCalledWith(
-        mockSupervisionRequest.supervisor_id,
+      expect(mocks.supervisorsService.findSupervisorById).toHaveBeenCalledWith(
+        testData.mockSupervisionRequest.supervisor_id,
       );
-      expect(mockRepository.updateRequestState).toHaveBeenCalledWith({
-        id: REQUEST_UUID,
+      expect(mocks.repository.hasAcceptedSupervision).toHaveBeenCalledWith(
+        mockSupervisionRequestWithUsers.student_id,
+      );
+      expect(mocks.repository.updateRequestState).toHaveBeenCalledWith({
+        id: TEST_IDS.REQUEST_UUID,
         newState: RequestState.ACCEPTED,
-        currentState: mockSupervisionRequest.request_state,
-        supervisor_id: mockSupervisionRequest.supervisor_id,
-        available_spots: mockSupervisor.available_spots,
-        total_spots: mockSupervisor.total_spots,
+        currentState: testData.mockSupervisionRequest.request_state,
+        supervisor_id: testData.mockSupervisionRequest.supervisor_id,
+        available_spots: testData.mockSupervisor.available_spots,
+        total_spots: testData.mockSupervisor.total_spots,
       });
+    });
+
+    it('should throw StudentAlreadyHasAnAcceptedSupervisionRequestException when accepting if student already has accepted supervision', async () => {
+      // Arrange
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.supervisorsService.findSupervisorById.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.hasAcceptedSupervision.mockResolvedValue(true); // Already has accepted supervision
+
+      // Act & Assert
+      await expect(
+        service.updateRequestState(
+          TEST_IDS.REQUEST_UUID,
+          RequestState.ACCEPTED,
+          testData.mockSupervisorUser,
+        ),
+      ).rejects.toThrow(StudentAlreadyHasAnAcceptedSupervisionRequestException);
+
+      expect(mocks.repository.hasAcceptedSupervision).toHaveBeenCalledWith(
+        mockSupervisionRequestWithUsers.student_id,
+      );
+      expect(mocks.repository.updateRequestState).not.toHaveBeenCalled();
     });
 
     it('should throw SupervisorCapacityException if accepting with no available spots', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.hasAcceptedSupervision.mockResolvedValue(false);
+
       // Supervisor with no available spots
-      mockSupervisorsService.findSupervisorById.mockResolvedValue({
-        ...mockSupervisor,
+      mocks.supervisorsService.findSupervisorById.mockResolvedValue({
+        ...testData.mockSupervisor,
         available_spots: 0,
       });
 
       // Act & Assert
       await expect(
-        service.updateRequestState(REQUEST_UUID, RequestState.ACCEPTED, mockSupervisorUser),
+        service.updateRequestState(
+          TEST_IDS.REQUEST_UUID,
+          RequestState.ACCEPTED,
+          testData.mockSupervisorUser,
+        ),
       ).rejects.toThrow(SupervisorCapacityException);
     });
 
     it('should throw InvalidRequestStateTransitionException if student tries to accept', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mocks.repository.findRequestById.mockResolvedValue(mockSupervisionRequestWithUsers);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
 
       // Act & Assert
       await expect(
-        service.updateRequestState(REQUEST_UUID, RequestState.ACCEPTED, mockStudentUser),
+        service.updateRequestState(
+          TEST_IDS.REQUEST_UUID,
+          RequestState.ACCEPTED,
+          testData.mockStudentUser,
+        ),
       ).rejects.toThrow(InvalidRequestStateTransitionException);
     });
 
     it('should throw NotFoundException if request not found', async () => {
       // Arrange
-      mockRepository.findRequestById.mockResolvedValue(null);
+      mocks.repository.findRequestById.mockResolvedValue(null);
 
       // Act & Assert
       await expect(
-        service.updateRequestState(REQUEST_UUID, RequestState.WITHDRAWN, mockStudentUser),
+        service.updateRequestState(
+          TEST_IDS.REQUEST_UUID,
+          RequestState.WITHDRAWN,
+          testData.mockStudentUser,
+        ),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -670,19 +826,21 @@ describe('SupervisionRequestsService', () => {
     it('should count pending requests for a student', async () => {
       // Arrange
       const expectedCount = 3;
-      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-      mockRepository.countRequests.mockResolvedValue(expectedCount);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockStudentUser);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+      mocks.repository.countRequests.mockResolvedValue(expectedCount);
 
       // Act
-      const result = await service.countPendingRequestsForUser(mockStudentUser.id);
+      const result = await service.countPendingRequestsForUser(testData.mockStudentUser.id);
 
       // Assert
       expect(result).toEqual({ pending_count: expectedCount });
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.countRequests).toHaveBeenCalledWith({
-        student_id: mockStudent.id,
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockStudentUser.id);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
+      expect(mocks.repository.countRequests).toHaveBeenCalledWith({
+        student_id: testData.mockStudent.id,
         request_state: RequestState.PENDING,
       });
     });
@@ -690,61 +848,63 @@ describe('SupervisionRequestsService', () => {
     it('should count pending requests for a supervisor', async () => {
       // Arrange
       const expectedCount = 5;
-      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-      mockRepository.countRequests.mockResolvedValue(expectedCount);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockSupervisorUser);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.countRequests.mockResolvedValue(expectedCount);
 
       // Act
-      const result = await service.countPendingRequestsForUser(mockSupervisorUser.id);
+      const result = await service.countPendingRequestsForUser(testData.mockSupervisorUser.id);
 
       // Assert
       expect(result).toEqual({ pending_count: expectedCount });
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockSupervisorUser.id);
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
-      expect(mockRepository.countRequests).toHaveBeenCalledWith({
-        supervisor_id: mockSupervisor.id,
+      expect(mocks.repository.countRequests).toHaveBeenCalledWith({
+        supervisor_id: testData.mockSupervisor.id,
         request_state: RequestState.PENDING,
       });
     });
 
     it('should return 0 for a student with no pending requests', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
-      mockRepository.countRequests.mockResolvedValue(0);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockStudentUser);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
+      mocks.repository.countRequests.mockResolvedValue(0);
 
       // Act
-      const result = await service.countPendingRequestsForUser(mockStudentUser.id);
+      const result = await service.countPendingRequestsForUser(testData.mockStudentUser.id);
 
       // Assert
       expect(result).toEqual({ pending_count: 0 });
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.countRequests).toHaveBeenCalledWith({
-        student_id: mockStudent.id,
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockStudentUser.id);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
+      );
+      expect(mocks.repository.countRequests).toHaveBeenCalledWith({
+        student_id: testData.mockStudent.id,
         request_state: RequestState.PENDING,
       });
     });
 
     it('should return 0 for a supervisor with no pending requests', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
-      mockSupervisorsService.findSupervisorByUserId.mockResolvedValue(mockSupervisor);
-      mockRepository.countRequests.mockResolvedValue(0);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockSupervisorUser);
+      mocks.supervisorsService.findSupervisorByUserId.mockResolvedValue(testData.mockSupervisor);
+      mocks.repository.countRequests.mockResolvedValue(0);
 
       // Act
-      const result = await service.countPendingRequestsForUser(mockSupervisorUser.id);
+      const result = await service.countPendingRequestsForUser(testData.mockSupervisorUser.id);
 
       // Assert
       expect(result).toEqual({ pending_count: 0 });
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockSupervisorUser.id);
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
-      expect(mockRepository.countRequests).toHaveBeenCalledWith({
-        supervisor_id: mockSupervisor.id,
+      expect(mocks.repository.countRequests).toHaveBeenCalledWith({
+        supervisor_id: testData.mockSupervisor.id,
         request_state: RequestState.PENDING,
       });
     });
@@ -752,83 +912,87 @@ describe('SupervisionRequestsService', () => {
     it('should throw NotFoundException if user does not exist', async () => {
       // Arrange
       const nonExistentUserId = 'non-existent-user-id';
-      mockUsersService.findUserById.mockResolvedValue(null);
+      mocks.usersService.findUserById.mockResolvedValue(null);
 
       // Act & Assert
       await expect(service.countPendingRequestsForUser(nonExistentUserId)).rejects.toThrow(
         NotFoundException,
       );
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(nonExistentUserId);
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(nonExistentUserId);
       // Should not call other services if user doesn't exist
-      expect(mockStudentsService.findStudentByUserId).not.toHaveBeenCalled();
-      expect(mockSupervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
-      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+      expect(mocks.studentsService.findStudentByUserId).not.toHaveBeenCalled();
+      expect(mocks.supervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
+      expect(mocks.repository.countRequests).not.toHaveBeenCalled();
     });
 
     it('should throw AdminSupervisionRequestException if user is an admin', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockAdminUser);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockAdminUser);
 
       // Act & Assert
-      await expect(service.countPendingRequestsForUser(mockAdminUser.id)).rejects.toThrow(
+      await expect(service.countPendingRequestsForUser(testData.mockAdminUser.id)).rejects.toThrow(
         AdminSupervisionRequestException,
       );
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockAdminUser.id);
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockAdminUser.id);
       // Should not call other services if user is admin
-      expect(mockStudentsService.findStudentByUserId).not.toHaveBeenCalled();
-      expect(mockSupervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
-      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+      expect(mocks.studentsService.findStudentByUserId).not.toHaveBeenCalled();
+      expect(mocks.supervisorsService.findSupervisorByUserId).not.toHaveBeenCalled();
+      expect(mocks.repository.countRequests).not.toHaveBeenCalled();
     });
 
     it('should handle errors from repository count method', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
-      mockStudentsService.findStudentByUserId.mockResolvedValue(mockStudent);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockStudentUser);
+      mocks.studentsService.findStudentByUserId.mockResolvedValue(testData.mockStudent);
       const repositoryError = new Error('Database connection error');
-      mockRepository.countRequests.mockRejectedValue(repositoryError);
+      mocks.repository.countRequests.mockRejectedValue(repositoryError);
 
       // Act & Assert
-      await expect(service.countPendingRequestsForUser(mockStudentUser.id)).rejects.toThrow(
-        'Database connection error',
+      await expect(
+        service.countPendingRequestsForUser(testData.mockStudentUser.id),
+      ).rejects.toThrow('Database connection error');
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockStudentUser.id);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
       );
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.countRequests).toHaveBeenCalledWith({
-        student_id: mockStudent.id,
+      expect(mocks.repository.countRequests).toHaveBeenCalledWith({
+        student_id: testData.mockStudent.id,
         request_state: RequestState.PENDING,
       });
     });
 
     it('should handle errors from students service', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockStudentUser);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockStudentUser);
       const studentsServiceError = new NotFoundException('Student profile not found');
-      mockStudentsService.findStudentByUserId.mockRejectedValue(studentsServiceError);
+      mocks.studentsService.findStudentByUserId.mockRejectedValue(studentsServiceError);
 
       // Act & Assert
-      await expect(service.countPendingRequestsForUser(mockStudentUser.id)).rejects.toThrow(
-        'Student profile not found',
+      await expect(
+        service.countPendingRequestsForUser(testData.mockStudentUser.id),
+      ).rejects.toThrow('Student profile not found');
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockStudentUser.id);
+      expect(mocks.studentsService.findStudentByUserId).toHaveBeenCalledWith(
+        testData.mockStudentUser.id,
       );
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockStudentsService.findStudentByUserId).toHaveBeenCalledWith(mockStudentUser.id);
-      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+      expect(mocks.repository.countRequests).not.toHaveBeenCalled();
     });
 
     it('should handle errors from supervisors service', async () => {
       // Arrange
-      mockUsersService.findUserById.mockResolvedValue(mockSupervisorUser);
+      mocks.usersService.findUserById.mockResolvedValue(testData.mockSupervisorUser);
       const supervisorsServiceError = new NotFoundException('Supervisor profile not found');
-      mockSupervisorsService.findSupervisorByUserId.mockRejectedValue(supervisorsServiceError);
+      mocks.supervisorsService.findSupervisorByUserId.mockRejectedValue(supervisorsServiceError);
 
       // Act & Assert
-      await expect(service.countPendingRequestsForUser(mockSupervisorUser.id)).rejects.toThrow(
-        'Supervisor profile not found',
+      await expect(
+        service.countPendingRequestsForUser(testData.mockSupervisorUser.id),
+      ).rejects.toThrow('Supervisor profile not found');
+      expect(mocks.usersService.findUserById).toHaveBeenCalledWith(testData.mockSupervisorUser.id);
+      expect(mocks.supervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
+        testData.mockSupervisorUser.id,
       );
-      expect(mockUsersService.findUserById).toHaveBeenCalledWith(mockSupervisorUser.id);
-      expect(mockSupervisorsService.findSupervisorByUserId).toHaveBeenCalledWith(
-        mockSupervisorUser.id,
-      );
-      expect(mockRepository.countRequests).not.toHaveBeenCalled();
+      expect(mocks.repository.countRequests).not.toHaveBeenCalled();
     });
   });
 });

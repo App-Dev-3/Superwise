@@ -16,40 +16,16 @@ This is a basic setup with a simple 'Hello World' endpoint. The project structur
 - **Jest** for testing
 - **Swagger/OpenAPI** for API documentation
 - **uuid** for ID generation
-- **class-validator** - Decorator-based property validation for incoming request data
-- **class-transformer** - Object transformation and type conversion for data transfer objects
 
 ### Project Structure
 
-```fs
-backend/
-├── prisma/                      # Prisma schema and migrations
-│   └── schema.prisma
-├── src/
-    ├── common/                  # Shared resources
-    │   ├── decorators/          # Custom decorators
-    │   ├── filters/             # Exception filters
-    │   ├── guards/              # Auth guards
-    │   ├── interceptors/        # HTTP interceptors
-    │   ├── pipes/               # Custom validation pipes
-    │   └── types/               # Type definitions
-    ├── config/                  # Configuration modules
-    │   └── app-config.module.ts
-    ├── modules/                 # Feature modules
-    │   ├── users/               # Users module
-    │   │   ├── dto/             # Data Transfer Objects
-    │   │   ├── entities/        # Entity definitions
-    │   │   ├── users.controller.ts
-    │   │   ├── users.module.ts
-    │   │   ├── users.service.ts
-    │   │   └── users.repository.ts  # Optional repository pattern
-    │   ├── auth/                # Authentication module
-    │   ├── students/            # Student module
-    │   └── supervisors/         # Supervisor module
-    ├── prisma/                  # Prisma service module
-    ├── app.module.ts            # Root module
-    └── main.ts                  # Application entry point
-```
+- `src/` - Source code
+  - `main.ts` - Application entry point
+  - `app.module.ts` - Root module
+  - `app.controller.ts` - Basic controller with hello world endpoint
+  - `app.service.ts` - Basic service
+- `prisma/` - Prisma schema and migration files
+- `.env.example` - Example environment variables
 
 ## How to Install
 

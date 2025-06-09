@@ -182,19 +182,19 @@ const studentStore = useStudentStore();
 
 const isLoading = ref(true);
 
-const dashboardState = studentStore.dashboardState;
-const supervisionRequestsSentByCurrentStudent = studentStore.supervisionRequestsSentByCurrentStudent;
-const acceptedSupervisionRequests = studentStore.acceptedSupervisionRequests;
+const dashboardState = computed(() => studentStore.dashboardState);
+const supervisionRequestsSentByCurrentStudent = computed(() => studentStore.supervisionRequestsSentByCurrentStudent);
+const acceptedSupervisionRequests = computed(() => studentStore.acceptedSupervisionRequests);
 
 // if for some reason the user has more than one accepted supervision request, we will show a warning
 const warning = computed(() => {
-  if (acceptedSupervisionRequests.length > 1) {
-    const namesOfAcceptedSupervisors = acceptedSupervisionRequests.map(
+  if (acceptedSupervisionRequests.value.length > 1) {
+    const namesOfAcceptedSupervisors = acceptedSupervisionRequests.value.map(
         (request) =>
             `${ request.supervisor.user.first_name } ${ request.supervisor.user.last_name }`
     );
     return t("dashboard.student.multipleAcceptedWarning", {
-      count: acceptedSupervisionRequests.length,
+      count: acceptedSupervisionRequests.value.length,
       supervisors: namesOfAcceptedSupervisors.join(", "),
     });
   }
@@ -202,8 +202,8 @@ const warning = computed(() => {
 });
 
 const warningModalId = computed(() => {
-  if (acceptedSupervisionRequests.length > 0) {
-    return `confirmation-modal-${ acceptedSupervisionRequests[0].id }`;
+  if (acceptedSupervisionRequests.value.length > 0) {
+    return `confirmation-modal-${ acceptedSupervisionRequests.value[0].id }`;
   }
   return "confirmation-modal-warning";
 });
@@ -217,7 +217,7 @@ onMounted(async () => {
             studentStore.fetchSupervisionRequests(),
             userStore.user ? Promise.resolve() : userStore.refetchCurrentUser()
         ]);
-        if (acceptedSupervisionRequests.length > 1) {
+        if (acceptedSupervisionRequests.value.length > 1) {
             const modal = document.getElementById(
                 warningModalId.value
             ) as HTMLDialogElement;
@@ -242,7 +242,7 @@ onMounted(async () => {
 });
 
 watch(
-    () => acceptedSupervisionRequests.length,
+    () => acceptedSupervisionRequests.value.length,
     (newLength) => {
       if (newLength > 1) {
         nextTick(() => {

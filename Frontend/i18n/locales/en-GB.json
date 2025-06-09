@@ -123,7 +123,10 @@
     "confirm": "Confirm",
     "dontShowAgain": "Don't show again",
     "sendSupervisionRequestHeadline": "Send supervision request",
-    "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download."
+    "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download.",
+    "withdrawSupervisionHeadline": "Withdraw Supervision Request",
+    "withdrawSupervisionDescription": "Would you like to withdraw the supervision request from {name}? Once withdrawn, the supervisor will no longer see this request.",
+    "withdrawSupervisionConfirm": "Withdraw Request"
   },
   "multiStepForm": {
     "description": {
@@ -259,5 +262,9 @@
     "search": "Search Tag...",
     "tagCount": "{current}/{max}",
     "title": "Select your tags"
+  },
+  "toast": {
+    "withdrawnRequest": "You have withdrawn the supervision request",
+    "withdrawRequestFailed": "Failed to withdraw the supervision request"
   }
 }

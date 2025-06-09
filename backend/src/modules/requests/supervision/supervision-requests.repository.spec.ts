@@ -409,7 +409,6 @@ describe('SupervisionRequestsRepository', () => {
     it('should create a simple supervision request when student_email is missing for ACCEPTED state', async () => {
       // Arrange
       const data = {
-        student_id: STUDENT_UUID, // Provide student_id for simple creation path
         supervisor_id: SUPERVISOR_UUID,
         request_state: RequestState.ACCEPTED,
         available_spots: 5,
@@ -424,7 +423,6 @@ describe('SupervisionRequestsRepository', () => {
       expect(result).toEqual(mockSupervisionRequest);
       expect(mockPrismaService.supervisionRequest.create).toHaveBeenCalledWith({
         data: {
-          student_id: STUDENT_UUID,
           supervisor_id: SUPERVISOR_UUID,
           request_state: RequestState.ACCEPTED,
         },

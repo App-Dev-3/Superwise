@@ -37,6 +37,14 @@ export default defineNuxtConfig({
         dataValue: "theme",
     },
 
+    clerk :{
+        appearance: {
+            variables: {
+                colorPrimary: 'blue'
+            }
+        }
+    },
+
     i18n: {
         defaultLocale: "en",
         strategy: "no_prefix",

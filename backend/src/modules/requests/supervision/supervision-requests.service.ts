@@ -146,6 +146,7 @@ export class SupervisionRequestsService {
       throw new SupervisorCapacityException(supervisor.id);
     }
 
+    // Create request with student (creating student if needed) in a transaction
     const result = await this.repository.createSupervisionRequest({
       supervisor_id: supervisor.id,
       student_email: dto.student_email,
@@ -153,6 +154,7 @@ export class SupervisionRequestsService {
       request_state: RequestState.ACCEPTED,
     });
 
+    // Log if a new student was created
     if (result.studentWasCreated) {
       this.logger.log(
         `New student account was created for email ${dto.student_email} by supervisor ${currentUser.id}`,
@@ -239,6 +241,7 @@ export class SupervisionRequestsService {
       throw new NotFoundException(`Supervision request with ID ${id} not found`);
     }
 
+    // Check if user has permission to update this request
     const hasPermission = await this.userHasRequestPermission(
       currentUser,
       request.student_id,
@@ -249,8 +252,10 @@ export class SupervisionRequestsService {
       throw new ForbiddenException('You do not have permission to update this request');
     }
 
+    // Validate state transition based on user role
     this.validateStateTransition(request.request_state, newState, currentUser.role);
 
+    // Check if student already has an accepted supervision request
     if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
       const hasAccepted = await this.repository.hasAcceptedSupervision(request.student_id);
       if (hasAccepted) {
@@ -258,6 +263,7 @@ export class SupervisionRequestsService {
       }
     }
 
+    // For transitions affecting supervisor capacity, get supervisor details
     if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
       const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
 
@@ -267,6 +273,7 @@ export class SupervisionRequestsService {
         }
       }
 
+      // Update with transaction for capacity management
       const result = await this.repository.updateRequestState({
         id,
         newState,
@@ -286,6 +293,7 @@ export class SupervisionRequestsService {
       return result;
     }
 
+    // For other state transitions that don't affect capacity
     return this.repository.updateRequestState({
       id,
       newState,

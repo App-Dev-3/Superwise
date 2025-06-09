@@ -5,6 +5,7 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { WinstonLoggerService } from '../../../common/logging/winston-logger.service';
 import * as jwksClient from 'jwks-rsa';
 import { Request } from 'express';
+import { AuthConfigService } from '@config/auth-config.service';
 
 interface JwtHeader {
   kid: string;
@@ -18,9 +19,12 @@ interface SigningKey {
 
 @Injectable()
 export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk-registration') {
-  constructor(private readonly logger: WinstonLoggerService) {
+  constructor(
+    private readonly logger: WinstonLoggerService,
+    private readonly authConfig: AuthConfigService,
+  ) {
     // Create a JWKS client to fetch the public key
-    const jwksUri = 'https://vital-pelican-84.clerk.accounts.dev/.well-known/jwks.json';
+    const jwksUri = authConfig.clerkJwksUri;
 
     // Create JWKS client for key retrieval
     const client = jwksClient({

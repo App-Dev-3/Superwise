@@ -26,7 +26,6 @@ const selectedTags = ref([ ...props.initialSelected ]);
 
 // Watch for changes in initialSelected prop and update the selectedTags accordingly
 watch(() => props.initialSelected, (newValue) => {
-  console.log("initialSelected changed:", newValue);
   selectedTags.value = [ ...newValue ];
   emit('update:selectedTags', selectedTags.value);
 }, { deep: true });

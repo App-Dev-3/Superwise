@@ -164,7 +164,7 @@ watch(
         <!-- Student List -->
         <NuxtLink
             v-for="student in students" :key="student.id"
-            :to="`/profiles/${student.id}`"
+            :to="!isEditing ? `/profiles/${student.id}` : ''"
             actions
             comment-more
         >

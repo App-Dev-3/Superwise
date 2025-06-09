@@ -4,7 +4,6 @@
         v-for="(request, index) in sortedRequests"
         :key="request.id || index"
         :ref="el => setItemRef(el, request.id)"
-        :swipe-threshold="10"
         class="mb-4 w-full max-w-xl sm:w-auto self-center"
         @swipe-left="handleSwipeLeft(request)"
         @swipe-right="handleSwipeRight(request)"

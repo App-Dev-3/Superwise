@@ -16,7 +16,7 @@ const modalInformation = ref<ConfirmationDialogData | null>(null)
 const toast = ref({
   visible: false,
   type: "success",
-  message: "This is a toast message",
+  message: "",
 });
 
 onMounted(() => {
@@ -25,7 +25,6 @@ onMounted(() => {
 
 onUnmounted(async () => {
   if (toast.value.visible) {
-    console.log("i am finna delete")
     await handleToastClosed();
   }
 });
@@ -47,12 +46,13 @@ async function handleWithdrawRequest(request: SupervisionRequestsData) {
   }
    modalInformation.value = {
     type: supervisionRequestType.DISMISS,
-    headline: `Withdraw Supervision Request`,
+    headline: t('modal.withdrawSupervisionHeadline'),
     icon: '',
     warning: '',
-    description: `Would you like to withdraw the supervision request from
-        ${ request.student.user.first_name } ${ request.student.user.last_name }? Once withdrawn, the supervisor will no longer see this request.`,
-    confirmButtonText: 'Withdraw Request',
+    description: t('modal.withdrawSupervisionDescription', {
+      name: `${request.student.user.first_name} ${request.student.user.last_name}`
+    }),
+    confirmButtonText: t('modal.withdrawSupervisionConfirm'),
     confirmButtonColor: 'error',
     request: request,
   };
@@ -105,7 +105,7 @@ const showToastInformation = () => {
   toast.value = {
     visible: true,
     type: "success",
-    message: "You have withdrawn; the supervision request",
+    message: t('toast.withdrawnRequest'),
   };
 };
 
@@ -141,7 +141,6 @@ definePageMeta({
         class="cursor-pointer"
         top-icon="user-group"
         :show-delete="true"
-        @card-clicked="console.log('Card clicked')"
         @delete-clicked="handleWithdrawRequest(pendingRequest)"
     />
 

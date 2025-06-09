@@ -225,7 +225,6 @@ const setItemRef = (el: InstanceType<typeof SwipeContainer> | null, id: string) 
 
 const showToastInformation = (type: string) => {
   if (toast.value.visible) {
-    console.log("Toast already visible, making request.😂😂😂😂");
     handleToastClosed();
   }
   if (modalInformation.value?.request?.id) {
@@ -238,7 +237,6 @@ const showToastInformation = (type: string) => {
       message: "You accepted the supervision request",
     };
   } else if (type === supervisionRequestType.DISMISS) {
-    console.log("😀😀😀😀");
     toast.value = {
       visible: true,
       type: "error",

@@ -69,6 +69,16 @@ export const useStudentStore = defineStore('student', () => {
             console.error(error)
         }
     }
+    
+    const addPendingSupervisionRequest = (request: SupervisionRequestsData) => {
+        pendingSupervisionRequests.value.push(request)
+    }
+    
+    const removePendingSupervisionRequest = (requestId: string) => {
+        pendingSupervisionRequests.value = pendingSupervisionRequests.value.filter(
+            request => request.id !== requestId
+        )
+    }
 
     return {
         supervisionRequestsSentByCurrentStudent,
@@ -78,6 +88,8 @@ export const useStudentStore = defineStore('student', () => {
         pendingSupervisionRequests,
         dashboardState,
         studentProfile,
-        fetchStudentProfile
+        fetchStudentProfile,
+        addPendingSupervisionRequest,
+        removePendingSupervisionRequest
     }
 })

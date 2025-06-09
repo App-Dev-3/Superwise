@@ -123,7 +123,11 @@
     "confirm": "Bestätigen",
     "dontShowAgain": "Nicht mehr anzeigen",
     "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
-    "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst."
+    "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
+    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen",
+    "withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
+    "withdrawSupervisionConfirm": "Anfrage zurückziehen"
+
   },
   "multiStepForm": {
     "description": {
@@ -259,5 +263,9 @@
     "search": "Tag suchen...",
     "tagCount": "{current}/{max}",
     "title": "Wähle deine Tags aus"
+  },
+  "toast": {
+    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen",
+    "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage"
   }
 }

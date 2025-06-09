@@ -50,7 +50,7 @@ async function handleWithdrawRequest(request: SupervisionRequestsData) {
     icon: '',
     warning: '',
     description: t('modal.withdrawSupervisionDescription', {
-      name: `${request.student.user.first_name} ${request.student.user.last_name}`
+      name: `${request.supervisor.user.first_name} ${request.supervisor.user.last_name}`
     }),
     confirmButtonText: t('modal.withdrawSupervisionConfirm'),
     confirmButtonColor: 'error',
@@ -78,13 +78,23 @@ const handleToastClosed = () => {
 };
 
 const handleWithdrawAction = async (request: SupervisionRequestsData) => {
-  await $fetch(`/api/supervision-requests/${request.id}`, {
-    method: HttpMethods.PATCH,
-    body: {
-      request_state: supervisionRequestStatus.WITHDRAWN,
-    },
-  });
-  modalInformation.value = null;
+   try {
+    await $fetch(`/api/supervision-requests/${request.id}`, {
+      method: HttpMethods.PATCH,
+      body: {
+        request_state: supervisionRequestStatus.WITHDRAWN,
+      },
+    });
+    modalInformation.value = null;
+  } catch (error) {
+    console.error("Failed to withdraw supervision request:", error);
+    toast.value = {
+      visible: true,
+      type: "error",
+      message: t('toast.withdrawRequestFailed'),
+    };
+    modalInformation.value = null;
+  }
 }
 
 const handleToastUndoClick = async () => {
@@ -185,7 +195,7 @@ definePageMeta({
         :description="modalInformation.description"
         :headline="modalInformation.headline"
         :icon="modalInformation.icon"
-        :image="modalInformation.request.student.user.profile_image || getPlaceholderImage(modalInformation.request.student.user.first_name, modalInformation.request.student.user.last_name)"
+        :image="modalInformation.request.supervisor.user.profile_image || getPlaceholderImage(modalInformation.request.supervisor.user.first_name, modalInformation.request.supervisor.user.last_name)"
         linked-component-id="confirmationModal"
         @confirm="showToastInformation()"
         @dont-show-again="handleModalDontShowAgain"

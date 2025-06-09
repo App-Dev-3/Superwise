@@ -58,9 +58,9 @@ const emit = defineEmits(['cardClicked', 'deleteClicked']);
       class="flex flex-row gap-3 p-2 w-full bg-base-100 "
   >
     <div 
-      @click="emit('cardClicked')"
       class="flex flex-row gap-3 items-center w-full cursor-pointer rounded-3xl"
       :class="{'w-full': props.fullWidth, 'w-fit': !props.fullWidth}"
+      @click="emit('cardClicked')"
     >
       <div class="avatar">
         <div class="mask mask-squircle w-16">
@@ -106,9 +106,9 @@ const emit = defineEmits(['cardClicked', 'deleteClicked']);
     </div>
     <button
       v-if="props.showDelete"
-      @click="emit('deleteClicked')"
       class="ml-2 text-error hover:text-error-content transition-colors"
       title="Withdraw Request"
+      @click="emit('deleteClicked')"
     >
       <FontAwesomeIcon icon="trash-can"/>
     </button>

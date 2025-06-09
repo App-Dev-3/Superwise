@@ -59,7 +59,7 @@ async function handleWithdrawRequest(request: SupervisionRequestsData) {
   if (settingsStore.settings?.showSupervisionAcceptModal) {
     openModal();
   } else {
-    showToastInformation(supervisionRequestType.DISMISS);
+    showToastInformation();
   }
 }
 
@@ -95,7 +95,7 @@ const handleToastUndoClick = async () => {
   }
 };
 
-const showToastInformation = (type: string) => {
+const showToastInformation = () => {
   if (toast.value.visible) {
     handleToastClosed();
   }
@@ -141,8 +141,8 @@ definePageMeta({
         class="cursor-pointer"
         top-icon="user-group"
         :show-delete="true"
-        @cardClicked="console.log('Card clicked')"
-        @deleteClicked="handleWithdrawRequest(pendingRequest)"
+        @card-clicked="console.log('Card clicked')"
+        @delete-clicked="handleWithdrawRequest(pendingRequest)"
     />
 
     <EmptyPagePlaceholder
@@ -188,7 +188,7 @@ definePageMeta({
         :icon="modalInformation.icon"
         :image="modalInformation.request.student.user.profile_image || getPlaceholderImage(modalInformation.request.student.user.first_name, modalInformation.request.student.user.last_name)"
         linked-component-id="confirmationModal"
-        @confirm="showToastInformation(modalInformation.type)"
+        @confirm="showToastInformation()"
         @dont-show-again="handleModalDontShowAgain"
     />
   </div>

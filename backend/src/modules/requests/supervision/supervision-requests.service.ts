@@ -267,6 +267,7 @@ export class SupervisionRequestsService {
     if (newState === RequestState.ACCEPTED || request.request_state === RequestState.ACCEPTED) {
       const supervisor = await this.supervisorsService.findSupervisorById(request.supervisor_id);
 
+      // Check if supervisor has available spots
       if (newState === RequestState.ACCEPTED && request.request_state !== RequestState.ACCEPTED) {
         if (supervisor.available_spots <= 0) {
           throw new SupervisorCapacityException(request.supervisor_id);

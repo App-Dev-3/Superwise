@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useStudentStore } from "~/stores/useStudentStore";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
-import { supervisionRequestStatus, supervisionRequestType } from "~/shared/enums/enums";
+import { supervisionRequestStatus, supervisionRequestType, HttpMethods } from "~/shared/enums/enums";
 import type { ConfirmationDialogData } from "~/shared/types/userInterfaces";
 import { nextTick, ref } from "vue";
 import type { SupervisionRequestsData } from "~/shared/types/supervisorInterfaces";
@@ -13,19 +13,38 @@ const settingsStore = useSettingsStore();
 
 const { pendingSupervisionRequests, rejectedSupervisionRequests } = storeToRefs(studentStore)
 const modalInformation = ref<ConfirmationDialogData | null>(null)
-
+const toast = ref({
+  visible: false,
+  type: "success",
+  message: "This is a toast message",
+});
 
 onMounted(() => {
   studentStore.fetchSupervisionRequests()
 })
+
+onUnmounted(async () => {
+  if (toast.value.visible) {
+    console.log("i am finna delete")
+    await handleToastClosed();
+  }
+});
+
+const sortedRequests = computed(() => {
+  return [ ...(pendingSupervisionRequests.value || []) ]
+      .sort((a, b) => {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      })
+});
 
 function navigate(route: string) {
   navigateTo(route);
 }
 
 async function handleWithdrawRequest(request: SupervisionRequestsData) {
-
-  console.log('handleWithdrawRequest called with request:', request);
+  if (toast.value.visible && modalInformation.value) {
+    await handleToastClosed();
+  }
    modalInformation.value = {
     type: supervisionRequestType.DISMISS,
     headline: `Withdraw Supervision Request`,
@@ -37,22 +56,65 @@ async function handleWithdrawRequest(request: SupervisionRequestsData) {
     confirmButtonColor: 'error',
     request: request,
   };
-  if (settingsStore.settings?.showSupervisionRejectModal) {
+  if (settingsStore.settings?.showSupervisionAcceptModal) {
     openModal();
   } else {
-    // supervisorStore.removeSupervisionRequest(request.id);
-    // showToastInformation(supervisionRequestType.DISMISS);
+    showToastInformation(supervisionRequestType.DISMISS);
   }
-  // await $fetch(`/api/supervision-requests/${request.id}`, {
-  //   method: "PATCH",
-  //   body: {
-  //     request_state: supervisionRequestStatus.WITHDRAWN,
-  //   },
-  // });
 }
 
+/**
+ * This function is called when the toast is closed.
+ * It is vital for the functionality of the matching. When the toast closes, the appropriate
+ * request is sent to perform the user action.
+ *
+ * Its implemented this way to reduce the amount of request calls in case the user 'undoes' the action.
+ */
+const handleToastClosed = () => {
+  toast.value.visible = false;
+  if (modalInformation.value?.request) {
+    handleWithdrawAction(modalInformation.value.request);
+  }
+};
 
+const handleWithdrawAction = async (request: SupervisionRequestsData) => {
+  await $fetch(`/api/supervision-requests/${request.id}`, {
+    method: HttpMethods.PATCH,
+    body: {
+      request_state: supervisionRequestStatus.WITHDRAWN,
+    },
+  });
+  modalInformation.value = null;
+}
 
+const handleToastUndoClick = async () => {
+  toast.value.visible = false;
+  if (modalInformation.value?.request) {
+    studentStore.addPendingSupervisionRequest(modalInformation.value.request);
+    modalInformation.value = null;
+  }
+};
+
+const showToastInformation = (type: string) => {
+  if (toast.value.visible) {
+    handleToastClosed();
+  }
+  if (modalInformation.value?.request) {
+    studentStore.removePendingSupervisionRequest(modalInformation.value.request.id);
+  }
+  toast.value = {
+    visible: true,
+    type: "success",
+    message: "You have withdrawn; the supervision request",
+  };
+};
+
+const handleModalDontShowAgain = () => {
+  settingsStore.settings = {
+    ...settingsStore.settings,
+    showSupervisionAcceptModal: false,
+  };
+};
 
 const openModal = async () => {
   await nextTick();
@@ -68,7 +130,7 @@ definePageMeta({
 <template>
   <div class="size-full flex overflow-y-auto flex-col py-3 px-8">
     <MiniCard
-        v-for="pendingRequest in pendingSupervisionRequests"
+        v-for="pendingRequest in sortedRequests"
         :key="pendingRequest.id"
         :bottom-text="new Date(pendingRequest.updated_at).toLocaleDateString()"
         :first-name="pendingRequest.supervisor.user.first_name"
@@ -108,6 +170,15 @@ definePageMeta({
           @click="navigate(`/profiles/${rejectedRequest.supervisor.user_id}`)"
       />
     </CustomAccordion>
+    <Toast
+        v-if="toast.visible"
+        :duration="3000"
+        :message="toast.message"
+        :type="toast.type"
+        button-text="Undo"
+        @close="handleToastClosed"
+        @button-click="handleToastUndoClick"
+    />
     <ConfirmationModal
         v-if="modalInformation && modalInformation.request"
         :confirm-button-color="modalInformation.confirmButtonColor"
@@ -117,9 +188,8 @@ definePageMeta({
         :icon="modalInformation.icon"
         :image="modalInformation.request.student.user.profile_image || getPlaceholderImage(modalInformation.request.student.user.first_name, modalInformation.request.student.user.last_name)"
         linked-component-id="confirmationModal"
-        @abort="console.log('Dont show again clicked')"
         @confirm="showToastInformation(modalInformation.type)"
-        @dont-show-again="console.log('Dont show again clicked')"
+        @dont-show-again="handleModalDontShowAgain"
     />
   </div>
   

@@ -95,7 +95,6 @@ onMounted(async () => {
         await registrationStore.fetchRegistrationStatus(user.value.primaryEmailAddress?.emailAddress)
     }
   if (registrationStore.status?.is_registered) {
-    console.log('User is already registered');
     DbTags.value = (await getTags()) as tagData[];
     return
   }
@@ -130,11 +129,11 @@ const handleSubmit = async () => {
   if (!userStore.user) {
     await userStore.refetchCurrentUser();
   }
-  addUserTag({
+  await addUserTag({
     id: userStore.user?.id,
     tags: tags.value as tagData[],
   });
-  navigateTo('/supervisor/dashboard');
+  return navigateTo('/supervisor/dashboard');
 };
 
 

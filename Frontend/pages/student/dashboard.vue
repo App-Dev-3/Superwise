@@ -183,7 +183,11 @@ const studentStore = useStudentStore();
 const isLoading = ref(true);
 
 const dashboardState = computed(() => studentStore.dashboardState);
-const supervisionRequestsSentByCurrentStudent = computed(() => studentStore.supervisionRequestsSentByCurrentStudent);
+const supervisionRequestsSentByCurrentStudent = computed(() => 
+  studentStore.supervisionRequestsSentByCurrentStudent.filter(
+    (request) => request.request_state === supervisionRequestStatus.PENDING
+  )
+);
 const acceptedSupervisionRequests = computed(() => studentStore.acceptedSupervisionRequests);
 
 // if for some reason the user has more than one accepted supervision request, we will show a warning

@@ -106,7 +106,7 @@ onMounted(async () => {
           ?.emailAddress,
     } as UserCreateData)) as UserData;
     userStore.setUser(res);
-
+    DbTags.value = (await getTags()) as tagData[];
   } catch (error) {
     console.error('Error fetching data:', error);
   }

@@ -128,7 +128,10 @@ const handleSwipeRight = async (request: SupervisionRequestsData) => {
     headline: t("matching.acceptRequest"),
     icon: "",
     warning: "",
-    description: t("matching.acceptRequestDescription"),
+    description: t("matching.acceptRequestDescription", {
+      firstName: request.student.user.first_name,
+      lastName: request.student.user.last_name,
+    }),
     confirmButtonText: t("matching.acceptRequestButton"),
     confirmButtonColor: "primary",
     request: request,

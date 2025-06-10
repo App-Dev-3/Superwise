@@ -39,13 +39,12 @@ function onChangeLocale(newLocale: string) {
 definePageMeta({
   layout: "generic-back-layout",
 });
-
 </script>
 
 <template>
   <div class="w-full h-fit flex flex-col gap-4 p-8">
     <!-- App Settings -->
-    <SettingsArea icon="eye" title="Appearance">
+    <SettingsArea :title="t('settings.title.appearance')" icon="eye">
       <SettingsElement
           :description="t('settings.theme.description')"
           :title="t('settings.theme.title')"
@@ -61,11 +60,11 @@ definePageMeta({
             :label="t('settings.select.language')"
             :model-value="locale"
             :options="
-                locales.map((l) => ({
-                  key: l.code,
-                  value: t('generic.' + l.name),
-                }))
-              "
+            locales.map((l) => ({
+              key: l.code,
+              value: t('generic.' + l.name),
+            }))
+          "
             :placeholder="t('settings.select.language')"
             @update:model-value="(val) => onChangeLocale(val as string)"
         />
@@ -75,8 +74,8 @@ definePageMeta({
     <!-- Modal Settings -->
     <SettingsArea icon="up-right-from-square" title="Modals">
       <SettingsElement
-          description="Show confirmation modal when accepting a supervision request"
-          title="Supervision request Accept Modal"
+          :description="t('settings.supervisor.acceptingDescription')"
+          :title="t('settings.supervisor.acceptingTitle')"
       >
         <CustomToggle
             v-model:checked="settingsStore.showSupervisionAcceptModal"
@@ -84,8 +83,8 @@ definePageMeta({
       </SettingsElement>
 
       <SettingsElement
-          description="Show confirmation modal when rejecting a supervision request"
-          title="Supervision request Reject Modal"
+          :description="t('settings.supervisor.rejectDescription')"
+          :title="t('settings.supervisor.rejectTitle')"
       >
         <CustomToggle
             v-model:checked="settingsStore.showSupervisionRejectModal"
@@ -95,8 +94,8 @@ definePageMeta({
       <hr>
 
       <SettingsElement
-          description="Show confirmation modal when adding a student to supervise in the add view."
-          title="Add Student to Supervise Modal"
+          :description="t('settings.supervisor.addStudentDescription')"
+          :title="t('settings.supervisor.addStudentTitle')"
       >
         <CustomToggle v-model:checked="settingsStore.showAddStudentModal"/>
       </SettingsElement>
@@ -105,10 +104,13 @@ definePageMeta({
     <!-- App Info -->
     <SettingsArea
         id="settingsArea"
+        :title="t('settings.title.about')"
         icon="info-circle"
-        title="About SuperWise"
     >
-      <SettingsElement :description="version" title="App Version">
+      <SettingsElement
+          :description="version"
+          :title="t('settings.title.appVersion')"
+      >
         <CustomButton
             class="copyButton"
             color="default"
@@ -122,7 +124,7 @@ definePageMeta({
 
       <SettingsElement
           :description="settingsStore.notificationId || 'Not available'"
-          title="Notification ID"
+          :title="t('settings.title.notificationId')"
       >
         <CustomButton
             class="copyButton"
@@ -132,8 +134,8 @@ definePageMeta({
             text=""
             variant="ghost"
             @click="
-                copyToClipboard(settingsStore.notificationId || 'Not available')
-              "
+            copyToClipboard(settingsStore.notificationId || 'Not available')
+          "
         />
       </SettingsElement>
     </SettingsArea>

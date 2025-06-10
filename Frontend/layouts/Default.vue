@@ -15,7 +15,7 @@
       >
     </ClientOnly>
     <span class="text-large flex flex-row items-center gap-1">
-      Loading page
+      {{ t("generic.loading") }}
       <span class="loading loading-dots loading-xs translate-y-1"/>
     </span>
   </div>
@@ -30,16 +30,18 @@ import { until } from "@vueuse/core";
 import { onMounted } from "vue";
 import { useColorMode } from "#imports";
 
+const { t } = useI18n();
+
 const colorMode = useColorMode();
 
-const authStore = useAuthStore()
-await authStore.initialize()
-const { isLoaded } = storeToRefs(authStore)
+const authStore = useAuthStore();
+await authStore.initialize();
+const { isLoaded } = storeToRefs(authStore);
 const isLoading = ref(true);
 
 onMounted(async () => {
-    await authStore.initialize();
-    await until(isLoaded).toBe(true);
-    isLoading.value = false;
+  await authStore.initialize();
+  await until(isLoaded).toBe(true);
+  isLoading.value = false;
 });
 </script>

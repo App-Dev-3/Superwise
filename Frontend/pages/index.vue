@@ -1,6 +1,6 @@
 <template>
   <div
-      class="w-full h-screen flex max-w-xl m-auto flex-col p-6"
+      class="w-full h-screen flex max-w-xl m-auto flex-col p-6 justify-center"
   >
     <ClientOnly>
       <img

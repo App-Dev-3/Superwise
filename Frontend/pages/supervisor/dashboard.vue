@@ -57,7 +57,7 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="flex flex-col w-full gap-8">
+  <div class="flex flex-col w-full gap-8 p-8">
     <ActionCard
         :button-text="t('dashboard.supervisor.manageStudents')"
         card-type="primary"

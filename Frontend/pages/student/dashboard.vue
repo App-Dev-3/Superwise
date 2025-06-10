@@ -1,168 +1,174 @@
 <template>
   <div class="flex flex-col w-full">
-      <div v-if="isLoading">
-            <SkeletonStatusBar class="my-4"/>
-          <div class="w-full px-6 py-8 flex flex-col gap-8">
-              <SkeletonActionCard>
-                  <div class="flex flex-col w-full items-center p-8">
-                      <div class="skeleton w-64 h-64"/>
-                  </div>
-              </SkeletonActionCard>
+    <div v-if="isLoading">
+      <SkeletonStatusBar class="my-4"/>
+      <div class="w-full px-6 py-8 flex flex-col gap-8">
+        <SkeletonActionCard>
+          <div class="flex flex-col w-full items-center p-8">
+            <div class="skeleton w-64 h-64"/>
           </div>
+        </SkeletonActionCard>
       </div>
-      <div v-else>
-        <StatusBar :step="dashboardState" class="my-4"/>
+    </div>
+    <div v-else>
+      <StatusBar :step="dashboardState" class="my-4"/>
 
-          <div
-              v-if="dashboardState === 1"
-              class="w-full px-4 py-8 flex flex-col gap-8"
-          >
-            <CustomMessage
-                :message="t('onboarding.completed')"
-                type="success"
-            />
-            <ActionCard
-                v-if="matches.length"
-                :button-text="t('dashboard.student.startMatching')"
-                card-type="primary"
-                @action-button-clicked="navigate('/student/matching')"
-            >
-              <div class="flex flex-col w-full items-center p-3">
-                <h2 class="text-xl mx-4 py-8">
-                  {{ t("dashboard.student.findSupervisor") }}
-                </h2>
-                <CardStack :amount="3" @click="navigate('/student/matching')">
-                  <SupervisorCard
-                      :current-capacity="matches[0].availableSpots"
-                      :description="matches[0].bio"
-                      :first-name="matches[0].firstName || ''"
-                      :image="matches[0].profileImage"
-                      :last-name="matches[0].lastName || ''"
-                      :max-capacity="matches[0].totalSpots"
-                      :similarity-score="
+      <div
+          v-if="dashboardState === 1"
+          class="w-full px-4 py-8 flex flex-col gap-8"
+      >
+        <CustomMessage :message="t('onboarding.completed')" type="success"/>
+        <ActionCard
+            v-if="matches.length"
+            :button-text="t('dashboard.student.startMatching')"
+            card-type="primary"
+            @action-button-clicked="navigate('/student/matching')"
+        >
+          <div class="flex flex-col w-full items-center p-3">
+            <h2 class="text-xl mx-4 py-8">
+              {{ t("dashboard.student.findSupervisor") }}
+            </h2>
+            <CardStack :amount="3" @click="navigate('/student/matching')">
+              <SupervisorCard
+                  :current-capacity="matches[0].availableSpots"
+                  :description="matches[0].bio"
+                  :first-name="matches[0].firstName || ''"
+                  :image="matches[0].profileImage"
+                  :last-name="matches[0].lastName || ''"
+                  :max-capacity="matches[0].totalSpots"
+                  :similarity-score="
                       Math.round((matches[0].compatibilityScore as number) * 100)
                     "
-                    :tags="matches[0].tags"
-                    name="Hello name"
-                    size="xs"
-                />
-              </CardStack>
-            </div>
-          </ActionCard>
-        </div>
-
-          <div
-              v-if="dashboardState === 2"
-              class="w-full px-4 py-8 flex flex-col gap-8"
-          >
-            <ActionCard
-                :button-text="t('generic.showAll')"
-                :header-text="t('dashboard.student.yourRequests')"
-                card-type="ghost"
-                @action-button-clicked="navigate('/student/requests')"
-            >
-              <div class="h-64 lg:h-96">
-                <div
-                    class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
-                >
-                  <div
-                      v-for="sentRequest in supervisionRequestsSentByCurrentStudent"
-                      :key="sentRequest.id"
-                      class="mb-2 w-full"
-                  >
-                    <NuxtLink :to="`/profiles/${sentRequest.supervisor.user_id}`">
-                      <MiniCard
-                          :bottom-text="
-                            new Date(sentRequest.updated_at).toLocaleDateString()
-                          "
-                          :first-name="sentRequest.supervisor.user.first_name"
-                          :image="sentRequest.supervisor.user.profile_image"
-                          :last-name="sentRequest.supervisor.user.last_name"
-                          :preview-text="sentRequest.request_state === supervisionRequestStatus.REJECTED ?
-                          t('generic.rejectedRequestTo') + ' ' + sentRequest.supervisor.user.first_name + ' ' + sentRequest.supervisor.user.last_name
-                          : t('generic.pendingRequestTo') + ' ' + sentRequest.supervisor.user.first_name + ' ' + sentRequest.supervisor.user.last_name"
-                          top-icon="user-group"
-                      />
-                    </NuxtLink>
-                  </div>
-                </div>
-              </div>
-            </ActionCard>
+                  :tags="matches[0].tags"
+                  name="Hello name"
+                  size="xs"
+              />
+            </CardStack>
           </div>
+        </ActionCard>
+      </div>
 
-        <div
-            v-if="dashboardState === 3"
-            class="my-auto mx-auto w-full px-4 py-8"
+      <div
+          v-if="dashboardState === 2"
+          class="w-full px-4 py-8 flex flex-col gap-8"
+      >
+        <ActionCard
+            :button-text="t('generic.showAll')"
+            :header-text="t('dashboard.student.yourRequests')"
+            card-type="ghost"
+            @action-button-clicked="navigate('/student/requests')"
         >
-          <ConfirmationExport
-              :accepted-date="acceptedSupervisionRequests[0].updated_at"
-              :canvas-id="
-                'confirmation-canvas-' + acceptedSupervisionRequests[0].id
-              "
-              :student-email="acceptedSupervisionRequests[0].student.user.email"
-              :student-name="
-                acceptedSupervisionRequests[0].student.user.first_name +
-                ' ' +
-                acceptedSupervisionRequests[0].student.user.last_name
-              "
-              :supervisor-email="
-                acceptedSupervisionRequests[0].supervisor.user.email
-              "
-              :supervisor-name="
-                acceptedSupervisionRequests[0].supervisor.user.first_name +
-                ' ' +
-                acceptedSupervisionRequests[0].supervisor.user.last_name
-              "
-          />
-
-          <ConfirmationModal
-              :description="warning"
-              :linked-component-id="warningModalId"
-              confirm-button-color="warning"
-              confirm-button-text="OK"
-              headline="Warning - Multiple Supervisors"
-              hide-cancel-button
-              icon="triangle-exclamation"
-          />
-
-          <ActionCard
-              :button-text="t('dashboard.student.downloadConfirmation')"
-              card-type="primary"
-              @action-button-clicked="
-                downloadImageFromCanvas(
-                  'confirmation-canvas-' + acceptedSupervisionRequests[0].id
-                )
-              "
-          >
-            <div class="h-64 flex">
-              <div class="flex flex-col w-full items-center justify-center p-3">
-                <Avatar
-                    :first-name="
-                      acceptedSupervisionRequests[0].supervisor.user.first_name
+          <div class="h-64 lg:h-96">
+            <div
+                class="flex flex-col w-full items-center p-3 overflow-y-auto h-full"
+            >
+              <div
+                  v-for="sentRequest in supervisionRequestsSentByCurrentStudent"
+                  :key="sentRequest.id"
+                  class="mb-2 w-full"
+              >
+                <NuxtLink :to="`/profiles/${sentRequest.supervisor.user_id}`">
+                  <MiniCard
+                      :bottom-text="
+                      new Date(sentRequest.updated_at).toLocaleDateString()
                     "
-                    :last-name="
-                      acceptedSupervisionRequests[0].supervisor.user.last_name
+                      :class="{ 'opacity-50': sentRequest.request_state ===
+                      supervisionRequestStatus.REJECTED }"
+                      :first-name="sentRequest.supervisor.user.first_name"
+                      :image="sentRequest.supervisor.user.profile_image"
+                      :last-name="sentRequest.supervisor.user.last_name"
+                      :preview-text="
+                      sentRequest.request_state ===
+                      supervisionRequestStatus.REJECTED
+                        ? t('generic.rejectedRequestTo') +
+                          ' ' +
+                          sentRequest.supervisor.user.first_name +
+                          ' ' +
+                          sentRequest.supervisor.user.last_name
+                        : t('generic.pendingRequestTo') +
+                          ' ' +
+                          sentRequest.supervisor.user.first_name +
+                          ' ' +
+                          sentRequest.supervisor.user.last_name
                     "
-                    :src="
-                      acceptedSupervisionRequests[0].supervisor.user.profile_image
-                    "
-                    alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
-                    ring-color="success"
-                    shape="circle"
-                    size="xl"
-                />
-                <h2 class="text-xl mx-4 py-8 text-center">
-                  {{ acceptedSupervisionRequests[0].supervisor.user.first_name }}
-                  {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}
-                  is your supervisor!
-                </h2>
+                      top-icon="user-group"
+                  />
+                </NuxtLink>
               </div>
             </div>
-          </ActionCard>
-        </div>
+          </div>
+        </ActionCard>
+      </div>
+
+      <div v-if="dashboardState === 3" class="my-auto mx-auto w-full px-4 py-8">
+        <ConfirmationExport
+            :accepted-date="acceptedSupervisionRequests[0].updated_at"
+            :canvas-id="
+            'confirmation-canvas-' + acceptedSupervisionRequests[0].id
+          "
+            :student-email="acceptedSupervisionRequests[0].student.user.email"
+            :student-name="
+            acceptedSupervisionRequests[0].student.user.first_name +
+            ' ' +
+            acceptedSupervisionRequests[0].student.user.last_name
+          "
+            :supervisor-email="
+            acceptedSupervisionRequests[0].supervisor.user.email
+          "
+            :supervisor-name="
+            acceptedSupervisionRequests[0].supervisor.user.first_name +
+            ' ' +
+            acceptedSupervisionRequests[0].supervisor.user.last_name
+          "
+        />
+
+        <ConfirmationModal
+            :description="warning"
+            :linked-component-id="warningModalId"
+            confirm-button-color="warning"
+            confirm-button-text="OK"
+            headline="Warning - Multiple Supervisors"
+            hide-cancel-button
+            icon="triangle-exclamation"
+        />
+
+        <ActionCard
+            :button-text="t('dashboard.student.downloadConfirmation')"
+            card-type="primary"
+            @action-button-clicked="
+            downloadImageFromCanvas(
+              'confirmation-canvas-' + acceptedSupervisionRequests[0].id
+            )
+          "
+        >
+          <div class="h-64 flex">
+            <div class="flex flex-col w-full items-center justify-center p-3">
+              <Avatar
+                  :first-name="
+                  acceptedSupervisionRequests[0].supervisor.user.first_name
+                "
+                  :last-name="
+                  acceptedSupervisionRequests[0].supervisor.user.last_name
+                "
+                  :src="
+                  acceptedSupervisionRequests[0].supervisor.user.profile_image
+                "
+                  alt="Profile Picture of {{ acceptedSupervisionRequests[0].supervisor.user.first_name }} {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}"
+                  ring-color="success"
+                  shape="circle"
+                  size="xl"
+              />
+              <h2 class="text-xl mx-4 py-8 text-center">
+                {{ acceptedSupervisionRequests[0].supervisor.user.first_name }}
+                {{ acceptedSupervisionRequests[0].supervisor.user.last_name }}
+                {{ t("dashboard.student.yourSupervisor") }}
+              </h2>
+            </div>
+          </div>
+        </ActionCard>
+      </div>
     </div>
   </div>
-
 </template>
 
 <script lang="ts" setup>
@@ -171,7 +177,7 @@ import { useUserStore } from "~/stores/useUserStore";
 import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useStudentStore } from "~/stores/useStudentStore";
-import {supervisionRequestStatus} from "#shared/enums/enums";
+import { supervisionRequestStatus } from "#shared/enums/enums";
 
 const { t } = useI18n();
 
@@ -183,7 +189,7 @@ const studentStore = useStudentStore();
 const isLoading = ref(true);
 
 const dashboardState = computed(() => studentStore.dashboardState);
-const supervisionRequestsSentByCurrentStudent = computed(() => 
+const supervisionRequestsSentByCurrentStudent = computed(() =>
   studentStore.supervisionRequestsSentByCurrentStudent.filter(
     (request) => request.request_state === supervisionRequestStatus.PENDING
   )

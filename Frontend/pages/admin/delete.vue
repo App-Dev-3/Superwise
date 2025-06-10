@@ -1,14 +1,12 @@
 <script setup lang="ts">
-
+const { t } = useI18n();
 </script>
 
 <template>
-<AdminHeader
+  <AdminHeader
     variant="delete"
-    header-text="Delete Data"
-/>
+    :header-text="t('appHeader.admin.deleteData')"
+  />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

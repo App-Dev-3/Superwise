@@ -39,35 +39,34 @@ function onChangeLocale(newLocale: string) {
 definePageMeta({
   layout: "generic-back-layout",
 });
-
 </script>
 
 <template>
   <div class="w-full h-fit flex flex-col gap-4 p-8">
     <!-- App Settings -->
-    <SettingsArea icon="eye" title="Appearance">
+    <SettingsArea icon="eye" :title="t('settings.title.appearance')">
       <SettingsElement
-          :description="t('settings.theme.description')"
-          :title="t('settings.theme.title')"
+        :description="t('settings.theme.description')"
+        :title="t('settings.theme.title')"
       >
-        <theme-toggle/>
+        <theme-toggle />
       </SettingsElement>
 
       <SettingsElement
-          :description="t('settings.language.description')"
-          :title="t('settings.language.title')"
+        :description="t('settings.language.description')"
+        :title="t('settings.language.title')"
       >
         <CustomSelect
-            :label="t('settings.language.placeholder')"
-            :model-value="locale"
-            :options="
-                locales.map((l) => ({
-                  key: l.code,
-                  value: t('generic.' + l.name),
-                }))
-              "
-            :placeholder="t('settings.select.language')"
-            @update:model-value="(val) => onChangeLocale(val as string)"
+          :label="t('settings.language.placeholder')"
+          :model-value="locale"
+          :options="
+            locales.map((l) => ({
+              key: l.code,
+              value: t('generic.' + l.name),
+            }))
+          "
+          :placeholder="t('settings.select.language')"
+          @update:model-value="(val) => onChangeLocale(val as string)"
         />
       </SettingsElement>
     </SettingsArea>
@@ -75,54 +74,59 @@ definePageMeta({
     <!-- Modal Settings -->
     <SettingsArea icon="up-right-from-square" title="Modals">
       <SettingsElement
-          :description="t('settings.modal.student.supervisionrequest.description')"
-          :title="t('settings.modal.student.supervisionrequest.title')"
+        :description="
+          t('settings.modal.student.supervisionrequest.description')
+        "
+        :title="t('settings.modal.student.supervisionrequest.title')"
       >
         <CustomToggle
-            v-model:checked="settingsStore.showSupervisionRequestModal"
+          v-model:checked="settingsStore.showSupervisionRequestModal"
         />
       </SettingsElement>
 
       <SettingsElement
-          description="Show confirmation modal when swipe-dismissing a supervisor"
-          title="Dismiss Modal"
+        :description="t('settings.student.dismissingDescription')"
+        :title="t('settings.student.dismissingTitle')"
       >
-        <CustomToggle v-model:checked="settingsStore.showDismissModal"/>
+        <CustomToggle v-model:checked="settingsStore.showDismissModal" />
       </SettingsElement>
     </SettingsArea>
 
     <!-- App Info -->
     <SettingsArea
-        id="settingsArea"
-        icon="info-circle"
-        title="About SuperWise"
+      id="settingsArea"
+      icon="info-circle"
+      :title="t('settings.title.about')"
     >
-      <SettingsElement :description="version" title="App Version">
+      <SettingsElement
+        :description="version"
+        :title="t('settings.title.appVersion')"
+      >
         <CustomButton
-            class="copyButton"
-            color="default"
-            left-icon="copy"
-            size="lg"
-            text=""
-            variant="ghost"
-            @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
+          class="copyButton"
+          color="default"
+          left-icon="copy"
+          size="lg"
+          text=""
+          variant="ghost"
+          @click="copyToClipboard(`SuperWise App-Version: ${version}`)"
         />
       </SettingsElement>
 
       <SettingsElement
-          :description="settingsStore.notificationId || 'Not available'"
-          title="Notification ID"
+        :description="settingsStore.notificationId || 'Not available'"
+        :title="t('settings.title.notificationId')"
       >
         <CustomButton
-            class="copyButton"
-            color="default"
-            left-icon="copy"
-            size="lg"
-            text=""
-            variant="ghost"
-            @click="
-                copyToClipboard(settingsStore.notificationId || 'Not available')
-              "
+          class="copyButton"
+          color="default"
+          left-icon="copy"
+          size="lg"
+          text=""
+          variant="ghost"
+          @click="
+            copyToClipboard(settingsStore.notificationId || 'Not available')
+          "
         />
       </SettingsElement>
     </SettingsArea>

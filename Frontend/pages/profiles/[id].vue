@@ -1,21 +1,21 @@
 <template>
   <div class="size-full flex flex-col justify-center items-center">
     <div
-      v-if="pending"
-      class="w-full h-full flex flex-col items-center gap-4 pt-6 px-4"
+        v-if="pending"
+        class="w-full h-full flex flex-col items-center gap-4 pt-6 px-4"
     >
-      <div class="skeleton h-24 w-24 shrink-0 rounded-full" />
-      <div class="skeleton h-4 w-20" />
-      <div class="skeleton h-4 w-28" />
-      <div class="skeleton h-32 w-full" />
+      <div class="skeleton h-24 w-24 shrink-0 rounded-full"/>
+      <div class="skeleton h-4 w-20"/>
+      <div class="skeleton h-4 w-28"/>
+      <div class="skeleton h-32 w-full"/>
     </div>
     <div
-      v-else-if="error"
-      class="w-full h-full flex flex-col items-center gap-4 pt-6 px-4"
+        v-else-if="error"
+        class="w-full h-full flex flex-col items-center gap-4 pt-6 px-4"
     >
       <FontAwesomeIcon
-        class="text-base-content/60 text-6xl"
-        icon="link-slash"
+          class="text-base-content/60 text-6xl"
+          icon="link-slash"
       />
       <h1 class="text-base-content/60 text-2xl">
         {{ t("generic.404-not-found") }}
@@ -23,25 +23,25 @@
     </div>
     <div v-else class="w-full h-full overflow-y-auto p-6 flex flex-col gap-4">
       <div
-        class="w-full flex flex-col items-center gap-3 justify-center pt-6 px-4"
+          class="w-full flex flex-col items-center gap-3 justify-center pt-6 px-4"
       >
         <Avatar
-          :emoji="emoji"
-          :first-name="routeParamUser.first_name"
-          :last-name="routeParamUser.last_name"
-          :src="routeParamUser.profile_image"
-          ring-color="info"
-          shape="circle"
-          size="lg"
+            :emoji="emoji"
+            :first-name="routeParamUser.first_name"
+            :last-name="routeParamUser.last_name"
+            :src="routeParamUser.profile_image"
+            ring-color="info"
+            shape="circle"
+            size="lg"
         />
 
         <CustomTag
-          :text="t('role.' + routeParamUser.role.toLowerCase())"
-          class="opacity-50"
-          color="default"
-          left-icon="fa-solid fa-tag"
-          size="lg"
-          variant="outline"
+            :text="t('role.' + routeParamUser.role.toLowerCase())"
+            class="opacity-50"
+            color="default"
+            left-icon="users"
+            size="lg"
+            variant="outline"
         />
 
         <div class="flex flex-col items-center gap-1">
@@ -55,88 +55,88 @@
 
         <div class="flex flex-row gap-2 w-full justify-center">
           <CustomButton
-            :text="t('generic.mail')"
-            block
-            color="default"
-            left-icon="envelope"
-            @click="sendMail"
+              :text="t('generic.mail')"
+              block
+              color="default"
+              left-icon="envelope"
+              @click="sendMail"
           />
 
           <CustomButton
-            v-if="
+              v-if="
               routeParamUser.role === UserRoles.SUPERVISOR &&
               currentUser?.role === UserRoles.STUDENT &&
               routeParamUser.is_registered &&
               !routeParamUser.is_deleted
             "
-            :text="t('generic.supervisionRequest')"
-            block
-            color="default"
-            left-icon="message"
-            @click="askForConfirmation"
+              :text="t('generic.supervisionRequest')"
+              block
+              color="default"
+              left-icon="message"
+              @click="askForConfirmation"
           />
         </div>
       </div>
 
       <div
-        v-if="routeParamUser.is_registered && !routeParamUser.is_deleted"
-        class="w-full h-full flex flex-col gap-4"
+          v-if="routeParamUser.is_registered && !routeParamUser.is_deleted"
+          class="w-full h-full flex flex-col gap-4"
       >
-        <hr v-if="!isAdmin" class="border-base-300 text-base-300" />
+        <hr v-if="!isAdmin" class="border-base-300 text-base-300">
 
         <div
-          v-if="!isAdmin"
-          class="w-full flex justify-center flex-col p-4 gap-3"
+            v-if="!isAdmin"
+            class="w-full flex justify-center flex-col p-4 gap-3"
         >
           <div class="w-full flex flex-row flex-wrap gap-2 justify-center">
             <CustomTag
-              v-for="(tag, index) in routeParamUser.tags"
-              :key="`selected-${index}`"
-              :color="
+                v-for="(tag, index) in routeParamUser.tags"
+                :key="`selected-${index}`"
+                :color="
                 currentUserTags.some((currUserTag) => currUserTag.id === tag.id)
                   ? 'primary'
                   : 'default'
               "
-              :text="tag.tag.tag_name"
+                :text="tag.tag.tag_name"
             />
           </div>
         </div>
 
-        <hr v-if="!isAdmin" class="border-base-300 text-base-300" />
+        <hr v-if="!isAdmin" class="border-base-300 text-base-300">
 
         <SupervisorStatistics
-          v-if="isSupervisor"
-          :compatibility="compatability"
-          :currently-supervising="
+            v-if="isSupervisor"
+            :compatibility="compatability"
+            :currently-supervising="
             routeParamUser.supervisor_profile.available_spots
           "
-          :first-name="routeParamUser.first_name"
-          :last-name="routeParamUser.last_name"
-          :pending="pendingRequests"
-          :slots="routeParamUser.supervisor_profile.total_spots"
+            :first-name="routeParamUser.first_name"
+            :last-name="routeParamUser.last_name"
+            :pending="pendingRequests"
+            :slots="routeParamUser.supervisor_profile.total_spots"
         />
 
-        <hr v-if="isSupervisor" class="border-base-300 text-base-300" />
+        <hr v-if="isSupervisor" class="border-base-300 text-base-300">
 
         <div v-if="!isAdmin" class="p-3">
           <ProfileDescription
-            :content="
+              :content="
               isStudent
                 ? routeParamUser.student_profile.thesis_description || ''
                 : routeParamUser.supervisor_profile.bio || ''
             "
-            :headline="isStudent ? t('generic.thesisDescription') : 'Bio'"
+              :headline="isStudent ? t('generic.thesisDescription') : 'Bio'"
           />
         </div>
       </div>
 
       <div v-else class="pt-4">
-        <hr class="border-base-300 text-base-300" />
+        <hr class="border-base-300 text-base-300">
 
         <div class="alert alert-warning" role="alert">
-          <FontAwesomeIcon class="opacity-75" icon="warning" />
+          <FontAwesomeIcon class="opacity-75" icon="warning"/>
           <span
-            >{{ t("profile.warning") }}:
+          >{{ t("profile.warning") }}:
             <span class="font-bold">
               {{ routeParamUser.first_name }} {{ routeParamUser.last_name }}
             </span>
@@ -147,26 +147,26 @@
     </div>
 
     <Toast
-      v-if="toastData.visible"
-      :duration="8000"
-      :message="toastData.message"
-      :type="toastData.type"
-      @close="toastData.visible = false"
-      @button-click="toastData.visible = false"
+        v-if="toastData.visible"
+        :duration="8000"
+        :message="toastData.message"
+        :type="toastData.type"
+        @close="toastData.visible = false"
+        @button-click="toastData.visible = false"
     />
 
     <ConfirmationModal
-      v-if="isSupervisor && currentUser?.role === UserRoles.STUDENT"
-      :confirm-button-text="modalInformation.confirmButtonText"
-      :description="modalInformation.description"
-      :headline="modalInformation.headline"
-      :image="modalInformation.image"
-      :linked-component-id="modalInformation.linkedComponentId"
-      confirm-button-color="primary"
-      hide-dont-show-again
-      icon=""
-      @abort="closeModal"
-      @confirm="sendSupervisionRequest"
+        v-if="isSupervisor && currentUser?.role === UserRoles.STUDENT"
+        :confirm-button-text="modalInformation.confirmButtonText"
+        :description="modalInformation.description"
+        :headline="modalInformation.headline"
+        :image="modalInformation.image"
+        :linked-component-id="modalInformation.linkedComponentId"
+        confirm-button-color="primary"
+        hide-dont-show-again
+        icon=""
+        @abort="closeModal"
+        @confirm="sendSupervisionRequest"
     />
   </div>
 </template>
@@ -189,7 +189,7 @@ const route = useRoute();
 const routeParamUserId = route.params.id as string;
 const isOwnProfile = computed(() => currentUser?.id === routeParamUserId);
 const { data, error, pending } = await useFetch(
-  `/api/users/${routeParamUserId}/with-relations`
+    `/api/users/${ routeParamUserId }/with-relations`
 );
 const routeParamUser = data;
 
@@ -205,13 +205,13 @@ const modalInformation = ref({
   headline: "",
   description: t("modal.supervisionInfo"),
   image: routeParamUser.value.profile_image || "",
-  linkedComponentId: `profilesConfirmationModal-${routeParamUserId}`,
+  linkedComponentId: `profilesConfirmationModal-${ routeParamUserId }`,
 });
 
 const sendMail = () => {
   const email = routeParamUser.value.email;
   if (email) {
-    window.location.href = `mailto:${email}`;
+    window.location.href = `mailto:${ email }`;
   } else {
     console.error("No email address available for this user.");
   }
@@ -233,7 +233,7 @@ const askForConfirmation = () => {
     headline: t("modal.sendSupervisionRequestHeadline"),
     description: t("modal.supervisionInfo"),
     image: routeParamUser.value.profile_image || "",
-    linkedComponentId: `profilesConfirmationModal-${routeParamUserId}`,
+    linkedComponentId: `profilesConfirmationModal-${ routeParamUserId }`,
   };
   openModal();
 };
@@ -275,7 +275,7 @@ const sendSupervisionRequest = async () => {
           visible: true,
           type: "error",
           message:
-            "You have already sent a supervision request to this supervisor.",
+              "You have already sent a supervision request to this supervisor.",
         };
         break;
       default:
@@ -292,14 +292,14 @@ const sendSupervisionRequest = async () => {
 
 const closeModal = () => {
   const modal = document.getElementById(
-    modalInformation.value.linkedComponentId
+      modalInformation.value.linkedComponentId
   ) as HTMLDialogElement;
   if (modal) modal.close();
 };
 
 const openModal = () => {
   const modal = document.getElementById(
-    modalInformation.value.linkedComponentId
+      modalInformation.value.linkedComponentId
   ) as HTMLDialogElement;
   if (modal) modal.showModal();
 };
@@ -332,7 +332,7 @@ const isStudent = computed(() => {
 const currentUserTags = ref([]);
 if (currentUser?.id) {
   try {
-    const { data } = await useFetch(`/api/users/${currentUser.id}/tags`);
+    const { data } = await useFetch(`/api/users/${ currentUser.id }/tags`);
     currentUserTags.value = data.value || [];
   } catch (e) {
     console.error("Error fetching current user tags:", e);

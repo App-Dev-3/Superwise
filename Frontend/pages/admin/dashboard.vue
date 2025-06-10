@@ -1,59 +1,59 @@
 <template>
   <div class="flex flex-col size-full overflow-y-auto gap-8 px-6 py-8">
     <div
-      class="rounded-3xl bg-base-100 shadow-lg flex flex-col border border-base-300"
+        class="rounded-3xl bg-base-100 shadow-lg flex flex-col border border-base-300"
     >
       <div class="p-8 gap-4 admin-overview-grid">
-        <FontAwesomeIcon class="opacity-75" icon="user" />
+        <FontAwesomeIcon class="opacity-75" icon="user"/>
         <span class="text-body text-primary"
-          >{{ registeredSupervisorsAmount }}/{{ allSupervisorsAmount }}</span
+        >{{ registeredSupervisorsAmount }}/{{ allSupervisorsAmount }}</span
         >
         <span class="text-x-small opacity-50"
-          >{{ t("admin.supervisorAmount") }}
+        >{{ t("admin.supervisorAmount") }}
         </span>
 
-        <FontAwesomeIcon class="opacity-75" icon="user-group" />
+        <FontAwesomeIcon class="opacity-75" icon="user-group"/>
         <span class="text-body text-primary"
-          >{{ availableSpots }}/{{ totalSpots }}</span
+        >{{ availableSpots }}/{{ totalSpots }}</span
         >
         <span class="text-x-small opacity-50"
-          >{{ t("admin.availableSpots") }}
+        >{{ t("admin.availableSpots") }}
         </span>
       </div>
-      <hr class="border-base-300" />
+      <hr class="border-base-300">
       <div class="p-8 gap-4 admin-overview-grid">
-        <FontAwesomeIcon class="opacity-75" icon="user-group" />
+        <FontAwesomeIcon class="opacity-75" icon="user-group"/>
         <span class="text-body text-primary"
-          >{{ acceptedSupervisionRequestsCount }}/{{ amountOfStudents }}</span
+        >{{ acceptedSupervisionRequestsCount }}/{{ amountOfStudents }}</span
         >
         <span class="text-x-small opacity-50">{{
-          t("admin.studentsWithSupervisor")
-        }}</span>
+            t("admin.studentsWithSupervisor")
+          }}</span>
 
-        <FontAwesomeIcon class="opacity-75" icon="user-group" />
+        <FontAwesomeIcon class="opacity-75" icon="user-group"/>
         <span class="text-body text-primary">{{
-          pendingSupervisionRequestsCount
-        }}</span>
+            pendingSupervisionRequestsCount
+          }}</span>
         <span class="text-x-small opacity-50">{{
-          t("admin.waitingStudents")
-        }}</span>
+            t("admin.waitingStudents")
+          }}</span>
       </div>
     </div>
 
     <CustomButton
-      color="info"
-      left-icon="cloud-upload-alt"
-      text="Import Data"
-      wide
-      @click="navigateTo('/admin/upload')"
+        :text="t('generic.upload')"
+        color="info"
+        left-icon="cloud-upload-alt"
+        wide
+        @click="navigateTo('/admin/upload')"
     />
 
     <CustomButton
-      color="success"
-      left-icon="file-download"
-      text="Export Data"
-      wide
-      @click="navigateTo('/admin/download')"
+        :text="t('generic.download')"
+        color="success"
+        left-icon="file-download"
+        wide
+        @click="navigateTo('/admin/download')"
     />
 
     <!--            <CustomButton-->
@@ -68,11 +68,7 @@
 
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import {
-  HttpMethods,
-  supervisionRequestStatus,
-  UserRoles,
-} from "#shared/enums/enums";
+import { HttpMethods, supervisionRequestStatus, UserRoles, } from "#shared/enums/enums";
 import type { UserCreateData, UserData } from "#shared/types/userInterfaces";
 import type { SupervisorProfile } from "#shared/types/supervisorInterfaces";
 import type { SupervisionRequest } from "#shared/types/requests";
@@ -115,10 +111,10 @@ const getSupervisorInfo = async () => {
   }
   allUsers.value = data.value || [];
   const allSupervisors = data.value?.filter(
-    (user) => user.role === UserRoles.SUPERVISOR
+      (user) => user.role === UserRoles.SUPERVISOR
   );
   const registeredSupervisors = allSupervisors?.filter(
-    (user) => user.is_registered
+      (user) => user.is_registered
   );
   allSupervisorsAmount.value = allSupervisors?.length || 0;
   registeredSupervisorsAmount.value = registeredSupervisors?.length || 0;
@@ -126,32 +122,32 @@ const getSupervisorInfo = async () => {
 
 const getAvailableSpots = async () => {
   const allSupervisorProfiles = await $fetch<SupervisorProfile[]>(
-    "/api/supervisors",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    }
+      "/api/supervisors",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
   );
   console.log("all supervisors:");
   console.log(allSupervisorProfiles);
   totalSpots.value =
-    allSupervisorProfiles.reduce(
-      (acc: number, supervisor: SupervisorProfile) => {
-        return acc + supervisor.total_spots;
-      },
-      0
-    ) || 0;
+      allSupervisorProfiles.reduce(
+          (acc: number, supervisor: SupervisorProfile) => {
+            return acc + supervisor.total_spots;
+          },
+          0
+      ) || 0;
 
   availableSpots.value =
-    allSupervisorProfiles.reduce(
-      (acc: number, supervisor: SupervisorProfile) => {
-        return acc + supervisor.available_spots;
-      },
-      0
-    ) || 0;
+      allSupervisorProfiles.reduce(
+          (acc: number, supervisor: SupervisorProfile) => {
+            return acc + supervisor.available_spots;
+          },
+          0
+      ) || 0;
 };
 
 const getAmountOfStudentsThatHaveASupervisorAndRequestStates = async () => {
@@ -164,35 +160,35 @@ const getAmountOfStudentsThatHaveASupervisorAndRequestStates = async () => {
   });
   amountOfStudents.value = allStudents.length;
   const acceptedRequests = await $fetch<SupervisionRequest[]>(
-    "/api/supervision-requests",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      query: {
-        request_state: supervisionRequestStatus.ACCEPTED,
-      },
-    }
+      "/api/supervision-requests",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        query: {
+          request_state: supervisionRequestStatus.ACCEPTED,
+        },
+      }
   );
   acceptedSupervisionRequestsCount.value = acceptedRequests.length || 0;
 
   const pendingSupervisionRequests = await $fetch<SupervisionRequest[]>(
-    "/api/supervision-requests",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      query: {
-        request_state: supervisionRequestStatus.PENDING,
-      },
-    }
+      "/api/supervision-requests",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        query: {
+          request_state: supervisionRequestStatus.PENDING,
+        },
+      }
   );
   pendingSupervisionRequestsCount.value =
-    pendingSupervisionRequests.length || 0;
+      pendingSupervisionRequests.length || 0;
 };
 
 const getAdminRegistrationStatus = async () => {
@@ -200,7 +196,7 @@ const getAdminRegistrationStatus = async () => {
     if (!isLoaded.value) await until(isLoaded).toBe(true);
     const adminEmail = ref({} as UserCreateData);
     adminEmail.value.email =
-      user.value?.primaryEmailAddress?.emailAddress || "";
+        user.value?.primaryEmailAddress?.emailAddress || "";
     await useFetch("/api/users/", {
       method: HttpMethods.POST,
       body: {

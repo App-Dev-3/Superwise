@@ -1,21 +1,24 @@
 {
   "admin": {
-    "supervisorAmount": "Betreuer verwenden die App",
     "availableSpots": "Verfügbare Plätze",
-    "studentsWithSupervisor": "Studenten haben einen Betreuer",
-    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung",
     "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
+    "downloadFileName": "lade confirmed_supervisions.csv herunter",
     "downloadTitle": "Bestätigte Betreuungen herunterladen",
     "invalidCSV": "Ungültiges CSV-Format. Bitte prüfen Sie, ob alle Spalten korrekt sind.",
     "invalidJSON": "Ungültiges JSON-Format",
+    "studentsWithSupervisor": "Studenten haben einen Betreuer",
+    "supervisorAmount": "Betreuer verwenden die App",
     "uploadSupervisorsDescription": "Dies aktualisiert die Betreuer und ihre verfügbaren Plätze",
-    "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte"
+    "uploadSupervisorsFileName": "wähle *.csv aus",
+    "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte",
+    "uploadTagsFileName": "wähle updated_tag_list.json aus",
+    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
   },
   "appHeader": {
     "admin": {
-      "downloadData": "Daten herunterladen",
-      "uploadData": "Daten Importieren",
-      "deleteData": "Delete Data"
+      "deleteData": "Delete Data",
+      "downloadData": "Daten Herunterladen",
+      "uploadData": "Daten Importieren"
     },
     "back": "Zurück",
     "onboarding": {
@@ -90,12 +93,13 @@
   },
   "generic": {
     "404-not-found": "404 - Nicht gefunden",
+    "acceptedRequestTo": "Akzeptierte Anfrage an",
     "admin": "Admin",
     "cancel": "Abbrechen",
     "chatRequest": "Chat-Anfrage",
     "continue": "Weiter",
-    "delete": "löschen",
-    "download": "herunterladen",
+    "delete": "Löschen",
+    "download": "Herunterladen",
     "edit": "Bearbeiten",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
@@ -105,8 +109,10 @@
     "loading": "Lädt",
     "logoAlt": "Logo",
     "mail": "E-Mail",
+    "pendingRequestTo": "Ausstehende Anfrage an",
     "profile": "Profil",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
+    "rejectedRequestTo": "Abgelehnte Anfrage an",
     "requests": "Anfragen",
     "saveChanges": "Änderungen speichern",
     "showAll": "Alle anzeigen...",
@@ -117,40 +123,37 @@
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
     "supervisors": "Betreuer",
-    "tags": "Gebiete",
+    "tags": "Tags",
     "thesisDescription": "Thesis-Beschreibung",
     "undo": "rückgängig machen",
-    "upload": "Importieren",
-    "rejectedRequestTo": "Abgelehnte Anfrage an",
-    "acceptedRequestTo": "Akzeptierte Anfrage an",
-    "pendingRequestTo": "Ausstehende Anfrage an"
+    "upload": "Importieren"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
     "here": "hier"
   },
   "matching": {
+    "acceptRequest": "Betreuungsanfrage annehmen",
+    "acceptRequestButton": "Anfrage annehmen",
+    "acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
+    "confirmationToast": "Sie haben die Betreuungsanfrage {type}",
     "existingSupervision": {
       "actionButton": "Zurück zum Dashboard",
       "headline": "Glückwunsch, du hast bereits einen Betreuer!"
     },
     "noRequests": "Es gibt keine neuen Anfragen...",
     "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
-    "supervisionRequest": "{name} will von dir betreut werden!",
-    "sentRequest": "Betreuungsanfrage wurde gesendet",
-    "supervisorDismissed": "Betreuer wurde abgelehnt",
-    "swipeLeft": {
-      "headline": "Betreuer entfernen",
-      "warning": "Entfernte Betreuer sind weiterhin in der Suche zu finden",
-      "description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?"
-    },
-    "acceptRequest": "Betreuungsanfrage annehmen",
-    "acceptRequestButton": "Anfrage annehmen",
-    "acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
     "rejectRequest": "Betreuungsanfrage ablehnen",
     "rejectRequestButton": "Anfrage ablehnen",
     "rejectRequestDescription": "Sind Sie sicher, dass Sie die Betreuungsanfrage von {firstName} {lastName} ablehnen möchten?",
-    "confirmationToast": "Sie haben die Betreuungsanfrage {type}"
+    "sentRequest": "Betreuungsanfrage wurde gesendet",
+    "supervisionRequest": "{name} will von dir betreut werden!",
+    "supervisorDismissed": "Betreuer wurde abgelehnt",
+    "swipeLeft": {
+      "description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?",
+      "headline": "Betreuer entfernen",
+      "warning": "Entfernte Betreuer sind weiterhin in der Suche zu finden"
+    }
   },
   "miniCard": {
     "pending": "Ausstehende Anfrage an {firstName}",
@@ -162,10 +165,9 @@
     "dontShowAgain": "Nicht mehr anzeigen",
     "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
     "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
-    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen",
+    "withdrawSupervisionConfirm": "Anfrage zurückziehen",
     "withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
-    "withdrawSupervisionConfirm": "Anfrage zurückziehen"
-
+    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen"
   },
   "multiStepForm": {
     "description": {
@@ -212,6 +214,7 @@
     "processing": "Daten werden verarbeitet, bitte warten..."
   },
   "profile": {
+    "availableSlots": "{0} von {1} plätze sind noch verfügbar.",
     "bio": "Biografie",
     "bioPlaceholder": "Erzählen Sie etwas über sich...",
     "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
@@ -227,6 +230,7 @@
     "imageUpdated": "Profilbild aktualisiert",
     "lastName": "Nachname",
     "pageHeader": "Mein Profil",
+    "pendingRequests": "{0} Betreuungsanfragen sind noch unbeantwortet",
     "preview": "Vorschau",
     "requestSent": "Anfrage gesendet",
     "saveChanges": "Änderungen speichern",
@@ -269,32 +273,32 @@
     "modal": {
       "student": {
         "supervisionrequest": {
-          "description": "Zeige das Popup, wenn ein Supervisor angefragt wird.",
-          "title": "Supervisor Anfrage Popup"
+          "description": "Zeige ein Popup, wenn ein Betreuer angefragt wird.",
+          "title": "Betreuer Anfrage Popup"
         }
       }
     },
     "student": {
-      "dismissingTitle": "Entfernungs-Modal",
-      "dismissingDescription": "Bestätigungs-Modal anzeigen, wenn ein Betreuer per Wischgeste entfernt wird"
+      "dismissingDescription": "Bestätigungs-Modal anzeigen, wenn ein Betreuer per Wischgeste entfernt wird",
+      "dismissingTitle": "Entfernungs-Modal"
     },
     "supervisor": {
-      "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
       "acceptingDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage angenommen wird",
-      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage",
-      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
+      "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
+      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird",
       "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
-      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird"
-    },
-    "title": {
-      "appearance": "Erscheinungsbild",
-      "about": "Über SuperWise",
-      "appVersion": "App-Version",
-      "notificationId": "Benachrichtigungs-ID"
+      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
+      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
     },
     "theme": {
       "description": "App Design auswählen",
       "title": "Design"
+    },
+    "title": {
+      "about": "Über SuperWise",
+      "appVersion": "App-Version",
+      "appearance": "Erscheinungsbild",
+      "notificationId": "Benachrichtigungs-ID"
     }
   },
   "statusBar": {
@@ -323,7 +327,7 @@
     "title": "Wähle deine Tags aus"
   },
   "toast": {
-    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen",
-    "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage"
+    "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage",
+    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen"
   }
 }

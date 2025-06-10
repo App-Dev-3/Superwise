@@ -209,9 +209,9 @@ async function handleSubmit() {
   if (!userProfileExists) {
     await useUserApi().createStudentProfile('');
   }
-  addUserTag({
-    id: userStore.user?.id || '',
-    tags: tags.value as tagData[],
+  await addUserTag({
+      id: userStore.user?.id || '',
+      tags: tags.value as tagData[],
   });
     if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
         await registrationStore.fetchRegistrationStatus(userStore.user?.email)

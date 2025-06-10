@@ -83,7 +83,7 @@ definePageMeta({
       </SettingsElement>
 
       <SettingsElement
-          :description="t('settings.supervisor.acceptingDescription')"
+          :description="t('settings.supervisor.rejectDescription')"
           :title="t('settings.supervisor.rejectTitle')"
       >
         <CustomToggle

@@ -152,7 +152,7 @@ const handleSwipeLeft = async (request: SupervisionRequestsData) => {
     headline: t("matching.rejectRequest"),
     icon: "",
     warning: "",
-    description: t("matching.acceptRequestDescription", {
+    description: t("matching.rejectRequestDescription", {
       firstName: request.student.user.first_name,
       lastName: request.student.user.last_name,
     }),

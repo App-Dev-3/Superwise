@@ -37,7 +37,7 @@ export default defineNuxtConfig({
         dataValue: "theme",
     },
 
-    clerk :{
+    clerk: {
         appearance: {
             variables: {
                 colorPrimary: 'blue'
@@ -141,6 +141,7 @@ export default defineNuxtConfig({
     },
     app: {
         head: {
+            title: "SuperWise",
             link: [
                 {
                     rel: 'icon',

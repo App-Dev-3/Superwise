@@ -40,7 +40,12 @@ export const useStudentStore = defineStore('student', () => {
     watch(acceptedSupervisionRequests, () => {
         if (acceptedSupervisionRequests.value.length > 0) {
             dashboardState.value = 3
-        } else if (supervisionRequestsSentByCurrentStudent.value.length > 0) {
+        } else if (
+            supervisionRequestsSentByCurrentStudent.value.length > 0 &&
+            supervisionRequestsSentByCurrentStudent.value.some(
+                request => request.request_state === supervisionRequestStatus.PENDING
+            )
+        ) {
             dashboardState.value = 2
         } else {
             dashboardState.value = 1

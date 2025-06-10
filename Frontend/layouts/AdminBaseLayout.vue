@@ -2,7 +2,7 @@
 
 import { ref } from "vue";
 import type { UserData } from "#shared/types/userInterfaces";
-import {UserRoles} from "#shared/enums/enums";
+import { UserRoles } from "#shared/enums/enums";
 
 
 const userStore = useUserStore();
@@ -25,8 +25,6 @@ if (userStore.user) {
         :image="currentUser?.profile_image || ''"
         :last-name="currentUser?.last_name || 'Admin'"
         :role="UserRoles.ADMIN"
-        show-search
-        show-user
     />
 
     <div class="size-full overflow-y-auto flex flex-col">

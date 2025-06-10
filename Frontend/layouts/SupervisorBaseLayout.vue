@@ -3,7 +3,7 @@
 import { ref } from "vue";
 import type { UserData } from "#shared/types/userInterfaces";
 import { useRoute } from 'vue-router';
-import {UserRoles} from "#shared/enums/enums";
+import { UserRoles } from "#shared/enums/enums";
 
 const route = useRoute();
 const { t } = useI18n();
@@ -60,8 +60,6 @@ const headerText = computed(() => {
         :image="currentUser?.profile_image || ''"
         :last-name="currentUser?.last_name"
         :role="UserRoles.SUPERVISOR"
-        show-search
-        show-user
     />
     <AdminHeader
         v-else

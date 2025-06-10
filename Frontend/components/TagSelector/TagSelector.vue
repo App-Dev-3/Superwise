@@ -6,7 +6,7 @@ const { t } = useI18n();
 
 interface TagSelectorProps {
   allTags: Array<{ tag_name: string }>;
-  initialSelected: Array<{ tag_name: string }>;
+  initialSelected?: Array<{ tag_name: string }>;
   maxSelection?: number;
   descriptionText: string;
 }
@@ -14,6 +14,7 @@ interface TagSelectorProps {
 
 const props = withDefaults(defineProps<TagSelectorProps>(), {
   maxSelection: 10,
+  initialSelected: () => [],
 });
 
 

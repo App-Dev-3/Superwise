@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { useI18n } from "vue-i18n";
 
 interface SupervisorStatisticsProps {
   currentlySupervising: number;
@@ -12,8 +11,6 @@ interface SupervisorStatisticsProps {
 }
 
 const props = defineProps<SupervisorStatisticsProps>();
-
-const { t } = useI18n();
 
 </script>
 

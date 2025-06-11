@@ -29,6 +29,16 @@
     "search": "Search",
     "searchPlaceholder": "Search..."
   },
+  "appTour": {
+    "dashboard": {
+      "student": {
+        "alt": "Picture showing on how the dashbaord works",
+        "description": "Efforlessly navigate the dashboard and get an overview of your current state in the request progress, matches, and much more...",
+        "title": "Navigate the Dashboard"
+      }
+    },
+    "finish": "Finish..."
+  },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",
     "details": "Confirmation Details",
@@ -97,6 +107,7 @@
     "admin": "Admin",
     "cancel": "Cancel",
     "chatRequest": "Chat request",
+    "close": "Close",
     "continue": "Continue",
     "delete": "delete",
     "download": "download",
@@ -126,7 +137,10 @@
     "tags": "Tags",
     "thesisDescription": "Thesis description",
     "undo": "Undo",
-    "upload": "Upload"
+    "upload": "Upload",
+    "rejectedRequestTo": "Rejected request to",
+    "acceptedRequestTo": "Accepted request to",
+    "pendingRequestTo": "Pending request to"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",

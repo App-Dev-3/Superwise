@@ -29,6 +29,16 @@
     "search": "Suche",
     "searchPlaceholder": "Suchen..."
   },
+  "appTour": {
+    "dashboard": {
+      "student": {
+        "alt": "Bild das zeigt wie das Dashboard funktioniert",
+        "description": "Verwende das dashboard um einen Überblick über den aktuellen stand der dinge, anfragen und noch vieles weitere zu bekommen...",
+        "title": "Navigiere das Dashboard"
+      }
+    },
+    "finish": "Abschließen..."
+  },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",
     "details": "Bestätigungsdetails",
@@ -97,6 +107,7 @@
     "admin": "Admin",
     "cancel": "Abbrechen",
     "chatRequest": "Chat-Anfrage",
+    "close": "Schließen",
     "continue": "Weiter",
     "delete": "Löschen",
     "download": "Herunterladen",
@@ -126,7 +137,10 @@
     "tags": "Tags",
     "thesisDescription": "Thesis-Beschreibung",
     "undo": "rückgängig machen",
-    "upload": "Importieren"
+    "upload": "Importieren",
+    "rejectedRequestTo": "Abgelehnte Anfrage an",
+    "acceptedRequestTo": "Akzeptierte Anfrage an",
+    "pendingRequestTo": "Ausstehende Anfrage an"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",

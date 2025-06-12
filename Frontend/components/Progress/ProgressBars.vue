@@ -14,7 +14,7 @@ const props = defineProps<ProgressBarProps>();
     <div
         v-for="i in props.totalSteps"
         :key="i"
-        :class="{'bg-primary': props.currentStep >= i-1, 'bg-base-300': props.currentStep < i-1}"
+        :class="{'bg-primary opacity-75': props.currentStep >= i-1, 'bg-base-300': props.currentStep < i-1}"
         class="h-3 w-full rounded-full"
     />
   </div>

@@ -70,39 +70,10 @@ definePageMeta({
         right-icon="xmark"
         @right-button-click="close"
     />
-    <div class="flex-1 min-h-0 size-full p-4 flex flex-col gap-4 overflow-y-auto">
-      <ProgressBars
-          :current-step="currentStep"
-          :total-steps="steps.length"
-      />
-
-      <div
-          class="flex-1 min-h-0 w-fit flex self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip">
-        <img
-            v-if="steps[currentStep].source.endsWith('jpeg')"
-            :alt="steps[currentStep].alt"
-            :src="steps[currentStep].source"
-            class="max-h-full w-auto object-cover"
-        >
-        <video
-            v-else
-            autoplay
-            class="max-h-full w-auto object-cover"
-            loop
-        >
-          <source :src="steps[currentStep].source">
-        </video>
-      </div>
-
-      <div class="flex flex-col gap-2 w-full h-fit">
-        <h2 class="text-large">
-          {{ steps[currentStep].title }}
-        </h2>
-        <p class="text-body">
-          {{ steps[currentStep].description }}
-        </p>
-      </div>
-    </div>
+    <AppTour
+        :current-step="currentStep"
+        :steps="steps"
+    />
     <div class="flex w-full h-fit p-8 pt-0 gap-3">
       <CustomButton
           :text="t('appHeader.back')"
@@ -121,7 +92,3 @@ definePageMeta({
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

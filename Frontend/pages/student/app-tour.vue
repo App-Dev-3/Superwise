@@ -33,11 +33,18 @@ const steps = [
 const currentStep = ref(0);
 
 function next() {
+  if (currentStep.value === steps.length - 1) {
+    close();
+  }
   currentStep.value = Math.min(steps.length - 1, currentStep.value + 1);
 }
 
 function back() {
   currentStep.value = Math.max(0, currentStep.value - 1);
+}
+
+function close() {
+  navigateTo('/student/dashboard');
 }
 
 const nextText = computed(() => {
@@ -49,27 +56,33 @@ const nextText = computed(() => {
   }
 });
 
+definePageMeta({
+  layout: "onboarding-layout",
+});
+
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col size-full">
     <AdminHeader
         :header-text="t('nav.appTour')"
         :right-button="t('generic.close')"
         right-icon="xmark"
+        @right-button-click="close"
     />
-    <div class="size-full p-8 gap-4">
+    <div class="size-full p-8 flex flex-col gap-4 overflow-y-auto">
       <ProgressBars
           :current-step="currentStep"
           :total-steps="steps.length"
       />
 
-      <div class="size-full border-4 border-base-300">
+      <div
+          class="h-full w-fit self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip max-h-[60vh]">
         <img
             v-if="steps[currentStep].source.endsWith('jpeg')"
             :alt="steps[currentStep].alt"
             :src="steps[currentStep].source"
-            class="size-full"
+            class="h-full w-auto object-cover"
         >
         <video
             v-else
@@ -92,16 +105,17 @@ const nextText = computed(() => {
     </div>
     <div class="flex w-full h-fit p-8 pt-0 gap-3">
       <CustomButton
-          :is-active="currentStep != 0"
           :text="t('appHeader.back')"
-          btn-type="default"
-          wide
+          block
+          color="default"
+          left-icon="arrow-left"
           @click="back"
       />
       <CustomButton
           :text="nextText"
-          btn-type="primary"
-          wide
+          block
+          color="primary"
+          right-icon="arrow-right"
           @click="next"
       />
     </div>

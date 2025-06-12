@@ -82,10 +82,10 @@ function removeTag(tag) {
       v-model="searchValue"
       :label="t('tagSelector.label')"
       :placeholder="t('tagSelector.search')"
-      @keydown.enter.prevent
       class="h-fit"
       clearable
       right-icon="xmark"
+      @keydown.enter.prevent
     />
 
     <div class="flex flex-wrap gap-2 p-3" data-test="selected-tags">

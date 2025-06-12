@@ -215,15 +215,15 @@ watch(
       "
       :image-src="undefined"
       :main-text="
-        t('supervisorStudentList.removeStudent.mainText', {
+        t('settings.supervisorStudentList.removeStudent.mainText', {
           firstName: studentToRemove?.firstName,
           lastName: studentToRemove?.lastName,
         })
       "
-      :confirm-text="t('supervisorStudentList.removeStudent.confirmText')"
-      :checkbox-label="t('supervisorStudentList.checkboxLabel')"
+      :confirm-text="t('settings.supervisorStudentList.removeStudent.confirmText')"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
       setting-key="showRemoveStudentModal"
-      :title="t('supervisorStudentList.removeStudent.title')"
+      :title="t('settings.supervisorStudentList.removeStudent.title')"
       icon="trash"
       @confirm="confirmRemoveStudent"
     />
@@ -242,18 +242,18 @@ watch(
       "
       :image-src="modal_user?.profile_image || undefined"
       :main-text="
-        t('supervisorStudentList.addExistingStudent.mainText', {
+        t('settings.supervisorStudentList.addExistingStudent.mainText', {
           firstName: modal_user?.first_name,
           lastName: modal_user?.last_name,
         })
       "
       :show-checkbox="true"
-      :checkbox-label="t('supervisorStudentList.checkboxLabel')"
-      :confirm-text="t('supervisorStudentList.addExistingStudent.confirmText')"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
+      :confirm-text="t('settings.supervisorStudentList.addExistingStudent.confirmText')"
       icon="user-group"
       setting-key="showAddStudentModal"
-      :sub-text="t('supervisorStudentList.addExistingStudent.subText')"
-      :title="t('supervisorStudentList.addExistingStudent.title')"
+      :sub-text="t('settings.supervisorStudentList.addExistingStudent.subText')"
+      :title="t('settings.supervisorStudentList.addExistingStudent.title')"
       @confirm="addStudent"
     />
 
@@ -262,19 +262,19 @@ watch(
       ref="modalNotExistingStudentRef"
       :email="emailAddress"
       :main-text="
-        t('supervisorStudentList.addNewStudent.mainText', {
+        t('settings.supervisorStudentList.addNewStudent.mainText', {
           emailAddress: emailAddress,
         })
       "
       :show-checkbox="true"
-      :checkbox-label="t('supervisorStudentList.checkboxLabel')"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
       confirm-text=""
       icon="user-group"
       image-alt="Logo"
       image-src="../images/Superwise_Logo.svg"
       setting-key="showAddStudentModal"
-      :sub-text="t('supervisorStudentList.addExistingStudent.subText')"
-      :title="t('supervisorStudentList.addNewStudent.title')"
+      :sub-text="t('settings.supervisorStudentList.addExistingStudent.subText')"
+      :title="t('settings.supervisorStudentList.addNewStudent.title')"
       @confirm="addStudent"
     />
   </div>

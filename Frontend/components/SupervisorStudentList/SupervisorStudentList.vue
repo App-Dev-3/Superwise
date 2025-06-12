@@ -10,9 +10,9 @@ import { useSettingsStore } from "~/stores/useSettingsStore";
 import { useI18n } from "vue-i18n";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
 
-const authStore = useAuthStore()
-await authStore.initialize()
-const { user } = storeToRefs(authStore)
+const authStore = useAuthStore();
+await authStore.initialize();
+const { user } = storeToRefs(authStore);
 const userStore = useUserStore();
 const { getSupervisorByUserId } = useSupervisorApi();
 const { getUserByEmail } = useUserApi();
@@ -41,12 +41,17 @@ interface SupervisorStudentListProps {
 // Define props for the component
 const props = defineProps<SupervisorStudentListProps>();
 
+// Modal refs
 const modalExistingStudentRef = ref<InstanceType<typeof CustomModal> | null>(
-    null
+  null
 );
 const modalNotExistingStudentRef = ref<InstanceType<typeof CustomModal> | null>(
-    null
+  null
 );
+const removeModalRef = ref<InstanceType<typeof CustomModal> | null>(null);
+
+// Track which student is pending removal
+const studentToRemove = ref<Student | null>(null);
 
 // Handle edit button click
 const isEditing = ref(false);
@@ -57,15 +62,21 @@ const toggleEdit = () => {
 const modal_user = ref<UserData | null>(null);
 
 // Emit events when students are updated
-const emit = defineEmits([ "remove-student", "add-student" ]);
+const emit = defineEmits(["remove-student", "add-student"]);
 
-// Function to remove a student
-const removeStudent = (studentId: string) => {
-  if (!isEditing.value) {
-    return;
+// Function to prompt remove confirmation
+const promptRemoveStudent = (student: Student) => {
+  if (!isEditing.value) return;
+  studentToRemove.value = student;
+  removeModalRef.value?.show();
+};
+
+// Confirm removal
+const confirmRemoveStudent = () => {
+  if (studentToRemove.value) {
+    emit("remove-student", studentToRemove.value.id);
+    studentToRemove.value = null;
   }
-
-  emit("remove-student", studentId);
 };
 
 const emailAddress = ref("");
@@ -76,13 +87,8 @@ const updateMail = (value: string) => {
   emailAddress.value = value;
 };
 
-const editButtonLabel = computed(() => {
-  return isEditing.value ? "Done" : "Edit";
-});
-
-const editButtonIcon = computed(() => {
-  return isEditing.value ? "check" : "edit";
-});
+const editButtonLabel = computed(() => (isEditing.value ? "Done" : "Edit"));
+const editButtonIcon = computed(() => (isEditing.value ? "check" : "edit"));
 
 const confirm = async () => {
   if (!emailAddress.value) return;
@@ -92,14 +98,13 @@ const confirm = async () => {
   }
   try {
     modal_user.value = await getUserByEmail(emailAddress.value);
-
     modalExistingStudentRef.value?.show();
   } catch (err: unknown) {
     if (
-        typeof err === "object" &&
-        err !== null &&
-        "statusCode" in err &&
-        (err as { statusCode: number }).statusCode === 404
+      typeof err === "object" &&
+      err !== null &&
+      "statusCode" in err &&
+      (err as { statusCode: number }).statusCode === 404
     ) {
       modalNotExistingStudentRef.value?.show();
     } else {
@@ -110,33 +115,28 @@ const confirm = async () => {
 
 const addStudent = () => {
   if (emailAddress.value) {
-    // const email = `${emailAddress.value}@${emailDomain}`;
     emit("add-student", emailAddress.value);
-
-    // Clear the input
     clearInput.value = true;
     emailAddress.value = "";
   }
 };
 
 watch(
-    () => user.value?.primaryEmailAddress?.emailAddress,
-    async (email) => {
-      if (!email) return;
-
-      if (!userStore.user) {
-        const fetched = (await getUserByEmail(email)) as UserData;
-        userStore.setUser(fetched);
-      }
-      current_user.value = userStore.user;
-
-      if (current_user.value?.id) {
-        supervisor_data.value = (await getSupervisorByUserId(
-            current_user.value.id
-        )) as SupervisorData;
-      }
-    },
-    { immediate: true }
+  () => user.value?.primaryEmailAddress?.emailAddress,
+  async (email) => {
+    if (!email) return;
+    if (!userStore.user) {
+      const fetched = (await getUserByEmail(email)) as UserData;
+      userStore.setUser(fetched);
+    }
+    current_user.value = userStore.user;
+    if (current_user.value?.id) {
+      supervisor_data.value = (await getSupervisorByUserId(
+        current_user.value.id
+      )) as SupervisorData;
+    }
+  },
+  { immediate: true }
 );
 </script>
 
@@ -145,67 +145,94 @@ watch(
     <div class="flex flex-col w-full gap-4 px-8 py-3">
       <div class="flex flex-row w-full justify-between items-center px-2">
         <span class="text-x-small"
-        >{{ props.students.length }}/{{ props.maxStudents }}</span
+          >{{ props.students.length }}/{{ props.maxStudents }}</span
         >
         <CustomButton
-            :left-icon="editButtonIcon"
-            :text="editButtonLabel"
-            color="default"
-            size="xs"
-            variant="ghost"
-            @click="toggleEdit"
+          :left-icon="editButtonIcon"
+          :text="editButtonLabel"
+          color="default"
+          size="xs"
+          variant="ghost"
+          @click="toggleEdit"
         />
       </div>
 
       <div
-          class="min-h-64 max-h-96 overflow-y-auto flex flex-col gap-2 border-t border-b border-base-300"
+        class="min-h-64 max-h-96 overflow-y-auto flex flex-col gap-2 border-t border-b border-base-300"
       >
-
         <!-- Student List -->
         <NuxtLink
-            v-for="student in students" :key="student.id"
-            :to="!isEditing ? `/profiles/${student.id}` : ''"
-            actions
-            comment-more
+          v-for="student in students"
+          :key="student.id"
+          :to="!isEditing ? `/profiles/${student.id}` : ''"
+          actions
+          comment-more
         >
           <StudentCard
-              :edit-mode="isEditing"
-              :email="student.email"
-              :first-name="student.firstName"
-              :img-src="student.src"
-              :last-name="student.lastName"
-              @click="removeStudent(student.id)"
+            :edit-mode="isEditing"
+            :email="student.email"
+            :first-name="student.firstName"
+            :img-src="student.src"
+            :last-name="student.lastName"
+            @click="() => promptRemoveStudent(student)"
           />
         </NuxtLink>
         <EmptyPagePlaceholder
-            :render-condition="students"
-            :text="t('supervisor.noStudents')"
+          :render-condition="students"
+          :text="t('supervisor.noStudents')"
         />
       </div>
 
       <div v-if="isEditing" class="flex flex-row gap-3 w-full">
         <ValidatedMailInput
-            :clear-input="clearInput"
-            :domain="emailDomain"
-            error-message="Invalid email address"
-            placeholder="Add Student..."
-            @update:model-value="updateMail"
-            @update:input-cleared="clearInput = false"
-            @keyup.enter="confirm"
+          :clear-input="clearInput"
+          :domain="emailDomain"
+          error-message="Invalid email address"
+          placeholder="Add Student..."
+          @update:model-value="updateMail"
+          @update:input-cleared="clearInput = false"
+          @keyup.enter="confirm"
         />
         <CustomButton
-            color="default"
-            left-icon="plus"
-            text=""
-            @click="confirm"
+          color="default"
+          left-icon="plus"
+          text=""
+          @click="confirm"
         />
       </div>
     </div>
 
+    <!-- Removal Confirmation Modal -->
     <CustomModal
-        ref="modalExistingStudentRef"
-        :email="modal_user?.email"
-        :image-alt="
+      ref="removeModalRef"
+      :image-alt="
+        studentToRemove
+          ? 'Profile image of ' +
+            studentToRemove?.firstName +
+            ' ' +
+            studentToRemove?.lastName
+          : ''
+      "
+      :image-src="undefined"
+      :main-text="
+        t('settings.supervisorStudentList.removeStudent.mainText', {
+          firstName: studentToRemove?.firstName,
+          lastName: studentToRemove?.lastName,
+        })
+      "
+      :confirm-text="t('settings.supervisorStudentList.removeStudent.confirmText')"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
+      setting-key="showRemoveStudentModal"
+      :title="t('settings.supervisorStudentList.removeStudent.title')"
+      icon="trash"
+      @confirm="confirmRemoveStudent"
+    />
+
+    <!-- Existing Student Modal -->
+    <CustomModal
+      ref="modalExistingStudentRef"
+      :email="modal_user?.email"
+      :image-alt="
         modal_user
           ? 'Profile image of ' +
             modal_user.first_name +
@@ -213,32 +240,42 @@ watch(
             modal_user.last_name
           : ''
       "
-        :image-src="modal_user?.profile_image || undefined"
-        :main-text="`Would you like to supervise ${modal_user?.first_name} ${modal_user?.last_name}?`"
-        :show-checkbox="true"
-        checkbox-label="Don't show again"
-        confirm-text="Supervise Student"
-        icon="user-group"
-        setting-key="showAddStudentModal"
-        sub-text="They will get notified that you are supervising them!"
-        title="Supervise Student"
-        @confirm="addStudent"
+      :image-src="modal_user?.profile_image || undefined"
+      :main-text="
+        t('settings.supervisorStudentList.addExistingStudent.mainText', {
+          firstName: modal_user?.first_name,
+          lastName: modal_user?.last_name,
+        })
+      "
+      :show-checkbox="true"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
+      :confirm-text="t('settings.supervisorStudentList.addExistingStudent.confirmText')"
+      icon="user-group"
+      setting-key="showAddStudentModal"
+      :sub-text="t('settings.supervisorStudentList.addExistingStudent.subText')"
+      :title="t('settings.supervisorStudentList.addExistingStudent.title')"
+      @confirm="addStudent"
     />
 
+    <!-- Not Existing Student Modal -->
     <CustomModal
-        ref="modalNotExistingStudentRef"
-        :email="emailAddress"
-        :main-text="`Would you like to supervise ${emailAddress}? They are not registered on SuperWise, but will get notified via mail.`"
-        :show-checkbox="true"
-        checkbox-label="Don't show again"
-        confirm-text="Supervise Student"
-        icon="user-group"
-        image-alt="Logo"
-        image-src="../images/Superwise_Logo.svg"
-        setting-key="showAddStudentModal"
-        sub-text="They will get notified that you are supervising them!"
-        title="Supervise Student"
-        @confirm="addStudent"
+      ref="modalNotExistingStudentRef"
+      :email="emailAddress"
+      :main-text="
+        t('settings.supervisorStudentList.addNewStudent.mainText', {
+          emailAddress: emailAddress,
+        })
+      "
+      :show-checkbox="true"
+      :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
+      confirm-text=""
+      icon="user-group"
+      image-alt="Logo"
+      image-src="../images/Superwise_Logo.svg"
+      setting-key="showAddStudentModal"
+      :sub-text="t('settings.supervisorStudentList.addExistingStudent.subText')"
+      :title="t('settings.supervisorStudentList.addNewStudent.title')"
+      @confirm="addStudent"
     />
   </div>
 </template>
@@ -247,7 +284,6 @@ watch(
 .border-1 {
   border-width: 1px;
 }
-
 .text-x-small {
   font-size: 0.75rem;
 }

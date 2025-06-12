@@ -57,6 +57,7 @@ export interface UserSettingsData {
     showSupervisionRequestModal?: boolean
     showDismissModal?: boolean
     showAddStudentModal?: boolean
+    showRemoveStudentModal?: boolean
     showSupervisionAcceptModal?: boolean
     showSupervisionRejectModal?: boolean
 }

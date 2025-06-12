@@ -50,7 +50,7 @@ function close() {
 const nextText = computed(() => {
   switch (currentStep.value) {
     case steps.length - 1:
-      return t('appTour.finish');
+      return t('generic.close');
     default:
       return t('multiStepForm.next');
   }
@@ -70,14 +70,14 @@ definePageMeta({
         right-icon="xmark"
         @right-button-click="close"
     />
-    <div class="size-full p-8 flex flex-col gap-4 overflow-y-auto">
+    <div class="size-full p-4 flex flex-col gap-4 overflow-y-auto">
       <ProgressBars
           :current-step="currentStep"
           :total-steps="steps.length"
       />
 
       <div
-          class="h-full w-fit self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip max-h-[60vh]">
+          class="h-full w-fit flex self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip max-h-[60vh]">
         <img
             v-if="steps[currentStep].source.endsWith('jpeg')"
             :alt="steps[currentStep].alt"

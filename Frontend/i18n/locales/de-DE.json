@@ -285,10 +285,33 @@
     "supervisor": {
       "acceptingDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage angenommen wird",
       "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
-      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird",
+      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung hinzufügen",
       "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
+      "removeStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung entfernen",
+      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung",
       "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
       "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
+    },
+    "supervisorStudentList": {
+      "checkboxLabel": "Nicht erneut anzeigen",
+      "addExistingStudent": {
+        "mainText": "Möchten Sie {firstName} {lastName} betreuen?",
+        "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
+        "confirmText": "Studierenden betreuen",
+        "title": "Studierenden betreuen"
+      },
+      "addNewStudent": {
+        "mainText": "Möchten Sie {emailAddress} betreuen? Er/Sie ist noch nicht auf SuperWise registriert, wird aber per E-Mail benachrichtigt.",
+        "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
+        "title": "Studierenden betreuen",
+        "confirmText": "Studierenden betreuen"
+      },
+      "removeStudent": {
+        "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
+        "subText": "",
+        "confirmText": "Studierenden entfernen",
+        "title": "Studierenden entfernen"
+      }
     },
     "theme": {
       "description": "App Design auswählen",

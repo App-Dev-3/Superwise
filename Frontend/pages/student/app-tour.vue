@@ -63,31 +63,31 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="flex flex-col size-full">
+  <div class="flex flex-col size-full min-h-0">
     <AdminHeader
         :header-text="t('nav.appTour')"
         :right-button="t('generic.close')"
         right-icon="xmark"
         @right-button-click="close"
     />
-    <div class="size-full p-4 flex flex-col gap-4 overflow-y-auto">
+    <div class="flex-1 min-h-0 size-full p-4 flex flex-col gap-4 overflow-y-auto">
       <ProgressBars
           :current-step="currentStep"
           :total-steps="steps.length"
       />
 
       <div
-          class="h-full w-fit flex self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip max-h-[60vh]">
+          class="flex-1 min-h-0 w-fit flex self-center border-4 border-base-300 rounded-3xl shadow-inner overflow-clip">
         <img
             v-if="steps[currentStep].source.endsWith('jpeg')"
             :alt="steps[currentStep].alt"
             :src="steps[currentStep].source"
-            class="h-full w-auto object-cover"
+            class="max-h-full w-auto object-cover"
         >
         <video
             v-else
             autoplay
-            class="size-full"
+            class="max-h-full w-auto object-cover"
             loop
         >
           <source :src="steps[currentStep].source">

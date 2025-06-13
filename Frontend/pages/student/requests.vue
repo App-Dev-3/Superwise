@@ -1,7 +1,11 @@
 <script lang="ts" setup>
 import { useStudentStore } from "~/stores/useStudentStore";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
-import { supervisionRequestStatus, supervisionRequestType, HttpMethods } from "~/shared/enums/enums";
+import {
+  supervisionRequestStatus,
+  supervisionRequestType,
+  HttpMethods,
+} from "~/shared/enums/enums";
 import type { ConfirmationDialogData } from "~/shared/types/userInterfaces";
 import { nextTick, ref } from "vue";
 import type { SupervisionRequestsData } from "~/shared/types/supervisorInterfaces";
@@ -11,8 +15,9 @@ const { t } = useI18n();
 const studentStore = useStudentStore();
 const settingsStore = useSettingsStore();
 
-const { pendingSupervisionRequests, rejectedSupervisionRequests } = storeToRefs(studentStore)
-const modalInformation = ref<ConfirmationDialogData | null>(null)
+const { pendingSupervisionRequests, rejectedSupervisionRequests } =
+  storeToRefs(studentStore);
+const modalInformation = ref<ConfirmationDialogData | null>(null);
 const toast = ref({
   visible: false,
   type: "success",
@@ -30,10 +35,9 @@ onUnmounted(async () => {
 });
 
 const sortedRequests = computed(() => {
-  return [ ...(pendingSupervisionRequests.value || []) ]
-      .sort((a, b) => {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      })
+  return [...(pendingSupervisionRequests.value || [])].sort((a, b) => {
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 });
 
 function navigate(route: string) {
@@ -44,16 +48,16 @@ async function handleWithdrawRequest(request: SupervisionRequestsData) {
   if (toast.value.visible && modalInformation.value) {
     await handleToastClosed();
   }
-   modalInformation.value = {
+  modalInformation.value = {
     type: supervisionRequestType.DISMISS,
-    headline: t('modal.withdrawSupervisionHeadline'),
-    icon: '',
-    warning: '',
-    description: t('modal.withdrawSupervisionDescription', {
-      name: `${request.supervisor.user.first_name} ${request.supervisor.user.last_name}`
+    headline: t("modal.withdrawSupervisionHeadline"),
+    icon: "",
+    warning: "",
+    description: t("modal.withdrawSupervisionDescription", {
+      name: `${request.supervisor.user.first_name} ${request.supervisor.user.last_name}`,
     }),
-    confirmButtonText: t('modal.withdrawSupervisionConfirm'),
-    confirmButtonColor: 'error',
+    confirmButtonText: t("modal.withdrawSupervisionConfirm"),
+    confirmButtonColor: "error",
     request: request,
   };
   if (settingsStore.settings?.showSupervisionAcceptModal) {
@@ -78,7 +82,7 @@ const handleToastClosed = () => {
 };
 
 const handleWithdrawAction = async (request: SupervisionRequestsData) => {
-   try {
+  try {
     await $fetch(`/api/supervision-requests/${request.id}`, {
       method: HttpMethods.PATCH,
       body: {
@@ -91,11 +95,11 @@ const handleWithdrawAction = async (request: SupervisionRequestsData) => {
     toast.value = {
       visible: true,
       type: "error",
-      message: t('toast.withdrawRequestFailed'),
+      message: t("toast.withdrawRequestFailed"),
     };
     modalInformation.value = null;
   }
-}
+};
 
 const handleToastUndoClick = async () => {
   toast.value.visible = false;
@@ -110,12 +114,14 @@ const showToastInformation = () => {
     handleToastClosed();
   }
   if (modalInformation.value?.request) {
-    studentStore.removePendingSupervisionRequest(modalInformation.value.request.id);
+    studentStore.removePendingSupervisionRequest(
+      modalInformation.value.request.id
+    );
   }
   toast.value = {
     visible: true,
     type: "success",
-    message: t('toast.withdrawnRequest'),
+    message: t("toast.withdrawnRequest"),
   };
 };
 
@@ -128,9 +134,11 @@ const handleModalDontShowAgain = () => {
 
 const openModal = async () => {
   await nextTick();
-  const modal = document.getElementById('confirmationModal') as HTMLDialogElement
-  modal?.showModal()
-}
+  const modal = document.getElementById(
+    "confirmationModal"
+  ) as HTMLDialogElement;
+  modal?.showModal();
+};
 
 definePageMeta({
   layout: "student-base-layout",
@@ -140,18 +148,18 @@ definePageMeta({
 <template>
   <div class="size-full flex overflow-y-auto flex-col py-3 px-8">
     <MiniCard
-        v-for="pendingRequest in sortedRequests"
-        :key="pendingRequest.id"
-        :bottom-text="new Date(pendingRequest.updated_at).toLocaleDateString()"
-        :first-name="pendingRequest.supervisor.user.first_name"
-        :image="pendingRequest.supervisor.user.profile_image"
-        :last-name="pendingRequest.supervisor.user.last_name"
-        :preview-text="`Pending Request to ${pendingRequest.supervisor.user.first_name}`"
-        bottom-icon="tag"
-        class="cursor-pointer"
-        top-icon="user-group"
-        :show-delete="true"
-        @delete-clicked="handleWithdrawRequest(pendingRequest)"
+      v-for="pendingRequest in sortedRequests"
+      :key="pendingRequest.id"
+      :bottom-text="new Date(pendingRequest.updated_at).toLocaleDateString()"
+      :first-name="pendingRequest.supervisor.user.first_name"
+      :image="pendingRequest.supervisor.user.profile_image"
+      :last-name="pendingRequest.supervisor.user.last_name"
+      :preview-text="t('miniCard.pending', {firstName: pendingRequest.supervisor.user.first_name})"
+      bottom-icon="tag"
+      class="cursor-pointer"
+      top-icon="user-group"
+      :show-delete="true"
+      @delete-clicked="handleWithdrawRequest(pendingRequest)"
     />
 
     <EmptyPagePlaceholder
@@ -185,28 +193,33 @@ definePageMeta({
       />
     </CustomAccordion>
     <Toast
-        v-if="toast.visible"
-        :duration="3000"
-        :message="toast.message"
-        :type="toast.type"
-        button-text="Undo"
-        @close="handleToastClosed"
-        @button-click="handleToastUndoClick"
+      v-if="toast.visible"
+      :duration="3000"
+      :message="toast.message"
+      :type="toast.type"
+      button-text="Undo"
+      @close="handleToastClosed"
+      @button-click="handleToastUndoClick"
     />
     <ConfirmationModal
-        v-if="modalInformation && modalInformation.request"
-        :confirm-button-color="modalInformation.confirmButtonColor"
-        :confirm-button-text="modalInformation.confirmButtonText"
-        :description="modalInformation.description"
-        :headline="modalInformation.headline"
-        :icon="modalInformation.icon"
-        :image="modalInformation.request.supervisor.user.profile_image || getPlaceholderImage(modalInformation.request.supervisor.user.first_name, modalInformation.request.supervisor.user.last_name)"
-        linked-component-id="confirmationModal"
-        @confirm="showToastInformation()"
-        @dont-show-again="handleModalDontShowAgain"
+      v-if="modalInformation && modalInformation.request"
+      :confirm-button-color="modalInformation.confirmButtonColor"
+      :confirm-button-text="modalInformation.confirmButtonText"
+      :description="modalInformation.description"
+      :headline="modalInformation.headline"
+      :icon="modalInformation.icon"
+      :image="
+        modalInformation.request.supervisor.user.profile_image ||
+        getPlaceholderImage(
+          modalInformation.request.supervisor.user.first_name,
+          modalInformation.request.supervisor.user.last_name
+        )
+      "
+      linked-component-id="confirmationModal"
+      @confirm="showToastInformation()"
+      @dont-show-again="handleModalDontShowAgain"
     />
   </div>
-
 </template>
 
 <style scoped></style>

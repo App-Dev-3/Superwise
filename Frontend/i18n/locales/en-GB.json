@@ -211,7 +211,7 @@
     "name": {
       "title": "Enter your Name"
     },
-    "processing": "Processing information, please wait..."
+    "processing": "Processing information, please wait "
   },
   "profile": {
     "availableSlots": "{0} out of {1} slots are still open.",
@@ -287,6 +287,8 @@
       "acceptingTitle": "Supervision request Accept Modal",
       "addStudentDescription": "Show confirmation modal when adding a student to supervise in the add view.",
       "addStudentTitle": "Add Student to Supervise Modal",
+      "removeStudentDescription": "Show confirmation modal when removing a student to supervise in the add view.",
+      "removeStudentTitle": "Remove Student to Supervise Modal",
       "rejectDescription": "Show confirmation modal when rejecting a supervision request",
       "rejectTitle": "Supervision request Reject Modal"
     },
@@ -314,6 +316,27 @@
     "pending": "Pending requests",
     "profilePictureAlt": "Profile Picture of {firstName} {lastName}",
     "similarityScore": "Similarity score"
+  },
+  "supervisorStudentList": {
+    "checkboxLabel": "Don't show again",
+    "addExistingStudent": {
+      "mainText": "Would you like to supervise {firstName} {lastName}?",
+      "subText": "They will get notified that you are supervising them!",
+      "confirmText": "Supervise Student",
+      "title": "Supervise Student"
+    },
+    "addNewStudent": {
+      "mainText": "Would you like to supervise {emailAddress}? They are not registered on SuperWise, but will get notified via mail.",
+      "subText": "They will get notified that you are supervising them!",
+      "title": "Supervise Student",
+      "confirmText": "Supervise Student"
+    },
+    "removeStudent": {
+      "mainText": "Are you sure you want to remove {firstName} {lastName}?",
+      "subText": "",
+      "confirmText": "Remove Student",
+      "title": "Remove Student"
+    }
   },
   "tagPriority": {
     "arrangeByPriority": "Arrange tags by priority",

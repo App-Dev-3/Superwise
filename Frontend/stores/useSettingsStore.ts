@@ -12,6 +12,7 @@ export const useSettingsStore = defineStore('settings', () => {
     showSupervisionAcceptModal: true,
     showSupervisionRejectModal: true,
     showAddStudentModal: true,
+    showRemoveStudentModal: true,
   }
 
   // Reactive state
@@ -91,6 +92,11 @@ export const useSettingsStore = defineStore('settings', () => {
     set: (val: boolean) => setSettings({ showAddStudentModal: val }),
   })
 
+  const showRemoveStudentModal = computed({
+    get: () => settings.value.showRemoveStudentModal ?? defaultSettings.showRemoveStudentModal,
+    set: (val: boolean) => setSettings({ showRemoveStudentModal: val }),
+  })
+
   function setNotificationId(id: string) {
     notificationId.value = id
   }
@@ -109,5 +115,6 @@ export const useSettingsStore = defineStore('settings', () => {
     showSupervisionAcceptModal,
     showSupervisionRejectModal,
     showAddStudentModal,
+    showRemoveStudentModal
   }
 })

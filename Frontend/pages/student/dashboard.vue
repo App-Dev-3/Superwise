@@ -19,7 +19,7 @@
       >
         <CustomMessage :message="t('onboarding.completed')" type="success"/>
         <ActionCard
-            v-if="matches.length"
+            v-if="matches"
             :button-text="t('dashboard.student.startMatching')"
             card-type="primary"
             @action-button-clicked="navigate('/student/matching')"
@@ -30,16 +30,16 @@
             </h2>
             <CardStack :amount="3" @click="navigate('/student/matching')">
               <SupervisorCard
-                  :current-capacity="matches[0].availableSpots"
-                  :description="matches[0].bio"
-                  :first-name="matches[0].firstName || ''"
-                  :image="matches[0].profileImage"
-                  :last-name="matches[0].lastName || ''"
-                  :max-capacity="matches[0].totalSpots"
+                  :current-capacity="matches.availableSpots"
+                  :description="matches.bio"
+                  :first-name="matches.firstName || ''"
+                  :image="matches.profileImage"
+                  :last-name="matches.lastName || ''"
+                  :max-capacity="matches.totalSpots"
                   :similarity-score="
-                      Math.round((matches[0].compatibilityScore as number) * 100)
+                      Math.round((matches.compatibilityScore as number) * 100)
                     "
-                  :tags="matches[0].tags"
+                  :tags="matches.tags"
                   name="Hello name"
                   size="xs"
               />
@@ -186,7 +186,13 @@ const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 const studentStore = useStudentStore();
 
-const isLoading = ref(true);
+const isLoading = computed(() => {
+  return supervisorStore.supervisors.length === 0 && acceptedSupervisionRequests.value.length === 0;
+});
+
+const matches = computed(() => {
+  return supervisorStore.supervisors[0]
+});
 
 const dashboardState = computed(() => studentStore.dashboardState);
 const supervisionRequestsSentByCurrentStudent = computed(() =>
@@ -242,12 +248,10 @@ onMounted(async () => {
                 userStore.user.id
             )) as SupervisorData[];
             supervisorStore.setSupervisors(res);
-            matches.value = res;
         }
     } catch (error) {
         console.error("Error fetching supervision requests or user data:", error);
     } finally {
-        isLoading.value = false;
     }
 });
 
@@ -271,8 +275,6 @@ watch(
     },
     { immediate: true }
 );
-
-const matches = ref([] as SupervisorData[]);
 
 function navigate(route: string) {
   navigateTo(route);

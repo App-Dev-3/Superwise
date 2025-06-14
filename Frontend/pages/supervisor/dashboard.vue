@@ -2,11 +2,10 @@
 import { ref, watch } from "vue";
 import { useUserStore } from "~/stores/useUserStore";
 import type { UserData } from "#shared/types/userInterfaces";
-import type { SupervisorData } from "#shared/types/supervisorInterfaces";
+import type { SupervisorData, SupervisionRequestsData  } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
-import type { SupervisionRequestsData } from "#shared/types/supervisorInterfaces";
 
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)

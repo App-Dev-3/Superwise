@@ -183,7 +183,7 @@ watch(
         />
       </div>
 
-      <div v-if="isEditing" class="flex flex-row gap-3 w-full">
+      <div class="flex flex-row gap-3 w-full">
         <ValidatedMailInput
           :clear-input="clearInput"
           :domain="emailDomain"

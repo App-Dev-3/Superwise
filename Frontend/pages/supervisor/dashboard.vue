@@ -6,16 +6,20 @@ import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
+import type { SupervisionRequestsData } from "#shared/types/supervisorInterfaces";
 
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
 const { getUserByEmail } = useUserApi();
 const { getSupervisorByUserId } = useSupervisorApi();
 const userStore = useUserStore();
+const supervisorStore = useSupervisorStore();
+
 
 const current_user = ref<UserData | null>(null);
-const supervisor_data = ref<SupervisorData | null>(null);
-
+const supervisor_data = computed(() => {
+  return supervisorStore.supervisors[0] || null;
+});
 const {
   data: pendingRequests,
 } = useSupervisionRequests("PENDING");
@@ -24,9 +28,10 @@ function navigate(route: string) {
   navigateTo(route);
 }
 
+console.log("supervisor", supervisorStore.supervisors);
 const visibleCount = ref(3);
 const visibleRequests = computed(
-    () => pendingRequests.value?.slice(0, visibleCount.value) ?? []
+    () => supervisorStore.supervisionRequests?.slice(0, visibleCount.value) ?? []
 );
 
 watch(
@@ -41,12 +46,23 @@ watch(
       current_user.value = userStore.user;
 
       if (current_user.value?.id) {
-        supervisor_data.value = (await getSupervisorByUserId(
+        const data = (await getSupervisorByUserId(
             current_user.value.id
         )) as SupervisorData;
+        supervisorStore.setSupervisors([data]);
       }
     },
     { immediate: true }
+);
+
+watch(
+  pendingRequests,
+  (newVal) => {
+    if (newVal) {
+      supervisorStore.setSupervisionRequests(newVal as SupervisionRequestsData[]);
+    }
+  },
+  { immediate: true }
 );
 
 const { t } = useI18n();
@@ -69,7 +85,7 @@ definePageMeta({
           <FontAwesomeIcon icon="user-group"/>
           {{
             // this works, even though the IDE tells you it doesnt. The frontend interface types are not consitent with the backend types. Dont ask why.
-            supervisor_data?.total_spots - supervisor_data?.available_spots
+            supervisorStore.supervisors[0].total_spots - supervisor_data?.available_spots
           }}/{{ supervisor_data?.total_spots }}
         </h2>
         <p class="text-md">

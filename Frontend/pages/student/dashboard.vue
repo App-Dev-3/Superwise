@@ -172,7 +172,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
 import { useUserStore } from "~/stores/useUserStore";
 import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
@@ -251,7 +250,6 @@ onMounted(async () => {
         }
     } catch (error) {
         console.error("Error fetching supervision requests or user data:", error);
-    } finally {
     }
 });
 

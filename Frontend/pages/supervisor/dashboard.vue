@@ -28,7 +28,6 @@ function navigate(route: string) {
   navigateTo(route);
 }
 
-console.log("supervisor", supervisorStore.supervisors);
 const visibleCount = ref(3);
 const visibleRequests = computed(
     () => supervisorStore.supervisionRequests?.slice(0, visibleCount.value) ?? []
@@ -85,7 +84,7 @@ definePageMeta({
           <FontAwesomeIcon icon="user-group"/>
           {{
             // this works, even though the IDE tells you it doesnt. The frontend interface types are not consitent with the backend types. Dont ask why.
-            supervisorStore.supervisors[0].total_spots - supervisor_data?.available_spots
+            supervisor_data.total_spots - supervisor_data?.available_spots
           }}/{{ supervisor_data?.total_spots }}
         </h2>
         <p class="text-md">

@@ -83,8 +83,8 @@ definePageMeta({
           <FontAwesomeIcon icon="user-group"/>
           {{
             // this works, even though the IDE tells you it doesnt. The frontend interface types are not consitent with the backend types. Dont ask why.
-            supervisor_data.total_spots - supervisor_data?.available_spots
-          }}/{{ supervisor_data?.total_spots }}
+            (supervisor_data?.total_spots ?? 0) - (supervisor_data?.available_spots ?? 0)
+            }}/{{ supervisor_data?.total_spots ?? 0 }}
         </h2>
         <p class="text-md">
           {{ t("dashboard.supervisor.slotsFilled") }}

@@ -292,27 +292,6 @@
       "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
       "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
     },
-    "supervisorStudentList": {
-      "checkboxLabel": "Nicht erneut anzeigen",
-      "addExistingStudent": {
-        "mainText": "Möchten Sie {firstName} {lastName} betreuen?",
-        "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
-        "confirmText": "Studierenden betreuen",
-        "title": "Studierenden betreuen"
-      },
-      "addNewStudent": {
-        "mainText": "Möchten Sie {emailAddress} betreuen? Er/Sie ist noch nicht auf SuperWise registriert, wird aber per E-Mail benachrichtigt.",
-        "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
-        "title": "Studierenden betreuen",
-        "confirmText": "Studierenden betreuen"
-      },
-      "removeStudent": {
-        "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
-        "subText": "",
-        "confirmText": "Studierenden entfernen",
-        "title": "Studierenden entfernen"
-      }
-    },
     "theme": {
       "description": "App Design auswählen",
       "title": "Design"
@@ -337,6 +316,27 @@
     "pending": "Ausstehende Anfragen",
     "profilePictureAlt": "Profilbild von {firstName} {lastName}",
     "similarityScore": "Übereinstimmungswert"
+  },
+  "supervisorStudentList": {
+    "checkboxLabel": "Nicht erneut anzeigen",
+    "addExistingStudent": {
+      "mainText": "Möchten Sie {firstName} {lastName} betreuen?",
+      "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
+      "confirmText": "Studierenden betreuen",
+      "title": "Studierenden betreuen"
+    },
+    "addNewStudent": {
+      "mainText": "Möchten Sie {emailAddress} betreuen? Er/Sie ist noch nicht auf SuperWise registriert, wird aber per E-Mail benachrichtigt.",
+      "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
+      "title": "Studierenden betreuen",
+      "confirmText": "Studierenden betreuen"
+    },
+    "removeStudent": {
+      "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
+      "subText": "",
+      "confirmText": "Studierenden entfernen",
+      "title": "Studierenden entfernen"
+    }
   },
   "tagPriority": {
     "arrangeByPriority": "Tags nach Priorität ordnen",

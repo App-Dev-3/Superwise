@@ -31,7 +31,7 @@ const emit = defineEmits(["click"])
         :last-name="props.lastName"
         :src="props.imgSrc"
         alt="Profile Picture of {{ props.firstName }} {{ props.lastName }}"
-        shape="circle"
+        shape="rounded"
         size="sm"/>
 
     <div class="flex flex-col w-full">

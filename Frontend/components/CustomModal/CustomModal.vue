@@ -12,7 +12,7 @@
             v-if="props.imageSrc"
             :src="props.imageSrc"
             :alt="props.imageAlt"
-            class="h-24 mb-2"
+            class="h-24 mb-2 mask mask-squircle"
           >
           <p v-if="props.email" class="text-slate-500 text-sm">
             {{ props.email }}

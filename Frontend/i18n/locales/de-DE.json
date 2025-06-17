@@ -1,355 +1,353 @@
 {
-  "admin": {
-    "availableSpots": "Verfügbare Plätze",
-    "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
-    "downloadFileName": "lade confirmed_supervisions.csv herunter",
-    "downloadTitle": "Bestätigte Betreuungen herunterladen",
-    "invalidCSV": "Ungültiges CSV-Format. Bitte prüfen Sie, ob alle Spalten korrekt sind.",
-    "invalidJSON": "Ungültiges JSON-Format",
-    "studentsWithSupervisor": "Studenten haben einen Betreuer",
-    "supervisorAmount": "Betreuer verwenden die App",
-    "uploadSupervisorsDescription": "Dies aktualisiert die Betreuer und ihre verfügbaren Plätze",
-    "uploadSupervisorsFileName": "wähle *.csv aus",
-    "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte",
-    "uploadTagsFileName": "wähle updated_tag_list.json aus",
-    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
-  },
-  "appHeader": {
-    "admin": {
-      "deleteData": "Delete Data",
-      "downloadData": "Daten Herunterladen",
-      "uploadData": "Daten Importieren"
-    },
-    "back": "Zurück",
-    "onboarding": {
-      "name": "Willkommen bei SuperWise! Wie heißen Sie?",
-      "priority": "Bitte sortieren Sie die Tags nach Priorität.",
-      "tags": "Welche Tags beschreiben Ihr Thesis Thema?"
-    },
-    "search": "Suche",
-    "searchPlaceholder": "Suchen..."
-  },
-  "appTour": {
-    "dashboard": {
-      "student": {
-        "alt": "Bild das zeigt wie das Dashboard funktioniert",
-        "description": "Verwende das dashboard um einen Überblick über den aktuellen stand der dinge, anfragen und noch vieles weitere zu bekommen...",
-        "title": "Navigiere das Dashboard"
-      }
-    },
-    "finish": "Abschließen...",
-    "matching": {
-      "student": {
-        "alt": "",
-        "description": "",
-        "title": "Matche mit Betreuern"
-      }
-    },
-    "overview": {
-      "student": {
-        "alt": "",
-        "description": "",
-        "title": ""
-      }
-    },
-    "profile": {
-      "student": {
-        "alt": "",
-        "description": "",
-        "title": ""
-      }
-    }
-  },
-  "confirmation": {
-    "acceptedOn": "Akzeptiert am: {date}",
-    "details": "Bestätigungsdetails",
-    "scanToVerify": "Scannen zur Überprüfung der Bestätigung",
-    "student": "Student",
-    "supervisor": "Betreuer",
-    "title": "Abschlussarbeitsbetreuung Bestätigung"
-  },
-  "confirmed": {
-    "confirmedOn": "Bestätigt am {date}",
-    "noStudents": "Du hast noch keine Studenten angenommen...",
-    "supervising": "Sie betreuen {firstName}"
-  },
-  "dashboard": {
-    "student": {
-      "downloadConfirmation": "Bestätigung herunterladen",
-      "findSupervisor": "Finde jetzt deinen Betreuer!",
-      "multipleAcceptedWarning": "Du hast {count} Betreuungsanfragen akzeptiert, benötigst aber nur einen Betreuer. Bitte sprich mit {supervisors} und löse den Konflikt.",
-      "startMatching": "Beginne zu Matchen!",
-      "suggestedMatches": "Vorgeschlagene Matches",
-      "yourRequests": "Deine Anfragen",
-      "yourSupervisor": "ist dein Betreuer!"
-    },
-    "supervisor": {
-      "manageStudents": "Studenten Verwalten",
-      "noRequests": "Es gibt keine offenen Anfragen...",
-      "slotsFilled": "Belegte Slots"
-    }
-  },
-  "dataProtection": {
-    "admin": {
-      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen oder Ihr Profilbild aktualisieren, wird die vorherige Version dauerhaft überschrieben. Es werden keine Kopien oder Backups der vorherigen persönlichen Daten aufbewahrt.",
-      "collectedDataList": "Vollständiger Name\nE-Mail-Adresse\nProfilbild",
-      "collectedDataText": "Für Admin-Konten erfassen und speichern wir ausschließlich:",
-      "dataDeletionText": "Wenn ein Admin sein Konto löscht, werden alle personenbezogenen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft und ohne Backup gelöscht.",
-      "dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden",
-      "dataRetentionSubtitle": "📁 Was nach der Löschung eines Admin-Kontos erhalten bleibt",
-      "dataRetentionText": {
-        "1": "Wenn ein Admin sein Konto löscht, werden alle persönlichen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft entfernt. Einige im Rahmen der Plattformverwaltung erstellte oder hochgeladene Daten gelten jedoch nicht als personenbezogene Daten und bleiben erhalten. Dazu zählen:",
-        "2": "Diese Inhalte sind Teil der Infrastruktur der Plattform und essenziell für die Aufrechterhaltung der Integrität und Kontinuität des SuperWise-Systems. Daher werden sie beim Löschen eines Admin-Kontos nicht entfernt."
-      },
-      "generalInfoText": "Diese Klausel gilt speziell für Nutzer*innen mit Admin-Zugriff auf SuperWise."
-    },
-    "generic": {
-      "changesAndOverwritesSubtitle": "🔁 Datenänderungen und Überschreibungen",
-      "collectedDataSubtitle": "📌 Welche Daten wir erfassen",
-      "dataDeletionSubtitle": "🗑 Datenlöschung",
-      "deleteMyData": "Meine Daten löschen",
-      "generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen.",
-      "generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie"
-    },
-    "student&supervisor": {
-      "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
-      "collectedDataList": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
-      "collectedDataText": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
-      "dataDeletionList": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten",
-      "dataDeletionText": {
-        "1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
-        "2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
-      }
-    }
-  },
-  "generic": {
-    "404-not-found": "404 - Nicht gefunden",
-    "acceptedRequestTo": "Akzeptierte Anfrage an",
-    "admin": "Admin",
-    "cancel": "Abbrechen",
-    "chatRequest": "Chat-Anfrage",
-    "close": "Schließen",
-    "continue": "Weiter",
-    "delete": "Löschen",
-    "download": "Herunterladen",
-    "edit": "Bearbeiten",
-    "english": "🇬🇧 English",
-    "french": "🇫🇷 Français",
-    "german": "🇩🇪 Deutsch",
-    "italian": "🇮🇹 Italiano",
-    "language": "Sprache",
-    "loading": "Lädt",
-    "logoAlt": "Logo",
-    "mail": "E-Mail",
-    "noVideoSupport": "",
-    "pendingRequestTo": "Ausstehende Anfrage an",
-    "profile": "Profil",
-    "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
-    "rejectedRequestTo": "Abgelehnte Anfrage an",
-    "requests": "Anfragen",
-    "saveChanges": "Änderungen speichern",
-    "showAll": "Alle anzeigen...",
-    "showLess": "Weniger anzeigen",
-    "spanish": "🇪🇸 Español",
-    "student": "Studierende",
-    "supervise": "Betreuen",
-    "supervisionRequest": "Betreuungsanfrage",
-    "supervisor": "Betreuende",
-    "supervisors": "Betreuer",
-    "tags": "Tags",
-    "thesisDescription": "Thesis-Beschreibung",
-    "undo": "rückgängig machen",
-    "upload": "Importieren"
-  },
-  "landing": {
-    "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
-    "here": "hier"
-  },
-  "matching": {
-    "acceptRequest": "Betreuungsanfrage annehmen",
-    "acceptRequestButton": "Anfrage annehmen",
-    "acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
-    "confirmationToast": "Sie haben die Betreuungsanfrage {type}",
-    "existingSupervision": {
-      "actionButton": "Zurück zum Dashboard",
-      "headline": "Glückwunsch, du hast bereits einen Betreuer!"
-    },
-    "noRequests": "Es gibt keine neuen Anfragen...",
-    "noSupervisors": "Es gibt keine Betreuer (mehr) die zu deinen Tags passen...",
-    "rejectRequest": "Betreuungsanfrage ablehnen",
-    "rejectRequestButton": "Anfrage ablehnen",
-    "rejectRequestDescription": "Sind Sie sicher, dass Sie die Betreuungsanfrage von {firstName} {lastName} ablehnen möchten?",
-    "sentRequest": "Betreuungsanfrage wurde gesendet",
-    "supervisionRequest": "{name} will von dir betreut werden!",
-    "supervisorDismissed": "Betreuer wurde abgelehnt",
-    "swipeLeft": {
-      "description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?",
-      "headline": "Betreuer entfernen",
-      "warning": "Entfernte Betreuer sind weiterhin in der Suche zu finden"
-    }
-  },
-  "miniCard": {
-    "pending": "Ausstehende Anfrage an {firstName}",
-    "rejected": "Abgelehnte Anfrage an {firstName}"
-  },
-  "modal": {
-    "cancel": "Abbrechen",
-    "confirm": "Bestätigen",
-    "dontShowAgain": "Nicht mehr anzeigen",
-    "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
-    "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
-    "withdrawSupervisionConfirm": "Anfrage zurückziehen",
-    "withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
-    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen"
-  },
-  "multiStepForm": {
-    "description": {
-      "name": "Dein Name ist für jeden sichtbar, dem / der du anfragen sendest. Der Name kann später auf den Profil angepasst werden",
-      "priority": {
-        "student": "Tags helfen dabei, passende Betreuer für dich zu finden. Du kannst bis zu 10 Tags auswählen und sie nach Priorität sortieren.",
-        "supervisor": "Tags helfen dabei, deine Expertise zu beschreiben. Du kannst bis zu 10 Tags auswählen und sie nach Priorität sortieren."
-      },
-      "tag": {
-        "student": "Tags helfen dabei, passende Betreuer für dich zu finden. Du kannst bis zu 10 Tags auswählen.",
-        "supervisor": "Tags helfen dabei, dein Fachgebiet zu beschreiben. Du kannst bis zu 10 Tags auswählen."
-      }
-    },
-    "next": "Weiter",
-    "saveTags": "Tags speichern",
-    "selectTags": "Tags Auswählen",
-    "startMatching": "Matching starten",
-    "tagPriority": "Tags Sortieren"
-  },
-  "nav": {
-    "appTour": "App Tour",
-    "confirmed": "Bestätigt",
-    "currentlySupervising": "Betreuende Studenten",
-    "dashboard": "Dashboard",
-    "dataProtection": "Datenschutz",
-    "defaultHeader": "SuperWise",
-    "logout": "Abmelden",
-    "matching": "Matching",
-    "profile": "Profil",
-    "settings": "Einstellungen"
-  },
-  "onboarding": {
-    "completed": "Du hast erfolgreich das Onboarding abgeschlossen!",
-    "error": {
-      "missingName": "Bitte fülle alle Informationen aus.",
-      "missingTags": "Bitte wähle mindestens ein Tag aus."
-    },
-    "firstName": "Vorname",
-    "lastName": "Nachname",
-    "maxSelection": "Maximale Auswahl",
-    "name": {
-      "title": "Gib deinen Namen ein"
-    },
-    "processing": "Daten werden verarbeitet, bitte warten..."
-  },
-  "profile": {
-    "availableSlots": "{0} von {1} plätze sind noch verfügbar.",
-    "bio": "Biografie",
-    "bioPlaceholder": "Erzählen Sie etwas über sich...",
-    "bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
-    "changesSaved": "Änderungen gespeichert",
-    "description": {
-      "showLess": "Weniger anzeigen...",
-      "showMore": "Alles anzeigen..."
-    },
-    "editProfile": "Profil bearbeiten",
-    "errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
-    "errorSavingChanges": "Fehler beim Speichern der Änderungen, bitte versuchen Sie es später erneut",
-    "firstName": "Vorname",
-    "imageUpdated": "Profilbild aktualisiert",
-    "lastName": "Nachname",
-    "pageHeader": "Mein Profil",
-    "pendingRequests": "{0} Betreuungsanfragen sind noch unbeantwortet",
-    "preview": "Vorschau",
-    "requestSent": "Anfrage gesendet",
-    "saveChanges": "Änderungen speichern",
-    "thesisTopic": "Thesis-Thema",
-    "topicPlaceholder": "Beschreibe deine Thesis-Idee...",
-    "topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein",
-    "warning": "Warnung",
-    "warningMessage": "{firstName} ist noch nicht registriert. Bitte kontaktieren Sie {firstName} per E-Mail oder über Microsoft Teams."
-  },
-  "requests": {
-    "noRequests": "Du hast noch keine Anfragen gesendet...",
-    "rejectedRequests": "Abgelehnte Anfragen"
-  },
-  "role": {
-    "admin": "Admin",
-    "student": "Studierende",
-    "supervisor": "Betreuende"
-  },
-  "search": {
-    "emptyForStudents": "Suche nach einem Betreuer...",
-    "emptyForSupervisors": "Suche nach einem Studenten...",
-    "filter": {
-      "availability": "Verfügbarkeit",
-      "bestMatch": "Größte Übereinstimmung",
-      "name": "Namen"
-    },
-    "noResults": "Keine Suchergebnisse...",
-    "placeholderForStudents": "Betreuer suchen...",
-    "placeholderForSupervisors": "Studenten suchen..."
-  },
-  "searchBar": {
-    "noResults": "Keine Ergebnisse gefunden"
-  },
-  "settings": {
-    "language": {
-      "description": "App sprache auswählen",
-      "placeholder": "Sprache wählen...",
-      "title": "Sprache"
-    },
-    "modal": {
-      "student": {
-        "supervisionrequest": {
-          "description": "Zeige ein Popup, wenn ein Betreuer angefragt wird.",
-          "title": "Betreuer Anfrage Popup"
-        }
-      }
-    },
-    "student": {
-      "dismissingDescription": "Bestätigungs-Modal anzeigen, wenn ein Betreuer per Wischgeste entfernt wird",
-      "dismissingTitle": "Entfernungs-Modal"
-    },
-    "supervisor": {
-      "acceptingDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage angenommen wird",
-      "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
-      "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung hinzufügen",
-      "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
-      "removeStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung entfernen",
-      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung",
-      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
-      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
-    },
-    "theme": {
-      "description": "App Design auswählen",
-      "title": "Design"
-    },
-    "title": {
-      "about": "Über SuperWise",
-      "appVersion": "App-Version",
-      "appearance": "Erscheinungsbild",
-      "notificationId": "Benachrichtigungs-ID"
-    }
-  },
-  "statusBar": {
-    "confirmed": "Bestätigt",
-    "matching": "Matching",
-    "onboarding": "Onboarding"
-  },
-  "supervisor": {
-    "noStudents": "Du Betreust zur zeit niemanden..."
-  },
-  "supervisorCard": {
-    "capacity": "Kapazität",
-    "pending": "Ausstehende Anfragen",
-    "profilePictureAlt": "Profilbild von {firstName} {lastName}",
-    "similarityScore": "Übereinstimmungswert"
-  },
+	"admin": {
+		"availableSpots": "Verfügbare Plätze",
+		"downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
+		"downloadFileName": "lade confirmed_supervisions.csv herunter",
+		"downloadTitle": "Bestätigte Betreuungen herunterladen",
+		"invalidCSV": "Ungültiges CSV-Format. Bitte prüfen Sie, ob alle Spalten korrekt sind.",
+		"invalidJSON": "Ungültiges JSON-Format",
+		"studentsWithSupervisor": "Studenten haben einen Betreuer",
+		"supervisorAmount": "Betreuer verwenden die App",
+		"uploadSupervisorsDescription": "Dies aktualisiert die Betreuer und ihre verfügbaren Plätze",
+		"uploadSupervisorsFileName": "wähle *.csv aus",
+		"uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte",
+		"uploadTagsFileName": "wähle updated_tag_list.json aus",
+		"waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
+	},
+	"appHeader": {
+		"admin": {
+			"deleteData": "Delete Data",
+			"downloadData": "Daten Herunterladen",
+			"uploadData": "Daten Importieren"
+		},
+		"back": "Zurück",
+		"onboarding": {
+			"name": "Willkommen bei SuperWise! Wie heißen Sie?",
+			"priority": "Bitte sortieren Sie die Tags nach Priorität.",
+			"tags": "Welche Tags beschreiben Ihr Thesis Thema?"
+		},
+		"search": "Suche",
+		"searchPlaceholder": "Suchen..."
+	},
+	"appTour": {
+		"dashboard": {
+			"student": {
+				"alt": "Bild, das zeigt, wie das Dashboard funktioniert",
+				"description": "Nutze das Dashboard, um einen Überblick über den aktuellen Stand der Dinge, Anfragen und vieles mehr zu bekommen...",
+				"title": "Navigiere das Dashboard"
+			}
+		},
+		"finish": "Abschließen...",
+		"matching": {
+			"student": {
+				"alt": "Ein Video, das die Nutzung der Matching-Seite zeigt",
+				"description": "Wische nach links oder rechts, um mit deinem perfekten Betreuer zu matchen. Du kannst deine Kompatibilität mit ihnen sehen, ihr Profil besuchen und deine Aktionen rückgängig machen, falls du falsch gewischt hast!",
+				"title": "Matche mit Betreuern"
+			}
+		},
+		"overview": {
+			"student": {
+				"alt": "Ein Video, das einen Überblick über die App gibt",
+				"description": "Jetzt, da du die Grundlagen kennst, steige direkt ein und beginne mit dem Matching von Betreuern!",
+				"title": "Starte mit der Nutzung der App"
+			}
+		},
+		"profile": {
+			"student": {
+				"alt": "Ein Video, das zeigt, wie man das Profil nutzt",
+				"description": "Du kannst deinen Namen, Tags und Beschreibungen bearbeiten. Personen, die dein Profil besuchen, können diese Daten sehen!",
+				"title": "Profil anzeigen und bearbeiten"
+			}
+		}
+	},
+	"confirmation": {
+		"acceptedOn": "Akzeptiert am: {date}",
+		"details": "Bestätigungsdetails",
+		"scanToVerify": "Scannen zur Überprüfung der Bestätigung",
+		"student": "Student",
+		"supervisor": "Betreuer",
+		"title": "Abschlussarbeitsbetreuung Bestätigung"
+	},
+	"confirmed": {
+		"confirmedOn": "Bestätigt am {date}",
+		"noStudents": "Du hast noch keine Studenten angenommen...",
+		"supervising": "Sie betreuen {firstName}"
+	},
+	"dashboard": {
+		"student": {
+			"downloadConfirmation": "Bestätigung herunterladen",
+			"findSupervisor": "Finde jetzt deinen Betreuer!",
+			"multipleAcceptedWarning": "Du hast {count} Betreuungsanfragen akzeptiert, benötigst aber nur einen Betreuer. Bitte sprich mit {supervisors} und löse den Konflikt.",
+			"startMatching": "Beginne zu Matchen!",
+			"suggestedMatches": "Vorgeschlagene Matches",
+			"yourRequests": "Deine Anfragen",
+			"yourSupervisor": "ist dein Betreuer!"
+		},
+		"supervisor": {
+			"manageStudents": "Studenten Verwalten",
+			"noRequests": "Es gibt keine offenen Anfragen...",
+			"slotsFilled": "Belegte Slots"
+		}
+	},
+	"dataProtection": {
+		"admin": {
+			"changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen oder Ihr Profilbild aktualisieren, wird die vorherige Version dauerhaft überschrieben. Es werden keine Kopien oder Backups der vorherigen persönlichen Daten aufbewahrt.",
+			"collectedDataList": "Vollständiger Name\nE-Mail-Adresse\nProfilbild",
+			"collectedDataText": "Für Admin-Konten erfassen und speichern wir ausschließlich:",
+			"dataDeletionText": "Wenn ein Admin sein Konto löscht, werden alle personenbezogenen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft und ohne Backup gelöscht.",
+			"dataRetentionList": "Tags, die dem System hinzugefügt wurden\nBetreuenden-Accounts und zugehörige Metadaten\nPlattformkonfigurationen oder andere strukturelle Eingaben, die während der administrativen Nutzung vorgenommen wurden",
+			"dataRetentionSubtitle": "📁 Was nach der Löschung eines Admin-Kontos erhalten bleibt",
+			"dataRetentionText": {
+				"1": "Wenn ein Admin sein Konto löscht, werden alle persönlichen Daten (Name, E-Mail-Adresse und Profilbild) dauerhaft entfernt. Einige im Rahmen der Plattformverwaltung erstellte oder hochgeladene Daten gelten jedoch nicht als personenbezogene Daten und bleiben erhalten. Dazu zählen:",
+				"2": "Diese Inhalte sind Teil der Infrastruktur der Plattform und essenziell für die Aufrechterhaltung der Integrität und Kontinuität des SuperWise-Systems. Daher werden sie beim Löschen eines Admin-Kontos nicht entfernt."
+			},
+			"generalInfoText": "Diese Klausel gilt speziell für Nutzer*innen mit Admin-Zugriff auf SuperWise."
+		},
+		"generic": {
+			"changesAndOverwritesSubtitle": "🔁 Datenänderungen und Überschreibungen",
+			"collectedDataSubtitle": "📌 Welche Daten wir erfassen",
+			"dataDeletionSubtitle": "🗑 Datenlöschung",
+			"deleteMyData": "Meine Daten löschen",
+			"generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen.",
+			"generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie"
+		},
+		"student&supervisor": {
+			"changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
+			"collectedDataList": "E-Mail-Adresse (zur Anmeldung und Kommunikation)\nVor- und Nachname\nProfilbild\nNachrichten, die über die Plattform versendet werden\nThemenbeschreibung (von Studierenden)\nKurzprofil/Biografie (von Betreuenden)\nAusgewählte Tags zur Beschreibung der Fachgebiete oder Thesis-Themen\nMatch-Historie: Betreuende, mit denen Sie ein Match hatten oder die Sie abgelehnt haben\nGesendete Anfragen: einschließlich Chat- und Betreuungsanfragen",
+			"collectedDataText": "Um unseren Matching- und Betreuungsservice bereitzustellen, erfassen und speichern wir folgende Informationen:",
+			"dataDeletionList": "Ihre E-Mail-Adresse\nAufzeichnungen über Matches\nGesendete und empfangene Nachrichten",
+			"dataDeletionText": {
+				"1": "Sie haben jederzeit das Recht, die Löschung Ihrer Daten zu beantragen. Nach der Löschung sind Ihr Profil und Ihre persönlichen Informationen für andere Nutzer*innen nicht mehr sichtbar oder zugänglich. Einige minimale Daten können bis zum Ende des Betreuungszeitraums gespeichert bleiben – für Funktionalität und Nachvollziehbarkeit. Dazu gehören:",
+				"2": "Nach Ablauf des Betreuungszeitraums werden auch diese verbleibenden Daten vollständig und unwiderruflich gelöscht."
+			}
+		}
+	},
+	"generic": {
+		"404-not-found": "404 - Nicht gefunden",
+		"acceptedRequestTo": "Akzeptierte Anfrage an",
+		"admin": "Admin",
+		"cancel": "Abbrechen",
+		"chatRequest": "Chat-Anfrage",
+		"close": "Schließen",
+		"continue": "Weiter",
+		"delete": "Löschen",
+		"download": "Herunterladen",
+		"edit": "Bearbeiten",
+		"english": "🇬🇧 English",
+		"french": "🇫🇷 Français",
+		"german": "🇩🇪 Deutsch",
+		"italian": "🇮🇹 Italiano",
+		"language": "Sprache",
+		"loading": "Lädt",
+		"logoAlt": "Logo",
+		"mail": "E-Mail",
+		"noVideoSupport": "Dein Browser unterstützt kein HTML-Video... ich denke, es ist Zeit für ein Upgrade deines Geräts!",
+		"pendingRequestTo": "Ausstehende Anfrage an",
+		"profile": "Profil",
+		"profilePictureAlt": "Profil Bild von {firstName} {lastName}",
+		"rejectedRequestTo": "Abgelehnte Anfrage an",
+		"requests": "Anfragen",
+		"saveChanges": "Änderungen speichern",
+		"showAll": "Alle anzeigen...",
+		"showLess": "Weniger anzeigen",
+		"spanish": "🇪🇸 Español",
+		"student": "Studierende",
+		"supervise": "Betreuen",
+		"supervisionRequest": "Betreuungsanfrage",
+		"supervisor": "Betreuende",
+		"supervisors": "Betreuer",
+		"tags": "Tags",
+		"thesisDescription": "Thesis-Beschreibung",
+		"undo": "rückgängig machen",
+		"upload": "Importieren"
+	},
+	"landing": {
+		"dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",
+		"here": "hier"
+	},
+	"matching": {
+		"acceptRequest": "Betreuungsanfrage annehmen",
+		"acceptRequestButton": "Anfrage annehmen",
+		"acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
+		"confirmationToast": "Sie haben die Betreuungsanfrage {type}",
+		"existingSupervision": {
+			"actionButton": "Zurück zum Dashboard",
+			"headline": "Glückwunsch, du hast bereits einen Betreuer!"
+		},
+		"noRequests": "Es gibt keine neuen Anfragen...",
+		"noSupervisors": "Es gibt keine (mehr) Betreuer, die zu deinen Tags passen...",
+		"rejectRequest": "Betreuungsanfrage ablehnen",
+		"rejectRequestButton": "Anfrage ablehnen",
+		"rejectRequestDescription": "Sind Sie sicher, dass Sie die Betreuungsanfrage von {firstName} {lastName} ablehnen möchten?",
+		"sentRequest": "Betreuungsanfrage wurde gesendet",
+		"supervisionRequest": "{name} will von dir betreut werden!",
+		"supervisorDismissed": "Betreuer wurde abgelehnt",
+		"swipeLeft": {
+			"description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?",
+			"headline": "Betreuer entfernen",
+			"warning": "Entfernte Betreuer sind weiterhin in der Suche zu finden"
+		}
+	},
+	"miniCard": {
+		"pending": "Ausstehende Anfrage an {firstName}",
+		"rejected": "Abgelehnte Anfrage an {firstName}"
+	},
+	"modal": {
+		"cancel": "Abbrechen",
+		"confirm": "Bestätigen",
+		"dontShowAgain": "Nicht mehr anzeigen",
+		"sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
+		"supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
+		"withdrawSupervisionConfirm": "Anfrage zurückziehen",
+		"withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
+		"withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen"
+	},
+	"multiStepForm": {
+		"description": {
+			"name": "Dein Name ist für jeden sichtbar, dem du Anfragen sendest. Der Name kann später im Profil angepasst werden",
+			"priority": {
+				"student": "Tags helfen dabei, passende Betreuer für dich zu finden. Du kannst bis zu 10 Tags auswählen und sie nach Priorität sortieren. Die Priorität kann später im Profil geändert werden!",
+				"supervisor": "Die Priorität dieser Tags sollte deine Expertise auf dem Gebiet widerspiegeln. Sie können jederzeit in deinem Profil geändert werden."
+			},
+			"tag": {
+				"student": "Tags helfen dabei, passende Betreuer für dich zu finden. Sie können jederzeit in deinem Profil geändert werden!",
+				"supervisor": "Tags werden von Studierenden genutzt, um mit dir zu matchen. Sie können jederzeit in deinem Profil geändert werden."
+			}
+		},
+		"next": "Weiter",
+		"saveTags": "Tags speichern",
+		"selectTags": "Tags Auswählen",
+		"startMatching": "Matching starten",
+		"tagPriority": "Tags Sortieren"
+	},
+	"nav": {
+		"appTour": "App Tour",
+		"confirmed": "Bestätigt",
+		"currentlySupervising": "Betreuende Studenten",
+		"dashboard": "Dashboard",
+		"dataProtection": "Datenschutz",
+		"defaultHeader": "SuperWise",
+		"logout": "Abmelden",
+		"matching": "Matching",
+		"profile": "Profil",
+		"settings": "Einstellungen"
+	},
+	"onboarding": {
+		"completed": "Du hast erfolgreich das Onboarding abgeschlossen!",
+		"error": {
+			"missingName": "Bitte fülle alle Informationen aus.",
+			"missingTags": "Bitte wähle mindestens ein Tag aus."
+		},
+		"firstName": "Vorname",
+		"lastName": "Nachname",
+		"maxSelection": "Maximale Auswahl",
+		"name": {
+			"title": "Gib deinen Namen ein"
+		},
+		"processing": "Daten werden verarbeitet, bitte warten..."
+	},
+	"profile": {
+		"availableSlots": "{0} von {1} Plätze sind noch verfügbar.",
+		"bio": "Biografie",
+		"bioPlaceholder": "Erzählen Sie etwas über sich...",
+		"bioVisibility": "Ihre Biografie wird für andere Benutzer sichtbar sein",
+		"changesSaved": "Änderungen gespeichert",
+		"description": {
+			"showLess": "Weniger anzeigen...",
+			"showMore": "Alles anzeigen..."
+		},
+		"editProfile": "Profil bearbeiten",
+		"errorOwnProfile": "Sie können sich nicht selbst eine Anfrage senden",
+		"errorSavingChanges": "Fehler beim Speichern der Änderungen, bitte versuchen Sie es später erneut",
+		"firstName": "Vorname",
+		"imageUpdated": "Profilbild aktualisiert",
+		"lastName": "Nachname",
+		"pageHeader": "Mein Profil",
+		"pendingRequests": "{0} Betreuungsanfragen sind noch unbeantwortet",
+		"preview": "Vorschau",
+		"requestSent": "Anfrage gesendet",
+		"saveChanges": "Änderungen speichern",
+		"thesisTopic": "Thesis-Thema",
+		"topicPlaceholder": "Beschreibe deine Thesis-Idee...",
+		"topicVisibility": "Deine Thesis-Beschreibung wird für andere Benutzer sichtbar sein",
+		"warning": "Warnung",
+		"warningMessage": "{firstName} ist noch nicht registriert. Bitte kontaktieren Sie {firstName} per E-Mail oder über Microsoft Teams."
+	},
+	"requests": {
+		"noRequests": "Du hast noch keine Anfragen gesendet...",
+		"rejectedRequests": "Abgelehnte Anfragen"
+	},
+	"role": {
+		"admin": "Admin",
+		"student": "Studierende",
+		"supervisor": "Betreuende"
+	},
+	"search": {
+		"emptyForStudents": "Suche nach einem Betreuer...",
+		"emptyForSupervisors": "Suche nach einem Studenten...",
+		"filter": {
+			"availability": "Verfügbarkeit",
+			"bestMatch": "Größte Übereinstimmung",
+			"name": "Namen"
+		},
+		"noResults": "Keine Suchergebnisse...",
+		"placeholderForStudents": "Betreuer suchen...",
+		"placeholderForSupervisors": "Studenten suchen..."
+	},
+	"searchBar": {
+		"noResults": "Keine Ergebnisse gefunden"
+	},
+	"settings": {
+		"language": {
+			"description": "App-Sprache auswählen",
+			"placeholder": "Sprache wählen...",
+			"title": "Sprache"
+		},
+		"modal": {
+			"student": {
+				"supervisionrequest": {
+					"description": "Zeige ein Popup, wenn ein Betreuer angefragt wird.",
+					"title": "Betreuer Anfrage Popup"
+				}
+			}
+		},
+		"student": {
+			"dismissingDescription": "Bestätigungs-Modal anzeigen, wenn ein Betreuer per Wischgeste entfernt wird",
+			"dismissingTitle": "Entfernungs-Modal"
+		},
+		"supervisor": {
+			"acceptingDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage angenommen wird",
+			"acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
+			"addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird",
+			"addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
+			"rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
+			"rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
+		},
+		"theme": {
+			"description": "App Design auswählen",
+			"title": "Design"
+		},
+		"title": {
+			"about": "Über SuperWise",
+			"appVersion": "App-Version",
+			"appearance": "Erscheinungsbild",
+			"notificationId": "Benachrichtigungs-ID"
+		}
+	},
+	"statusBar": {
+		"confirmed": "Bestätigt",
+		"matching": "Matching",
+		"onboarding": "Onboarding"
+	},
+	"supervisor": {
+		"noStudents": "Du betreust zurzeit niemanden..."
+	},
+	"supervisorCard": {
+		"capacity": "Kapazität",
+		"pending": "Ausstehende Anfragen",
+		"profilePictureAlt": "Profilbild von {firstName} {lastName}",
+		"similarityScore": "Übereinstimmungswert"
+	},
   "supervisorStudentList": {
     "checkboxLabel": "Nicht erneut anzeigen",
     "addExistingStudent": {
@@ -371,19 +369,19 @@
       "title": "Studierenden entfernen"
     }
   },
-  "tagPriority": {
-    "arrangeByPriority": "Tags nach Priorität ordnen",
-    "unknownTag": "Unknown Tag '{tagNumber}'"
-  },
-  "tagSelector": {
-    "label": "Wähle bis zu 10 Tags, die zu deinem Thema / Interessen passen",
-    "placeholder": "Ausgewählte Tags...",
-    "search": "Tag suchen...",
-    "tagCount": "{current}/{max}",
-    "title": "Wähle deine Tags aus"
-  },
-  "toast": {
-    "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage",
-    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen"
-  }
+	"tagPriority": {
+		"arrangeByPriority": "Tags nach Priorität ordnen",
+		"unknownTag": "Unbekannter Tag '{tagNumber}'"
+	},
+	"tagSelector": {
+		"label": "Wähle bis zu 10 Tags, die zu deinem Thema/Interessen passen",
+		"placeholder": "Ausgewählte Tags...",
+		"search": "Tag suchen...",
+		"tagCount": "{current}/{max}",
+		"title": "Wähle deine Tags aus"
+	},
+	"toast": {
+		"withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage",
+		"withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen"
+	}
 }

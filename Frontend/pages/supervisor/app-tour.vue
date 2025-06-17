@@ -3,30 +3,37 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+
 const steps = [
   {
-    source: '../appTour/dashboard.jpeg',
-    alt: t('appTour.dashboard.student.alt'),
-    title: t('appTour.dashboard.student.title'),
-    description: t('appTour.dashboard.student.description')
+    source: '../appTour/supervisors/dashboard.jpeg',
+    alt: t('appTour.dashboard.supervisor.alt'),
+    title: t('appTour.dashboard.supervisor.title'),
+    description: t('appTour.dashboard.supervisor.description')
   },
   {
-    source: '../appTour/matching.jpeg',
-    alt: t('appTour.matching.student.alt'),
-    title: t('appTour.matching.student.title'),
-    description: t('appTour.matching.student')
+    source: '../appTour/supervisors/matching.mp4',
+    alt: t('appTour.matching.supervisor.alt'),
+    title: t('appTour.matching.supervisor.title'),
+    description: t('appTour.matching.supervisor.description')
   },
   {
-    source: '../appTour/profile.jpeg',
-    alt: t('appTour.profile.student.alt'),
-    title: t('appTour.profile.student.title'),
-    description: t('appTour.profile.student.description')
+    source: '../appTour/supervisors/profile.mp4',
+    alt: t('appTour.profile.supervisor.alt'),
+    title: t('appTour.profile.supervisor.title'),
+    description: t('appTour.profile.supervisor.description')
   },
   {
-    source: '../appTour/demo.mp4',
-    alt: t('appTour.overview.student.alt'),
-    title: t('appTour.overview.student.title'),
-    description: t('appTour.overview.student.description')
+    source: '../appTour/supervisors/manage.mp4',
+    alt: t('appTour.manage.supervisor.alt'),
+    title: t('appTour.manage.supervisor.title'),
+    description: t('appTour.manage.supervisor.description')
+  },
+  {
+    source: '../appTour/supervisors/demo.mp4',
+    alt: t('appTour.overview.supervisor.alt'),
+    title: t('appTour.overview.supervisor.title'),
+    description: t('appTour.overview.supervisor.description')
   },
 ];
 
@@ -44,7 +51,7 @@ function back() {
 }
 
 function close() {
-  navigateTo('/student/dashboard');
+  navigateTo('/supervisor/dashboard');
 }
 
 const nextText = computed(() => {

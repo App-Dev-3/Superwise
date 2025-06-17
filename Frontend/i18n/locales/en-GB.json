@@ -52,6 +52,29 @@
         "title": "Upload new data"
       }
     },
+    "finish": "Finish...",
+    "student": {
+      "dashboard": {
+        "alt": "Picture showing on how the dashboard works",
+        "description": "Effortlessly navigate the dashboard and get an overview of your current state in the request progress, matches, and much more...",
+        "title": "Navigate the Dashboard"
+      },
+      "matching": {
+        "alt": "A video showcasing the use of the matching page",
+        "description": "Swipe left or right to match with your perfect supervisor or dismiss unwanted ones. You can see your compatability with them, visit their profile, and undo your actions if you mis-swiped!",
+        "title": "Match with Supervisors"
+      },
+      "overview": {
+        "alt": "A video giving an overview of the app",
+        "description": "Now that you know the basics, jump right in and start matching with supervisors!",
+        "title": "Get started using the app"
+      },
+      "profile": {
+        "alt": "A video showcasing how to use the profile",
+        "description": "You can edit your name, tags and descriptions. People who visit your profile, are able to see this data!",
+        "title": "View and edit your profile"
+      }
+    },
     "supervisor": {
       "dashboard": {
         "alt": "Picture showing on how the dashboard works",
@@ -78,30 +101,7 @@
         "description": "You can edit your tags and descriptions. People who visit your profile, are able to see this data!",
         "title": "View and edit your profile"
       }
-    },
-    "student": {
-      "dashboard": {
-        "alt": "Picture showing on how the dashboard works",
-        "description": "Effortlessly navigate the dashboard and get an overview of your current state in the request progress, matches, and much more...",
-        "title": "Navigate the Dashboard"
-      },
-      "matching": {
-        "alt": "A video showcasing the use of the matching page",
-        "description": "Swipe left or right to match with your perfect supervisor or dismiss unwanted ones. You can see your compatability with them, visit their profile, and undo your actions if you mis-swiped!",
-        "title": "Match with Supervisors"
-      },
-      "overview": {
-        "alt": "A video giving an overview of the app",
-        "description": "Now that you know the basics, jump right in and start matching with supervisors!",
-        "title": "Get started using the app"
-      },
-      "profile": {
-        "alt": "A video showcasing how to use the profile",
-        "description": "You can edit your name, tags and descriptions. People who visit your profile, are able to see this data!",
-        "title": "View and edit your profile"
-      }
-    },
-    "finish": "Finish..."
+    }
   },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",
@@ -174,6 +174,7 @@
     "close": "Close",
     "continue": "Continue",
     "delete": "Delete",
+    "done": "Done",
     "download": "Download",
     "edit": "Edit",
     "english": "🇬🇧 English",

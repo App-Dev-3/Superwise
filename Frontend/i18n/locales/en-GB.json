@@ -30,6 +30,28 @@
     "searchPlaceholder": "Search..."
   },
   "appTour": {
+    "admin": {
+      "dashboard": {
+        "alt": "Picture showing on how the dashboard works",
+        "description": "Effortlessly navigate the dashboard and get an overview of the current state of matches, students, supervisors, open positions, and much more...",
+        "title": "Navigate the Dashboard"
+      },
+      "download": {
+        "alt": "Picture of the download page",
+        "description": "Easily download all the confirmed matches. This gives you a one click overview of who is already matched and who's missing",
+        "title": "Download match data"
+      },
+      "profile": {
+        "alt": "Picture of the profile page",
+        "description": "Edit your profile by changing your name or picture. Keep in mind, you will be the only one to see this, to just do it for your personal satisfaction.",
+        "title": "Edit your profile"
+      },
+      "upload": {
+        "alt": "Picture of the upload page",
+        "description": "Easily upload all the supervisors and tags. Supervisors data gets overwritten when you upload a new list.",
+        "title": "Upload new data"
+      }
+    },
     "dashboard": {
       "student": {
         "alt": "Picture showing on how the dashboard works",
@@ -157,8 +179,8 @@
     "chatRequest": "Chat request",
     "close": "Close",
     "continue": "Continue",
-    "delete": "delete",
-    "download": "download",
+    "delete": "Delete",
+    "download": "Download",
     "edit": "Edit",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",

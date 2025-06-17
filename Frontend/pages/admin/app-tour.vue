@@ -6,34 +6,28 @@ const { t } = useI18n();
 
 const steps = [
   {
-    source: '../appTour/supervisor/dashboard.jpeg',
-    alt: t('appTour.dashboard.supervisor.alt'),
-    title: t('appTour.dashboard.supervisor.title'),
-    description: t('appTour.dashboard.supervisor.description')
+    source: '../appTour/admin/dashboard.jpeg',
+    alt: t('appTour.admin.dashboard.alt'),
+    title: t('appTour.admin.dashboard.title'),
+    description: t('appTour.admin.dashboard.description')
   },
   {
-    source: '../appTour/supervisor/matching.mp4',
-    alt: t('appTour.matching.supervisor.alt'),
-    title: t('appTour.matching.supervisor.title'),
-    description: t('appTour.matching.supervisor.description')
+    source: '../appTour/admin/upload.jpeg',
+    alt: t('appTour.admin.upload.alt'),
+    title: t('appTour.admin.upload.title'),
+    description: t('appTour.admin.upload.description')
   },
   {
-    source: '../appTour/supervisor/profile.mp4',
-    alt: t('appTour.profile.supervisor.alt'),
-    title: t('appTour.profile.supervisor.title'),
-    description: t('appTour.profile.supervisor.description')
+    source: '../appTour/admin/download.jpeg',
+    alt: t('appTour.admin.download.alt'),
+    title: t('appTour.admin.download.title'),
+    description: t('appTour.admin.download.description')
   },
   {
-    source: '../appTour/supervisor/manage.mp4',
-    alt: t('appTour.manage.supervisor.alt'),
-    title: t('appTour.manage.supervisor.title'),
-    description: t('appTour.manage.supervisor.description')
-  },
-  {
-    source: '../appTour/supervisor/demo.mp4',
-    alt: t('appTour.overview.supervisor.alt'),
-    title: t('appTour.overview.supervisor.title'),
-    description: t('appTour.overview.supervisor.description')
+    source: '../appTour/admin/profile.jpeg',
+    alt: t('appTour.admin.profile.alt'),
+    title: t('appTour.admin.profile.title'),
+    description: t('appTour.admin.profile.description')
   },
 ];
 
@@ -51,7 +45,7 @@ function back() {
 }
 
 function close() {
-  navigateTo('/supervisor/dashboard');
+  navigateTo('/dashboard/admin');
 }
 
 const nextText = computed(() => {

@@ -129,7 +129,7 @@
     "supervisor": {
       "manageStudents": "Manage Students",
       "noRequests": "There are no open requests...",
-      "slotsFilled": "Slots filled"
+      "slotsFilled": "Free slots"
     }
   },
   "dataProtection": {
@@ -178,6 +178,7 @@
     "done": "Done",
     "download": "Download",
     "edit": "Edit",
+    "error": "Error",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
@@ -197,6 +198,7 @@
     "showLess": "Show less",
     "spanish": "🇪🇸 Español",
     "student": "Student",
+    "success": "Success",
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",

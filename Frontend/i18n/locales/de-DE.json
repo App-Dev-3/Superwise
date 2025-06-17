@@ -129,7 +129,7 @@
     "supervisor": {
       "manageStudents": "Studenten Verwalten",
       "noRequests": "Es gibt keine offenen Anfragen...",
-      "slotsFilled": "Belegte Slots"
+      "slotsFilled": "Freie Slots"
     }
   },
   "dataProtection": {
@@ -178,6 +178,7 @@
     "done": "Fertig",
     "download": "Herunterladen",
     "edit": "Bearbeiten",
+    "error": "Fehler",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
@@ -197,6 +198,7 @@
     "showLess": "Weniger anzeigen",
     "spanish": "🇪🇸 Español",
     "student": "Studierende",
+    "success": "Erfolgreich ausgeführt",
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",

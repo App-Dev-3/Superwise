@@ -17,12 +17,20 @@ const { getUserByEmail } = useUserApi();
 const current_user = ref<UserData | null>(null);
 const supervisor_data = ref<SupervisorData | null>(null);
 
+const { t } = useI18n();
+
 const {
   data: requests,
   pending,
   error,
   refresh,
 } = useSupervisionRequests("ACCEPTED");
+
+const toastData = ref({
+  visible: false,
+  type: "success",
+  message: "",
+});
 
 const students = computed(() =>
   (requests.value ?? []).map((request) => ({
@@ -83,14 +91,33 @@ async function addStudent(email: string) {
   );
 
   if (!existingStudent) {
-    await $fetch("/api/supervision-requests", {
-      method: "POST",
-      body: {
-        // This "id" usage is correct based on the current backend, even if you ide says its not
-        supervisor_id: supervisor_data.value.id,
-        student_email: email,
-      },
-    });
+    try {
+      await $fetch("/api/supervision-requests", {
+        method: "POST",
+        body: {
+          // This "id" usage is correct based on the current backend, even if you ide says its not
+          supervisor_id: supervisor_data.value.id,
+          student_email: email,
+        },
+      });
+      toastData.value = {
+        visible: true,
+        type: "success",
+        message: t("generic.success"), // or any other suitable success message
+      };
+    } catch (err) {
+      const errorMessage =
+        (err as { data?: { message?: string }; message?: string })?.data
+          ?.message ||
+        (err as { message?: string })?.message ||
+        t("generic.error");
+
+      toastData.value = {
+        visible: true,
+        type: "error",
+        message: errorMessage,
+      };
+    }
   }
   await refresh();
 }
@@ -109,7 +136,7 @@ definePageMeta({
       v-if="pending || error"
       class="w-full h-fit min-h-64 p-4 border border-base-300 rounded-3xl flex flex-col justify-center items-center"
     >
-      <div v-if="pending">Loading…</div>
+      <div v-if="pending">{{ t("generic.loading") }}</div>
       <div v-else-if="error" class="text-red-600">{{ error.message }}</div>
     </div>
     <!-- your IDE says that total_spots doesnt exists. Its lying. The interfaces are fucked up, we gotta fix that later-->
@@ -119,6 +146,14 @@ definePageMeta({
       :students="students"
       @add-student="addStudent"
       @remove-student="removeStudent"
+    />
+    <Toast
+      v-if="toastData.visible"
+      :duration="3000"
+      :message="toastData.message"
+      :type="toastData.type"
+      @close="toastData.visible = false"
+      @button-click="toastData.visible = false"
     />
   </div>
 </template>

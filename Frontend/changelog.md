@@ -1,4 +1,0 @@
-- added translation for pending request
-- added translation for matching swipe right request modal headline
-- added text to swiping to make it more clear and improve ux
-- delete data gives a (fake) toast that data is deleted

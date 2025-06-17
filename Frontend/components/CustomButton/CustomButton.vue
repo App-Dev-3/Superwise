@@ -107,7 +107,10 @@ const buttonClasses = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center max-w-full">
+  <div
+      :class="{'w-full': props.block}"
+      class="flex flex-col items-center max-w-full"
+  >
     <div v-if="props.topText" class="mb-2">
       <span class="text-sm text-base-content/60 block text-center">{{ props.topText }}</span>
     </div>

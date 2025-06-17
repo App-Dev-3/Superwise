@@ -42,8 +42,8 @@
       <template #step2>
         <tag-selector
             :all-tags="DbTags"
-            :initial-selected="[]"
             :description-text="descriptionText[1]"
+            :initial-selected="[]"
             :max-selection="10"
             @update:selected-tags="
                   tags = $event
@@ -104,7 +104,7 @@ const processingData = ref(false);
 const buttonText = [
   t('multiStepForm.selectTags'),
   t('multiStepForm.tagPriority'),
-  t('multiStepForm.startMatching'),
+  t('nav.appTour'),
 ];
 
 const descriptionText = [
@@ -166,7 +166,7 @@ async function handleStepChange(step: number): Promise<void> {
         console.warn(
             'User already registered. Skipping registration.',
         );
-        return navigateTo('/student/dashboard');
+        return navigateTo('/student/app-tour');
       } else {
         console.error(
             'Unexpected error:',
@@ -210,12 +210,12 @@ async function handleSubmit() {
     await useUserApi().createStudentProfile('');
   }
   await addUserTag({
-      id: userStore.user?.id || '',
-      tags: tags.value as tagData[],
+    id: userStore.user?.id || '',
+    tags: tags.value as tagData[],
   });
-    if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
-        await registrationStore.fetchRegistrationStatus(userStore.user?.email)
-    }
+  if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
+    await registrationStore.fetchRegistrationStatus(userStore.user?.email)
+  }
   return navigateTo('/student/dashboard');
 }
 

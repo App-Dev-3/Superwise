@@ -52,62 +52,56 @@
         "title": "Upload new data"
       }
     },
-    "dashboard": {
-      "student": {
-        "alt": "Picture showing on how the dashboard works",
-        "description": "Effortlessly navigate the dashboard and get an overview of your current state in the request progress, matches, and much more...",
-        "title": "Navigate the Dashboard"
-      },
-      "supervisor": {
+    "supervisor": {
+      "dashboard": {
         "alt": "Picture showing on how the dashboard works",
         "description": "Effortlessly navigate the dashboard and get an overview of your current state of open requests and manage your supervised students",
         "title": "Navigate the Dashboard"
-      }
-    },
-    "finish": "Finish...",
-    "manage": {
-      "supervisor": {
+      },
+      "manage": {
         "alt": "A video showcasing how to remove students you have matched with",
         "description": "Remove students you have matched with, or add new ones, if you will be supervising them!",
         "title": "Manage you Students"
-      }
-    },
-    "matching": {
-      "student": {
-        "alt": "A video showcasing the use of the matching page",
-        "description": "Swipe left or right to match with your perfect supervisor or dismiss unwanted ones. You can see your compatability with them, visit their profile, and undo your actions if you mis-swiped!",
-        "title": "Match with Supervisors"
       },
-      "supervisor": {
+      "matching": {
         "alt": "A video showcasing the use of the matching page",
         "description": "Swipe left or right to accept or reject supervision requests from Students. Visit their profile, and undo your actions if you mis-swiped!",
         "title": "Match with Supervisors"
-      }
-    },
-    "overview": {
-      "student": {
-        "alt": "A video giving an overview of the app",
-        "description": "Now that you know the basics, jump right in and start matching with supervisors!",
-        "title": "Get started using the app"
       },
-      "supervisor": {
+      "overview": {
         "alt": "A video giving an overview of the app",
         "description": "Now that you know the basics, jump right in and start supervising students!",
         "title": "Get started using the app"
-      }
-    },
-    "profile": {
-      "student": {
-        "alt": "A video showcasing how to use the profile",
-        "description": "You can edit your name, tags and descriptions. People who visit your profile, are able to see this data!",
-        "title": "View and edit your profile"
       },
-      "supervisor": {
+      "profile": {
         "alt": "A video showcasing how to use the profile",
         "description": "You can edit your tags and descriptions. People who visit your profile, are able to see this data!",
         "title": "View and edit your profile"
       }
-    }
+    },
+    "student": {
+      "dashboard": {
+        "alt": "Picture showing on how the dashboard works",
+        "description": "Effortlessly navigate the dashboard and get an overview of your current state in the request progress, matches, and much more...",
+        "title": "Navigate the Dashboard"
+      },
+      "matching": {
+        "alt": "A video showcasing the use of the matching page",
+        "description": "Swipe left or right to match with your perfect supervisor or dismiss unwanted ones. You can see your compatability with them, visit their profile, and undo your actions if you mis-swiped!",
+        "title": "Match with Supervisors"
+      },
+      "overview": {
+        "alt": "A video giving an overview of the app",
+        "description": "Now that you know the basics, jump right in and start matching with supervisors!",
+        "title": "Get started using the app"
+      },
+      "profile": {
+        "alt": "A video showcasing how to use the profile",
+        "description": "You can edit your name, tags and descriptions. People who visit your profile, are able to see this data!",
+        "title": "View and edit your profile"
+      }
+    },
+    "finish": "Finish..."
   },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",

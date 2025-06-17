@@ -52,62 +52,56 @@
         "title": ""
       }
     },
-    "dashboard": {
-      "student": {
-        "alt": "Bild, das zeigt, wie das Dashboard funktioniert",
-        "description": "Nutze das Dashboard, um einen Überblick über den aktuellen Stand der Dinge, Anfragen und vieles mehr zu bekommen...",
-        "title": "Navigiere das Dashboard"
-      },
-      "supervisor": {
+    "supervisor": {
+      "dashboard": {
         "alt": "Bild, das zeigt, wie das Dashboard funktioniert",
         "description": "Nutze das Dashboard, um einen Überblick über den aktuellen Stand offener Anfragen zu bekommen und deine betreuten Studierenden zu verwalten",
         "title": "Navigiere das Dashboard"
-      }
-    },
-    "finish": "Abschließen...",
-    "manage": {
-      "supervisor": {
+      },
+      "manage": {
         "alt": "Ein Video, das zeigt, wie man Studierende entfernt, mit denen man gematched hat",
         "description": "Entferne Studierende, mit denen du gematched hast, oder füge neue hinzu, falls du sie betreuen wirst!",
         "title": "Verwalte deine Studierenden"
-      }
-    },
-    "matching": {
-      "student": {
-        "alt": "Ein Video, das die Nutzung der Matching-Seite zeigt",
-        "description": "Wische nach links oder rechts, um mit deinem perfekten Betreuer zu matchen. Du kannst deine Kompatibilität mit ihnen sehen, ihr Profil besuchen und deine Aktionen rückgängig machen, falls du falsch gewischt hast!",
-        "title": "Matche mit Betreuern"
       },
-      "supervisor": {
+      "matching": {
         "alt": "Ein Video, das die Nutzung der Matching-Seite zeigt",
         "description": "Wische nach links oder rechts, um Betreuungsanfragen von Studierenden anzunehmen oder abzulehnen. Besuche ihr Profil und mache deine Aktionen rückgängig, falls du falsch gewischt hast!",
         "title": "Matche mit Studierenden"
-      }
-    },
-    "overview": {
-      "student": {
-        "alt": "Ein Video, das einen Überblick über die App gibt",
-        "description": "Jetzt, da du die Grundlagen kennst, steige direkt ein und beginne mit dem Matching von Betreuern!",
-        "title": "Starte mit der Nutzung der App"
       },
-      "supervisor": {
+      "overview": {
         "alt": "Ein Video, das einen Überblick über die App gibt",
         "description": "Jetzt, da du die Grundlagen kennst, steige direkt ein und beginne mit der Betreuung von Studierenden!",
         "title": "Starte mit der Nutzung der App"
-      }
-    },
-    "profile": {
-      "student": {
-        "alt": "Ein Video, das zeigt, wie man das Profil nutzt",
-        "description": "Du kannst deinen Namen, Tags und Beschreibungen bearbeiten. Personen, die dein Profil besuchen, können diese Daten sehen!",
-        "title": "Profil anzeigen und bearbeiten"
       },
-      "supervisor": {
+      "profile": {
         "alt": "Ein Video, das zeigt, wie man das Profil nutzt",
         "description": "Du kannst deine Tags und Beschreibungen bearbeiten. Personen, die dein Profil besuchen, können diese Daten sehen!",
         "title": "Profil anzeigen und bearbeiten"
       }
-    }
+    },
+    "student": {
+      "dashboard": {
+        "alt": "Bild, das zeigt, wie das Dashboard funktioniert",
+        "description": "Nutze das Dashboard, um einen Überblick über den aktuellen Stand der Dinge, Anfragen und vieles mehr zu bekommen...",
+        "title": "Navigiere das Dashboard"
+      },
+      "matching": {
+        "alt": "Ein Video, das die Nutzung der Matching-Seite zeigt",
+        "description": "Wische nach links oder rechts, um mit deinem perfekten Betreuer zu matchen. Du kannst deine Kompatibilität mit ihnen sehen, ihr Profil besuchen und deine Aktionen rückgängig machen, falls du falsch gewischt hast!",
+        "title": "Matche mit Betreuern"
+      },
+      "overview": {
+        "alt": "Ein Video, das einen Überblick über die App gibt",
+        "description": "Jetzt, da du die Grundlagen kennst, steige direkt ein und beginne mit dem Matching von Betreuern!",
+        "title": "Starte mit der Nutzung der App"
+      },
+      "profile": {
+        "alt": "Ein Video, das zeigt, wie man das Profil nutzt",
+        "description": "Du kannst deinen Namen, Tags und Beschreibungen bearbeiten. Personen, die dein Profil besuchen, können diese Daten sehen!",
+        "title": "Profil anzeigen und bearbeiten"
+      }
+    },
+    "finish": "Abschließen..."
   },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",

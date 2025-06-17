@@ -7,33 +7,33 @@ const { t } = useI18n();
 const steps = [
   {
     source: '../appTour/supervisor/dashboard.jpeg',
-    alt: t('appTour.dashboard.supervisor.alt'),
-    title: t('appTour.dashboard.supervisor.title'),
-    description: t('appTour.dashboard.supervisor.description')
+    alt: t('appTour.supervisor.dashboard.alt'),
+    title: t('appTour.supervisor.dashboard.title'),
+    description: t('appTour.supervisor.dashboard.description')
   },
   {
     source: '../appTour/supervisor/matching.mp4',
-    alt: t('appTour.matching.supervisor.alt'),
-    title: t('appTour.matching.supervisor.title'),
-    description: t('appTour.matching.supervisor.description')
+    alt: t('appTour.supervisor.matching.alt'),
+    title: t('appTour.supervisor.matching.title'),
+    description: t('appTour.supervisor.matching.description')
   },
   {
     source: '../appTour/supervisor/profile.mp4',
-    alt: t('appTour.profile.supervisor.alt'),
-    title: t('appTour.profile.supervisor.title'),
-    description: t('appTour.profile.supervisor.description')
+    alt: t('appTour.supervisor.profile.alt'),
+    title: t('appTour.supervisor.profile.title'),
+    description: t('appTour.supervisor.profile.description')
   },
   {
     source: '../appTour/supervisor/manage.mp4',
-    alt: t('appTour.manage.supervisor.alt'),
-    title: t('appTour.manage.supervisor.title'),
-    description: t('appTour.manage.supervisor.description')
+    alt: t('appTour.supervisor.manage.alt'),
+    title: t('appTour.supervisor.manage.title'),
+    description: t('appTour.supervisor.manage.description')
   },
   {
     source: '../appTour/supervisor/demo.mp4',
-    alt: t('appTour.overview.supervisor.alt'),
-    title: t('appTour.overview.supervisor.title'),
-    description: t('appTour.overview.supervisor.description')
+    alt: t('appTour.supervisor.overview.alt'),
+    title: t('appTour.supervisor.overview.title'),
+    description: t('appTour.supervisor.overview.description')
   },
 ];
 

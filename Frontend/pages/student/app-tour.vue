@@ -6,27 +6,27 @@ const { t } = useI18n();
 const steps = [
   {
     source: '../appTour/student/dashboard.jpeg',
-    alt: t('appTour.dashboard.student.alt'),
-    title: t('appTour.dashboard.student.title'),
-    description: t('appTour.dashboard.student.description')
+    alt: t('appTour.student.dashboard.alt'),
+    title: t('appTour.student.dashboard.title'),
+    description: t('appTour.student.dashboard.description')
   },
   {
     source: '../appTour/student/matching.mp4',
-    alt: t('appTour.matching.student.alt'),
-    title: t('appTour.matching.student.title'),
-    description: t('appTour.matching.student.description')
+    alt: t('appTour.student.matching.alt'),
+    title: t('appTour.student.matching.title'),
+    description: t('appTour.student.matching.description')
   },
   {
     source: '../appTour/student/profile.mp4',
-    alt: t('appTour.profile.student.alt'),
-    title: t('appTour.profile.student.title'),
-    description: t('appTour.profile.student.description')
+    alt: t('appTour.student.profile.alt'),
+    title: t('appTour.student.profile.title'),
+    description: t('appTour.student.profile.description')
   },
   {
     source: '../appTour/student/demo.mp4',
-    alt: t('appTour.overview.student.alt'),
-    title: t('appTour.overview.student.title'),
-    description: t('appTour.overview.student.description')
+    alt: t('appTour.student.overview.alt'),
+    title: t('appTour.student.overview.title'),
+    description: t('appTour.student.overview.description')
   },
 ];
 

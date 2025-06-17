@@ -5,6 +5,7 @@ import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
 import type { UserData } from "~/shared/types/userInterfaces";
 import { supervisionRequestStatus } from "#shared/enums/enums";
+import { useI18n } from 'vue-i18n';
 
 const authStore = useAuthStore();
 await authStore.initialize();
@@ -94,6 +95,8 @@ async function addStudent(email: string) {
   await refresh();
 }
 
+const { t } = useI18n();
+
 definePageMeta({
   layout: "generic-back-layout",
 });
@@ -101,7 +104,7 @@ definePageMeta({
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 p-8">
-    <span class="text-large">Currently Supervising</span>
+    <span class="text-large">{{ t('nav.currentlySupervising') }}</span>
     <div
       v-if="pending || error"
       class="w-full h-fit min-h-64 p-4 border border-base-300 rounded-3xl flex flex-col justify-center items-center"

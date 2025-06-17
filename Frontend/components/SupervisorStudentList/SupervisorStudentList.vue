@@ -83,12 +83,18 @@ const emailAddress = ref("");
 const clearInput = ref(false);
 const emailDomain = "fhstp.ac.at";
 
+
 const updateMail = (value: string) => {
   emailAddress.value = value;
 };
 
-const editButtonLabel = computed(() => (isEditing.value ? "Done" : "Edit"));
-const editButtonIcon = computed(() => (isEditing.value ? "check" : "edit"));
+const editButtonLabel = computed(() => {
+  return isEditing.value ? t('generic.done') : t('generic.edit');
+});
+
+const editButtonIcon = computed(() => {
+  return isEditing.value ? "check" : "edit";
+});
 
 const confirm = async () => {
   if (!emailAddress.value) return;

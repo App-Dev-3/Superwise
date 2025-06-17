@@ -104,7 +104,7 @@ definePageMeta({
 
 <template>
   <div class="w-full h-fit flex flex-col gap-2 p-8">
-    <span class="text-large">{{ t('nav.currentlySupervising') }}</span>
+    <span class="text-large p-4">{{ t('nav.currentlySupervising') }}</span>
     <div
       v-if="pending || error"
       class="w-full h-fit min-h-64 p-4 border border-base-300 rounded-3xl flex flex-col justify-center items-center"

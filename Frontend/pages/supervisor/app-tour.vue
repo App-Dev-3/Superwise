@@ -5,25 +5,25 @@ const { t } = useI18n();
 
 const steps = [
   {
-    source: '../appTour/students/dashboard.jpeg',
+    source: '../appTour/dashboard.jpeg',
     alt: t('appTour.dashboard.student.alt'),
     title: t('appTour.dashboard.student.title'),
     description: t('appTour.dashboard.student.description')
   },
   {
-    source: '../appTour/students/matching.mp4',
+    source: '../appTour/matching.jpeg',
     alt: t('appTour.matching.student.alt'),
     title: t('appTour.matching.student.title'),
-    description: t('appTour.matching.student.description')
+    description: t('appTour.matching.student')
   },
   {
-    source: '../appTour/students/profile.mp4',
+    source: '../appTour/profile.jpeg',
     alt: t('appTour.profile.student.alt'),
     title: t('appTour.profile.student.title'),
     description: t('appTour.profile.student.description')
   },
   {
-    source: '../appTour/students/demo.mp4',
+    source: '../appTour/demo.mp4',
     alt: t('appTour.overview.student.alt'),
     title: t('appTour.overview.student.title'),
     description: t('appTour.overview.student.description')

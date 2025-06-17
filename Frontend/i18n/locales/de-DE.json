@@ -37,7 +37,28 @@
         "title": "Navigiere das Dashboard"
       }
     },
-    "finish": "Abschließen..."
+    "finish": "Abschließen...",
+    "matching": {
+      "student": {
+        "alt": "",
+        "description": "",
+        "title": "Matche mit Betreuern"
+      }
+    },
+    "overview": {
+      "student": {
+        "alt": "",
+        "description": "",
+        "title": ""
+      }
+    },
+    "profile": {
+      "student": {
+        "alt": "",
+        "description": "",
+        "title": ""
+      }
+    }
   },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",
@@ -120,6 +141,7 @@
     "loading": "Lädt",
     "logoAlt": "Logo",
     "mail": "E-Mail",
+    "noVideoSupport": "",
     "pendingRequestTo": "Ausstehende Anfrage an",
     "profile": "Profil",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
@@ -137,10 +159,7 @@
     "tags": "Tags",
     "thesisDescription": "Thesis-Beschreibung",
     "undo": "rückgängig machen",
-    "upload": "Importieren",
-    "rejectedRequestTo": "Abgelehnte Anfrage an",
-    "acceptedRequestTo": "Akzeptierte Anfrage an",
-    "pendingRequestTo": "Ausstehende Anfrage an"
+    "upload": "Importieren"
   },
   "landing": {
     "dataCollection": "Um den perfekten Betreuer für dich zu finden, müssen wir einige Daten sammeln und verarbeiten. Erfahre {0} was wir damit machen!",

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useI18n } from 'vue-i18n';
 
 interface AppTourProps {
   steps: Array<{
@@ -15,6 +16,8 @@ const props = defineProps<AppTourProps>();
 const currentStepRef = computed(() => {
   return props.steps[props.currentStep];
 });
+
+const { t } = useI18n();
 
 </script>
 
@@ -35,11 +38,13 @@ const currentStepRef = computed(() => {
       >
       <video
           v-else
+          :aria-label="currentStepRef.alt"
           autoplay
           class="max-h-full w-auto object-cover"
           loop
       >
-        <source :src="currentStepRef.source">
+        <source :src="currentStepRef.source" type="video/mp4">
+        {{ t('generic.noVideoSupport') }}
       </video>
     </div>
 

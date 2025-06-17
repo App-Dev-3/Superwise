@@ -37,7 +37,28 @@
         "title": "Navigate the Dashboard"
       }
     },
-    "finish": "Finish..."
+    "finish": "Finish...",
+    "matching": {
+      "student": {
+        "alt": "A video showcasing the use of the matching page",
+        "description": "Swipe left or right to match with your perfect supervisor. You can see your compatability with them, visit their profile, and undo your actions if you mis-swiped!",
+        "title": "Match with Supervisors"
+      }
+    },
+    "overview": {
+      "student": {
+        "alt": "A video giving an overview of the app",
+        "description": "Now that you know the basics, jumpt right in and start matching with supervisors!",
+        "title": "Get started using the app"
+      }
+    },
+    "profile": {
+      "student": {
+        "alt": "A video showcasing how to use the profile",
+        "description": "You can edit your name, tags and descriptions. People who visit your profile, are able to see this data!",
+        "title": "View and edit your profile"
+      }
+    }
   },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",
@@ -120,6 +141,7 @@
     "loading": "Loading",
     "logoAlt": "logo",
     "mail": "Mail",
+    "noVideoSupport": "Your browser does not support HTML video... i think its time to upgrade your device!",
     "pendingRequestTo": "Pending request to",
     "profile": "Profile",
     "profilePictureAlt": "Profile picture of {firstName} {lastName}",
@@ -137,10 +159,7 @@
     "tags": "Tags",
     "thesisDescription": "Thesis description",
     "undo": "Undo",
-    "upload": "Upload",
-    "rejectedRequestTo": "Rejected request to",
-    "acceptedRequestTo": "Accepted request to",
-    "pendingRequestTo": "Pending request to"
+    "upload": "Upload"
   },
   "landing": {
     "dataCollection": "In order to find the perfect supervisor for you, we have to collect and process some data. Find out {0} what we do with it!",

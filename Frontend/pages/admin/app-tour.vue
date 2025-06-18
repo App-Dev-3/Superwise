@@ -3,7 +3,32 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+const authStore = useAuthStore();
+await authStore.initialize();
+const { user } = storeToRefs(authStore);
+const userEmail = user.value?.primaryEmailAddress?.emailAddress;
+const registrationStore = useRegistrationStore();
 
+const registerNewAdmin = async () => {
+    if (!userEmail) {
+        console.error('User email is not available');
+        return;
+    }
+    console.log('registerNewAdmin with email:', userEmail);
+
+    $fetch('/api/users', {
+        method: 'POST',
+        body: {
+            email: userEmail
+        }
+    })
+        .then(() => {
+            navigateTo('/dashboard/admin');
+        })
+        .catch((error) => {
+            console.error('Error registering new admin:', error);
+        });
+};
 const steps = [
   {
     source: '../appTour/admin/dashboard.jpeg',
@@ -35,7 +60,11 @@ const currentStep = ref(0);
 
 function next() {
   if (currentStep.value === steps.length - 1) {
-    close();
+      if (!registrationStore.status.is_registered) {
+          registerNewAdmin()
+      } else {
+          close();
+      }
   }
   currentStep.value = Math.min(steps.length - 1, currentStep.value + 1);
 }

@@ -216,7 +216,7 @@ async function handleSubmit() {
   if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
     await registrationStore.fetchRegistrationStatus(userStore.user?.email)
   }
-  return navigateTo('/student/dashboard');
+  return navigateTo('/student/app-tour');
 }
 
 const fetchAlldata = async () => {

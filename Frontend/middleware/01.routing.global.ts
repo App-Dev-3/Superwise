@@ -34,7 +34,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // Register user if is not already registered
 
   if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
-    console.log('🍍🍍🍍🍍🍍🍍[ROUTING MIDDLEWARE]: Fetching registration status for user:', userEmail)
     await registrationStore.fetchRegistrationStatus(userEmail)
   }
   let userRole = UserRoles.STUDENT
@@ -42,15 +41,20 @@ export default defineNuxtRouteMiddleware(async (to) => {
     userRole = registrationStore.status.role
   }
 
-  // Skip checking is admin is oboarded. They should be redirected to dashboard
+  const accountRegistrationCompleted = registrationStore.status?.is_registered || false
+
   if (userRole === UserRoles.ADMIN) {
+    if (!accountRegistrationCompleted) {
+      if (!to.path.startsWith('/admin/app-tour')) {
+        return navigateTo('/admin/app-tour')
+      }
+    }
     if (!to.path.startsWith('/admin')) {
       return navigateTo('/admin/dashboard')
     }
     return
   }
 
-  const accountRegistrationCompleted = registrationStore.status?.is_registered || false
   const tagsSelected = registrationStore.status?.tags || false
 
   if (!accountRegistrationCompleted && to.path.startsWith('/onboarding')) {

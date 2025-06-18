@@ -21,8 +21,8 @@
       <template #step1>
         <tag-selector
             :all-tags="DbTags"
-            :initial-selected="[]"
             :description-text="descriptionText[0]"
+            :initial-selected="[]"
             :max-selection="10"
             @update:selected-tags="
                   tags = $event
@@ -75,7 +75,7 @@ const processingData = ref(false);
 
 const buttonText = [
   t('multiStepForm.tagPriority'),
-  t('multiStepForm.seeMatches'),
+  t('nav.appTour'),
 ];
 
 const descriptionText = [
@@ -91,9 +91,9 @@ const headerText = [
 
 onMounted(async () => {
   if (!user.value) return navigateTo('/');
-    if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
-        await registrationStore.fetchRegistrationStatus(user.value.primaryEmailAddress?.emailAddress)
-    }
+  if (!registrationStore.status || !registrationStore.status.exists || !registrationStore.status.is_registered) {
+    await registrationStore.fetchRegistrationStatus(user.value.primaryEmailAddress?.emailAddress)
+  }
   if (registrationStore.status?.is_registered) {
     DbTags.value = (await getTags()) as tagData[];
     return
@@ -133,7 +133,7 @@ const handleSubmit = async () => {
     id: userStore.user?.id,
     tags: tags.value as tagData[],
   });
-  return navigateTo('/supervisor/dashboard');
+  return navigateTo('/supervisor/app-tour');
 };
 
 

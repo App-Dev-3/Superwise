@@ -14,13 +14,31 @@ const pageContent = [
   "dataProtection.student&supervisor.dataDeletionText.1",
   "dataProtection.student&supervisor.dataDeletionList",
   "dataProtection.student&supervisor.dataDeletionText.2",
+  "dataProtection.generic.generalInfoTitle",
+  "dataProtection.generic.generalInfoText",
+  "dataProtection.generic.collectedDataSubtitle",
+  "dataProtection.student&supervisor.collectedDataText",
+  "dataProtection.student&supervisor.collectedDataList",
+  "dataProtection.generic.changesAndOverwritesSubtitle",
+  "dataProtection.student&supervisor.changesAndOverwritesText",
+  "dataProtection.generic.dataDeletionSubtitle",
+  "dataProtection.student&supervisor.dataDeletionText.1",
+  "dataProtection.student&supervisor.dataDeletionList",
+  "dataProtection.student&supervisor.dataDeletionText.2",
 ];
 
 const getStyle = (content: string) => {
   if (content.match(/Subtitle(\.\d+)?$/)) return "pt-6";
+  if (content.match(/Subtitle(\.\d+)?$/)) return "pt-6";
 };
 
 const { t } = useI18n();
+
+const toastData = ref({
+  visible: false,
+  type: "success",
+  message: "",
+});
 
 const toastData = ref({
   visible: false,
@@ -48,11 +66,17 @@ definePageMeta({
 
 <template>
   <div class="p-8 flex flex-col gap-2">
+  <div class="p-8 flex flex-col gap-2">
     <div
       v-for="content in pageContent"
       :key="content"
       :class="getStyle(content)"
+      v-for="content in pageContent"
+      :key="content"
+      :class="getStyle(content)"
     >
+      <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
+        <li v-for="(item, index) in t(content).split('\n')" :key="index">
       <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
         <li v-for="(item, index) in t(content).split('\n')" :key="index">
           {{ item }}
@@ -60,9 +84,11 @@ definePageMeta({
       </ul>
 
       <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">
+      <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">
         {{ t(content) }}
       </h2>
 
+      <h1 v-else-if="content.match(/Title(\.\d+)?$/)" class="text-header">
       <h1 v-else-if="content.match(/Title(\.\d+)?$/)" class="text-header">
         {{ t(content) }}
       </h1>
@@ -82,6 +108,14 @@ definePageMeta({
         />
       </a>
     </SignOutButton>
+    <Toast
+      v-if="toastData.visible"
+      :duration="3000"
+      :message="toastData.message"
+      :type="toastData.type"
+      @close="toastData.visible = false"
+      @button-click="toastData.visible = false"
+    />
     <Toast
       v-if="toastData.visible"
       :duration="3000"

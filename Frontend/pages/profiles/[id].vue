@@ -193,7 +193,6 @@
 import { ref } from "vue";
 import CustomButton from "~/components/CustomButton/CustomButton.vue";
 import ProfileDescription from "~/components/ProfileViewComponents/ProfileDescription.vue";
-import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import {
   HttpMethods,
   supervisionRequestStatus,
@@ -234,9 +233,6 @@ const { data, error, pending } = await useFetch(
     `/api/users/${ routeParamUserId }/with-relations`
 );
 const routeParamUser = data;
-const {
-  data: requests,
-} = useSupervisionRequests("ACCEPTED");
 
 const studentPendingRequest = computed(() => {
   return supervisorStore.supervisionRequests?.find(

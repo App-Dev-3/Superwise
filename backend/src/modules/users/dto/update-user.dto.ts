@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, IsBoolean } from 'class-validator';
 
 export class UpdateUserDto {
   @ApiPropertyOptional({
@@ -33,4 +33,24 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   profile_image?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  is_registered?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'User deletion status',
+    example: false,
+  })
+  @IsBoolean()
+  @IsOptional()
+  is_deleted?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Clerk ID for authentication',
+    example: 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM',
+  })
+  @IsString()
+  @IsOptional()
+  clerk_id?: string | null;
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { AdminRepository } from './admin.repository';
 import { UsersRepository } from '../users/users.repository';
 import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
@@ -9,12 +9,15 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { CreateAdminSuccessDto } from './dto/create-admin-success.dto';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
+import { UsersService } from '../users/users.service';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class AdminService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly usersRepository: UsersRepository,
+    private readonly usersService: UsersService,
     private readonly logger: WinstonLoggerService,
   ) {}
 
@@ -79,6 +82,29 @@ export class AdminService {
       success: true,
       message: 'Admin user created successfully',
       adminId: newAdmin.id,
+    };
+  }
+
+  async resetUser(userId: string): Promise<{ success: boolean; message: string }> {
+  
+    const user = await this.usersService.findUserById(userId);
+
+    if (user.role === Role.ADMIN) {
+      throw new ForbiddenException('Cannot reset admin users');
+    }
+
+    await this.usersService.updateUser(userId, {
+      first_name: '',
+      last_name: '',
+      profile_image: "",
+      is_registered: false,
+      is_deleted: true,
+      clerk_id: null,
+    });
+
+    return {
+      success: true,
+      message: `User ${user.email} has been reset`,
     };
   }
 }

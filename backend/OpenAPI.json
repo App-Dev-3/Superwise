@@ -1404,6 +1404,30 @@
         ]
       }
     },
+    "/admin/users/{id}/reset": {
+      "delete": {
+        "operationId": "AdminController_resetUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Reset a user account (Admin only)",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/match/{userId}": {
       "get": {
         "description": "Calculate and retrieve a list of all supervisors with their compatibility scores for a specific student",
@@ -2036,6 +2060,16 @@
             "type": "string",
             "description": "URL to user profile image",
             "example": "https://example.com/images/updated-profile.jpg"
+          },
+          "is_deleted": {
+            "type": "boolean",
+            "description": "User deletion status",
+            "example": false
+          },
+          "clerk_id": {
+            "type": "object",
+            "description": "Clerk ID for authentication",
+            "example": "user_2NUj8tGhSFhTLD9sdP0q4P7VoJM"
           }
         }
       },

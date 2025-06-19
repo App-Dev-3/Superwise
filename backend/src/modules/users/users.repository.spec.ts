@@ -40,7 +40,7 @@ describe('UsersRepository', () => {
 
   const mockUser = {
     id: USER_UUID,
-    email: 'exampleStudent1@fhstp.ac.at',
+    email: 'examplestudent1@fhstp.ac.at',
     first_name: 'Max',
     last_name: 'Mustermann',
     role: Role.STUDENT,
@@ -89,7 +89,7 @@ describe('UsersRepository', () => {
   describe('findUsers', () => {
     it('should return users matching email query', async () => {
       // Arrange
-      const searchQuery = 'exampleStudent1@fhstp.ac.at';
+      const searchQuery = 'examplestudent1@fhstp.ac.at';
       mockPrismaService.user.findMany.mockResolvedValue([mockUser]);
 
       // Act
@@ -297,7 +297,7 @@ describe('UsersRepository', () => {
     it('should create a new user', async () => {
       // Arrange
       const userData = {
-        email: 'exampleStudent1@fhstp.ac.at',
+        email: 'examplestudent1@fhstp.ac.at',
         first_name: 'Max',
         last_name: 'Mustermann',
         role: Role.STUDENT,
@@ -323,7 +323,7 @@ describe('UsersRepository', () => {
         {
           ...mockUser,
           id: USER_UUID_2,
-          email: 'exampleStudent2@fhstp.ac.at',
+          email: 'examplestudent2@fhstp.ac.at',
           first_name: 'Maria',
           last_name: 'Mustermann',
           profile_image: 'https://superwise.at/images/a7f32c8b-d09e-47a1-83c1-5fe198b67890.jpg',
@@ -421,7 +421,7 @@ describe('UsersRepository', () => {
   describe('findUserByEmail', () => {
     it('should find a user by email', async () => {
       // Arrange
-      const email = 'exampleStudent1@fhstp.ac.at';
+      const email = 'examplestudent1@fhstp.ac.at';
       mockPrismaService.user.findUnique.mockResolvedValue(mockUser);
 
       // Act

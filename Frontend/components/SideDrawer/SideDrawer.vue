@@ -1,12 +1,13 @@
-<script setup>
-import {useRouter} from 'vue-router';
-import {useColorMode} from '#imports';
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+<script lang="ts" setup>
+import { useRouter } from 'vue-router';
+import { useColorMode } from '#imports';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import type { DrawerLinkListInterface } from "~/shared/types/userInterfaces";
 
 const colorMode = useColorMode();
 const router = useRouter();
 
-const {t} = useI18n();
+const { t } = useI18n();
 
 const props = defineProps({
   image: {
@@ -27,25 +28,25 @@ const props = defineProps({
   },
 });
 
-const drawerLinks = {
+const drawerLinks: DrawerLinkListInterface = {
   student: [
-    {key: 'profile', url: '/student/profile', text: t('nav.profile'), icon: 'user'},
-    {key: 'settings', url: '/student/settings', text: t('nav.settings'), icon: 'gear'},
-    {key: 'app-tour', url: '/student/app-tour', text: t('nav.appTour'), icon: 'map'},
-    {key: 'data-protection', url: '/student/data-protection', text: t('nav.dataProtection'), icon: 'user-shield'},
+    { key: 'profile', url: '/student/profile', text: t('nav.profile'), icon: 'user' },
+    { key: 'settings', url: '/student/settings', text: t('nav.settings'), icon: 'gear' },
+    { key: 'app-tour', url: '/student/app-tour', text: t('nav.appTour'), icon: 'map' },
+    { key: 'data-protection', url: '/student/data-protection', text: t('nav.dataProtection'), icon: 'user-shield' },
   ],
   supervisor: [
-    {key: 'profile', url: '/supervisor/profile', text: t('nav.profile'), icon: 'user'},
-    {key: 'settings', url: '/supervisor/settings', text: t('nav.settings'), icon: 'gear'},
-    {key: 'app-tour', url: '/supervisor/app-tour', text: t('nav.appTour'), icon: 'map'},
-    {key: 'data-protection', url: '/supervisor/data-protection', text: t('nav.dataProtection'), icon: 'user-shield'},
+    { key: 'profile', url: '/supervisor/profile', text: t('nav.profile'), icon: 'user' },
+    { key: 'settings', url: '/supervisor/settings', text: t('nav.settings'), icon: 'gear' },
+    { key: 'app-tour', url: '/supervisor/app-tour', text: t('nav.appTour'), icon: 'map' },
+    { key: 'data-protection', url: '/supervisor/data-protection', text: t('nav.dataProtection'), icon: 'user-shield' },
   ],
   admin: [
-    {key: 'profile', url: '/admin/profile', text: t('nav.profile'), icon: 'user'},
-    {key: 'settings', url: '/admin/settings', text: t('nav.settings'), icon: 'gear'},
-    {key: 'app-tour', url: '/admin/app-tour', text: t('nav.appTour'), icon: 'map'},
-    {key: 'data-protection', url: '/admin/data-protection', text: t('nav.dataProtection'), icon: 'user-shield'},
-    {key: 'new-cycle', url: '/admin/new-cycle', text: t('nav.newCycle'), icon: 'arrows-spin'},
+    { key: 'profile', url: '/admin/profile', text: t('nav.profile'), icon: 'user' },
+    { key: 'settings', url: '/admin/settings', text: t('nav.settings'), icon: 'gear' },
+    { key: 'app-tour', url: '/admin/app-tour', text: t('nav.appTour'), icon: 'map' },
+    { key: 'data-protection', url: '/admin/data-protection', text: t('nav.dataProtection'), icon: 'user-shield' },
+    { key: 'new-cycle', url: '/admin/new-cycle', text: t('nav.newCycle'), icon: 'arrows-spin' },
   ],
 };
 </script>
@@ -97,7 +98,7 @@ const drawerLinks = {
         <div class="flex flex-col flex-grow h-0">
           <ul class="space-y-3 flex flex-col w-fit h-full">
             <li
-                v-for="link in drawerLinks[props.role.toLowerCase() || 'student']"
+                v-for="link in drawerLinks[props.role.toLowerCase() as 'student' | 'supervisor' | 'admin' || 'student']"
                 :key="link.key"
                 class="w-contain px-2"
             >

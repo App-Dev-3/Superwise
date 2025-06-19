@@ -18,6 +18,7 @@
     "admin": {
       "deleteData": "Delete Data",
       "downloadData": "Daten Herunterladen",
+      "newCycle": "Neuer Zyklus",
       "uploadData": "Daten Importieren"
     },
     "back": "Zurück",
@@ -276,6 +277,17 @@
     "newCycle": "Betreuungs Zyklen",
     "profile": "Profil",
     "settings": "Einstellungen"
+  },
+  "new-cycle": {
+    "body": "Wenn du einen neuen Zyklus startest, werden alle Matches gelöscht, belegte Betreuungsslots zurückgesetzt und alle Anfragen storniert! Führe diese Aktion nur aus, wenn ein neues Jahr beginnt, du bereit bist, einen neuen Zyklus zu starten und ein Backup aller Matches erstellt hast!",
+    "header": "Beginne einen neuen Zyklus",
+    "modal": {
+      "button": "Neuer Zyklus"
+    },
+    "startNewCycle": "Neuen Zyklus beginnen...",
+    "toast": {
+      "message": "Ein neuer Zyklus hat begonnen!"
+    }
   },
   "onboarding": {
     "completed": "Du hast erfolgreich das Onboarding abgeschlossen!",

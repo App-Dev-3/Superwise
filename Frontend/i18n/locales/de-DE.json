@@ -206,6 +206,8 @@
     "loading": "Lädt",
     "logoAlt": "Logo",
     "mail": "E-Mail",
+    "manageRequest": "Anfrage verwalten",
+    "addStudent": "Als Betreute*r hinzufügen",
     "noVideoSupport": "Dein Browser unterstützt kein HTML-Video... ich denke, es ist Zeit für ein Upgrade deines Geräts!",
     "pendingRequestTo": "Ausstehende Anfrage an",
     "profile": "Profil",
@@ -265,7 +267,18 @@
     "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
     "withdrawSupervisionConfirm": "Anfrage zurückziehen",
     "withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
-    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen"
+    "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen",
+    "handleRequest": {
+      "accept": "Anfrage annehmen",
+      "dismiss": "Anfrage ablehnen",
+      "description": "{firstName} {lastName} hat eine ausstehende Anfrage zur Betreuung. Möchten Sie diese Anfrage annehmen oder ablehnen?",
+      "headline": "Ausstehende Betreuungsanfrage"
+    },
+    "supervisee": {
+      "accept": "Als Betreuer hinzufügen",
+      "headline": "Student als Betreuer hinzufügen",
+      "description": "Das Hinzufügen eines Studenten als Betreuer überspringt den Bestätigungsprozess und fügt ihn direkt zu deinen betreuten Studenten hinzu. Möchtest du fortfahren?"
+    }
   },
   "multiStepForm": {
     "description": {
@@ -461,6 +474,10 @@
   },
   "toast": {
     "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage",
-    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen"
+    "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen",
+    "withdrawnStudentRequest": "Die Anfrage des Studierenden wurde zurückgezogen",
+    "acceptedStudentRequest": "Die Anfrage des Studierenden wurde angenommen",
+    "somethingWentWrong": "Etwas ist schief gelaufen, bitte versuchen Sie es später noch einmal",
+    "addedStudentAsSupervisee": "Student wurde als Betreuer hinzugefügt"
   }
 }

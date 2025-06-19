@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { IsAllowedEmailDomain } from '../../../../common/validators/allowed-email-domains.validator';
 
 export class CreateSupervisionRequestDto {
@@ -18,6 +19,9 @@ export class CreateSupervisionRequestDto {
   })
   @IsOptional()
   @IsEmail()
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.toLowerCase() : (value as string),
+  )
   @IsAllowedEmailDomain({
     message: 'Email must be from an allowed domain',
   })

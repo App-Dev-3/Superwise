@@ -22,22 +22,24 @@ const headerText = computed(() => {
         download: t("appHeader.admin.downloadData"),
         upload: t("appHeader.admin.uploadData"),
         delete: t("appHeader.admin.deleteData"),
-        'new-cycle': t("appHeader.admin.newCycle"),
+        "new-cycle": t("appHeader.admin.newCycle"),
+        "add-admin": t("appHeader.addAdmin"),
       }[currentPage] || t("nav.defaultHeader")
   );
 });
 
 const getVariant = computed(
-    (): "default" | "upload" | "download" | "delete" | "text" | undefined => {
-      const breadCrumbs: string[] = route.path.substring(1).split("/");
-      const currentPage = breadCrumbs.pop() || "";
-      if (breadCrumbs[0].includes("admin")) {
-        const variant = {
-          download: "download",
-          upload: "upload",
-          delete: "delete",
-          'new-cycle': "delete"
-        }[currentPage] as "download" | "upload" | "delete" | undefined;
+  (): "default" | "upload" | "download" | "delete" | "warning" |"text" | undefined => {
+    const breadCrumbs: string[] = route.path.substring(1).split("/");
+    const currentPage = breadCrumbs.pop() || "";
+    if (breadCrumbs[0].includes("admin")) {
+      const variant = {
+        download: "download",
+        upload: "upload",
+        delete: "delete",
+        "new-cycle": "delete",
+        "add-admin": "warning",
+      }[currentPage] as "download" | "upload" | "delete" | "warning" | undefined;
 
         return variant || "default";
       }

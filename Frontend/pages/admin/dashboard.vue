@@ -56,6 +56,14 @@
         @click="navigateTo('/admin/download')"
     />
 
+    <CustomButton
+        :text="t('generic.addAdmin')"
+        color="warning"
+        left-icon="gear"
+        wide
+        @click="navigateTo('/admin/add-admin')"
+    />
+
     <!--            <CustomButton-->
     <!--                color="error"-->
     <!--                left-icon="trash-can"-->

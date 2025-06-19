@@ -137,8 +137,8 @@ definePageMeta({
           <ValidatedMailInput
               :clear-input="clearInput"
               :domain="emailDomain"
+              :placeholder="t('add-admin.add-admin')+'...'"
               error-message="Invalid email address"
-              placeholder="Add Student..."
               @update:model-value="updateMail"
               @update:input-cleared="clearInput = false"
           />

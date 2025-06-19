@@ -84,38 +84,21 @@ const toast = ref({
 
 const { t } = useI18n();
 
+onMounted(async () => {
+  await supervisorStore.getSupervisionRequests();
+});
+
 onUnmounted(async () => {
   if (toast.value.visible) {
     await handleToastClosed();
   }
 });
 
-if (
-  !supervisorStore.supervisionRequests ||
-  !supervisorStore.supervisionRequests.length
-) {
-  const { data, error } = await useFetch<SupervisionRequestsData[]>(
-    "/api/supervision-requests",
-    {
-      method: HttpMethods.GET,
-      params: {
-        request_state: supervisionRequestStatus.PENDING,
-      },
-    }
-  );
-  if (error.value) {
-    navigateTo("/supervisor/dashboard");
-  } else if (data.value) {
-    supervisorStore.setSupervisionRequests(data.value);
-  }
-}
-
 const sortedRequests = computed(() => {
   return [...(supervisorStore.supervisionRequests || [])].sort((a, b) => {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 });
-console.log("Supervisor Store:", sortedRequests.value);
 
 const handleSwipeRight = async (request: SupervisionRequestsData) => {
   // quickest solution in the wild west for the bug where spamming the slider wont send old requests

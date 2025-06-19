@@ -86,7 +86,7 @@ const handleConfirm = () => {
           {{ props.headline }}
         </h3>
         <div class="mx-4 mt-1">
-          <FontAwesomeIcon :icon="props.icon"/>
+          <FontAwesomeIcon :icon="props.icon" @click="props.icon=='xmark'? closeModal() : null"/>
         </div>
       </div>
 

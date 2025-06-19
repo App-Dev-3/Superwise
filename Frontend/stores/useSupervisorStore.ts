@@ -1,3 +1,4 @@
+import { HttpMethods, supervisionRequestStatus } from "~/shared/enums/enums";
 import type { SupervisionRequestsData, SupervisorData } from "~/shared/types/supervisorInterfaces"
 
 export const useSupervisorStore = defineStore('supervisorStore', {
@@ -7,6 +8,28 @@ state: () => ({
 }),
 
 actions: {
+  async getSupervisionRequests() {
+    if (
+      !this.supervisionRequests ||
+      !this.supervisionRequests.length
+    ) {
+      const { data, error } = await useFetch<SupervisionRequestsData[]>(
+        "/api/supervision-requests",
+        {
+          method: HttpMethods.GET,
+          params: {
+            request_state: supervisionRequestStatus.PENDING,
+          },
+        }
+      );
+      if (error.value) {
+        navigateTo("/supervisor/dashboard");
+      } else if (data.value) {
+        this.setSupervisionRequests(data.value);
+      }
+    }
+    return this.supervisionRequests;
+  },
   setSupervisors(supervisors: SupervisorData[]) {
     this.supervisors = supervisors
   },

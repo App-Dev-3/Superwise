@@ -35,6 +35,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  required: {
+    type: Boolean,
+    default: false,
+  }
 });
 const isClearIcon = computed(() => props.rightIcon === "xmark");
 
@@ -78,7 +82,7 @@ function handleRightIconClick() {
         v-if="props.label.length > 0"
         class="fieldset-legend text-sm font-semibold mb-1 opacity-50 my-0 py-1"
     >
-      {{ label }}
+      {{ label + (required ? '*' : '') }}
     </legend>
 
     <div class="input-container">

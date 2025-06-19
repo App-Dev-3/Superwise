@@ -496,6 +496,32 @@ describe('UsersService', () => {
       expect(result).toEqual([]); // Verify empty array returned
       expect(mockUsersRepository.setUserTagsByUserId).toHaveBeenCalledWith(userId, []);
     });
+
+    it('should throw an error if user does not exist', async () => {
+      // Arrange
+      const userId = 'non-existent-id';
+      const dto: SetUserTagsDto = {
+        tags: [{ tag_id: 'tag-1', priority: 1 }],
+      };
+      mockUsersRepository.findUserById.mockResolvedValue(null);
+
+      // Act & Assert
+      await expect(service.setUserTagsByUserId(userId, dto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw an error if one of the tags does not exist', async () => {
+      const dto: SetUserTagsDto = {
+        tags: [{ tag_id: 'non-existent-tag-id', priority: 1 }],
+      };
+      mockUsersRepository.findUserById.mockResolvedValue(mockUser);
+      mockTagsService.findTagById.mockRejectedValue(
+        new BadRequestException('Tag with id non-existent-tag-id not found'),
+      );
+
+      await expect(service.setUserTagsByUserId(mockUser.id, dto)).rejects.toThrow(
+        new BadRequestException('Tag with id non-existent-tag-id not found'),
+      );
+    });
   });
 
   // --- User Block Operations ---

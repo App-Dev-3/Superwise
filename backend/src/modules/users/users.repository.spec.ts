@@ -394,6 +394,19 @@ describe('UsersRepository', () => {
         where: { id: userId },
       });
     });
+
+    it('should throw error for invalid user IDs', async () => {
+      // Arrange
+      const invalidUserId = 'invalid-uuid';
+      mockPrismaService.user.findUnique.mockRejectedValue(
+        new Error(`Invalid UUID provided: ${invalidUserId}`),
+      );
+
+      // Act & Assert
+      await expect(repository.findUserById(invalidUserId)).rejects.toThrow(
+        `Invalid UUID provided: ${invalidUserId}`,
+      );
+    });
   });
 
   describe('findUserByIdWithRelations', () => {

@@ -6,8 +6,14 @@ import { User, Role } from '@prisma/client';
 
 describe('CacheService', () => {
   let service: CacheService;
-  let mockCacheManager: jest.Mocked<any>;
-  let mockLogger: jest.Mocked<WinstonLoggerService>;
+  let mockCacheManager: any;
+  let mockLogger: {
+    debug: jest.Mock;
+    error: jest.Mock;
+    log: jest.Mock;
+    warn: jest.Mock;
+    verbose: jest.Mock;
+  };
 
   const mockUser: User = {
     id: 'test-user-id',
@@ -38,7 +44,7 @@ describe('CacheService', () => {
       log: jest.fn(),
       warn: jest.fn(),
       verbose: jest.fn(),
-    } as any;
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [

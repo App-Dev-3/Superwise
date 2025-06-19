@@ -321,45 +321,57 @@ export class DatabaseListenerService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Manual invalidation methods (for testing and emergency use)
+   * Manual cache invalidation for a specific user
+   * @param clerkId - The Clerk ID of the user whose cache should be cleared
    */
   async handleUserChange(clerkId: string): Promise<void> {
+    this.logger.debug(
+      `Manual user cache invalidation for clerk_id: ${clerkId}`,
+      'DatabaseListenerService',
+    );
     await this.cacheService.invalidateUser(clerkId);
-    this.logger.log(`Manual user cache invalidation for: ${clerkId}`, 'DatabaseListenerService');
-  }
-
-  async handleTagChange(): Promise<void> {
-    await this.cacheService.invalidateTagSimilarities('all');
-    this.logger.log('Manual tag similarities cache invalidation', 'DatabaseListenerService');
   }
 
   /**
-   * Health check for database listener connection
+   * Manual cache invalidation for all tag similarities
    */
-  async isHealthy(): Promise<boolean> {
-    try {
-      if (!this.pgClient) return false;
+  async handleTagChange(): Promise<void> {
+    this.logger.debug('Manual tag similarities cache invalidation', 'DatabaseListenerService');
+    await this.cacheService.invalidateTagSimilarities('all');
+  }
 
-      // Simple query to test connection
+  /**
+   * Health check for the database listener connection
+   * @returns true if the connection is alive, false otherwise
+   */
+  async healthCheck(): Promise<boolean> {
+    if (!this.pgClient) {
+      return false;
+    }
+    try {
       await this.pgClient.query('SELECT 1');
       return true;
-    } catch {
+    } catch (error) {
+      this.logger.error(
+        `Database listener health check failed: ${error}`,
+        'DatabaseListenerService',
+      );
       return false;
     }
   }
 
   /**
-   * Get connection status information
+   * Get the current status of the database listener connection
+   * @returns 'connected', 'connecting', 'disconnected', or 'reconnecting'
    */
-  getConnectionStatus(): {
-    connected: boolean;
-    reconnectAttempts: number;
-    maxReconnectAttempts: number;
-  } {
-    return {
-      connected: this.pgClient !== null,
-      reconnectAttempts: this.reconnectAttempts,
-      maxReconnectAttempts: this.maxReconnectAttempts,
-    };
+  getConnectionStatus(): 'connected' | 'connecting' | 'disconnected' | 'reconnecting' {
+    if (this.reconnectTimer) {
+      return 'reconnecting';
+    }
+    if (!this.pgClient) {
+      return 'disconnected';
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (this.pgClient as any).readyForQuery ? 'connected' : 'connecting';
   }
 }

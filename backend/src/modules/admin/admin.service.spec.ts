@@ -113,7 +113,7 @@ describe('AdminService', () => {
       };
 
       mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
-      mockCacheService.invalidateTagSimilarities.mockResolvedValue();
+      mockCacheService.invalidateTagSimilarities.mockResolvedValue(undefined);
 
       // Act
       const result = await service.tagsBulkImport(mockDto);
@@ -144,7 +144,7 @@ describe('AdminService', () => {
       };
 
       mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
-      mockCacheService.invalidateTagSimilarities.mockResolvedValue();
+      mockCacheService.invalidateTagSimilarities.mockResolvedValue(undefined);
 
       // Act
       await service.tagsBulkImport(mockDto);
@@ -176,6 +176,7 @@ describe('AdminService', () => {
       };
 
       mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
+      mockCacheService.invalidateTagSimilarities.mockResolvedValue(undefined);
 
       // Act
       const result = await service.tagsBulkImport(mockDto);

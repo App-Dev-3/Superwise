@@ -489,7 +489,7 @@
   "toast": {
     "withdrawRequestFailed": "Fehler beim Zurückziehen der Betreuungsanfrage",
     "withdrawnRequest": "Sie haben die Betreuungsanfrage zurückgezogen",
-    "withdrawnStudentRequest": "Die Anfrage des Studierenden wurde zurückgezogen",
+    "withdrawnStudentRequest": "Die Anfrage des Studierenden wurde abgelehnt",
     "acceptedStudentRequest": "Die Anfrage des Studierenden wurde angenommen",
     "somethingWentWrong": "Etwas ist schief gelaufen, bitte versuchen Sie es später noch einmal",
     "addedStudentAsSupervisee": "Student wurde als Betreuer hinzugefügt"

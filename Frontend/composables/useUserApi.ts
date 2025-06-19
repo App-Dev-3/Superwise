@@ -47,8 +47,8 @@ export const useUserApi = () => {
     })
   }
 
-  const deleteUser = async (data: Record<string, unknown>) => {
-    return await makeRequest(`users/${data.id}`, 'DELETE')
+  const deleteUser = async (id: string) => {
+    return await makeRequest(`users/${id}`, 'DELETE')
   }
 
   return {

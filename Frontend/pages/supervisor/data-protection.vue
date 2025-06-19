@@ -32,6 +32,8 @@ const toastData = ref({
 const deleteData = () => {
   // Implement the logic to delete data
   console.log("Delete data button clicked");
+  if (!userStore.user) return;
+
   deleteUser(userStore.user.id);
   toastData.value = {
     visible: true,

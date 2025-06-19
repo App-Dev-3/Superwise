@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class PendingRequestCountEntity {
+export class SupervisionRequestCountEntity {
   @ApiProperty({
-    description: 'Number of pending supervision requests for the user',
+    description: 'Number of supervision requests for the user with the specified state',
     example: 5,
     minimum: 0,
   })
-  pending_count: number;
+  request_count: number;
 }

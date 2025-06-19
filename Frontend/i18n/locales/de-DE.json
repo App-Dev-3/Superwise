@@ -1,4 +1,22 @@
 {
+  "add-admin": {
+    "add-admin": "Admin hinzufügen",
+    "inputMissing": "Bitte fülle alle felder aus!",
+    "modal": {
+      "text": "Bist du dir sicher das du {firstName} {lastName} mit der mail Adresse {mail} admin machen willst?"
+    },
+    "text": "Durch das Hinzufügen eines weiteren admins bekommt diese person die gleiche lese, schreibe und lösch rechte wie du! Füge nur jemand als Admin dazu, falls das wirklich gewollt ist! Diese aktion kann nicht rückgängig gemacht werden!",
+    "title": "Füge einen Admin hinzu",
+    "toast": {
+      "error": {
+        "400": "Falsche Mail Domain, fehlendes Feld, oder nutzer bereits registriert.",
+        "403": "Nur bereits existierende Admins dürfen einen neuen admin account erstellen",
+        "409": "Es existiert bereits ein nutzer mit dieser Mail!",
+        "generic": "Es ist ein fehler aufgetreten. Bitte versuche es später erneut..."
+      },
+      "message": "Ein neuer Admin wurde hinzugefügt!"
+    }
+  },
   "admin": {
     "availableSpots": "Verfügbare Plätze",
     "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
@@ -15,6 +33,7 @@
     "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
   },
   "appHeader": {
+    "addAdmin": "Admin Hinzufügen",
     "admin": {
       "deleteData": "Delete Data",
       "downloadData": "Daten Herunterladen",
@@ -169,6 +188,7 @@
   "generic": {
     "404-not-found": "404 - Nicht gefunden",
     "acceptedRequestTo": "Akzeptierte Anfrage an",
+    "addAdmin": "Neuen Admin Hinzufügen",
     "admin": "Admin",
     "cancel": "Abbrechen",
     "chatRequest": "Chat-Anfrage",

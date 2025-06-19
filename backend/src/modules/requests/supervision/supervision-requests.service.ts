@@ -19,7 +19,7 @@ import { SupervisorTargetException } from '../../../common/exceptions/custom-exc
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { AppConfigService } from '@config';
-import { SupervisionRequestCountEntity } from './entities/pending-request-count.entity';
+import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 @Injectable()
@@ -310,7 +310,7 @@ export class SupervisionRequestsService {
    * Validates user exists and role, then returns count based on role
    * @param userId - The ID of the user to count requests for
    * @param requestState - The request state to filter by
-   * @returns A PendingRequestCountEntity object containing the count of requests
+   * @returns A SupervisionRequestCountEntity object containing the count of requests
    * @throws NotFoundException if the user is not found
    * @throws AdminSupervisionRequestException if the user is an admin
    */

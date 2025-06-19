@@ -7,7 +7,7 @@ import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto'
 import { CountQueryDto } from './dto/count-query.dto';
 import { SupervisionRequestEntity } from './entities/supervision-request.entity';
 import { SupervisionRequestWithUsersEntity } from './entities/supervision-request-with-users.entity';
-import { SupervisionRequestCountEntity } from './entities/pending-request-count.entity';
+import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { RequestState, User } from '@prisma/client';
 

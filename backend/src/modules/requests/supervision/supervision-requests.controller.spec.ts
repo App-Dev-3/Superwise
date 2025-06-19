@@ -5,7 +5,7 @@ import { RequestState, Role, User } from '@prisma/client';
 import { CreateSupervisionRequestDto } from './dto/create-supervision-request.dto';
 import { UpdateSupervisionRequestDto } from './dto/update-supervision-request.dto';
 import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto';
-import { SupervisionRequestCountEntity } from './entities/pending-request-count.entity';
+import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';

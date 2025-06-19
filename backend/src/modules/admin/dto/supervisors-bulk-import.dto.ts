@@ -10,6 +10,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { normalizeEmail } from '../../../common/utils/email-utils';
 
 export class SupervisorDto {
   @ApiProperty({
@@ -19,9 +20,7 @@ export class SupervisorDto {
   })
   @IsEmail()
   @IsNotEmpty()
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.toLowerCase() : (value as string),
-  )
+  @Transform(({ value }) => normalizeEmail(value))
   email: string;
 
   @ApiPropertyOptional({

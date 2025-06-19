@@ -18,6 +18,7 @@
     "admin": {
       "deleteData": "Delete Data",
       "downloadData": "Daten Herunterladen",
+      "newCycle": "Neuer Zyklus",
       "uploadData": "Daten Importieren"
     },
     "back": "Zurück",
@@ -273,8 +274,20 @@
     "defaultHeader": "SuperWise",
     "logout": "Abmelden",
     "matching": "Matching",
+    "newCycle": "Betreuungs Zyklen",
     "profile": "Profil",
     "settings": "Einstellungen"
+  },
+  "new-cycle": {
+    "body": "Wenn du einen neuen Zyklus startest, werden alle Matches gelöscht, belegte Betreuungsslots zurückgesetzt und alle Anfragen storniert! Führe diese Aktion nur aus, wenn ein neues Jahr beginnt, du bereit bist, einen neuen Zyklus zu starten und ein Backup aller Matches erstellt hast!",
+    "header": "Beginne einen neuen Zyklus",
+    "modal": {
+      "button": "Neuer Zyklus"
+    },
+    "startNewCycle": "Neuen Zyklus beginnen...",
+    "toast": {
+      "message": "Ein neuer Zyklus hat begonnen!"
+    }
   },
   "onboarding": {
     "completed": "Du hast erfolgreich das Onboarding abgeschlossen!",
@@ -364,10 +377,10 @@
       "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
       "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird",
       "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
-      "removeStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung entfernen",
-      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung",
       "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
-      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
+      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage",
+      "removeStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung entfernen",
+      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung"
     },
     "theme": {
       "description": "App Design auswählen",
@@ -395,23 +408,23 @@
     "similarityScore": "Übereinstimmungswert"
   },
   "supervisorStudentList": {
-    "checkboxLabel": "Nicht erneut anzeigen",
     "addExistingStudent": {
+      "confirmText": "Studierenden betreuen",
       "mainText": "Möchten Sie {firstName} {lastName} betreuen?",
       "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
-      "confirmText": "Studierenden betreuen",
       "title": "Studierenden betreuen"
     },
     "addNewStudent": {
+      "confirmText": "Studierenden betreuen",
       "mainText": "Möchten Sie {emailAddress} betreuen? Er/Sie ist noch nicht auf SuperWise registriert, wird aber per E-Mail benachrichtigt.",
       "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
-      "title": "Studierenden betreuen",
-      "confirmText": "Studierenden betreuen"
+      "title": "Studierenden betreuen"
     },
+    "checkboxLabel": "Nicht erneut anzeigen",
     "removeStudent": {
+      "confirmText": "Studierenden entfernen",
       "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
       "subText": "",
-      "confirmText": "Studierenden entfernen",
       "title": "Studierenden entfernen"
     }
   },

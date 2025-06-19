@@ -39,7 +39,7 @@ const getVariant = computed(
         delete: "delete",
         "new-cycle": "delete",
         "add-admin": "warning",
-      }[currentPage] as "download" | "upload" | "delete" | undefined;
+      }[currentPage] as "download" | "upload" | "delete" | "warning" | undefined;
 
         return variant || "default";
       }

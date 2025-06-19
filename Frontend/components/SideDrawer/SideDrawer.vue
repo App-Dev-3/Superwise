@@ -115,7 +115,7 @@ const drawerLinks: DrawerLinkListInterface = {
                 </p>
               </NuxtLink>
             </li>
-            <li class="w-contain p-2 text-error-content border-t border-t-base-300 list-none mt-auto">
+            <li class="w-contain p-2 border-t border-t-base-300 list-none mt-auto">
               <SignOutButton>
                 <NuxtLink
                     class="px-6 py-2"

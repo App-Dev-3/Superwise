@@ -18,6 +18,7 @@
     "admin": {
       "deleteData": "Delete Data",
       "downloadData": "Download Data",
+      "newCycle": "New cycle",
       "uploadData": "Upload Data"
     },
     "back": "Back",
@@ -273,8 +274,20 @@
     "defaultHeader": "SuperWise",
     "logout": "Logout",
     "matching": "Matching",
+    "newCycle": "Supervision Cycles",
     "profile": "Profile",
     "settings": "Settings"
+  },
+  "new-cycle": {
+    "body": "By starting a new cycle, all the matches will be deleted, occupied supervision slots will be reset and all request canceled! Only perform this action when a new year begins, you are ready to start a new cycle and have made a backup of all the matches!",
+    "header": "Start a new Cycle",
+    "modal": {
+      "button": "New Cycle"
+    },
+    "startNewCycle": "Start new cycle...",
+    "toast": {
+      "message": "A new cycle has started!"
+    }
   },
   "onboarding": {
     "completed": "You successfully completed the onboarding!",
@@ -364,10 +377,10 @@
       "acceptingTitle": "Supervision request Accept Modal",
       "addStudentDescription": "Show confirmation modal when adding a student to supervise in the add view.",
       "addStudentTitle": "Add Student to Supervise Modal",
-      "removeStudentDescription": "Show confirmation modal when removing a student to supervise in the add view.",
-      "removeStudentTitle": "Remove Student to Supervise Modal",
       "rejectDescription": "Show confirmation modal when rejecting a supervision request",
-      "rejectTitle": "Supervision request Reject Modal"
+      "rejectTitle": "Supervision request Reject Modal",
+      "removeStudentDescription": "Show confirmation modal when removing a student to supervise in the add view.",
+      "removeStudentTitle": "Remove Student to Supervise Modal"
     },
     "theme": {
       "description": "Select app theme",
@@ -395,23 +408,23 @@
     "similarityScore": "Similarity score"
   },
   "supervisorStudentList": {
-    "checkboxLabel": "Don't show again",
     "addExistingStudent": {
+      "confirmText": "Supervise Student",
       "mainText": "Would you like to supervise {firstName} {lastName}?",
       "subText": "They will get notified that you are supervising them!",
-      "confirmText": "Supervise Student",
       "title": "Supervise Student"
     },
     "addNewStudent": {
+      "confirmText": "Supervise Student",
       "mainText": "Would you like to supervise {emailAddress}? They are not registered on SuperWise, but will get notified via mail.",
       "subText": "They will get notified that you are supervising them!",
-      "title": "Supervise Student",
-      "confirmText": "Supervise Student"
+      "title": "Supervise Student"
     },
+    "checkboxLabel": "Don't show again",
     "removeStudent": {
+      "confirmText": "Remove Student",
       "mainText": "Are you sure you want to remove {firstName} {lastName}?",
       "subText": "",
-      "confirmText": "Remove Student",
       "title": "Remove Student"
     }
   },

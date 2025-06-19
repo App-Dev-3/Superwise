@@ -84,6 +84,15 @@
               left-icon="message"
               @click="managePendingRequest"
           />
+          <!-- TODO: conditionally render if student doesnt have an accepted supervisor -->
+          <CustomButton
+              v-if="isStudent && !studentPendingRequest"
+              :text="t('generic.addStudent')"
+              block
+              color="default"
+              left-icon="message"
+              @click="manageAddAsSupervisee"
+          />
         </div>
       </div>
 
@@ -282,6 +291,35 @@ const askForConfirmation = () => {
   openModal();
 };
 
+const manageAddAsSupervisee = () => {
+  modalInformation.value = {
+    visible: true,
+    confirmButtonText: t("modal.supervisee.accept"),
+    cancelButtonText: t("generic.cancel"),
+    headline: t("modal.supervisee.headline"),
+    icon: 'envelope',
+    description: t("modal.supervisee.description"),
+    image: routeParamUser.value.profile_image || "",
+    linkedComponentId: `profilesConfirmationModal-${ routeParamUserId }`,
+  }; 
+  openModal();
+};
+
+const addStudentAsSupervisee = async() => {
+  await $fetch("/api/supervision-requests", {
+    method: "POST",
+    body: {
+      supervisor_id: currentUser?.id,
+      student_email: routeParamUser.value.email,
+    },
+  });
+  toastData.value = {
+      visible: true,
+      type: "success",
+      message: t("toast.addedStudentAsSupervisee"),
+    };
+}
+
 const sendSupervisionRequest = async () => {
   closeModal();
   try {
@@ -388,7 +426,7 @@ const dismissPendingRequest = async () => {
     });
     toastData.value = {
       visible: true,
-      type: "success",
+      type: "error",
       message: t("toast.withdrawnStudentRequest"),
     };
   } catch (error) {
@@ -413,7 +451,11 @@ const handleModalConfirm = () => {
   if (isSupervisor.value) {
     sendSupervisionRequest();
   } else if (isStudent.value) {
-    acceptPendingRequest();
+    if (studentPendingRequest.value) {
+      acceptPendingRequest();
+    } else {
+      addStudentAsSupervisee();
+    }
   }
   closeModal();
 };

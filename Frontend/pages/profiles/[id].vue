@@ -417,7 +417,7 @@ const dismissPendingRequest = async () => {
     await $fetch(`/api/supervision-requests/${ studentPendingRequest.value.id }`, {
       method: HttpMethods.PATCH,
       body: {
-        request_state: supervisionRequestStatus.WITHDRAWN,
+        request_state: supervisionRequestStatus.REJECTED,
       },
     });
     toastData.value = {

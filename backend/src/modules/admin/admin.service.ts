@@ -195,26 +195,6 @@ export class AdminService {
   }
 
   /**
-   * Handles cleanup of student-specific data during user reset with optimized database operations.
-   *
-   * This method processes all supervision requests for a student:
-   * - Active supervisions (ACCEPTED) are withdrawn in batch operations
-   * - Supervisor capacity is restored efficiently with grouped updates
-   * - Other request states (PENDING, REJECTED, WITHDRAWN) remain unchanged
-   *
-   * @param studentId - ID of the student profile to reset
-   * @param tx - Prisma transaction client for atomic operations
-   *
-   * @private Internal method used within resetUser transaction
-   *
-   * @effects
-   * - Converts ACCEPTED supervision requests to WITHDRAWN state in batch
-   * - Efficiently restores available_spots for affected supervisors
-   * - Student loses active supervision and becomes unassigned
-   *
-   * @performance Uses batch operations and Promise.all to minimize database queries
-   */
-  /**
    * Handles cleanup of student-specific data during user reset with secure database operations.
    *
    * This method processes all supervision requests for a student:

@@ -1419,7 +1419,32 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User has been successfully reset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User john.doe@fhstp.ac.at has been reset successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid user ID provided"
+          },
+          "403": {
+            "description": "Forbidden - Cannot reset admin users"
+          },
+          "404": {
+            "description": "User not found"
           }
         },
         "summary": "Reset a user account (Admin only)",

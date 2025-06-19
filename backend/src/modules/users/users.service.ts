@@ -84,6 +84,7 @@ export class UsersService {
         return this.usersRepository.updateUser(existingUser.id, {
           clerk_id: authUser.clerk_id,
           is_registered: true,
+          is_deleted: false,
           // Update profile details if provided in DTO, otherwise keep existing
           first_name: createUserDto.first_name || existingUser.first_name,
           last_name: createUserDto.last_name || existingUser.last_name,
@@ -104,6 +105,7 @@ export class UsersService {
         return this.usersRepository.updateUser(existingUser.id, {
           clerk_id: authUser.clerk_id,
           is_registered: true,
+          is_deleted: false,
           // Update profile details if provided in DTO, otherwise keep existing
           first_name: createUserDto.first_name || existingUser.first_name,
           last_name: createUserDto.last_name || existingUser.last_name,

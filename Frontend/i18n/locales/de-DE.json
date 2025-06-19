@@ -12,7 +12,21 @@
     "uploadSupervisorsFileName": "wähle *.csv aus",
     "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte",
     "uploadTagsFileName": "wähle updated_tag_list.json aus",
-    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
+    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung",
+    "deleteUser": {
+      "title": "Benutzer Löschen",
+      "searchPlaceholder": "Benutzer nach Name, E-Mail oder Rolle suchen...",
+      "selectedUser": "Ausgewählter Benutzer:",
+      "noUsersFound": "Keine Benutzer gefunden für",
+      "searchInstruction": "Tippen Sie, um nach Benutzern zu suchen...",
+      "description": "Dies setzt das Benutzerkonto vollständig auf den nicht registrierten Zustand zurück, wobei die E-Mail-Adresse für eine erneute Registrierung erhalten bleibt.",
+      "deleteButton": "Benutzer Löschen",
+      "deleting": "Lösche...",
+      "selectUserError": "Bitte wählen Sie einen Benutzer zum Löschen aus",
+      "generalError": "Ein Fehler ist beim Zurücksetzen des Benutzers aufgetreten",
+      "permissionError": "Berechtigung verweigert - Admin-Benutzer können nicht zurückgesetzt werden",
+      "userNotFoundError": "Benutzer nicht gefunden"
+    }
   },
   "appHeader": {
     "admin": {

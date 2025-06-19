@@ -85,7 +85,7 @@ const deleteUser = async () => {
     searchQuery.value = "";
 
     await fetchUsers();
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error resetting user:", error);
 
     let errorMessage = t("admin.deleteUser.generalError");
@@ -140,7 +140,7 @@ definePageMeta({
               type="text"
               :placeholder="t('admin.deleteUser.searchPlaceholder')"
               class="input input-bordered w-full pl-10 focus:input-error"
-            />
+            >
             <FontAwesomeIcon
               icon="search"
               class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/50"
@@ -156,8 +156,8 @@ definePageMeta({
                   t("admin.deleteUser.selectedUser")
                 }}</span>
                 <button
-                  @click="selectedUserId = ''"
                   class="btn btn-ghost btn-xs text-error"
+                  @click="selectedUserId = ''"
                 >
                   <FontAwesomeIcon icon="times" />
                 </button>
@@ -181,8 +181,8 @@ definePageMeta({
             <button
               v-for="user in filteredUsers"
               :key="user.value"
-              @click="selectUser(user.value)"
               class="w-full text-left p-3 hover:bg-base-200 border-b border-base-300 last:border-b-0 transition-colors"
+              @click="selectUser(user.value)"
             >
               <div class="text-sm">{{ user.label }}</div>
             </button>

@@ -103,6 +103,31 @@ export class AdminController {
 
   @Delete('users/:id/reset')
   @ApiOperation({ summary: 'Reset a user account (Admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'User has been successfully reset',
+    schema: {
+      properties: {
+        success: { type: 'boolean', example: true },
+        message: {
+          type: 'string',
+          example: 'User john.doe@fhstp.ac.at has been reset successfully',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request - Invalid user ID provided',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Cannot reset admin users',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'User not found',
+  })
   async resetUser(
     @Param('id', ParseUUIDPipe) userId: string,
   ): Promise<{ success: boolean; message: string }> {

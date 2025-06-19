@@ -4,9 +4,9 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AdminRepository } from './admin.repository';
 import { UsersRepository } from '../users/users.repository';
 import { TagsRepository } from '../tags/tags.repository';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
-import { Tag, Role } from '@prisma/client';
+import { Role, RequestState } from '@prisma/client';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
 
@@ -415,6 +415,201 @@ describe('AdminService', () => {
         first_name: mockDto.first_name,
         last_name: mockDto.last_name,
       });
+    });
+  });
+});
+
+describe('AdminService - resetUser', () => {
+  let service: AdminService;
+  let prismaService: PrismaService;
+  let mockTransaction: any;
+
+  const mockUser = {
+    id: 'user-uuid-123',
+    email: 'test@fhstp.ac.at',
+    role: Role.STUDENT,
+    first_name: 'Test',
+    last_name: 'User',
+  };
+
+  const mockAdmin = {
+    id: 'admin-uuid-456',
+    email: 'admin@fhstp.ac.at',
+    role: Role.ADMIN,
+    first_name: 'Admin',
+    last_name: 'User',
+  };
+
+  beforeEach(async () => {
+    mockTransaction = {
+      user: {
+        findUnique: jest.fn(),
+        update: jest.fn(),
+      },
+      student: {
+        findUnique: jest.fn(),
+      },
+      supervisor: {
+        findUnique: jest.fn(),
+      },
+      supervisionRequest: {
+        findMany: jest.fn(),
+        updateMany: jest.fn(),
+      },
+      $executeRaw: jest.fn(),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AdminService,
+        {
+          provide: AdminRepository,
+          useValue: {},
+        },
+        {
+          provide: UsersRepository,
+          useValue: {},
+        },
+        {
+          provide: PrismaService,
+          useValue: {
+            $transaction: jest.fn().mockImplementation(callback => callback(mockTransaction)),
+          },
+        },
+        {
+          provide: WinstonLoggerService,
+          useValue: {
+            log: jest.fn(),
+            debug: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get<AdminService>(AdminService);
+    prismaService = module.get<PrismaService>(PrismaService);
+  });
+
+  describe('Input Validation', () => {
+    it('should throw BadRequestException for invalid userId', async () => {
+      await expect(service.resetUser('', 'admin-id')).rejects.toThrow(BadRequestException);
+      await expect(service.resetUser(null as any, 'admin-id')).rejects.toThrow(BadRequestException);
+    });
+
+    it('should throw BadRequestException for invalid requestingAdminId', async () => {
+      await expect(service.resetUser('user-id', '')).rejects.toThrow(BadRequestException);
+      await expect(service.resetUser('user-id', null as any)).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('Security Validation', () => {
+    it('should prevent admin self-reset', async () => {
+      const adminId = 'same-id-123';
+
+      await expect(service.resetUser(adminId, adminId)).rejects.toThrow(
+        new ForbiddenException('Admins cannot reset their own accounts'),
+      );
+    });
+
+    it('should throw NotFoundException for non-existent user', async () => {
+      mockTransaction.user.findUnique.mockResolvedValueOnce(null);
+
+      await expect(service.resetUser('non-existent', 'admin-id')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw ForbiddenException for non-admin requester', async () => {
+      mockTransaction.user.findUnique
+        .mockResolvedValueOnce(mockUser) // Target user exists
+        .mockResolvedValueOnce({ ...mockAdmin, role: Role.STUDENT }); // Requesting user is not admin
+
+      await expect(service.resetUser('user-id', 'non-admin-id')).rejects.toThrow(
+        ForbiddenException,
+      );
+    });
+
+    it('should prevent admin-to-admin reset', async () => {
+      const adminUser = { ...mockUser, role: Role.ADMIN };
+
+      mockTransaction.user.findUnique
+        .mockResolvedValueOnce(adminUser) // Target is admin
+        .mockResolvedValueOnce(mockAdmin); // Requester is admin
+
+      await expect(service.resetUser('admin-user-id', 'admin-id')).rejects.toThrow(
+        new ForbiddenException('Cannot reset admin users'),
+      );
+    });
+  });
+
+  describe('Student Reset', () => {
+    it('should successfully reset student with active supervisions', async () => {
+      const studentProfile = { id: 'student-profile-123', user_id: 'user-id' };
+      const supervisionRequests = [
+        { id: 'req-1', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-1' },
+        { id: 'req-2', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-2' },
+        { id: 'req-3', request_state: RequestState.PENDING, supervisor_id: 'sup-3' },
+      ];
+
+      mockTransaction.user.findUnique
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockAdmin);
+      mockTransaction.student.findUnique.mockResolvedValue(studentProfile);
+      mockTransaction.supervisionRequest.findMany.mockResolvedValue(supervisionRequests);
+      mockTransaction.supervisionRequest.updateMany.mockResolvedValue({ count: 2 });
+      mockTransaction.$executeRaw.mockResolvedValue(undefined);
+      mockTransaction.user.update.mockResolvedValue(mockUser);
+
+      const result = await service.resetUser('user-id', 'admin-id');
+
+      expect(result.success).toBe(true);
+      expect(result.message).toContain(mockUser.email);
+      expect(mockTransaction.supervisionRequest.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['req-1', 'req-2'] } },
+        data: { request_state: RequestState.WITHDRAWN },
+      });
+      expect(mockTransaction.$executeRaw).toHaveBeenCalled();
+    });
+  });
+
+  describe('Supervisor Reset', () => {
+    it('should successfully reset supervisor with active supervisions', async () => {
+      const supervisorUser = { ...mockUser, role: Role.SUPERVISOR };
+      const supervisorProfile = { id: 'supervisor-profile-123', user_id: 'user-id' };
+      const activeSupervisions = [{ id: 'sup-req-1' }, { id: 'sup-req-2' }];
+
+      mockTransaction.user.findUnique
+        .mockResolvedValueOnce(supervisorUser)
+        .mockResolvedValueOnce(mockAdmin);
+      mockTransaction.supervisor.findUnique.mockResolvedValue(supervisorProfile);
+      mockTransaction.supervisionRequest.findMany.mockResolvedValue(activeSupervisions);
+      mockTransaction.supervisionRequest.updateMany.mockResolvedValue({ count: 2 });
+      mockTransaction.user.update.mockResolvedValue(supervisorUser);
+
+      const result = await service.resetUser('user-id', 'admin-id');
+
+      expect(result.success).toBe(true);
+      expect(mockTransaction.supervisionRequest.updateMany).toHaveBeenCalledWith({
+        where: { id: { in: ['sup-req-1', 'sup-req-2'] } },
+        data: { request_state: RequestState.WITHDRAWN },
+      });
+    });
+  });
+
+  describe('Transaction Rollback', () => {
+    it('should rollback on supervision update failure', async () => {
+      const studentProfile = { id: 'student-profile-123', user_id: 'user-id' };
+
+      mockTransaction.user.findUnique
+        .mockResolvedValueOnce(mockUser)
+        .mockResolvedValueOnce(mockAdmin);
+      mockTransaction.student.findUnique.mockResolvedValue(studentProfile);
+      mockTransaction.supervisionRequest.findMany.mockResolvedValue([
+        { id: 'req-1', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-1' },
+      ]);
+      mockTransaction.supervisionRequest.updateMany.mockRejectedValue(new Error('DB Error'));
+
+      await expect(service.resetUser('user-id', 'admin-id')).rejects.toThrow('DB Error');
     });
   });
 });

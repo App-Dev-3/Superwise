@@ -193,3 +193,42 @@ describe('AdminController', () => {
     });
   });
 });
+
+describe('AdminController - resetUser', () => {
+  let controller: AdminController;
+  let adminService: AdminService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AdminController],
+      providers: [
+        {
+          provide: AdminService,
+          useValue: {
+            resetUser: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+
+    controller = module.get<AdminController>(AdminController);
+    adminService = module.get<AdminService>(AdminService);
+  });
+
+  it('should call adminService.resetUser with correct parameters', async () => {
+    const userId = '123e4567-e89b-12d3-a456-426614174000';
+    const requestingAdminId = '456e7890-e89b-12d3-a456-426614174001';
+    const expectedResult = { success: true, message: 'User reset successfully' };
+
+    const mockReq = {
+      user: { id: requestingAdminId },
+    };
+
+    (adminService.resetUser as jest.Mock).mockResolvedValue(expectedResult);
+
+    const result = await controller.resetUser(userId, mockReq);
+
+    expect(adminService.resetUser).toHaveBeenCalledWith(userId, requestingAdminId);
+    expect(result).toEqual(expectedResult);
+  });
+});

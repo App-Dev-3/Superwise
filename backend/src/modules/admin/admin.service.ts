@@ -14,7 +14,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { CreateAdminSuccessDto } from './dto/create-admin-success.dto';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
-import { Role, RequestState, PrismaClient } from '@prisma/client';
+import { Role, RequestState, PrismaClient, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 
 type PrismaTransaction = Omit<
@@ -97,33 +97,30 @@ export class AdminService {
   /**
    * Resets a user account to unregistered state while preserving email for re-registration.
    *
-   * This operation performs a comprehensive reset that:
-   * - Validates user exists and is not an admin
-   * - Terminates active supervisions and restores supervisor capacity
-   * - Clears all personal data (names, profile image, clerk ID)
-   * - Marks user as deleted and unregistered
-   * - Preserves email address to allow future re-registration
-   *
    * @param userId - UUID of the user to reset
+   * @param requestingAdminId - UUID of the admin performing the reset (for security)
    * @returns Promise resolving to operation result with success status and message
    *
    * @throws {BadRequestException} When userId is invalid
    * @throws {NotFoundException} When user with given ID doesn't exist
-   * @throws {ForbiddenException} When attempting to reset an admin user
-   *
-   * @example
-   * ```typescript
-   * const result = await adminService.resetUser('123e4567-e89b-12d3-a456-426614174000');
-   * console.log(result.message); // "User john.doe@fhstp.ac.at has been reset successfully"
-   * ```
-   *
-   * @security Admin-only operation. Requires admin role validation at controller level.
-   * @transaction Uses Prisma transaction to ensure atomicity - either all operations succeed or all are rolled back
+   * @throws {ForbiddenException} When attempting to reset admin users or self-reset
    */
-  async resetUser(userId: string): Promise<{ success: boolean; message: string }> {
+  async resetUser(
+    userId: string,
+    requestingAdminId: string,
+  ): Promise<{ success: boolean; message: string }> {
     // Input validation
     if (!userId || typeof userId !== 'string') {
       throw new BadRequestException('Invalid user ID provided');
+    }
+
+    if (!requestingAdminId || typeof requestingAdminId !== 'string') {
+      throw new BadRequestException('Invalid requesting admin ID');
+    }
+
+    // CRITICAL: Prevent admin self-reset
+    if (userId === requestingAdminId) {
+      throw new ForbiddenException('Admins cannot reset their own accounts');
     }
 
     return this.prisma.$transaction(async (tx: PrismaTransaction) => {
@@ -136,10 +133,26 @@ export class AdminService {
         throw new NotFoundException(`User with ID ${userId} not found`);
       }
 
+      // Validate requesting admin exists and has admin role
+      const requestingAdmin = await tx.user.findUnique({
+        where: { id: requestingAdminId },
+        select: { id: true, role: true, email: true },
+      });
+
+      if (!requestingAdmin || requestingAdmin.role !== Role.ADMIN) {
+        throw new ForbiddenException('Only administrators can perform user resets');
+      }
+
       // Prevent admin account deletion for security
       if (user.role === Role.ADMIN) {
         throw new ForbiddenException('Cannot reset admin users');
       }
+
+      // Log admin action for audit trail
+      this.logger.log(
+        `Admin ${requestingAdmin.email} (${requestingAdminId}) is resetting user ${user.email} (${userId})`,
+        'AdminService',
+      );
 
       // Handle role-specific cleanup before user profile reset
       if (user.role === Role.STUDENT) {
@@ -148,7 +161,7 @@ export class AdminService {
         });
 
         if (studentProfile) {
-          await this.resetStudentDataOptimized(studentProfile.id, tx);
+          await this.resetStudentData(studentProfile.id, tx);
         }
       } else if (user.role === Role.SUPERVISOR) {
         const supervisorProfile = await tx.supervisor.findUnique({
@@ -156,7 +169,7 @@ export class AdminService {
         });
 
         if (supervisorProfile) {
-          await this.resetSupervisorDataOptimized(supervisorProfile.id, tx);
+          await this.resetSupervisorData(supervisorProfile.id, tx);
         }
       }
 
@@ -173,6 +186,11 @@ export class AdminService {
           // Note: email is preserved to allow re-registration
         },
       });
+
+      this.logger.log(
+        `Successfully reset user ${user.email} by admin ${requestingAdmin.email}`,
+        'AdminService',
+      );
 
       return {
         success: true,
@@ -201,7 +219,27 @@ export class AdminService {
    *
    * @performance Uses batch operations and Promise.all to minimize database queries
    */
-  private async resetStudentDataOptimized(studentId: string, tx: PrismaTransaction): Promise<void> {
+  /**
+   * Handles cleanup of student-specific data during user reset with optimized database operations.
+   *
+   * This method processes all supervision requests for a student:
+   * - Active supervisions (ACCEPTED) are withdrawn in batch operations
+   * - Supervisor capacity is restored efficiently with a single bulk update
+   * - Other request states (PENDING, REJECTED, WITHDRAWN) remain unchanged
+   *
+   * @param studentId - ID of the student profile to reset
+   * @param tx - Prisma transaction client for atomic operations
+   *
+   * @private Internal method used within resetUser transaction
+   *
+   * @effects
+   * - Converts ACCEPTED supervision requests to WITHDRAWN state in batch
+   * - Efficiently restores available_spots for affected supervisors in single query
+   * - Student loses active supervision and becomes unassigned
+   *
+   * @performance Uses batch operations and single bulk update to minimize database queries
+   */
+  private async resetStudentData(studentId: string, tx: PrismaTransaction): Promise<void> {
     // Find all supervision requests for this student
     const supervisionRequests = await tx.supervisionRequest.findMany({
       where: { student_id: studentId },
@@ -231,15 +269,30 @@ export class AdminService {
       {} as Record<string, number>,
     );
 
-    // Execute supervisor capacity updates in parallel for better performance
-    await Promise.all(
-      Object.entries(supervisorUpdates).map(([supervisorId, increment]) =>
-        tx.supervisor.update({
-          where: { id: supervisorId },
-          data: { available_spots: { increment } },
-        }),
-      ),
-    );
+    // ✅ PERFORMANCE OPTIMIZATION: Single bulk update instead of individual queries
+    if (Object.keys(supervisorUpdates).length > 0) {
+      // Build CASE statement for bulk update
+      const updateCases = Object.entries(supervisorUpdates)
+        .map(([supervisorId, increment]) => `WHEN '${supervisorId}' THEN ${increment}`)
+        .join(' ');
+
+      const supervisorIds = Object.keys(supervisorUpdates);
+
+      // Execute single bulk update for all supervisor capacity changes
+      await tx.$executeRaw`
+      UPDATE "Supervisor" 
+      SET available_spots = available_spots + 
+        CASE id 
+          ${Prisma.raw(updateCases)}
+        END
+      WHERE id = ANY(${supervisorIds})
+    `;
+
+      this.logger.debug(
+        `Bulk updated capacity for ${supervisorIds.length} supervisors in single query`,
+        'AdminService',
+      );
+    }
   }
 
   /**
@@ -263,10 +316,7 @@ export class AdminService {
    * @warning High impact operation - can affect multiple students at once
    * @performance Uses batch updateMany for efficient processing of multiple supervisions
    */
-  private async resetSupervisorDataOptimized(
-    supervisorId: string,
-    tx: PrismaTransaction,
-  ): Promise<void> {
+  private async resetSupervisorData(supervisorId: string, tx: PrismaTransaction): Promise<void> {
     // Find all students currently being supervised by this supervisor
     const activeSupervisions = await tx.supervisionRequest.findMany({
       where: {

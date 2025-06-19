@@ -1,4 +1,4 @@
-import { Controller, ParseUUIDPipe, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, ParseUUIDPipe, Post, Body, Delete, Param, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AdminService } from './admin.service';
 import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
@@ -130,7 +130,9 @@ export class AdminController {
   })
   async resetUser(
     @Param('id', ParseUUIDPipe) userId: string,
+    @Request() req: any,
   ): Promise<{ success: boolean; message: string }> {
-    return this.adminService.resetUser(userId);
+    const requestingAdminId = req.user.id;
+    return this.adminService.resetUser(userId, requestingAdminId);
   }
 }

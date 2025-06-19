@@ -14,13 +14,8 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { CreateAdminSuccessDto } from './dto/create-admin-success.dto';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
-import { Role, RequestState, PrismaClient, Prisma } from '@prisma/client';
+import { Role, RequestState, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-
-type PrismaTransaction = Omit<
-  PrismaClient,
-  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use'
->;
 
 @Injectable()
 export class AdminService {
@@ -123,7 +118,7 @@ export class AdminService {
       throw new ForbiddenException('Admins cannot reset their own accounts');
     }
 
-    return this.prisma.$transaction(async (tx: PrismaTransaction) => {
+    return this.prisma.$transaction(async tx => {
       // Validate user exists
       const user = await tx.user.findUnique({
         where: { id: userId },
@@ -220,11 +215,11 @@ export class AdminService {
    * @performance Uses batch operations and Promise.all to minimize database queries
    */
   /**
-   * Handles cleanup of student-specific data during user reset with optimized database operations.
+   * Handles cleanup of student-specific data during user reset with secure database operations.
    *
    * This method processes all supervision requests for a student:
    * - Active supervisions (ACCEPTED) are withdrawn in batch operations
-   * - Supervisor capacity is restored efficiently with a single bulk update
+   * - Supervisor capacity is restored securely with individual atomic updates
    * - Other request states (PENDING, REJECTED, WITHDRAWN) remain unchanged
    *
    * @param studentId - ID of the student profile to reset
@@ -234,22 +229,26 @@ export class AdminService {
    *
    * @effects
    * - Converts ACCEPTED supervision requests to WITHDRAWN state in batch
-   * - Efficiently restores available_spots for affected supervisors in single query
+   * - Securely restores available_spots for affected supervisors
    * - Student loses active supervision and becomes unassigned
    *
-   * @performance Uses batch operations and single bulk update to minimize database queries
+   * @security Uses parameterized Prisma operations to prevent SQL injection
+   * @performance Uses batch operations where possible, individual updates for capacity restoration
    */
-  private async resetStudentData(studentId: string, tx: PrismaTransaction): Promise<void> {
-    // Find all supervision requests for this student
-    const supervisionRequests = await tx.supervisionRequest.findMany({
-      where: { student_id: studentId },
-      select: { id: true, request_state: true, supervisor_id: true },
-    });
+  private async resetStudentData(studentId: string, tx: Prisma.TransactionClient): Promise<void> {
+    // Validate student ID format for security
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(studentId)) {
+      throw new BadRequestException('Invalid student ID format');
+    }
 
-    // Filter accepted requests for processing
-    const acceptedRequests = supervisionRequests.filter(
-      request => request.request_state === RequestState.ACCEPTED,
-    );
+    // Optimize query to filter at database level instead of in memory
+    const acceptedRequests = await tx.supervisionRequest.findMany({
+      where: {
+        student_id: studentId,
+        request_state: RequestState.ACCEPTED,
+      },
+      select: { id: true, supervisor_id: true },
+    });
 
     // Early return if no active supervisions to process
     if (acceptedRequests.length === 0) return;
@@ -263,35 +262,59 @@ export class AdminService {
     // Group supervisor capacity updates to handle multiple supervisions per supervisor
     const supervisorUpdates = acceptedRequests.reduce(
       (acc, request) => {
+        // Validate supervisor ID format for security
+        if (
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            request.supervisor_id,
+          )
+        ) {
+          this.logger.error(
+            `Invalid supervisor ID format: ${request.supervisor_id}`,
+            'AdminService',
+          );
+          return acc; // Skip invalid IDs
+        }
         acc[request.supervisor_id] = (acc[request.supervisor_id] || 0) + 1;
         return acc;
       },
       {} as Record<string, number>,
     );
 
-    // ✅ PERFORMANCE OPTIMIZATION: Single bulk update instead of individual queries
     if (Object.keys(supervisorUpdates).length > 0) {
-      // Build CASE statement for bulk update
-      const updateCases = Object.entries(supervisorUpdates)
-        .map(([supervisorId, increment]) => `WHEN '${supervisorId}' THEN ${increment}`)
-        .join(' ');
+      try {
+        await Promise.all(
+          Object.entries(supervisorUpdates).map(([supervisorId, increment]) =>
+            tx.supervisor
+              .update({
+                where: { id: supervisorId },
+                data: {
+                  available_spots: {
+                    increment: increment,
+                  },
+                },
+              })
+              .catch((error: Error) => {
+                // Log individual failures for debugging
+                this.logger.error(
+                  `Failed to update capacity for supervisor ${supervisorId}: ${error.message}`,
+                  'AdminService',
+                );
+                throw error; // Re-throw to trigger transaction rollback
+              }),
+          ),
+        );
 
-      const supervisorIds = Object.keys(supervisorUpdates);
-
-      // Execute single bulk update for all supervisor capacity changes
-      await tx.$executeRaw`
-      UPDATE "Supervisor" 
-      SET available_spots = available_spots + 
-        CASE id 
-          ${Prisma.raw(updateCases)}
-        END
-      WHERE id = ANY(${supervisorIds})
-    `;
-
-      this.logger.debug(
-        `Bulk updated capacity for ${supervisorIds.length} supervisors in single query`,
-        'AdminService',
-      );
+        this.logger.debug(
+          `Securely updated capacity for ${Object.keys(supervisorUpdates).length} supervisors`,
+          'AdminService',
+        );
+      } catch (error: unknown) {
+        this.logger.error(
+          `Failed to update supervisor capacities during student reset: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          'AdminService',
+        );
+        throw error; // Will trigger transaction rollback
+      }
     }
   }
 
@@ -316,7 +339,10 @@ export class AdminService {
    * @warning High impact operation - can affect multiple students at once
    * @performance Uses batch updateMany for efficient processing of multiple supervisions
    */
-  private async resetSupervisorData(supervisorId: string, tx: PrismaTransaction): Promise<void> {
+  private async resetSupervisorData(
+    supervisorId: string,
+    tx: Prisma.TransactionClient,
+  ): Promise<void> {
     // Find all students currently being supervised by this supervisor
     const activeSupervisions = await tx.supervisionRequest.findMany({
       where: {

@@ -218,6 +218,7 @@ describe('AdminController - resetUser', () => {
   it('should call adminService.resetUser with correct parameters', async () => {
     const userId = '123e4567-e89b-12d3-a456-426614174000';
     const requestingAdminId = '456e7890-e89b-12d3-a456-426614174001';
+
     const expectedResult = { success: true, message: 'User reset successfully' };
 
     const mockReq = {

@@ -422,7 +422,24 @@ describe('AdminService', () => {
 describe('AdminService - resetUser', () => {
   let service: AdminService;
   let prismaService: PrismaService;
-  let mockTransaction: any;
+  let mockTransaction: {
+    user: {
+      findUnique: jest.Mock;
+      update: jest.Mock;
+    };
+    student: {
+      findUnique: jest.Mock;
+    };
+    supervisor: {
+      findUnique: jest.Mock;
+      update: jest.Mock;
+    };
+    supervisionRequest: {
+      findMany: jest.Mock;
+      updateMany: jest.Mock;
+    };
+    $executeRaw: jest.Mock;
+  };
 
   const mockUser = {
     id: 'user-uuid-123',
@@ -451,6 +468,7 @@ describe('AdminService - resetUser', () => {
       },
       supervisor: {
         findUnique: jest.fn(),
+        update: jest.fn(),
       },
       supervisionRequest: {
         findMany: jest.fn(),
@@ -473,7 +491,11 @@ describe('AdminService - resetUser', () => {
         {
           provide: PrismaService,
           useValue: {
-            $transaction: jest.fn().mockImplementation(callback => callback(mockTransaction)),
+            $transaction: jest
+              .fn()
+              .mockImplementation((callback: (tx: typeof mockTransaction) => Promise<any>) =>
+                callback(mockTransaction),
+              ),
           },
         },
         {
@@ -481,6 +503,8 @@ describe('AdminService - resetUser', () => {
           useValue: {
             log: jest.fn(),
             debug: jest.fn(),
+            error: jest.fn(),
+            warn: jest.fn(),
           },
         },
       ],
@@ -544,23 +568,35 @@ describe('AdminService - resetUser', () => {
 
   describe('Student Reset', () => {
     it('should successfully reset student with active supervisions', async () => {
-      const studentProfile = { id: 'student-profile-123', user_id: 'user-id' };
-      const supervisionRequests = [
-        { id: 'req-1', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-1' },
-        { id: 'req-2', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-2' },
-        { id: 'req-3', request_state: RequestState.PENDING, supervisor_id: 'sup-3' },
+      const studentProfile = { id: '123e4567-e89b-12d3-a456-426614174000', user_id: 'user-id' };
+      // Only return ACCEPTED requests (like the real query filters for)
+      const acceptedRequests = [
+        {
+          id: 'req-1',
+          request_state: RequestState.ACCEPTED,
+          supervisor_id: '223e4567-e89b-12d3-a456-426614174001',
+        },
+        {
+          id: 'req-2',
+          request_state: RequestState.ACCEPTED,
+          supervisor_id: '223e4567-e89b-12d3-a456-426614174002',
+        },
       ];
 
       mockTransaction.user.findUnique
         .mockResolvedValueOnce(mockUser)
         .mockResolvedValueOnce(mockAdmin);
       mockTransaction.student.findUnique.mockResolvedValue(studentProfile);
-      mockTransaction.supervisionRequest.findMany.mockResolvedValue(supervisionRequests);
+      mockTransaction.supervisionRequest.findMany.mockResolvedValue(acceptedRequests);
       mockTransaction.supervisionRequest.updateMany.mockResolvedValue({ count: 2 });
+      mockTransaction.supervisor.update.mockResolvedValue({});
       mockTransaction.$executeRaw.mockResolvedValue(undefined);
       mockTransaction.user.update.mockResolvedValue(mockUser);
 
-      const result = await service.resetUser('user-id', 'admin-id');
+      const result = await service.resetUser(
+        '223e4567-e89b-12d3-a456-426614174001',
+        '223e4567-e89b-12d3-a456-426614174003',
+      );
 
       expect(result.success).toBe(true);
       expect(result.message).toContain(mockUser.email);
@@ -568,7 +604,7 @@ describe('AdminService - resetUser', () => {
         where: { id: { in: ['req-1', 'req-2'] } },
         data: { request_state: RequestState.WITHDRAWN },
       });
-      expect(mockTransaction.$executeRaw).toHaveBeenCalled();
+      expect(mockTransaction.supervisor.update).toHaveBeenCalled();
     });
   });
 
@@ -598,14 +634,18 @@ describe('AdminService - resetUser', () => {
 
   describe('Transaction Rollback', () => {
     it('should rollback on supervision update failure', async () => {
-      const studentProfile = { id: 'student-profile-123', user_id: 'user-id' };
+      const studentProfile = { id: '123e4567-e89b-12d3-a456-426614174000', user_id: 'user-id' };
 
       mockTransaction.user.findUnique
         .mockResolvedValueOnce(mockUser)
         .mockResolvedValueOnce(mockAdmin);
       mockTransaction.student.findUnique.mockResolvedValue(studentProfile);
       mockTransaction.supervisionRequest.findMany.mockResolvedValue([
-        { id: 'req-1', request_state: RequestState.ACCEPTED, supervisor_id: 'sup-1' },
+        {
+          id: 'req-1',
+          request_state: RequestState.ACCEPTED,
+          supervisor_id: '223e4567-e89b-12d3-a456-426614174001',
+        },
       ]);
       mockTransaction.supervisionRequest.updateMany.mockRejectedValue(new Error('DB Error'));
 

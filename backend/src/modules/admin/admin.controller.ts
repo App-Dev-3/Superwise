@@ -130,9 +130,9 @@ export class AdminController {
   })
   async resetUser(
     @Param('id', ParseUUIDPipe) userId: string,
-    @Request() req: any,
+    @Request() req: { user: { id: string } },
   ): Promise<{ success: boolean; message: string }> {
-    const requestingAdminId = req.user.id;
+    const requestingAdminId: string = req.user.id;
     return this.adminService.resetUser(userId, requestingAdminId);
   }
 }

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { usePointerSwipe } from "@vueuse/core";
 import { computed, shallowRef, ref } from "vue";
+import { faCheck, faBan } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 interface Props {
   swipeThreshold?: number;
@@ -89,10 +91,12 @@ const backgroundColorClasses = computed(() => ({
   "bg-error": distanceX.value > props.swipeThreshold / 10,
 }));
 
-const swipeText = computed(() => {
-  if (distanceX.value < -props.swipeThreshold / 10) return props.swipeLeftText;
-  if (distanceX.value > props.swipeThreshold / 10) return props.swipeRightText;
-  return "";
+const swipeIcon = computed(() => {
+  if (!isSwiping.value) return null;
+
+  if (distanceX.value < -props.swipeThreshold / 10) return faCheck;
+  if (distanceX.value > props.swipeThreshold / 10) return faBan;
+  return null;
 });
 
 const textPositionClass = computed(() => {
@@ -111,7 +115,7 @@ const textPositionClass = computed(() => {
     >
       <div
         ref="target"
-        class="relative w-full flex items-center justify-center"
+        class="relative w-full flex items-center justify-center z-10"
         :class="{ 'transition-all duration-200 ease-linear': !isSwiping }"
         :style="{ left, opacity }"
       >
@@ -119,13 +123,11 @@ const textPositionClass = computed(() => {
       </div>
       <!-- Overlay text for swipe direction -->
       <div
-        v-if="swipeText"
+        v-if="swipeIcon"
         class="absolute top-1/2 transform -translate-y-1/2 pointer-events-none"
         :class="textPositionClass"
       >
-        <span class="text-xl font-bold text-white">
-          {{ swipeText }}
-        </span>
+        <FontAwesomeIcon :icon="swipeIcon" class="text-3xl text-white" />
       </div>
     </div>
   </div>

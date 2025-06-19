@@ -32,12 +32,6 @@ const toastData = ref({
   message: "",
 });
 
-const toastData = ref({
-  visible: false,
-  type: "success",
-  message: "",
-});
-
 const deleteData = () => {
   // Implement the logic to delete data
   console.log("Delete data button clicked");
@@ -62,9 +56,6 @@ definePageMeta({
       v-for="content in pageContent"
       :key="content"
       :class="getStyle(content)"
-      v-for="content in pageContent"
-      :key="content"
-      :class="getStyle(content)"
     >
       <ul v-if="content.match(/List(\.\d+)?$/)" class="list-disc pl-5">
         <li v-for="(item, index) in t(content).split('\n')" :key="index">
@@ -75,13 +66,7 @@ definePageMeta({
       <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">
         {{ t(content) }}
       </h2>
-      <h2 v-else-if="content.match(/Subtitle(\.\d+)?$/)" class="text-large">
-        {{ t(content) }}
-      </h2>
 
-      <h1 v-else-if="content.match(/Title(\.\d+)?$/)" class="text-header">
-        {{ t(content) }}
-      </h1>
       <h1 v-else-if="content.match(/Title(\.\d+)?$/)" class="text-header">
         {{ t(content) }}
       </h1>

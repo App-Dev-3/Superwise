@@ -1,35 +1,31 @@
 <script lang="ts" setup>
 
 import { nextTick } from "vue";
+import { v4 as uuid } from "uuid";
 
 const { t } = useI18n();
 
 const openConfirmationModal = async () => {
-  console.log('Opening confirmation modal...');
   await nextTick();
-  const modal = document.getElementById(
-      "confirmationModal"
-  ) as HTMLDialogElement;
+  const modal = document.getElementById(modalId) as HTMLDialogElement;
   modal?.showModal();
 };
 
 const deleteData = () => {
   // Implement the logic to delete data
-  console.log("Start new Cycle...");
   openToast();
 };
 
 const openToast = () => {
-  console.log('Open toast...');
   showToast.value = true;
 }
 
 const closeToast = () => {
-  console.log('Close toast...');
   showToast.value = false;
 }
 
 const showToast = ref(false);
+const modalId = uuid();
 
 definePageMeta({
   layout: "generic-back-layout",
@@ -57,11 +53,11 @@ definePageMeta({
         :confirm-button-text="t('new-cycle.modal.button')"
         :description="t('new-cycle.body')"
         :headline="t('new-cycle.header')"
+        :linked-component-id="modalId"
         confirm-button-color="error"
         confirm-button-icon="arrows-spin"
         hide-dont-show-again
         icon="arrows-spin"
-        linked-component-id="confirmationModal"
         @confirm="deleteData"
     />
 

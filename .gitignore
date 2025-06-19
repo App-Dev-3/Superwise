@@ -57,3 +57,16 @@ pnpm-debug.log*
 
 # Package manager
 .npm/
+
+# Database and cache sensitive files
+# Include Prisma migrations but exclude other SQL files
+*.sql
+!prisma/migrations/**/*.sql
+!backend/prisma/migrations/**/*.sql
+*.backup
+*.dump
+*.db
+*.sqlite
+*.sqlite3
+dump.rdb
+*.rdb

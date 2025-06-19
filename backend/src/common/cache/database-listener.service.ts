@@ -371,7 +371,10 @@ export class DatabaseListenerService implements OnModuleInit, OnModuleDestroy {
     if (!this.pgClient) {
       return 'disconnected';
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (this.pgClient as any).readyForQuery ? 'connected' : 'connecting';
+    // The 'pg' library's Client type doesn't explicitly include readyForQuery, but it exists on the instance.
+    // Using a type assertion is a clean way to access it without disabling lint rules.
+    return (this.pgClient as unknown as { readyForQuery: boolean }).readyForQuery
+      ? 'connected'
+      : 'connecting';
   }
 }

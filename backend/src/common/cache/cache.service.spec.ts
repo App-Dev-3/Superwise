@@ -1,12 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CacheService } from './cache.service';
-import { WinstonLoggerService } from '../logging/winston-logger.service';
 import { User, Role } from '@prisma/client';
+import { WinstonLoggerService } from '../logging/winston-logger.service';
 
 describe('CacheService', () => {
   let service: CacheService;
-  let mockCacheManager: any;
+  let mockCacheManager: {
+    get: jest.Mock;
+    set: jest.Mock;
+    del: jest.Mock;
+  };
   let mockLogger: {
     debug: jest.Mock;
     error: jest.Mock;

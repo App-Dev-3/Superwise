@@ -4,9 +4,10 @@ import { SupervisionRequestsService } from './supervision-requests.service';
 import { CreateSupervisionRequestDto } from './dto/create-supervision-request.dto';
 import { UpdateSupervisionRequestDto } from './dto/update-supervision-request.dto';
 import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto';
+import { CountQueryDto } from './dto/count-query.dto';
 import { SupervisionRequestEntity } from './entities/supervision-request.entity';
 import { SupervisionRequestWithUsersEntity } from './entities/supervision-request-with-users.entity';
-import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
+import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
 import { RequestState, User } from '@prisma/client';
 
@@ -137,35 +138,42 @@ export class SupervisionRequestsController {
     );
   }
 
-  @Get('pending-count/:userId')
+  @Get('count/:userId')
   @ApiOperation({
-    summary: 'Get pending supervision request count for a user',
+    summary: 'Get supervision request count for a user by state',
     description:
-      'Returns the count of pending supervision requests for a specific user. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.',
+      'Returns the count of supervision requests for a specific user filtered by state. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.',
   })
   @ApiParam({
     name: 'userId',
-    description: 'ID of the user to get pending request count for',
+    description: 'ID of the user to get request count for',
     type: String,
     format: 'uuid',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
+  @ApiQuery({
+    name: 'request_state',
+    required: true,
+    enum: RequestState,
+    description: 'The request state to count',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Returns the count of pending supervision requests',
-    type: PendingRequestCountEntity,
+    description: 'Returns the count of supervision requests',
+    type: SupervisionRequestCountEntity,
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request - Invalid UUID or admin user requested',
+    description: 'Bad request - Invalid UUID, admin user requested, or missing request state',
   })
   @ApiResponse({
     status: 404,
     description: 'User not found',
   })
-  async getPendingRequestCountForUser(
+  async getRequestCountForUser(
     @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<PendingRequestCountEntity> {
-    return this.supervisionRequestsService.countPendingRequestsForUser(userId);
+    @Query() queryParams: CountQueryDto,
+  ): Promise<SupervisionRequestCountEntity> {
+    return this.supervisionRequestsService.countRequestsForUser(userId, queryParams.request_state);
   }
 }

@@ -4,6 +4,7 @@ import {
     faArrowLeft,
     faArrowRight,
     faArrowRightToBracket,
+    faArrowsSpin,
     faBan,
     faCaretDown,
     faCaretUp,
@@ -101,7 +102,8 @@ library.add(
     faFilter,
     faFilterCircleXmark,
     faUpRightFromSquare,
-    faUsers
+    faUsers,
+    faArrowsSpin
 );
 
 export default defineNuxtPlugin((nuxtApp) => {

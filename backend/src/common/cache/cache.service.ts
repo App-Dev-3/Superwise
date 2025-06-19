@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { User } from '@prisma/client';
 import { WinstonLoggerService } from '../logging/winston-logger.service';
+import { CacheConfigService } from '../../config';
 
 /**
  * Centralized cache service for Redis operations
@@ -12,13 +13,10 @@ import { WinstonLoggerService } from '../logging/winston-logger.service';
 export class CacheService {
   private readonly logger: WinstonLoggerService;
 
-  // Cache TTL values (in milliseconds)
-  private readonly USER_TTL = 20 * 60 * 1000; // 20 minutes
-  private readonly TAG_SIMILARITY_TTL = 24 * 60 * 60 * 1000; // 24 hours
-
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     logger: WinstonLoggerService,
+    private readonly cacheConfig: CacheConfigService,
   ) {
     this.logger = logger;
   }
@@ -28,38 +26,53 @@ export class CacheService {
    * Only stores essential fields to minimize exposure
    */
   async setUser(clerkId: string, user: User, ttl?: number): Promise<void> {
-    const key = this.getUserKey(clerkId);
+    try {
+      const key = this.getUserKey(clerkId);
 
-    // Security: Filter sensitive data before caching
-    const filteredUser = this.filterUserForCache(user);
+      // Security: Filter sensitive data before caching
+      const filteredUser = this.filterUserForCache(user);
 
-    await this.cacheManager.set(key, filteredUser, ttl ?? this.USER_TTL);
-    this.logger.debug(`Cached user data for clerk_id: ${clerkId}`, 'CacheService');
+      await this.cacheManager.set(key, filteredUser, ttl ?? this.cacheConfig.userCacheTtl);
+      this.logger.debug(`Cached user data for clerk_id: ${clerkId}`, 'CacheService');
+    } catch (error) {
+      this.logger.error(`Cache error setting user ${clerkId}: ${error}`, 'CacheService');
+      // Continue execution - app will work without cache
+    }
   }
 
   /**
    * Retrieve cached user data
    */
   async getUser(clerkId: string): Promise<User | null> {
-    const key = this.getUserKey(clerkId);
-    const cached = await this.cacheManager.get<User>(key);
+    try {
+      const key = this.getUserKey(clerkId);
+      const cached = await this.cacheManager.get<User>(key);
 
-    if (cached) {
-      this.logger.debug(`Cache hit for user: ${clerkId}`, 'CacheService');
-      return cached;
+      if (cached) {
+        this.logger.debug(`Cache hit for user: ${clerkId}`, 'CacheService');
+        return cached;
+      }
+
+      this.logger.debug(`Cache miss for user: ${clerkId}`, 'CacheService');
+      return null;
+    } catch (error) {
+      this.logger.error(`Cache error getting user ${clerkId}: ${error}`, 'CacheService');
+      return null; // Fallback to database lookup
     }
-
-    this.logger.debug(`Cache miss for user: ${clerkId}`, 'CacheService');
-    return null;
   }
 
   /**
    * Invalidate user cache
    */
   async invalidateUser(clerkId: string): Promise<void> {
-    const key = this.getUserKey(clerkId);
-    await this.cacheManager.del(key);
-    this.logger.debug(`Invalidated user cache for: ${clerkId}`, 'CacheService');
+    try {
+      const key = this.getUserKey(clerkId);
+      await this.cacheManager.del(key);
+      this.logger.debug(`Invalidated user cache for: ${clerkId}`, 'CacheService');
+    } catch (error) {
+      this.logger.error(`Cache error invalidating user ${clerkId}: ${error}`, 'CacheService');
+      // Continue execution - cache will expire via TTL
+    }
   }
 
   /**
@@ -67,12 +80,12 @@ export class CacheService {
    */
   async setTagSimilarity(tagId1: string, tagId2: string, similarity: number): Promise<void> {
     const key = this.getTagSimilarityKey(tagId1, tagId2);
-    await this.cacheManager.set(key, similarity, this.TAG_SIMILARITY_TTL);
+    await this.cacheManager.set(key, similarity, this.cacheConfig.tagSimilarityCacheTtl);
 
     // Ensure bidirectional caching (similarity(A,B) = similarity(B,A))
     if (tagId1 !== tagId2) {
       const reverseKey = this.getTagSimilarityKey(tagId2, tagId1);
-      await this.cacheManager.set(reverseKey, similarity, this.TAG_SIMILARITY_TTL);
+      await this.cacheManager.set(reverseKey, similarity, this.cacheConfig.tagSimilarityCacheTtl);
     }
   }
 

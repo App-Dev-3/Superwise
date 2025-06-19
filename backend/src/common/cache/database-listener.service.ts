@@ -213,6 +213,15 @@ export class DatabaseListenerService implements OnModuleInit, OnModuleDestroy {
         operation: string;
       };
 
+      // Validate required fields
+      if (!notification.table || !notification.operation) {
+        this.logger.warn(
+          `Invalid cache invalidation payload: missing required fields`,
+          'DatabaseListenerService',
+        );
+        return;
+      }
+
       this.logger.debug(
         `Cache invalidation triggered: ${notification.table} ${notification.operation}`,
         'DatabaseListenerService',

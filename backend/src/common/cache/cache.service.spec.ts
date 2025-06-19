@@ -3,6 +3,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { CacheService } from './cache.service';
 import { User, Role } from '@prisma/client';
 import { WinstonLoggerService } from '../logging/winston-logger.service';
+import { CacheConfigService } from '../../config';
 
 describe('CacheService', () => {
   let service: CacheService;
@@ -60,6 +61,13 @@ describe('CacheService', () => {
         {
           provide: WinstonLoggerService,
           useValue: mockLogger,
+        },
+        {
+          provide: CacheConfigService,
+          useValue: {
+            userCacheTtl: 1200000, // 20 minutes
+            tagSimilarityCacheTtl: 86400000, // 24 hours
+          },
         },
       ],
     }).compile();

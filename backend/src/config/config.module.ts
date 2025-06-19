@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppConfigService } from './app-config.service';
 import { DatabaseConfigService } from './database-config.service';
 import { AuthConfigService } from './auth-config.service';
+import { CacheConfigService } from './cache-config.service';
 import { validateEnvironment } from './environment.validation';
 
 /**
@@ -32,7 +33,7 @@ import { validateEnvironment } from './environment.validation';
       cache: true, // Cache configuration for better performance
     }),
   ],
-  providers: [AppConfigService, DatabaseConfigService, AuthConfigService],
-  exports: [AppConfigService, DatabaseConfigService, AuthConfigService],
+  providers: [AppConfigService, DatabaseConfigService, AuthConfigService, CacheConfigService],
+  exports: [AppConfigService, DatabaseConfigService, AuthConfigService, CacheConfigService],
 })
 export class SuperwiseConfigModule {}

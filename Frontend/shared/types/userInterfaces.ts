@@ -1,7 +1,6 @@
 import type { supervisionRequestType, UserRoles } from "#shared/enums/enums";
 
 import type { SupervisionRequestsData, SupervisorData } from "./supervisorInterfaces";
-import type { RouteLocationRaw } from "#vue-router";
 
 export interface UserCreateData extends Record<string, unknown> {
     email: string;
@@ -61,17 +60,4 @@ export interface UserSettingsData {
     showRemoveStudentModal?: boolean
     showSupervisionAcceptModal?: boolean
     showSupervisionRejectModal?: boolean
-}
-
-export interface DrawerLinkListInterface {
-    student: DrawerLinkInterface[]
-    supervisor: DrawerLinkInterface[]
-    admin: DrawerLinkInterface[]
-}
-
-export interface DrawerLinkInterface {
-    key: string
-    url: RouteLocationRaw
-    text: string
-    icon: string
 }

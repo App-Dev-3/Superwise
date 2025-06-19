@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ref, watchEffect } from 'vue';
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {ref, watchEffect} from 'vue';
 
 interface ValidatedMailInput {
   placeholder: string;
@@ -56,7 +56,6 @@ function handleBlur(event: FocusEvent): void {
           @blur="handleBlur"
           @input="handleInput"
       >
-
       <span class="text-body opacity-75 pr-4">
         @{{ props.domain }}
       </span>

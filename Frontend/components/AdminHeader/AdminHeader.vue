@@ -7,7 +7,7 @@ const router = useRouter();
 const colorMode = useColorMode();
 
 interface Props {
-  variant?: "default" | "upload" | "download" | "delete" | "text" | "warning";
+  variant?: "default" | "upload" | "download" | "delete" | "text";
   headerText: string;
   rightButton?: string;
   rightIcon?: string;
@@ -25,7 +25,6 @@ const headerBG = computed(() => ({
   'bg-info': props.variant === 'upload',
   'bg-success': props.variant === 'download',
   'bg-error': props.variant === 'delete',
-  'bg-warning': props.variant === 'warning',
 }));
 
 const colorText = computed(() => ({
@@ -33,7 +32,6 @@ const colorText = computed(() => ({
   'text-info-content': props.variant === 'upload',
   'text-success-content': props.variant === 'download',
   'text-error-content': props.variant === 'delete',
-  'text-warning-content': props.variant === 'warning',
 }));
 
 const goBack = () => {

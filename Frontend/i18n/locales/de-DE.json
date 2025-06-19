@@ -1,22 +1,4 @@
 {
-  "add-admin": {
-    "add-admin": "Admin hinzufügen",
-    "inputMissing": "Bitte fülle alle felder aus!",
-    "modal": {
-      "text": "Bist du dir sicher das du {firstName} {lastName} mit der mail Adresse {mail} admin machen willst?"
-    },
-    "text": "Durch das Hinzufügen eines weiteren admins bekommt diese person die gleiche lese, schreibe und lösch rechte wie du! Füge nur jemand als Admin dazu, falls das wirklich gewollt ist! Diese aktion kann nicht rückgängig gemacht werden!",
-    "title": "Füge einen Admin hinzu",
-    "toast": {
-      "error": {
-        "400": "Falsche Mail Domain, fehlendes Feld, oder nutzer bereits registriert.",
-        "403": "Nur bereits existierende Admins dürfen einen neuen admin account erstellen",
-        "409": "Es existiert bereits ein nutzer mit dieser Mail!",
-        "generic": "Es ist ein fehler aufgetreten. Bitte versuche es später erneut..."
-      },
-      "message": "Ein neuer Admin wurde hinzugefügt!"
-    }
-  },
   "admin": {
     "availableSpots": "Verfügbare Plätze",
     "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
@@ -47,11 +29,9 @@
     }
   },
   "appHeader": {
-    "addAdmin": "Admin Hinzufügen",
     "admin": {
       "deleteData": "Delete Data",
       "downloadData": "Daten Herunterladen",
-      "newCycle": "Neuer Zyklus",
       "uploadData": "Daten Importieren"
     },
     "back": "Zurück",
@@ -202,7 +182,6 @@
   "generic": {
     "404-not-found": "404 - Nicht gefunden",
     "acceptedRequestTo": "Akzeptierte Anfrage an",
-    "addAdmin": "Neuen Admin Hinzufügen",
     "admin": "Admin",
     "cancel": "Abbrechen",
     "chatRequest": "Chat-Anfrage",
@@ -308,20 +287,8 @@
     "defaultHeader": "SuperWise",
     "logout": "Abmelden",
     "matching": "Matching",
-    "newCycle": "Betreuungs Zyklen",
     "profile": "Profil",
     "settings": "Einstellungen"
-  },
-  "new-cycle": {
-    "body": "Wenn du einen neuen Zyklus startest, werden alle Matches gelöscht, belegte Betreuungsslots zurückgesetzt und alle Anfragen storniert! Führe diese Aktion nur aus, wenn ein neues Jahr beginnt, du bereit bist, einen neuen Zyklus zu starten und ein Backup aller Matches erstellt hast!",
-    "header": "Beginne einen neuen Zyklus",
-    "modal": {
-      "button": "Neuer Zyklus"
-    },
-    "startNewCycle": "Neuen Zyklus beginnen...",
-    "toast": {
-      "message": "Ein neuer Zyklus hat begonnen!"
-    }
   },
   "onboarding": {
     "completed": "Du hast erfolgreich das Onboarding abgeschlossen!",
@@ -411,10 +378,10 @@
       "acceptingTitle": "Modal zur Annahme der Betreuungsanfrage",
       "addStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Studierender in der Hinzufügen-Ansicht zur Betreuung hinzugefügt wird",
       "addStudentTitle": "Modal zum Hinzufügen eines Studierenden zur Betreuung",
-      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
-      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage",
       "removeStudentDescription": "Bestätigungs-Modal anzeigen, wenn ein Sie einen Studierenden in der Hinzufügen-Ansicht zur Betreuung entfernen",
-      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung"
+      "removeStudentTitle": "Modal zum Entfernen einen Studierenden aus der Betreuung",
+      "rejectDescription": "Bestätigungs-Modal anzeigen, wenn eine Betreuungsanfrage abgelehnt wird",
+      "rejectTitle": "Modal zur Ablehnung der Betreuungsanfrage"
     },
     "theme": {
       "description": "App Design auswählen",
@@ -442,23 +409,23 @@
     "similarityScore": "Übereinstimmungswert"
   },
   "supervisorStudentList": {
+    "checkboxLabel": "Nicht erneut anzeigen",
     "addExistingStudent": {
-      "confirmText": "Studierenden betreuen",
       "mainText": "Möchten Sie {firstName} {lastName} betreuen?",
       "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
+      "confirmText": "Studierenden betreuen",
       "title": "Studierenden betreuen"
     },
     "addNewStudent": {
-      "confirmText": "Studierenden betreuen",
       "mainText": "Möchten Sie {emailAddress} betreuen? Er/Sie ist noch nicht auf SuperWise registriert, wird aber per E-Mail benachrichtigt.",
       "subText": "Er/Sie wird benachrichtigt, dass Sie ihn/sie betreuen!",
-      "title": "Studierenden betreuen"
+      "title": "Studierenden betreuen",
+      "confirmText": "Studierenden betreuen"
     },
-    "checkboxLabel": "Nicht erneut anzeigen",
     "removeStudent": {
-      "confirmText": "Studierenden entfernen",
       "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
       "subText": "",
+      "confirmText": "Studierenden entfernen",
       "title": "Studierenden entfernen"
     }
   },

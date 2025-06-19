@@ -1617,57 +1617,42 @@
         ]
       }
     },
-    "/supervision-requests/count/{userId}": {
+    "/supervision-requests/pending-count/{userId}": {
       "get": {
-        "description": "Returns the count of supervision requests for a specific user filtered by state. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.",
-        "operationId": "SupervisionRequestsController_getRequestCountForUser",
+        "description": "Returns the count of pending supervision requests for a specific user. Requesting a student gets their outgoing requests, requesting a supervisor gets their incoming requests.",
+        "operationId": "SupervisionRequestsController_getPendingRequestCountForUser",
         "parameters": [
           {
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "ID of the user to get request count for",
+            "description": "ID of the user to get pending request count for",
             "schema": {
               "format": "uuid",
               "example": "123e4567-e89b-12d3-a456-426614174000",
-              "type": "string"
-            }
-          },
-          {
-            "name": "request_state",
-            "required": true,
-            "in": "query",
-            "description": "The request state to count",
-            "schema": {
-              "enum": [
-                "PENDING",
-                "ACCEPTED",
-                "REJECTED",
-                "WITHDRAWN"
-              ],
               "type": "string"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Returns the count of supervision requests",
+            "description": "Returns the count of pending supervision requests",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SupervisionRequestCountEntity"
+                  "$ref": "#/components/schemas/PendingRequestCountEntity"
                 }
               }
             }
           },
           "400": {
-            "description": "Bad request - Invalid UUID, admin user requested, or missing request state"
+            "description": "Bad request - Invalid UUID or admin user requested"
           },
           "404": {
             "description": "User not found"
           }
         },
-        "summary": "Get supervision request count for a user by state",
+        "summary": "Get pending supervision request count for a user",
         "tags": [
           "supervision-requests"
         ]
@@ -2892,18 +2877,18 @@
           "request_state"
         ]
       },
-      "SupervisionRequestCountEntity": {
+      "PendingRequestCountEntity": {
         "type": "object",
         "properties": {
-          "request_count": {
+          "pending_count": {
             "type": "number",
-            "description": "Number of supervision requests for the user with the specified state",
+            "description": "Number of pending supervision requests for the user",
             "example": 5,
             "minimum": 0
           }
         },
         "required": [
-          "request_count"
+          "pending_count"
         ]
       }
     }

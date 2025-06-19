@@ -19,7 +19,7 @@ import { SupervisorTargetException } from '../../../common/exceptions/custom-exc
 import { MissingStudentEmailException } from '../../../common/exceptions/custom-exceptions/missing-student-email.exception';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { AppConfigService } from '@config';
-import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
+import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
 
 @Injectable()
@@ -306,18 +306,14 @@ export class SupervisionRequestsService {
   }
 
   /**
-   * Count supervision requests for a specific user filtered by state
+   * Count pending supervision requests for a specific user
    * Validates user exists and role, then returns count based on role
-   * @param userId - The ID of the user to count requests for
-   * @param requestState - The request state to filter by
-   * @returns A SupervisionRequestCountEntity object containing the count of requests
+   * @param userId - The ID of the user to count pending requests for
+   * @returns A PendingRequestCountEntity object containing the count of pending requests
    * @throws NotFoundException if the user is not found
    * @throws AdminSupervisionRequestException if the user is an admin
    */
-  async countRequestsForUser(
-    userId: string,
-    requestState: RequestState,
-  ): Promise<SupervisionRequestCountEntity> {
+  async countPendingRequestsForUser(userId: string): Promise<PendingRequestCountEntity> {
     // Step 1: Validate user exists
     const user = await this.usersService.findUserById(userId);
     if (!user) {
@@ -335,19 +331,19 @@ export class SupervisionRequestsService {
       const student = await this.studentsService.findStudentByUserId(userId);
       count = await this.repository.countRequests({
         student_id: student.id,
-        request_state: requestState,
+        request_state: RequestState.PENDING,
       });
     } else if (user.role === Role.SUPERVISOR) {
       const supervisor = await this.supervisorsService.findSupervisorByUserId(userId);
       count = await this.repository.countRequests({
         supervisor_id: supervisor.id,
-        request_state: requestState,
+        request_state: RequestState.PENDING,
       });
     } else {
       count = 0;
     }
 
-    return { request_count: count };
+    return { pending_count: count };
   }
 
   /**

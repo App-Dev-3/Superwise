@@ -5,7 +5,7 @@ import { RequestState, Role, User } from '@prisma/client';
 import { CreateSupervisionRequestDto } from './dto/create-supervision-request.dto';
 import { UpdateSupervisionRequestDto } from './dto/update-supervision-request.dto';
 import { SupervisionRequestQueryDto } from './dto/supervision-request-query.dto';
-import { SupervisionRequestCountEntity } from './entities/supervision-request-count.entity';
+import { PendingRequestCountEntity } from './entities/pending-request-count.entity';
 import { AdminSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/admin-supervision-request.exception';
 import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { StudentAlreadyHasAnAcceptedSupervisionRequestException } from '../../../common/exceptions/custom-exceptions/multiple-supervision-acceptances.exception';
@@ -19,7 +19,7 @@ describe('SupervisionRequestsController', () => {
     findAllRequests: jest.fn(),
     findRequestById: jest.fn(),
     updateRequestState: jest.fn(),
-    countRequestsForUser: jest.fn(),
+    countPendingRequestsForUser: jest.fn(),
   };
 
   // Sample test data with proper UUIDs
@@ -381,104 +381,98 @@ describe('SupervisionRequestsController', () => {
     });
   });
 
-  describe('getRequestCountForUser', () => {
+  describe('getPendingRequestCountForUser', () => {
     it('should return pending request count for a student user', async () => {
       // Arrange
-      const expectedResponse: SupervisionRequestCountEntity = { request_count: 3 };
-      const queryParams = { request_state: RequestState.PENDING };
-      mockSupervisionRequestsService.countRequestsForUser.mockResolvedValue(expectedResponse);
+      const expectedResponse: PendingRequestCountEntity = { pending_count: 3 };
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockResolvedValue(
+        expectedResponse,
+      );
 
       // Act
-      const result = await controller.getRequestCountForUser(STUDENT_USER_UUID, queryParams);
+      const result = await controller.getPendingRequestCountForUser(STUDENT_USER_UUID);
 
       // Assert
       expect(result).toEqual(expectedResponse);
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         STUDENT_USER_UUID,
-        RequestState.PENDING,
       );
     });
 
-    it('should return accepted request count for a supervisor user', async () => {
+    it('should return pending request count for a supervisor user', async () => {
       // Arrange
-      const expectedResponse: SupervisionRequestCountEntity = { request_count: 5 };
-      const queryParams = { request_state: RequestState.ACCEPTED };
-      mockSupervisionRequestsService.countRequestsForUser.mockResolvedValue(expectedResponse);
+      const expectedResponse: PendingRequestCountEntity = { pending_count: 5 };
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockResolvedValue(
+        expectedResponse,
+      );
 
       // Act
-      const result = await controller.getRequestCountForUser(SUPERVISOR_USER_UUID, queryParams);
+      const result = await controller.getPendingRequestCountForUser(SUPERVISOR_USER_UUID);
 
       // Assert
       expect(result).toEqual(expectedResponse);
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         SUPERVISOR_USER_UUID,
-        RequestState.ACCEPTED,
       );
     });
 
-    it('should return 0 requests when user has none', async () => {
+    it('should return 0 pending requests when user has none', async () => {
       // Arrange
-      const expectedResponse: SupervisionRequestCountEntity = { request_count: 0 };
-      const queryParams = { request_state: RequestState.REJECTED };
-      mockSupervisionRequestsService.countRequestsForUser.mockResolvedValue(expectedResponse);
+      const expectedResponse: PendingRequestCountEntity = { pending_count: 0 };
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockResolvedValue(
+        expectedResponse,
+      );
 
       // Act
-      const result = await controller.getRequestCountForUser(STUDENT_USER_UUID, queryParams);
+      const result = await controller.getPendingRequestCountForUser(STUDENT_USER_UUID);
 
       // Assert
       expect(result).toEqual(expectedResponse);
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         STUDENT_USER_UUID,
-        RequestState.REJECTED,
       );
     });
 
     it('should pass through NotFoundException when user is not found', async () => {
       // Arrange
       const nonExistentUserId = 'non-existent-user-id';
-      const queryParams = { request_state: RequestState.PENDING };
       const expectedError = new NotFoundException(`User with ID ${nonExistentUserId} not found`);
-      mockSupervisionRequestsService.countRequestsForUser.mockRejectedValue(expectedError);
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockRejectedValue(expectedError);
 
       // Act & Assert
-      await expect(
-        controller.getRequestCountForUser(nonExistentUserId, queryParams),
-      ).rejects.toThrow(expectedError);
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      await expect(controller.getPendingRequestCountForUser(nonExistentUserId)).rejects.toThrow(
+        expectedError,
+      );
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         nonExistentUserId,
-        RequestState.PENDING,
       );
     });
 
     it('should pass through AdminSupervisionRequestException when admin user is requested', async () => {
       // Arrange
-      const queryParams = { request_state: RequestState.PENDING };
       const expectedError = new AdminSupervisionRequestException();
-      mockSupervisionRequestsService.countRequestsForUser.mockRejectedValue(expectedError);
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockRejectedValue(expectedError);
 
       // Act & Assert
-      await expect(controller.getRequestCountForUser(ADMIN_USER_UUID, queryParams)).rejects.toThrow(
+      await expect(controller.getPendingRequestCountForUser(ADMIN_USER_UUID)).rejects.toThrow(
         expectedError,
       );
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         ADMIN_USER_UUID,
-        RequestState.PENDING,
       );
     });
 
     it('should pass through any service errors', async () => {
       // Arrange
-      const queryParams = { request_state: RequestState.WITHDRAWN };
       const serviceError = new Error('Database connection failed');
-      mockSupervisionRequestsService.countRequestsForUser.mockRejectedValue(serviceError);
+      mockSupervisionRequestsService.countPendingRequestsForUser.mockRejectedValue(serviceError);
 
       // Act & Assert
-      await expect(
-        controller.getRequestCountForUser(STUDENT_USER_UUID, queryParams),
-      ).rejects.toThrow('Database connection failed');
-      expect(mockSupervisionRequestsService.countRequestsForUser).toHaveBeenCalledWith(
+      await expect(controller.getPendingRequestCountForUser(STUDENT_USER_UUID)).rejects.toThrow(
+        'Database connection failed',
+      );
+      expect(mockSupervisionRequestsService.countPendingRequestsForUser).toHaveBeenCalledWith(
         STUDENT_USER_UUID,
-        RequestState.WITHDRAWN,
       );
     });
   });

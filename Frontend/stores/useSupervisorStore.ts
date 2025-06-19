@@ -13,6 +13,7 @@ actions: {
       !this.supervisionRequests ||
       !this.supervisionRequests.length
     ) {
+      const router = useRouter();
       const { data, error } = await useFetch<SupervisionRequestsData[]>(
         "/api/supervision-requests",
         {
@@ -23,7 +24,7 @@ actions: {
         }
       );
       if (error.value) {
-        navigateTo("/supervisor/dashboard");
+         router.push("/supervisor/dashboard");
       } else if (data.value) {
         this.setSupervisionRequests(data.value);
       }

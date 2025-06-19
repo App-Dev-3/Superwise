@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+const { deleteUser } = useUserApi();
+const userStore = useUserStore();
+
 const pageContent = [
   "dataProtection.generic.generalInfoTitle",
   "dataProtection.generic.generalInfoText",
@@ -31,6 +34,7 @@ const toastData = ref({
 const deleteData = () => {
   // Implement the logic to delete data
   console.log("Delete data button clicked");
+  deleteUser(userStore.user.id);
   toastData.value = {
     visible: true,
     type: "success",
@@ -66,14 +70,18 @@ definePageMeta({
 
       <p v-else class="text-body">{{ t(content) }}</p>
     </div>
-    <CustomButton
-      :text="t('dataProtection.generic.deleteMyData')"
-      block
-      class="py-8"
-      color="error"
-      left-icon="trash-can"
-      @click="deleteData"
-    />
+    <SignOutButton>
+      <a href="/">
+        <CustomButton
+          :text="t('dataProtection.generic.deleteMyData')"
+          block
+          class="py-8"
+          color="error"
+          left-icon="trash-can"
+          @click="deleteData"
+        />
+      </a>
+    </SignOutButton>
     <Toast
       v-if="toastData.visible"
       :duration="3000"

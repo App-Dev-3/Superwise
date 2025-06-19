@@ -6,26 +6,22 @@ import { TagsService } from '../tags/tags.service';
 import { UserTag } from '../users/entities/user-tag.entity';
 import { safeStringify } from '../../common/utils/string-utils';
 import { SupervisionRequestsService } from '../requests/supervision/supervision-requests.service';
+import { CacheService } from '../../common/cache';
 import { RequestState, Role } from '@prisma/client';
 
 @Injectable()
 export class MatchingService {
   private readonly logger = new Logger(MatchingService.name);
-  private tagSimilarityCache: Record<string, Record<string, number>> = {};
-  // cache expiration time (24 hours in ms)
-  private readonly CACHE_TTL = 24 * 60 * 60 * 1000;
-  private cacheLastRefreshed: Date = new Date();
 
   constructor(
     private readonly supervisorsService: SupervisorsService,
     private readonly usersService: UsersService,
     private readonly tagsService: TagsService,
     private readonly supervisionRequestsService: SupervisionRequestsService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async calculateAllMatchesForUserId(studentUserId: string): Promise<Match[]> {
-    this.checkCacheExpiration();
-
     // Get all available supervisors
     const availableSupervisors = await this.supervisorsService.findAllSupervisors({
       where: {
@@ -136,7 +132,10 @@ export class MatchingService {
       let maxSimilarity = 0;
 
       for (const supervisorTag of supervisorTags) {
-        const similarity = this.getTagSimilarityFromCache(studentTag.tagId, supervisorTag.tag_id);
+        const similarity = await this.getTagSimilarityFromCache(
+          studentTag.tagId,
+          supervisorTag.tag_id,
+        );
         maxSimilarity = Math.max(maxSimilarity, similarity);
       }
 
@@ -151,118 +150,87 @@ export class MatchingService {
     studentTags: UserTag[],
     supervisorTags: UserTag[],
   ): Promise<void> {
-    // the purpose of those is to get a set that contains all uniqe
-    // needed tags for the calculation and fetches them all.
+    // Get all unique tag combinations we need
     const studentTagIds = [...new Set(studentTags.map(tag => tag.tag_id))];
     const supervisorTagIds = [...new Set(supervisorTags.map(tag => tag.tag_id))];
     const allUniqueTagIds = [...new Set([...studentTagIds, ...supervisorTagIds])];
 
-    const tagsToFetch = new Set<string>();
+    const missingCombinations: Array<[string, string]> = [];
 
-    // but we still need to check if a tag is not stored in cache to fetch it
-    // then we check if we have for each tag in the list a
-    // pair of this tag with all other tags.
-    for (const tagId of allUniqueTagIds) {
-      this.ensureCacheInitialized(tagId);
-
-      // Check if we need to fetch data for this tag
-      let needsFetching = false;
-
-      // here i check if we have all tags combinations needed or not
-      for (const otherTagId of allUniqueTagIds) {
-        if (this.tagSimilarityCache[tagId][otherTagId] === undefined) {
-          needsFetching = true;
-          break;
+    // Check which tag combinations are missing from cache
+    for (const tagId1 of allUniqueTagIds) {
+      for (const tagId2 of allUniqueTagIds) {
+        const cached = await this.cacheService.getTagSimilarity(tagId1, tagId2);
+        if (cached === null) {
+          // Only add unique combinations (avoid duplicates like A-B and B-A)
+          const [sortedId1, sortedId2] = [tagId1, tagId2].sort();
+          if (!missingCombinations.some(([id1, id2]) => id1 === sortedId1 && id2 === sortedId2)) {
+            missingCombinations.push([sortedId1, sortedId2]);
+          }
         }
       }
-
-      if (needsFetching) {
-        tagsToFetch.add(tagId);
-      }
     }
 
-    const tagsToFetchArray = [...tagsToFetch];
-
-    if (tagsToFetchArray.length === 0) {
-      return; // if all similarites we need are cached
+    if (missingCombinations.length === 0) {
+      return; // All similarities are cached
     }
 
-    this.logger.debug(`Prefetching similarities for ${tagsToFetchArray.length} tags`);
+    this.logger.debug(`Prefetching similarities for ${missingCombinations.length} combinations`);
 
-    // here we get similarities for tags that need updating
-    const fetchPromises = tagsToFetchArray.map(tagId => this.fetchAndCacheTagSimilarities(tagId));
+    // Fetch missing similarities in batches
+    const fetchPromises = missingCombinations.map(([tagId1, tagId2]) =>
+      this.fetchAndCacheTagSimilarity(tagId1, tagId2),
+    );
 
-    // we wait for all fetches to complete, with retries for failures
-    // (shouldnt happen but who knows)
     await Promise.allSettled(fetchPromises);
   }
 
-  private async fetchAndCacheTagSimilarities(tagId: string, retryCount = 2): Promise<void> {
+  private async fetchAndCacheTagSimilarity(tagId1: string, tagId2: string): Promise<void> {
     try {
-      // here we find for one tag the similairties of all other tags
-      const similarTags = await this.tagsService.findSimilarTagsByTagId(tagId, 0.0);
+      let similarity: number;
 
-      //  self-similarity (always 1.0)
-      this.setSimilarityBidirectional(tagId, tagId, 1.0);
-
-      for (const similarTag of similarTags) {
-        this.setSimilarityBidirectional(tagId, similarTag.tag.id, similarTag.similarity);
+      if (tagId1 === tagId2) {
+        similarity = 1.0;
+      } else {
+        // Fetch from database
+        const similarTags = await this.tagsService.findSimilarTagsByTagId(tagId1, 0.0);
+        const found = similarTags.find(st => st.tag.id === tagId2);
+        similarity = found?.similarity ?? 0.0;
       }
+
+      // Cache the result
+      await this.cacheService.setTagSimilarity(tagId1, tagId2, similarity);
     } catch (error) {
-      this.logger.error(`Error fetching similarities for tag ${tagId}: ${safeStringify(error)}`);
+      this.logger.error(
+        `Error fetching similarity for ${tagId1}-${tagId2}: ${safeStringify(error)}`,
+      );
+    }
+  }
 
-      if (retryCount > 0) {
-        this.logger.debug(`Retrying fetch for tag ${tagId}, ${retryCount} attempts remaining`);
-        await this.fetchAndCacheTagSimilarities(tagId, retryCount - 1);
+  private async getTagSimilarityFromCache(tagId1: string, tagId2: string): Promise<number> {
+    try {
+      const cached = await this.cacheService.getTagSimilarity(tagId1, tagId2);
+      if (cached !== null) {
+        return cached;
       }
+
+      // If not cached, fetch and cache it
+      let similarity: number;
+      if (tagId1 === tagId2) {
+        similarity = 1.0;
+      } else {
+        const similarTags = await this.tagsService.findSimilarTagsByTagId(tagId1, 0.0);
+        const found = similarTags.find(st => st.tag.id === tagId2);
+        similarity = found?.similarity ?? 0.0;
+      }
+
+      await this.cacheService.setTagSimilarity(tagId1, tagId2, similarity);
+      return similarity;
+    } catch (error) {
+      this.logger.error(
+        `Error getting tag similarity from cache for ${tagId1}-${tagId2}: ${safeStringify(error)}`,
+      );
+      return 0.0;
     }
-  }
-
-  private getTagSimilarityFromCache(tagId1: string, tagId2: string): number {
-    if (this.tagSimilarityCache[tagId1]?.[tagId2] !== undefined) {
-      return this.tagSimilarityCache[tagId1][tagId2];
-    }
-
-    if (this.tagSimilarityCache[tagId2]?.[tagId1] !== undefined) {
-      return this.tagSimilarityCache[tagId2][tagId1];
-    }
-
-    if (tagId1 === tagId2) {
-      this.setSimilarityBidirectional(tagId1, tagId2, 1.0);
-      return 1.0;
-    }
-
-    this.logger.warn(`Cache miss for tag similarity: ${tagId1} - ${tagId2}`);
-    return 0;
-  }
-  // this inizalizing an empty object for the tagid if it has not entery
-  // inside the cache nested object.
-  private ensureCacheInitialized(tagId: string): void {
-    if (!this.tagSimilarityCache[tagId]) {
-      this.tagSimilarityCache[tagId] = {};
-    }
-  }
-
-  // to have bidrectional tags pairs (ai - machine learning , machine learning - ai)
-  private setSimilarityBidirectional(tagId1: string, tagId2: string, similarity: number): void {
-    this.ensureCacheInitialized(tagId1);
-    this.ensureCacheInitialized(tagId2);
-
-    this.tagSimilarityCache[tagId1][tagId2] = similarity;
-    this.tagSimilarityCache[tagId2][tagId1] = similarity;
-  }
-  // avoids dealing with data integtiy issues since it recalcultes everything
-  // after 24 hours.
-  private checkCacheExpiration(): void {
-    const now = new Date();
-    if (now.getTime() - this.cacheLastRefreshed.getTime() > this.CACHE_TTL) {
-      this.logger.debug('Tag similarity cache expired, resetting');
-      this.resetCache();
-    }
-  }
-
-  public resetCache(): void {
-    this.tagSimilarityCache = {};
-    this.cacheLastRefreshed = new Date();
   }
 }

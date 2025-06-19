@@ -9,11 +9,13 @@ import { TagsBulkImportDto } from './dto/tags-bulk-import.dto';
 import { Tag, Role } from '@prisma/client';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
+import { CacheService } from '../../common/cache/cache.service';
 
 describe('AdminService', () => {
   let service: AdminService;
   let adminRepository: AdminRepository;
   let usersRepository: UsersRepository;
+  let cacheService: CacheService;
 
   // Proper UUIDs for testing
   const ADMIN_USER_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -29,6 +31,16 @@ describe('AdminService', () => {
 
   const mockUsersRepository = {
     findUserByEmail: jest.fn(),
+  };
+
+  const mockCacheService = {
+    invalidateTagSimilarities: jest.fn(),
+    invalidateUser: jest.fn(),
+    setUser: jest.fn(),
+    getUser: jest.fn(),
+    setTagSimilarity: jest.fn(),
+    getTagSimilarity: jest.fn(),
+    healthCheck: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -60,12 +72,17 @@ describe('AdminService', () => {
             debug: jest.fn(),
           },
         },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
       ],
     }).compile();
 
     service = module.get<AdminService>(AdminService);
     adminRepository = module.get<AdminRepository>(AdminRepository);
     usersRepository = module.get<UsersRepository>(UsersRepository);
+    cacheService = module.get<CacheService>(CacheService);
 
     // Clear all mocks before each test
     jest.clearAllMocks();
@@ -96,6 +113,7 @@ describe('AdminService', () => {
       };
 
       mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
+      mockCacheService.invalidateTagSimilarities.mockResolvedValue();
 
       // Act
       const result = await service.tagsBulkImport(mockDto);
@@ -105,7 +123,35 @@ describe('AdminService', () => {
         mockDto.tags,
         mockDto.similarities,
       );
+      expect(mockCacheService.invalidateTagSimilarities).toHaveBeenCalledWith('all');
       expect(result).toEqual(mockResponse);
+    });
+
+    it('should invalidate cache after successful bulk import', async () => {
+      // Arrange
+      const mockDto: TagsBulkImportDto = {
+        tags: ['typescript', 'angular'],
+        similarities: [{ field1: 'typescript', field2: 'angular', similarity_score: 0.9 }],
+      };
+
+      const mockResponse = {
+        success: true,
+        message: '2 new tags added, 0 tags already existed',
+        tagsProcessed: 2,
+        similaritiesReplaced: 1,
+        duplicateTagsSkipped: 0,
+        duplicateSimsSkipped: 0,
+      };
+
+      mockAdminRepository.tagsBulkImport.mockResolvedValue(mockResponse);
+      mockCacheService.invalidateTagSimilarities.mockResolvedValue();
+
+      // Act
+      await service.tagsBulkImport(mockDto);
+
+      // Assert
+      expect(mockCacheService.invalidateTagSimilarities).toHaveBeenCalledTimes(1);
+      expect(mockCacheService.invalidateTagSimilarities).toHaveBeenCalledWith('all');
     });
 
     it('should handle duplicates with formatting inconsistencies', async () => {

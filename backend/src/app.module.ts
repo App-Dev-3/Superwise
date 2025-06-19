@@ -15,10 +15,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { ClerkAuthGuard } from './common/guards/clerk-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { SuperwiseConfigModule } from './config/config.module';
+import { CacheModule } from './common/cache';
 
 @Module({
   imports: [
     SuperwiseConfigModule,
+    CacheModule,
     PrismaModule,
     UsersModule,
     TagsModule,

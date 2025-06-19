@@ -7,6 +7,7 @@ import { UserTag } from '../users/entities/user-tag.entity';
 import { RequestState, Role, UserBlock } from '@prisma/client';
 import { StudentsService } from '../students/students.service';
 import { SupervisionRequestsService } from '../requests/supervision/supervision-requests.service';
+import { CacheService } from '../../common/cache/cache.service';
 
 describe('MatchingService', () => {
   let service: MatchingService;
@@ -15,6 +16,7 @@ describe('MatchingService', () => {
   let tagsService: jest.Mocked<TagsService>;
   let studentsService: jest.Mocked<StudentsService>;
   let supervisionRequestsService: jest.Mocked<SupervisionRequestsService>;
+  let cacheService: jest.Mocked<CacheService>;
 
   // Sample UUIDs for testing
   const STUDENT_UUID = '123e4567-e89b-12d3-a456-426614174000';
@@ -239,6 +241,16 @@ describe('MatchingService', () => {
       findAllRequests: jest.fn(),
     };
 
+    const cacheServiceMock = {
+      getTagSimilarity: jest.fn(),
+      setTagSimilarity: jest.fn(),
+      invalidateTagSimilarities: jest.fn(),
+      getUser: jest.fn(),
+      setUser: jest.fn(),
+      invalidateUser: jest.fn(),
+      healthCheck: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         MatchingService,
@@ -247,6 +259,7 @@ describe('MatchingService', () => {
         { provide: TagsService, useValue: tagsServiceMock },
         { provide: StudentsService, useValue: studentsServiceMock },
         { provide: SupervisionRequestsService, useValue: supervisionRequestsServiceMock },
+        { provide: CacheService, useValue: cacheServiceMock },
       ],
     }).compile();
 

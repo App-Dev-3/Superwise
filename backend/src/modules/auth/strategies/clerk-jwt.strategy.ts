@@ -3,8 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { UsersService } from '../../users/users.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
+import { CacheService } from '../../../common/cache';
 import { WinstonLoggerService } from '../../../common/logging/winston-logger.service';
 import { User } from '@prisma/client';
 import * as jwksClient from 'jwks-rsa';
@@ -26,7 +25,7 @@ export class ClerkJwtStrategy extends PassportStrategy(Strategy, 'clerk-jwt') {
   constructor(
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    private readonly cacheService: CacheService,
     private readonly logger: WinstonLoggerService,
     private readonly authConfig: AuthConfigService,
   ) {
@@ -113,16 +112,14 @@ export class ClerkJwtStrategy extends PassportStrategy(Strategy, 'clerk-jwt') {
       const clerkId = payload.sub;
 
       // Check cache first for better performance
-      const cachedUser = await this.cacheManager.get<User>(`user:${clerkId}`);
-      if (cachedUser) {
-        return cachedUser;
-      }
+      const cachedUser = await this.cacheService.getUser(clerkId);
+      if (cachedUser) return cachedUser;
 
       // Find user by Clerk ID
       const user = await this.usersService.findUserByClerkId(clerkId);
 
       // Cache user data (20 minutes TTL)
-      await this.cacheManager.set(`user:${clerkId}`, user, 1200000);
+      await this.cacheService.setUser(clerkId, user);
 
       return user;
     } catch (error) {

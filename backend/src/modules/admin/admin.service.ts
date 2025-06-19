@@ -9,6 +9,7 @@ import { CreateAdminDto } from './dto/create-admin.dto';
 import { CreateAdminSuccessDto } from './dto/create-admin-success.dto';
 import { UserAlreadyExistsException } from '../../common/exceptions/custom-exceptions/user-already-exists.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
+import { CacheService } from '../../common/cache/cache.service';
 
 @Injectable()
 export class AdminService {
@@ -16,6 +17,7 @@ export class AdminService {
     private readonly adminRepository: AdminRepository,
     private readonly usersRepository: UsersRepository,
     private readonly logger: WinstonLoggerService,
+    private readonly cacheService: CacheService,
   ) {}
 
   /**
@@ -27,7 +29,16 @@ export class AdminService {
    * @returns Success response with import statistics
    */
   async tagsBulkImport(dto: TagsBulkImportDto): Promise<TagsBulkImportSuccessDto> {
-    return this.adminRepository.tagsBulkImport(dto.tags, dto.similarities);
+    const result = await this.adminRepository.tagsBulkImport(dto.tags, dto.similarities);
+
+    // Direct cache invalidation after bulk import as backup to database triggers
+    await this.cacheService.invalidateTagSimilarities('all');
+    this.logger.log(
+      `Tag similarity cache invalidated after bulk import of ${dto.tags.length} tags and ${dto.similarities.length} similarities`,
+      'AdminService',
+    );
+
+    return result;
   }
 
   /**

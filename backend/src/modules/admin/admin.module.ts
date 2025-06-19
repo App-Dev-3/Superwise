@@ -5,9 +5,10 @@ import { AdminRepository } from './admin.repository';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { TagsModule } from '../tags/tags.module';
 import { UsersModule } from '../users/users.module';
+import { CacheModule } from '../../common/cache';
 
 @Module({
-  imports: [PrismaModule, TagsModule, UsersModule],
+  imports: [PrismaModule, TagsModule, UsersModule, CacheModule],
   controllers: [AdminController],
   providers: [AdminService, AdminRepository],
 })

@@ -10,6 +10,7 @@
         </SkeletonActionCard>
       </div>
     </div>
+
     <div v-else>
       <StatusBar :step="dashboardState" class="my-4"/>
 
@@ -18,6 +19,17 @@
           class="w-full px-4 py-8 flex flex-col gap-8"
       >
         <CustomMessage :message="t('onboarding.completed')" type="success"/>
+        <ActionCard
+            v-if="getProgress() < 100"
+            :button-text="t('dashboard.progress.button')"
+            card-type="ghost"
+            @action-button-clicked="navigateTo('/student/profile')"
+        >
+          <Progress
+              :progress="getProgress()"
+              :text="t('dashboard.progress.text')"
+          />
+        </ActionCard>
         <ActionCard
             v-if="matches"
             :button-text="t('dashboard.student.startMatching')"
@@ -52,6 +64,17 @@
           v-if="dashboardState === 2"
           class="w-full px-4 py-8 flex flex-col gap-8"
       >
+        <ActionCard
+            v-if="getProgress() < 100"
+            :button-text="t('dashboard.progress.button')"
+            card-type="ghost"
+            @action-button-clicked="navigateTo('/student/profile')"
+        >
+          <Progress
+              :progress="getProgress()"
+              :text="t('dashboard.progress.text')"
+          />
+        </ActionCard>
         <ActionCard
             :button-text="t('generic.showAll')"
             :header-text="t('dashboard.student.yourRequests')"
@@ -101,6 +124,17 @@
       </div>
 
       <div v-if="dashboardState === 3" class="my-auto mx-auto w-full px-4 py-8">
+        <ActionCard
+            v-if="getProgress() < 100"
+            :button-text="t('dashboard.progress.button')"
+            card-type="ghost"
+            @action-button-clicked="navigateTo('/student/profile')"
+        >
+          <Progress
+              :progress="getProgress()"
+              :text="t('dashboard.progress.text')"
+          />
+        </ActionCard>
         <ConfirmationExport
             :accepted-date="acceptedSupervisionRequests[0].updated_at"
             :canvas-id="
@@ -177,6 +211,7 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import type { SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useStudentStore } from "~/stores/useStudentStore";
 import { supervisionRequestStatus } from "#shared/enums/enums";
+import Progress from "~/components/Progress/Progress.vue";
 
 const { t } = useI18n();
 
@@ -184,6 +219,35 @@ const { getRecommendedSupervisors } = useUserApi();
 const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 const studentStore = useStudentStore();
+
+if (!userStore.user) {await userStore.refetchCurrentUser();}
+if (!studentStore.studentProfile) {await studentStore.fetchStudentProfile(userStore.user?.id ?? "");}
+
+const getProgress: number = () => {
+  console.log(userStore.user);
+  console.log(studentStore.studentProfile?.thesis_description);
+
+  const elements = [
+    userStore.user.first_name,
+    userStore.user.last_name,
+    userStore.user.email,
+    userStore.user.profile_image,
+    // TODO: this sucks super hard. Make sure this is loaded on the dashboard
+    studentStore.studentProfile?.thesis_description,
+    // userStore.user.thesis_description
+  ];
+
+  let result: number = 0;
+  const step: number = 100 / elements.length;
+
+  elements.forEach((element) => {
+    if (element && element !== '') {
+      result += step;
+    }
+  });
+
+  return Math.round(result);
+}
 
 const isLoading = computed(() => {
   return supervisorStore.supervisors.length === 0 && acceptedSupervisionRequests.value.length === 0;
@@ -195,9 +259,9 @@ const matches = computed(() => {
 
 const dashboardState = computed(() => studentStore.dashboardState);
 const supervisionRequestsSentByCurrentStudent = computed(() =>
-  studentStore.supervisionRequestsSentByCurrentStudent.filter(
-    (request) => request.request_state === supervisionRequestStatus.PENDING
-  )
+    studentStore.supervisionRequestsSentByCurrentStudent.filter(
+        (request) => request.request_state === supervisionRequestStatus.PENDING
+    )
 );
 const acceptedSupervisionRequests = computed(() => studentStore.acceptedSupervisionRequests);
 
@@ -224,33 +288,33 @@ const warningModalId = computed(() => {
 });
 
 onMounted(async () => {
-    if (!userStore.user) {
-        await userStore.refetchCurrentUser();
+  if (!userStore.user) {
+    await userStore.refetchCurrentUser();
+  }
+  try {
+    await Promise.all([
+      studentStore.fetchSupervisionRequests(),
+      userStore.user ? Promise.resolve() : userStore.refetchCurrentUser()
+    ]);
+    if (acceptedSupervisionRequests.value.length > 1) {
+      const modal = document.getElementById(
+          warningModalId.value
+      ) as HTMLDialogElement;
+      if (modal) {
+        modal.showModal();
+      } else {
+        console.error("Warning modal element not found:", warningModalId.value);
+      }
     }
-    try {
-        await Promise.all([
-            studentStore.fetchSupervisionRequests(),
-            userStore.user ? Promise.resolve() : userStore.refetchCurrentUser()
-        ]);
-        if (acceptedSupervisionRequests.value.length > 1) {
-            const modal = document.getElementById(
-                warningModalId.value
-            ) as HTMLDialogElement;
-            if (modal) {
-                modal.showModal();
-            } else {
-                console.error("Warning modal element not found:", warningModalId.value);
-            }
-        }
-        if (userStore.user) {
-            const res = (await getRecommendedSupervisors(
-                userStore.user.id
-            )) as SupervisorData[];
-            supervisorStore.setSupervisors(res);
-        }
-    } catch (error) {
-        console.error("Error fetching supervision requests or user data:", error);
+    if (userStore.user) {
+      const res = (await getRecommendedSupervisors(
+          userStore.user.id
+      )) as SupervisorData[];
+      supervisorStore.setSupervisors(res);
     }
+  } catch (error) {
+    console.error("Error fetching supervision requests or user data:", error);
+  }
 });
 
 watch(

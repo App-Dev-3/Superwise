@@ -64,7 +64,7 @@
 
           <CustomButton
               v-if="
-              routeParamUser.role === UserRoles.SUPERVISOR &&
+              isSupervisor &&
               currentUser?.role === UserRoles.STUDENT &&
               routeParamUser.is_registered &&
               !routeParamUser.is_deleted
@@ -74,6 +74,23 @@
               color="default"
               left-icon="message"
               @click="askForConfirmation"
+          />
+
+          <CustomButton
+              v-if="isStudent && studentPendingRequest && !hasSupervisor && !studentGotDismissed"
+              :text="t('generic.manageRequest')"
+              block
+              color="default"
+              left-icon="message"
+              @click="managePendingRequest"
+          />
+          <CustomButton
+              v-if="isStudent && !studentPendingRequest && !hasSupervisor"
+              :text="t('generic.addStudent')"
+              block
+              color="default"
+              left-icon="message"
+              @click="manageAddAsSupervisee"
           />
         </div>
       </div>
@@ -156,17 +173,17 @@
     />
 
     <ConfirmationModal
-        v-if="isSupervisor && currentUser?.role === UserRoles.STUDENT"
         :confirm-button-text="modalInformation.confirmButtonText"
+        :cancel-button-text="modalInformation.cancelButtonText"
         :description="modalInformation.description"
         :headline="modalInformation.headline"
         :image="modalInformation.image"
         :linked-component-id="modalInformation.linkedComponentId"
         confirm-button-color="primary"
         hide-dont-show-again
-        icon=""
-        @abort="closeModal"
-        @confirm="sendSupervisionRequest"
+        :icon="modalInformation.icon"
+        @abort="handleModalAbort"
+        @confirm="handleModalConfirm"
     />
   </div>
 </template>
@@ -175,23 +192,71 @@
 import { ref } from "vue";
 import CustomButton from "~/components/CustomButton/CustomButton.vue";
 import ProfileDescription from "~/components/ProfileViewComponents/ProfileDescription.vue";
+import {
+  HttpMethods,
+  supervisionRequestStatus,
+} from "~/shared/enums/enums";
 import SupervisorStatistics from "~/components/ProfileViewComponents/SupervisorStatistics.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { UserRoles } from "#shared/enums/enums";
 
 const { t } = useI18n();
 const userStore = useUserStore();
+const supervisorStore = useSupervisorStore();
 if (!userStore.user) {
   await userStore.refetchCurrentUser();
 }
 const currentUser = userStore.user;
 const route = useRoute();
 const routeParamUserId = route.params.id as string;
+
 const isOwnProfile = computed(() => currentUser?.id === routeParamUserId);
+const isAdmin = computed(() => {
+  return routeParamUser.value.role === UserRoles.ADMIN;
+});
+const isSupervisor = computed(() => {
+  return routeParamUser.value.role === UserRoles.SUPERVISOR;
+});
+const isStudent = computed(() => {
+  return routeParamUser.value.role === UserRoles.STUDENT;
+});
+//hacky solution, begin with true to not show the button. IF no supervisor, turn it false
+const hasSupervisor = ref(true)
+const studentGotDismissed = ref(false)
+
+onMounted(async() => {
+  if (isStudent.value) {
+    await supervisorStore.getSupervisionRequests();
+    const data = await $fetch(
+      `/api/supervision-requests/count/${routeParamUserId}`,
+      {
+        method: HttpMethods.GET,
+        query: {
+          request_state: supervisionRequestStatus.ACCEPTED,
+        },
+      }
+    );
+    if (data.request_count === 0) {
+      hasSupervisor.value = false;
+    }
+    console.log("requests", supervisorStore.supervisionRequests);
+  }
+});
+
+
 const { data, error, pending } = await useFetch(
     `/api/users/${ routeParamUserId }/with-relations`
 );
 const routeParamUser = data;
+
+const studentPendingRequest = computed(() => {
+  return supervisorStore.supervisionRequests?.find(
+    request => 
+      request.student.user_id === routeParamUser.value.id &&
+      request.request_state === supervisionRequestStatus.PENDING
+
+  );
+});
 
 const toastData = ref({
   visible: false,
@@ -202,6 +267,8 @@ const toastData = ref({
 const modalInformation = ref({
   visible: false,
   confirmButtonText: t("modal.confirm"),
+  cancelButtonText: t("generic.cancel"),
+  icon: '',
   headline: "",
   description: t("modal.supervisionInfo"),
   image: routeParamUser.value.profile_image || "",
@@ -237,6 +304,36 @@ const askForConfirmation = () => {
   };
   openModal();
 };
+
+const manageAddAsSupervisee = () => {
+  modalInformation.value = {
+    visible: true,
+    confirmButtonText: t("modal.supervisee.accept"),
+    cancelButtonText: t("generic.cancel"),
+    headline: t("modal.supervisee.headline"),
+    icon: 'envelope',
+    description: t("modal.supervisee.description"),
+    image: routeParamUser.value.profile_image || "",
+    linkedComponentId: `profilesConfirmationModal-${ routeParamUserId }`,
+  }; 
+  openModal();
+};
+
+const addStudentAsSupervisee = async() => {
+  await $fetch("/api/supervision-requests", {
+    method: "POST",
+    body: {
+      supervisor_id: currentUser?.id,
+      student_email: routeParamUser.value.email,
+    },
+  });
+  toastData.value = {
+      visible: true,
+      type: "success",
+      message: t("toast.addedStudentAsSupervisee"),
+    };
+    hasSupervisor.value = true;
+}
 
 const sendSupervisionRequest = async () => {
   closeModal();
@@ -290,6 +387,96 @@ const sendSupervisionRequest = async () => {
   }
 };
 
+const managePendingRequest = (() =>{
+  console.log("Managing supervision request for user:", routeParamUser.value);
+  modalInformation.value = {
+    visible: true,
+    confirmButtonText: t("modal.handleRequest.accept"),
+    cancelButtonText: t("modal.handleRequest.dismiss"),
+    headline: t("modal.handleRequest.headline"),
+    icon: 'xmark',
+    description: t("modal.handleRequest.description", {
+      firstName: routeParamUser.value.first_name,
+      lastName: routeParamUser.value.last_name,
+    }),
+    image: routeParamUser.value.profile_image || "",
+    linkedComponentId: `profilesConfirmationModal-${ routeParamUserId }`,
+  };
+  openModal();
+});
+
+const acceptPendingRequest = async () => {
+  if (!studentPendingRequest.value) {
+    console.error("No pending request found for the student.");
+    return;
+  }
+  try {
+    await $fetch(`/api/supervision-requests/${ studentPendingRequest.value.id }`, {
+      method: HttpMethods.PATCH,
+      body: {
+        request_state: supervisionRequestStatus.ACCEPTED,
+      },
+    });
+    toastData.value = {
+      visible: true,
+      type: "success",
+      message: t("toast.acceptedStudentRequest"),
+    };
+    hasSupervisor.value = true;
+  } catch (error) {
+    console.error("Error accepting pending request:", error);
+  }
+}
+
+const dismissPendingRequest = async () => {
+  if (!studentPendingRequest.value) {
+    console.error("No pending request found for the student.");
+    return;
+  }
+  try {
+    await $fetch(`/api/supervision-requests/${ studentPendingRequest.value.id }`, {
+      method: HttpMethods.PATCH,
+      body: {
+        request_state: supervisionRequestStatus.REJECTED,
+      },
+    });
+    toastData.value = {
+      visible: true,
+      type: "error",
+      message: t("toast.withdrawnStudentRequest"),
+    };
+    studentGotDismissed.value = true;
+  } catch (error) {
+    console.error("Error dismissing pending request:", error);
+    toastData.value = {
+      visible: true,
+      type: "error",
+      message: t("toast.somethingWentWrong"),
+    };
+  }
+}
+
+const handleModalAbort = () => {
+  if (isSupervisor.value){
+    closeModal();
+  } else if (isStudent.value) {
+    dismissPendingRequest();
+  }
+}
+
+const handleModalConfirm = () => {
+  if (isSupervisor.value) {
+    sendSupervisionRequest();
+  } else if (isStudent.value) {
+    if (studentPendingRequest.value) {
+      acceptPendingRequest();
+    } else {
+      addStudentAsSupervisee();
+    }
+  }
+  closeModal();
+};
+
 const closeModal = () => {
   const modal = document.getElementById(
       modalInformation.value.linkedComponentId
@@ -317,17 +504,6 @@ const emoji = computed(() => {
   }
 });
 
-const isAdmin = computed(() => {
-  return routeParamUser.value.role === UserRoles.ADMIN;
-});
-
-const isSupervisor = computed(() => {
-  return routeParamUser.value.role === UserRoles.SUPERVISOR;
-});
-
-const isStudent = computed(() => {
-  return routeParamUser.value.role === UserRoles.STUDENT;
-});
 
 const currentUserTags = ref([]);
 if (currentUser?.id) {

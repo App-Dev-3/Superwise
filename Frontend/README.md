@@ -1,34 +1,63 @@
+# Superwise Frontend
+
+This is the frontend application for the Superwise project, built with Nuxt 3, Vue 3, Pinia, and TailwindCSS. It provides a modern, responsive interface for students and supervisors to manage supervision requests, profiles, and onboarding.
+
+
 ## Tech stack
-- **Nuxt** framwork for Vue   
+- **Nuxt** framework for Vue
 - **Vitest** for testing
-- **I8ln** for localisation 
-- **Pinia** for state managment
+- **I18n** for localisation
+- **Pinia** for state management
 - **DaisyUI** for css designs
+
+## Features
+
+- **Authentication:** Secure sign-in and sign-out using Clerk.
+- **Role-based Dashboards:** Separate dashboards for students and supervisors.
+- **Supervision Requests:** Students can send, withdraw, and track supervision requests; supervisors can accept, reject, and manage them.
+- **Profile Management:** Users can edit their profiles and manage tags/interests.
+- **Onboarding:** Guided onboarding flows for both students and supervisors.
+- **Responsive Design:** Optimized for both desktop and mobile devices.
+- **Localization:** Multi-language support using Vue I18n.
+- **State Management:** Uses Pinia for global state and store management.
+- **API Integration:** Communicates with the backend via RESTful API endpoints.
+
+## Project Structure
+
+- `pages/` — Main application pages (student, supervisor, onboarding, etc.)
+- `components/` — Reusable Vue components (cards, modals, navigation, etc.)
+- `stores/` — Pinia stores for state management
+- `plugins/` — Nuxt plugins (e.g., Clerk, FontAwesome)
+- `middleware/` — Route guards and global middleware
+- `server/` — Nuxt backend API routes and server logic
+- `assets/` — Static assets (images, styles)
+- `locales/` — Localization files
+
+## Getting Started
 
 ## Installation and running
 
-1. Clone the repository
-2. Change into the frontend directory
+1. **Clone the repository to local directory**
+2. **ensure you are in the Frontend directory**
 
 ```bash
-cd FeMatchMaker
+cd Frontend
 ```
 
-3. Install dependencies: 
+3. **Install dependencies**:
+
 ```bash
 npm install
 ```
-4. Run the application
+
+4. **Environment Variables:**
+
+Copy the `.env.example` to an `.env` file in the root directory and ensure all the environment variables are set correctly. You can reach out to the admin for the secret keys.
+
+5. **Run the application**
 ```bash
 npm run dev
 ```
-
-## Testing with PWA
-The PWA module is not fully compataibile with hot module replacement due to caching and other "middle man" functionalities. As a result whenever testing with PWA run the following command to boot the applicaiton
-```bash
-npm run generate-preview
-```
-
 
 ## Testing
 To Run all the test in the application, run the command

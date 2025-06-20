@@ -224,6 +224,8 @@
     "loading": "Loading",
     "logoAlt": "logo",
     "mail": "Mail",
+    "manageRequest": "Manage Request",
+    "addStudent": "Add as supervisee",
     "noVideoSupport": "Your browser does not support HTML video... i think its time to upgrade your device!",
     "pendingRequestTo": "Pending request to",
     "profile": "Profile",
@@ -283,7 +285,18 @@
     "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download.",
     "withdrawSupervisionConfirm": "Withdraw Request",
     "withdrawSupervisionDescription": "Would you like to withdraw the supervision request from {name}? Once withdrawn, the supervisor will no longer see this request.",
-    "withdrawSupervisionHeadline": "Withdraw Supervision Request"
+    "withdrawSupervisionHeadline": "Withdraw Supervision Request",
+    "handleRequest": {
+      "accept": "Accept Request",
+      "dismiss": "Dismiss Request",
+      "description": "{firstName} {lastName} has a pending request for supervision. Would you like to accept or dismiss this request?",
+      "headline": "Pending Supervision Request"
+    },
+    "supervisee": {
+      "accept": "Add as Supervisee",
+      "headline": "Add Student as Supervisee",
+      "description": "Adding a student as supervisee will skip the confirmation process and directly add them to your supervised students. Do you wish to proceed?"
+    }
   },
   "multiStepForm": {
     "description": {
@@ -480,6 +493,10 @@
   },
   "toast": {
     "withdrawRequestFailed": "Failed to withdraw the supervision request",
-    "withdrawnRequest": "You have withdrawn the supervision request"
+    "withdrawnRequest": "You have withdrawn the supervision request",
+    "withdrawnStudentRequest": "Student request has been dismissed",
+    "acceptedStudentRequest": "Student request has been accepted",
+    "somethingWentWrong": "Something went wrong, please try again later",
+    "addedStudentAsSupervisee": "Student has been added as supervisee"
   }
 }

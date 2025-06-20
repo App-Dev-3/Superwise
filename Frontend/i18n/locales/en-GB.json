@@ -163,7 +163,7 @@
     "supervisor": {
       "manageStudents": "Manage Students",
       "noRequests": "There are no open requests...",
-      "slotsFilled": "Slots filled"
+      "slotsFilled": "Free slots"
     }
   },
   "dataProtection": {
@@ -186,7 +186,8 @@
       "dataDeletionSubtitle": "🗑 Data Deletion",
       "deleteMyData": "Delete my data",
       "generalInfoText": "At SuperWise, we take your privacy and the protection of your personal data seriously. This policy outlines how we collect, use, and manage your information to ensure transparency and your peace of mind.",
-      "generalInfoTitle": "🛡 SuperWise Data Protection Policy"
+      "generalInfoTitle": "🛡 SuperWise Data Protection Policy",
+      "dataDeleted": "Data deleted successfully"
     },
     "student&supervisor": {
       "changesAndOverwritesText": "When you update your personal data, such as your name, profile picture, topic description, or bio, the previous version is permanently overwritten. We do not retain copies or backups of your previous personal data.",
@@ -212,6 +213,7 @@
     "done": "Done",
     "download": "Download",
     "edit": "Edit",
+    "error": "Error",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
@@ -231,6 +233,7 @@
     "showLess": "Show less",
     "spanish": "🇪🇸 Español",
     "student": "Student",
+    "success": "Success",
     "supervise": "Supervise",
     "supervisionRequest": "Supervision request",
     "supervisor": "Supervisor",
@@ -261,6 +264,9 @@
     "sentRequest": "Supervision request has been sent",
     "supervisionRequest": "{name} wants to be supervised by you!",
     "supervisorDismissed": "Supervisor has been dismissed",
+    "swipeRightHeadline": "Request {firstName} {lastName}",
+    "swipeLeftText": "Request",
+    "swipeRightText": "Reject",
     "swipeLeft": {
       "description": "By dismissing {firstName} {lastName}, they will never get suggested again, but you can still search for them. Are you sure you want to do this?",
       "headline": "Dismiss Supervisor",
@@ -276,7 +282,7 @@
     "confirm": "Confirm",
     "dontShowAgain": "Don't show again",
     "sendSupervisionRequestHeadline": "Send supervision request",
-    "supervisionInfo": "When you send a thesis supervision request, it will be forwarded to the selected supervisors. They can then decide whether to accept or decline the request. If they accept the request, a confirmation will be created that you can download.",
+    "supervisionInfo": "When you send a thesis supervision request to {firstName} {lastName}, they will be notified and can accept or deny your request. If they accept the request, a confirmation will be created that you can download, otherwise you will need to choose a different supervisor.",
     "withdrawSupervisionConfirm": "Withdraw Request",
     "withdrawSupervisionDescription": "Would you like to withdraw the supervision request from {name}? Once withdrawn, the supervisor will no longer see this request.",
     "withdrawSupervisionHeadline": "Withdraw Supervision Request"

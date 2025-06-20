@@ -1,11 +1,11 @@
-import {makeRequest} from './useApi'
-import type {UserCreateData, UserRegistrationData} from "~/shared/types/userInterfaces";
+import { makeRequest } from './useApi'
+import type { UserCreateData, UserRegistrationData } from "~/shared/types/userInterfaces";
 
 export const useUserApi = () => {
 
   const getUserRegistrationStatus = async (email: string) => {
-      const data = await $fetch(`/api/users/check-registration?email=${email}`);
-      return data as UserRegistrationData;
+    const data = await $fetch(`/api/users/check-registration?email=${email}`);
+    return data as UserRegistrationData;
   }
   const createUser = async (data: UserCreateData) => {
     return await makeRequest('users', 'POST', data)
@@ -40,11 +40,15 @@ export const useUserApi = () => {
   const getRecommendedSupervisors = async (data: string) => {
     return await makeRequest(`match/${data}`, 'GET');
   }
-  
+
   const createStudentProfile = async (data: string) => {
     return await makeRequest('students', 'POST', {
       thesis_description: data
     })
+  }
+
+  const deleteUser = async (id: string) => {
+    return await makeRequest(`users/${id}`, 'DELETE')
   }
 
   return {
@@ -56,7 +60,8 @@ export const useUserApi = () => {
     getUserById,
     addUserTag,
     getRecommendedSupervisors,
-    createStudentProfile
+    createStudentProfile,
+    deleteUser
   }
 
 }

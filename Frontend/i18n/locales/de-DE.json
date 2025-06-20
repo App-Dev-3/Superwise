@@ -163,7 +163,7 @@
     "supervisor": {
       "manageStudents": "Studenten Verwalten",
       "noRequests": "Es gibt keine offenen Anfragen...",
-      "slotsFilled": "Belegte Slots"
+      "slotsFilled": "Freie Slots"
     }
   },
   "dataProtection": {
@@ -186,7 +186,8 @@
       "dataDeletionSubtitle": "🗑 Datenlöschung",
       "deleteMyData": "Meine Daten löschen",
       "generalInfoText": "Bei SuperWise nehmen wir Ihre Privatsphäre und den Schutz Ihrer persönlichen Daten sehr ernst. Diese Richtlinie beschreibt, wie wir Ihre Daten erfassen, verwenden und verwalten – für maximale Transparenz und Ihr beruhigtes Gewissen.",
-      "generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie"
+      "generalInfoTitle": "🛡️ SuperWise Datenschutzrichtlinie",
+      "dataDeleted": "Daten erfolgreich gelöscht"
     },
     "student&supervisor": {
       "changesAndOverwritesText": "Wenn Sie persönliche Daten wie Ihren Namen, Ihr Profilbild, die Themenbeschreibung oder die Biografie aktualisieren, wird die vorherige Version dauerhaft überschrieben. Wir speichern keine früheren Versionen oder Backups Ihrer persönlichen Daten.",
@@ -212,6 +213,7 @@
     "done": "Fertig",
     "download": "Herunterladen",
     "edit": "Bearbeiten",
+    "error": "Fehler",
     "english": "🇬🇧 English",
     "french": "🇫🇷 Français",
     "german": "🇩🇪 Deutsch",
@@ -231,6 +233,7 @@
     "showLess": "Weniger anzeigen",
     "spanish": "🇪🇸 Español",
     "student": "Studierende",
+    "success": "Erfolgreich ausgeführt",
     "supervise": "Betreuen",
     "supervisionRequest": "Betreuungsanfrage",
     "supervisor": "Betreuende",
@@ -261,6 +264,9 @@
     "sentRequest": "Betreuungsanfrage wurde gesendet",
     "supervisionRequest": "{name} will von dir betreut werden!",
     "supervisorDismissed": "Betreuer wurde abgelehnt",
+    "swipeRightHeadline": "{firstName} {lastName} anfragen",
+    "swipeLeftText": "Anfragen",
+    "swipeRightText": "Entfernen",
     "swipeLeft": {
       "description": "Wenn Sie {firstName} {lastName} entfernen, wird er nie wieder vorgeschlagen, Sie können jedoch weiterhin nach ihm suchen. Sind Sie sicher, dass Sie fortfahren möchten?",
       "headline": "Betreuer entfernen",
@@ -276,7 +282,7 @@
     "confirm": "Bestätigen",
     "dontShowAgain": "Nicht mehr anzeigen",
     "sendSupervisionRequestHeadline": "Betreuungsanfrage senden",
-    "supervisionInfo": "Wenn du eine Anfrage zur Betreuung einer Abschlussarbeit sendest, wird diese an die ausgewählten Betreuenden weitergeleitet. Sie können dann entscheiden, ob sie die Anfrage annehmen oder ablehnen möchten. Wenn sie die Anfrage annehmen, wird eine Bestätigung erstellt, die du herunterladen kannst.",
+    "supervisionInfo": "Wenn du eine Anfrage an {firstName} {lastName} sendest, wird er/sie benachrichtigt und kann die Anfrage annehmen oder ablehnen. Wenn er/sie die Anfrage annimmt, erhältst Du eine automatisch erstellte Bestätigung, die du herunterladen kannst. Wenn er/sie ablehnt, solltest du einen weiteren Betreuer anfragen.",
     "withdrawSupervisionConfirm": "Anfrage zurückziehen",
     "withdrawSupervisionDescription": "Möchten Sie die Betreuungsanfrage von {name} zurückziehen? Nach dem Zurückziehen kann der Betreuer diese Anfrage nicht mehr sehen.",
     "withdrawSupervisionHeadline": "Betreuungsanfrage zurückziehen"

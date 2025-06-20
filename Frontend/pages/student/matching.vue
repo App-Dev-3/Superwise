@@ -6,6 +6,8 @@
         :key="supervisor.supervisor_userId || index"
         :ref="(el) => setItemRef(el, supervisor.supervisor_userId)"
         class="mb-4"
+        :swipe-left-text="t('matching.swipeLeftText')"
+        :swipe-right-text="t('matching.swipeRightText')"
         @swipe-left="handleSwipeLeft(supervisor)"
         @swipe-right="handleSwipeRight(supervisor)"
       >
@@ -170,10 +172,16 @@ const handleSwipeRight = async (supervisor: SupervisorData) => {
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.CONFIRM,
-    headline: `Request ${supervisor.firstName} ${supervisor.lastName}`,
+    headline: t("matching.swipeRightHeadline", {
+      firstName: supervisor.firstName,
+      lastName: supervisor.lastName,
+    }),
     icon: "",
     warning: "",
-    description: t("modal.supervisionInfo"),
+    description: t("modal.supervisionInfo", {
+      firstName: supervisor.firstName,
+      lastName: supervisor.lastName,
+    }),
     confirmButtonText: t("modal.confirm"),
     confirmButtonColor: "primary",
     supervisor: supervisor,

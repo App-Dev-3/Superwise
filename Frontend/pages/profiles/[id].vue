@@ -84,9 +84,8 @@
               left-icon="message"
               @click="managePendingRequest"
           />
-          <!-- TODO: conditionally render if student doesnt have an accepted supervisor -->
           <CustomButton
-              v-if="isStudent && !studentPendingRequest"
+              v-if="isStudent && !studentPendingRequest && !hasSupervisor"
               :text="t('generic.addStudent')"
               block
               color="default"
@@ -221,10 +220,25 @@ const isSupervisor = computed(() => {
 const isStudent = computed(() => {
   return routeParamUser.value.role === UserRoles.STUDENT;
 });
+//hacky solution, begin with true to not show the button. IF no supervisor, turn it false
+const hasSupervisor = ref(true)
 
 onMounted(async() => {
   if (isStudent.value) {
     await supervisorStore.getSupervisionRequests();
+    const data = await $fetch(
+      `/api/supervision-requests/count/${routeParamUserId}`,
+      {
+        method: HttpMethods.GET,
+        query: {
+          request_state: supervisionRequestStatus.ACCEPTED,
+        },
+      }
+    );
+    if (data.request_count === 0) {
+      hasSupervisor.value = false;
+    }
+    console.log("requests", supervisorStore.supervisionRequests);
   }
 });
 
@@ -236,7 +250,10 @@ const routeParamUser = data;
 
 const studentPendingRequest = computed(() => {
   return supervisorStore.supervisionRequests?.find(
-    request => request.student.user_id === routeParamUser.value.id
+    request => 
+      request.student.user_id === routeParamUser.value.id &&
+      request.request_state === supervisionRequestStatus.PENDING
+
   );
 });
 

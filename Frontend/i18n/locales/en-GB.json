@@ -19,6 +19,20 @@
   },
   "admin": {
     "availableSpots": "Available spots",
+    "deleteUser": {
+      "deleteButton": "Delete User",
+      "deleting": "Deleting...",
+      "description": "This completely resets the user account to unregistered state while preserving email for re-registration.",
+      "generalError": "An error occurred while resetting the user",
+      "noUsersFound": "No users found matching",
+      "permissionError": "Permission denied - cannot reset admin users",
+      "searchInstruction": "Type to search for users...",
+      "searchPlaceholder": "Search users by name, email, or role...",
+      "selectUserError": "Please select a user to delete",
+      "selectedUser": "Selected User:",
+      "title": "Delete User",
+      "userNotFoundError": "User not found"
+    },
     "downloadDescription": "Download the confirmed Supervisor - Student pairs",
     "downloadFileName": "Download confirmed_supervisions.csv",
     "downloadTitle": "Download confirmed Supervisions",
@@ -30,21 +44,7 @@
     "uploadSupervisorsFileName": "select *.csv",
     "uploadTagsDescription": "This updates the tags and the similarity scores",
     "uploadTagsFileName": "select updated_tag_list.json",
-    "waitingStudents": "are currently waiting for supervision approval",
-     "deleteUser": {
-      "title": "Delete User",
-      "searchPlaceholder": "Search users by name, email, or role...",
-      "selectedUser": "Selected User:",
-      "noUsersFound": "No users found matching",
-      "searchInstruction": "Type to search for users...",
-      "description": "This completely resets the user account to unregistered state while preserving email for re-registration.",
-      "deleteButton": "Delete User",
-      "deleting": "Deleting...",
-      "selectUserError": "Please select a user to delete",
-      "generalError": "An error occurred while resetting the user",
-      "permissionError": "Permission denied - cannot reset admin users",
-      "userNotFoundError": "User not found"
-    }
+    "waitingStudents": "are currently waiting for supervision approval"
   },
   "appHeader": {
     "addAdmin": "Add Admin",
@@ -151,6 +151,10 @@
     "supervising": "You are supervising {firstName}"
   },
   "dashboard": {
+    "progress": {
+      "button": "Complete Profile...",
+      "text": "Your profile is almost complete! Add the last things for the best experience of SuperWise"
+    },
     "student": {
       "downloadConfirmation": "Download Confirmation",
       "findSupervisor": "Find your supervisor now!",
@@ -396,7 +400,8 @@
     },
     "noResults": "No search results...",
     "placeholderForStudents": "Search supervisor...",
-    "placeholderForSupervisors": "Search student..."
+    "placeholderForSupervisors": "Search student...",
+    "placeholderForAdmins": "Search users..."
   },
   "searchBar": {
     "noResults": "No results found"

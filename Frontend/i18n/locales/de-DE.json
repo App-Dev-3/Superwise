@@ -19,6 +19,20 @@
   },
   "admin": {
     "availableSpots": "Verfügbare Plätze",
+    "deleteUser": {
+      "deleteButton": "Benutzer Löschen",
+      "deleting": "Lösche...",
+      "description": "Dies setzt das Benutzerkonto vollständig auf den nicht registrierten Zustand zurück, wobei die E-Mail-Adresse für eine erneute Registrierung erhalten bleibt.",
+      "generalError": "Ein Fehler ist beim Zurücksetzen des Benutzers aufgetreten",
+      "noUsersFound": "Keine Benutzer gefunden für",
+      "permissionError": "Berechtigung verweigert - Admin-Benutzer können nicht zurückgesetzt werden",
+      "searchInstruction": "Tippen Sie, um nach Benutzern zu suchen...",
+      "searchPlaceholder": "Benutzer nach Name, E-Mail oder Rolle suchen...",
+      "selectUserError": "Bitte wählen Sie einen Benutzer zum Löschen aus",
+      "selectedUser": "Ausgewählter Benutzer:",
+      "title": "Benutzer Löschen",
+      "userNotFoundError": "Benutzer nicht gefunden"
+    },
     "downloadDescription": "Laden Sie die bestätigten Betreuer-Studenten-Paare herunter",
     "downloadFileName": "lade confirmed_supervisions.csv herunter",
     "downloadTitle": "Bestätigte Betreuungen herunterladen",
@@ -30,21 +44,7 @@
     "uploadSupervisorsFileName": "wähle *.csv aus",
     "uploadTagsDescription": "Dies aktualisiert die Tags und die Ähnlichkeitswerte",
     "uploadTagsFileName": "wähle updated_tag_list.json aus",
-    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung",
-    "deleteUser": {
-      "title": "Benutzer Löschen",
-      "searchPlaceholder": "Benutzer nach Name, E-Mail oder Rolle suchen...",
-      "selectedUser": "Ausgewählter Benutzer:",
-      "noUsersFound": "Keine Benutzer gefunden für",
-      "searchInstruction": "Tippen Sie, um nach Benutzern zu suchen...",
-      "description": "Dies setzt das Benutzerkonto vollständig auf den nicht registrierten Zustand zurück, wobei die E-Mail-Adresse für eine erneute Registrierung erhalten bleibt.",
-      "deleteButton": "Benutzer Löschen",
-      "deleting": "Lösche...",
-      "selectUserError": "Bitte wählen Sie einen Benutzer zum Löschen aus",
-      "generalError": "Ein Fehler ist beim Zurücksetzen des Benutzers aufgetreten",
-      "permissionError": "Berechtigung verweigert - Admin-Benutzer können nicht zurückgesetzt werden",
-      "userNotFoundError": "Benutzer nicht gefunden"
-    }
+    "waitingStudents": "warten derzeit auf die Genehmigung der Betreuung"
   },
   "appHeader": {
     "addAdmin": "Admin Hinzufügen",
@@ -151,6 +151,10 @@
     "supervising": "Sie betreuen {firstName}"
   },
   "dashboard": {
+    "progress": {
+      "button": "Profil vervollständigen...",
+      "text": "Dein Profil ist fast vollständig! Füge die letzten dinge hinzu für die beste SuperWise erfahrung!"
+    },
     "student": {
       "downloadConfirmation": "Bestätigung herunterladen",
       "findSupervisor": "Finde jetzt deinen Betreuer!",
@@ -396,7 +400,8 @@
     },
     "noResults": "Keine Suchergebnisse...",
     "placeholderForStudents": "Betreuer suchen...",
-    "placeholderForSupervisors": "Studenten suchen..."
+    "placeholderForSupervisors": "Studenten suchen...",
+    "placeholderForAdmins": "Benutzer suchen..."
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"

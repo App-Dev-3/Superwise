@@ -30,7 +30,21 @@
     "uploadSupervisorsFileName": "select *.csv",
     "uploadTagsDescription": "This updates the tags and the similarity scores",
     "uploadTagsFileName": "select updated_tag_list.json",
-    "waitingStudents": "are currently waiting for supervision approval"
+    "waitingStudents": "are currently waiting for supervision approval",
+     "deleteUser": {
+      "title": "Delete User",
+      "searchPlaceholder": "Search users by name, email, or role...",
+      "selectedUser": "Selected User:",
+      "noUsersFound": "No users found matching",
+      "searchInstruction": "Type to search for users...",
+      "description": "This completely resets the user account to unregistered state while preserving email for re-registration.",
+      "deleteButton": "Delete User",
+      "deleting": "Deleting...",
+      "selectUserError": "Please select a user to delete",
+      "generalError": "An error occurred while resetting the user",
+      "permissionError": "Permission denied - cannot reset admin users",
+      "userNotFoundError": "User not found"
+    }
   },
   "appHeader": {
     "addAdmin": "Add Admin",

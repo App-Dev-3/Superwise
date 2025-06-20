@@ -140,7 +140,7 @@
   "aria": {
     "matching": {
       "supervisor": {
-        "generalCard": ""
+        "generalCard": "Diese Person hat folgendes Kurzprofil: {bio}. Ihre Tags sind: {tags}. Deine Kompatibilität beträgt {compatability}. Aktuell sind {availableSpots} von {totalSpots} Betreuungsplätzen verfügbar. Momentan warten {pending} Studierende auf eine Rückmeldung."
       }
     },
     "pageHeader": "Du bist auf der folgenden Seite: {pageName}"

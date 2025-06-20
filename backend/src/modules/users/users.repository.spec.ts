@@ -14,6 +14,7 @@ describe('UsersRepository', () => {
       findMany: jest.fn(),
       findUnique: jest.fn(),
       update: jest.fn(),
+      count: jest.fn(),
     },
     userTag: {
       findMany: jest.fn(),
@@ -28,6 +29,13 @@ describe('UsersRepository', () => {
       create: jest.fn(),
       delete: jest.fn(),
       findUnique: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    student: {
+      update: jest.fn(),
+    },
+    supervisor: {
+      update: jest.fn(),
     },
   };
 
@@ -726,27 +734,6 @@ describe('UsersRepository', () => {
     });
   });
 
-  describe('softDeleteUser', () => {
-    it('should mark a user as deleted and return the updated entity', async () => {
-      // Arrange
-      const userId = USER_UUID;
-      const deletedUser = { ...mockUser, is_deleted: true };
-
-      mockPrismaService.user.update.mockResolvedValue(deletedUser);
-
-      // Act
-      const result = await repository.softDeleteUser(userId);
-
-      // Assert
-      expect(result).toEqual(deletedUser);
-      expect(mockPrismaService.user.update).toHaveBeenCalledWith({
-        where: { id: userId },
-        data: { is_deleted: true },
-      });
-      expect(mockPrismaService.user.update).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('findUserTagsByUserId', () => {
     it('should find all tags for a user', async () => {
       // Arrange
@@ -803,15 +790,12 @@ describe('UsersRepository', () => {
 
       mockPrismaService.userTag.deleteMany.mockResolvedValue({ count: 1 });
       mockPrismaService.userTag.createMany.mockResolvedValue({ count: 2 });
-      mockPrismaService.$transaction.mockImplementation(async ops => {
-        // Safe access with type checking
-        if (Array.isArray(ops) && ops.length > 0) {
-          await ops[0];
-          if (ops.length > 1) {
-            await ops[1];
-          }
-        }
+
+      // Mock $transaction to handle array of operations
+      mockPrismaService.$transaction.mockImplementation(operations => {
+        return Promise.all(operations);
       });
+
       mockPrismaService.userTag.findMany.mockResolvedValue(expectedNewTags);
 
       // Act
@@ -839,8 +823,10 @@ describe('UsersRepository', () => {
       const tagsInput: Array<{ tag_id: string; priority: number }> = [];
       mockPrismaService.userTag.deleteMany.mockResolvedValue({ count: 1 });
       mockPrismaService.userTag.findMany.mockResolvedValue([]);
-      mockPrismaService.$transaction.mockImplementation(async ops => {
-        await ops[0];
+
+      // Mock $transaction to handle array of operations
+      mockPrismaService.$transaction.mockImplementation(operations => {
+        return Promise.all(operations);
       });
 
       // Act
@@ -981,6 +967,186 @@ describe('UsersRepository', () => {
           },
         },
       });
+    });
+  });
+
+  describe('deleteUser', () => {
+    it('should delete a user using transaction', async () => {
+      // Arrange
+      const deleteData = {
+        userId: USER_UUID,
+        userEmail: 'test@example.com',
+        userRole: Role.STUDENT,
+        studentId: 'student-123',
+        supervisorId: undefined,
+      };
+
+      const txMock = {
+        user: {
+          update: jest.fn().mockResolvedValue({}),
+        },
+        userTag: {
+          deleteMany: jest.fn().mockResolvedValue({ count: 2 }),
+        },
+        userBlock: {
+          deleteMany: jest.fn().mockResolvedValue({ count: 1 }),
+        },
+        student: {
+          update: jest.fn().mockResolvedValue({}),
+        },
+      };
+
+      mockPrismaService.$transaction.mockImplementation(
+        (callback: (tx: typeof txMock) => unknown) => {
+          return callback(txMock);
+        },
+      );
+
+      // Act
+      const result = await repository.deleteUser(deleteData);
+
+      // Assert
+      expect(mockPrismaService.$transaction).toHaveBeenCalledTimes(1);
+      expect(result).toEqual({
+        deletedTagsCount: 2,
+        deletedBlocksCount: 1,
+        profileUpdated: true,
+      });
+    });
+
+    it('should handle supervisor deletion correctly', async () => {
+      // Arrange
+      const deleteData = {
+        userId: USER_UUID,
+        userEmail: 'supervisor@example.com',
+        userRole: Role.SUPERVISOR,
+        studentId: undefined,
+        supervisorId: 'supervisor-123',
+      };
+
+      const txMock = {
+        user: {
+          update: jest.fn().mockResolvedValue({}),
+        },
+        userTag: {
+          deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        },
+        userBlock: {
+          deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        },
+        supervisor: {
+          update: jest.fn().mockResolvedValue({}),
+        },
+      };
+
+      mockPrismaService.$transaction.mockImplementation(
+        (callback: (tx: typeof txMock) => unknown) => {
+          return callback(txMock);
+        },
+      );
+
+      // Act
+      const result = await repository.deleteUser(deleteData);
+
+      // Assert
+      expect(txMock.supervisor.update).toHaveBeenCalledWith({
+        where: { id: 'supervisor-123' },
+        data: {
+          bio: '',
+          available_spots: 0,
+          total_spots: 0,
+        },
+      });
+      expect(result).toEqual({
+        deletedTagsCount: 0,
+        deletedBlocksCount: 0,
+        profileUpdated: true,
+      });
+    });
+  });
+
+  describe('deleteAllUserTags', () => {
+    it('should delete all user tags and return count', async () => {
+      // Arrange
+      const userId = USER_UUID;
+      const deleteResult = { count: 3 };
+      mockPrismaService.userTag.deleteMany.mockResolvedValue(deleteResult);
+
+      // Act
+      const result = await repository.deleteAllUserTags(userId);
+
+      // Assert
+      expect(result).toBe(3);
+      expect(mockPrismaService.userTag.deleteMany).toHaveBeenCalledWith({
+        where: { user_id: userId },
+      });
+    });
+
+    it('should return 0 when no tags to delete', async () => {
+      // Arrange
+      const userId = USER_UUID;
+      const deleteResult = { count: 0 };
+      mockPrismaService.userTag.deleteMany.mockResolvedValue(deleteResult);
+
+      // Act
+      const result = await repository.deleteAllUserTags(userId);
+
+      // Assert
+      expect(result).toBe(0);
+      expect(mockPrismaService.userTag.deleteMany).toHaveBeenCalledWith({
+        where: { user_id: userId },
+      });
+    });
+  });
+
+  describe('deleteAllUserBlocks', () => {
+    it('should delete all user blocks and return count', async () => {
+      // Arrange
+      const userId = USER_UUID;
+      const deleteResult = { count: 2 };
+      mockPrismaService.userBlock.deleteMany.mockResolvedValue(deleteResult);
+
+      // Act
+      const result = await repository.deleteAllUserBlocks(userId);
+
+      // Assert
+      expect(result).toBe(2);
+      expect(mockPrismaService.userBlock.deleteMany).toHaveBeenCalledWith({
+        where: {
+          OR: [{ blocker_id: userId }, { blocked_id: userId }],
+        },
+      });
+    });
+  });
+
+  describe('countActiveAdmins', () => {
+    it('should count active admins correctly', async () => {
+      // Arrange
+      const expectedCount = 3;
+      mockPrismaService.user.count.mockResolvedValue(expectedCount);
+
+      // Act
+      const result = await repository.countActiveAdmins();
+
+      // Assert
+      expect(result).toBe(expectedCount);
+      expect(mockPrismaService.user.count).toHaveBeenCalledWith({
+        where: {
+          role: Role.ADMIN,
+          is_deleted: false,
+        },
+      });
+    });
+
+    it('should return 0 when no active admins exist', async () => {
+      // Arrange
+      mockPrismaService.user.count.mockResolvedValue(0);
+
+      // Act
+      const result = await repository.countActiveAdmins();
+
+      // Assert
+      expect(result).toBe(0);
     });
   });
 });

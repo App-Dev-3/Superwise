@@ -19,6 +19,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { DeleteUserSuccessDto } from './dto/delete-user-success.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -396,12 +397,11 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Delete user (Soft Delete)',
     description:
-      'Soft delete a user. Preserves data but marks user as deleted and they will no longer appear in regular queries.',
+      'Soft delete a user. Users can delete their own accounts, admins can delete any user. The last admin cannot delete themselves.',
   })
   @ApiParam({
     name: 'id',
@@ -411,11 +411,22 @@ export class UsersController {
     required: true,
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @ApiResponse({ status: 204, description: 'User has been successfully deleted.' })
+  @ApiResponse({
+    status: 200,
+    description: 'User has been successfully deleted.',
+    type: DeleteUserSuccessDto,
+  })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @ApiResponse({ status: 400, description: 'Bad request - Invalid User ID format.' })
-  deleteUser(@Param('id', ParseUUIDPipe) id: string): Promise<User> {
-    return this.usersService.deleteUser(id);
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Not authorized to delete this user or last admin.',
+  })
+  deleteUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() currentUser: User,
+  ): Promise<DeleteUserSuccessDto> {
+    return this.usersService.deleteUser(id, currentUser);
   }
 
   /**

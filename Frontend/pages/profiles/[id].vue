@@ -77,7 +77,7 @@
           />
 
           <CustomButton
-              v-if="isStudent && studentPendingRequest"
+              v-if="isStudent && studentPendingRequest && !hasSupervisor && !studentGotDismissed"
               :text="t('generic.manageRequest')"
               block
               color="default"
@@ -222,6 +222,7 @@ const isStudent = computed(() => {
 });
 //hacky solution, begin with true to not show the button. IF no supervisor, turn it false
 const hasSupervisor = ref(true)
+const studentGotDismissed = ref(false)
 
 onMounted(async() => {
   if (isStudent.value) {
@@ -331,6 +332,7 @@ const addStudentAsSupervisee = async() => {
       type: "success",
       message: t("toast.addedStudentAsSupervisee"),
     };
+    hasSupervisor.value = true;
 }
 
 const sendSupervisionRequest = async () => {
@@ -420,6 +422,7 @@ const acceptPendingRequest = async () => {
       type: "success",
       message: t("toast.acceptedStudentRequest"),
     };
+    hasSupervisor.value = true;
   } catch (error) {
     console.error("Error accepting pending request:", error);
   }
@@ -442,6 +445,7 @@ const dismissPendingRequest = async () => {
       type: "error",
       message: t("toast.withdrawnStudentRequest"),
     };
+    studentGotDismissed.value = true;
   } catch (error) {
     console.error("Error dismissing pending request:", error);
     toastData.value = {

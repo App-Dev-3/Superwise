@@ -137,6 +137,14 @@
       }
     }
   },
+  "aria": {
+    "matching": {
+      "supervisor": {
+        "generalCard": "They have the following bio: {bio}. Their tags are: {tags}. Your compatabilty is {compatability}. They currently have {availableSpots} out of {totalSpots} slots available for supervision. Currently there are {pending} students pending."
+      }
+    },
+    "pageHeader": "You are on the following page: {pageName}"
+  },
   "confirmation": {
     "acceptedOn": "Accepted on: {date}",
     "details": "Confirmation Details",
@@ -227,6 +235,7 @@
     "manageRequest": "Manage Request",
     "addStudent": "Add as supervisee",
     "noVideoSupport": "Your browser does not support HTML video... i think its time to upgrade your device!",
+    "nothing": "Nothing",
     "pendingRequestTo": "Pending request to",
     "profile": "Profile",
     "profilePictureAlt": "Profile picture of {firstName} {lastName}",
@@ -254,6 +263,10 @@
     "acceptRequest": "Accept Supervision Request",
     "acceptRequestButton": "Accept Request",
     "acceptRequestDescription": "Would you like to accept the supervision request from {firstName} {lastName}? Once accepted You will officially be a supervisor-student pair",
+    "aria": {
+      "matchWith": "Match with {name}",
+      "reject": "Dismiss {name}"
+    },
     "confirmationToast": "You {type} the supervision request",
     "existingSupervision": {
       "actionButton": "Go back to dashboard",
@@ -399,9 +412,9 @@
       "name": "Name"
     },
     "noResults": "No search results...",
+    "placeholderForAdmins": "Search users...",
     "placeholderForStudents": "Search supervisor...",
-    "placeholderForSupervisors": "Search student...",
-    "placeholderForAdmins": "Search users..."
+    "placeholderForSupervisors": "Search student..."
   },
   "searchBar": {
     "noResults": "No results found"
@@ -478,6 +491,12 @@
       "mainText": "Are you sure you want to remove {firstName} {lastName}?",
       "subText": "",
       "title": "Remove Student"
+    }
+  },
+  "swipe": {
+    "announcement": {
+      "left": "Card has been swiped left.",
+      "right": "Card has been swiped right."
     }
   },
   "tagPriority": {

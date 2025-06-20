@@ -387,7 +387,8 @@
     },
     "noResults": "No search results...",
     "placeholderForStudents": "Search supervisor...",
-    "placeholderForSupervisors": "Search student..."
+    "placeholderForSupervisors": "Search student...",
+    "placeholderForAdmins": "Search users..."
   },
   "searchBar": {
     "noResults": "No results found"

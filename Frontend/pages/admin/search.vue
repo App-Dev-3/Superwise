@@ -25,7 +25,6 @@ const debouncedSearch = useDebounceFn(async () => {
   try {
     await searchSupervisors(searchQuery.value);
   } catch (error) {
-    console.error("Error searching for supervisors:", error);
     searchResults.value = [];
   } finally {
     isLoading.value = false;
@@ -162,7 +161,7 @@ definePageMeta({
       />
       <InputField
           v-model="searchQuery"
-          :placeholder="t('search.placeholderForStudents')"
+          :placeholder="t('search.placeholderForAdmins')"
           class="w-full"
           right-icon="xmark"
           @input="debouncedSearch"

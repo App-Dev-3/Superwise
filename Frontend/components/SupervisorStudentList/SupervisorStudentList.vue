@@ -83,13 +83,12 @@ const emailAddress = ref("");
 const clearInput = ref(false);
 const emailDomain = "fhstp.ac.at";
 
-
 const updateMail = (value: string) => {
   emailAddress.value = value;
 };
 
 const editButtonLabel = computed(() => {
-  return isEditing.value ? t('generic.done') : t('generic.edit');
+  return isEditing.value ? t("generic.done") : t("generic.edit");
 });
 
 const editButtonIcon = computed(() => {
@@ -219,7 +218,14 @@ watch(
             studentToRemove?.lastName
           : ''
       "
-      :image-src="studentToRemove?.src || getPlaceholderImage(studentToRemove?.firstName, studentToRemove?.lastName) || ''"
+      :image-src="
+        studentToRemove?.src ||
+        getPlaceholderImage(
+          studentToRemove?.firstName,
+          studentToRemove?.lastName
+        ) ||
+        ''
+      "
       :main-text="
         t('supervisorStudentList.removeStudent.mainText', {
           firstName: studentToRemove?.firstName,
@@ -232,6 +238,7 @@ watch(
       :checkbox-label="t('settings.supervisorStudentList.checkboxLabel')"
       setting-key="showRemoveStudentModal"
       :title="t('supervisorStudentList.removeStudent.title')"
+      :sub-text="t('supervisorStudentList.removeStudent.subText')"
       icon="trash"
       @confirm="confirmRemoveStudent"
     />
@@ -248,7 +255,11 @@ watch(
             modal_user.last_name
           : ''
       "
-      :image-src="modal_user?.profile_image || getPlaceholderImage(modal_user?.first_name, modal_user?.last_name) || ''"
+      :image-src="
+        modal_user?.profile_image ||
+        getPlaceholderImage(modal_user?.first_name, modal_user?.last_name) ||
+        ''
+      "
       :main-text="
         t('supervisorStudentList.addExistingStudent.mainText', {
           firstName: modal_user?.first_name,

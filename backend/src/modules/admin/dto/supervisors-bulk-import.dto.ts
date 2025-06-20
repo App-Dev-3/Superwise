@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import {
   IsEmail,
   IsString,
@@ -10,6 +10,7 @@ import {
   IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { normalizeEmail } from '../../../common/utils/email-utils';
 
 export class SupervisorDto {
   @ApiProperty({
@@ -19,6 +20,7 @@ export class SupervisorDto {
   })
   @IsEmail()
   @IsNotEmpty()
+  @Transform(({ value }) => normalizeEmail(value))
   email: string;
 
   @ApiPropertyOptional({

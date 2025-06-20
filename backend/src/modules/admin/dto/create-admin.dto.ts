@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { normalizeEmail } from '../../../common/utils/email-utils';
 import { IsAllowedEmailDomain } from '../../../common/validators/allowed-email-domains.validator';
 
 export class CreateAdminDto {
@@ -10,6 +12,7 @@ export class CreateAdminDto {
   })
   @IsEmail()
   @IsNotEmpty()
+  @Transform(({ value }) => normalizeEmail(value))
   @IsAllowedEmailDomain({
     message: 'Email must be from an allowed domain',
   })

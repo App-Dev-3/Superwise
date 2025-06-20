@@ -121,7 +121,7 @@ export class ClerkRegistrationStrategy extends PassportStrategy(Strategy, 'clerk
       // For registration, extract and return the claims without DB lookup
       return {
         clerk_id: payload.sub,
-        email: payload.email,
+        email: payload.email.toLowerCase(),
         exp: payload.exp,
       };
     } catch (error) {

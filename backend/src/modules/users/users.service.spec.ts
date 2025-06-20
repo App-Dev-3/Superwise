@@ -51,7 +51,7 @@ describe('UsersService', () => {
 
   const mockStudent = {
     id: USER_UUID,
-    email: 'exampleStudent1@fhstp.ac.at',
+    email: 'examplestudent1@fhstp.ac.at',
     first_name: 'Max',
     last_name: 'Mustermann',
     role: Role.STUDENT,
@@ -65,7 +65,7 @@ describe('UsersService', () => {
 
   const mockSupervisor = {
     id: USER_UUID_2,
-    email: 'exampleSupervisor@fhstp.ac.at',
+    email: 'examplesupervisor@fhstp.ac.at',
     first_name: 'Supervisor',
     last_name: 'Example',
     role: Role.SUPERVISOR,
@@ -83,7 +83,7 @@ describe('UsersService', () => {
     mockUser,
     {
       id: USER_UUID_2,
-      email: 'exampleStudent2@fhstp.ac.at',
+      email: 'examplestudent2@fhstp.ac.at',
       first_name: 'Maria',
       last_name: 'Mustermann',
       role: Role.STUDENT,

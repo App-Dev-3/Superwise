@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { useColorMode } from "#imports";
+import { useI18n } from "vue-i18n";
 
 const router = useRouter();
 const colorMode = useColorMode();

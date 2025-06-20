@@ -2,10 +2,11 @@
 import { ref, watch } from "vue";
 import { useUserStore } from "~/stores/useUserStore";
 import type { UserData } from "#shared/types/userInterfaces";
-import type { SupervisorData, SupervisionRequestsData  } from "#shared/types/supervisorInterfaces";
+import type { SupervisionRequestsData, SupervisorData } from "#shared/types/supervisorInterfaces";
 import { useSupervisionRequests } from "~/composables/useSupervisionRequests";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import EmptyPagePlaceholder from "~/components/Placeholder/EmptyPagePlaceholder.vue";
+import Progress from "~/components/Progress/Progress.vue";
 
 const authStore = useAuthStore()
 const { user } = storeToRefs(authStore)
@@ -47,23 +48,47 @@ watch(
         const data = (await getSupervisorByUserId(
             current_user.value.id
         )) as SupervisorData;
-        supervisorStore.setSupervisors([data]);
+        supervisorStore.setSupervisors([ data ]);
       }
     },
     { immediate: true }
 );
 
 watch(
-  pendingRequests,
-  (newVal) => {
-    if (newVal) {
-      supervisorStore.setSupervisionRequests(newVal as SupervisionRequestsData[]);
-    }
-  },
-  { immediate: true }
+    pendingRequests,
+    (newVal) => {
+      if (newVal) {
+        supervisorStore.setSupervisionRequests(newVal as SupervisionRequestsData[]);
+      }
+    },
+    { immediate: true }
 );
 
 const { t } = useI18n();
+
+
+const getProgress: number = () => {
+  console.log(userStore.user);
+
+  const elements = [
+    userStore.user.first_name,
+    userStore.user.last_name,
+    userStore.user.email,
+    userStore.user.bio,
+    userStore.user.profile_image,
+  ];
+
+  let result: number = 0;
+  const step: number = 100 / elements.length;
+
+  elements.forEach((element) => {
+    if (element && element !== '') {
+      result += step;
+    }
+  });
+
+  return Math.round(result);
+}
 
 definePageMeta({
   layout: "supervisor-base-layout",
@@ -72,6 +97,17 @@ definePageMeta({
 
 <template>
   <div class="flex flex-col w-full gap-8 p-8">
+    <ActionCard
+        v-if="getProgress() < 100"
+        :button-text="t('dashboard.progress.button')"
+        card-type="ghost"
+        @action-button-clicked="navigateTo('/supervisor/profile')"
+    >
+      <Progress
+          :progress="getProgress()"
+          :text="t('dashboard.progress.text')"
+      />
+    </ActionCard>
     <ActionCard
         :button-text="t('dashboard.supervisor.manageStudents')"
         card-type="primary"
@@ -84,7 +120,7 @@ definePageMeta({
           {{
             // this works, even though the IDE tells you it doesnt. The frontend interface types are not consitent with the backend types. Dont ask why.
             (supervisor_data?.total_spots ?? 0) - (supervisor_data?.available_spots ?? 0)
-            }}/{{ supervisor_data?.total_spots ?? 0 }}
+          }}/{{ supervisor_data?.total_spots ?? 0 }}
         </h2>
         <p class="text-md">
           {{ t("dashboard.supervisor.slotsFilled") }}

@@ -414,7 +414,8 @@
     "noResults": "Keine Suchergebnisse...",
     "placeholderForAdmins": "Benutzer suchen...",
     "placeholderForStudents": "Betreuer suchen...",
-    "placeholderForSupervisors": "Studenten suchen..."
+    "placeholderForSupervisors": "Studenten suchen...",
+    "placeholderForAdmins": "Benutzer suchen..."
   },
   "searchBar": {
     "noResults": "Keine Ergebnisse gefunden"

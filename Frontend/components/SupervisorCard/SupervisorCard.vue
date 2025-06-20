@@ -152,6 +152,7 @@ const descriptionClasses = computed(() => ({
             :size="props.size"
             :src="props.image"
             aria-hidden="true"
+
         />
         <p class="text-large capitalize">
           {{ props.firstName }} {{ props.lastName }}

@@ -414,7 +414,8 @@
     "noResults": "No search results...",
     "placeholderForAdmins": "Search users...",
     "placeholderForStudents": "Search supervisor...",
-    "placeholderForSupervisors": "Search student..."
+    "placeholderForSupervisors": "Search student...",
+    "placeholderForAdmins": "Search users..."
   },
   "searchBar": {
     "noResults": "No results found"

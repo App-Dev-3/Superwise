@@ -220,6 +220,9 @@ const userStore = useUserStore();
 const supervisorStore = useSupervisorStore();
 const studentStore = useStudentStore();
 
+if (!userStore.user) {await userStore.refetchCurrentUser();}
+if (!studentStore.studentProfile) {await studentStore.fetchStudentProfile(userStore.user?.id ?? "");}
+
 const getProgress: number = () => {
   console.log(userStore.user);
   console.log(studentStore.studentProfile?.thesis_description);

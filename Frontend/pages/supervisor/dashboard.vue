@@ -74,7 +74,7 @@ const getProgress: number = () => {
     userStore.user.first_name,
     userStore.user.last_name,
     userStore.user.email,
-    userStore.user.bio,
+    userStore.supervisorProfile.bio,
     userStore.user.profile_image,
   ];
 

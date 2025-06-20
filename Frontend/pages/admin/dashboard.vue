@@ -20,7 +20,7 @@
         >{{ t("admin.availableSpots") }}
         </span>
       </div>
-      <hr class="border-base-300">
+      <hr class="border-base-300" >
       <div class="p-8 gap-4 admin-overview-grid">
         <FontAwesomeIcon class="opacity-75" icon="user-group"/>
         <span class="text-body text-primary"

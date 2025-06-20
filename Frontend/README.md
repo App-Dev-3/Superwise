@@ -52,7 +52,7 @@ npm install
 
 4. **Environment Variables:**
 
-Copy the `.env.example` to an `.env` file in the root directory and ensure all the environment variables are set correctly. You can reach out to the admin for the secret keys.
+Copy the `.env.example` to an `.env` file in the root directory and ensure all the environment variables are set correctly. Refer to the README file in the root directory of this repository if you are unsure about the environment variables.
 
 5. **Run the application**
 ```bash

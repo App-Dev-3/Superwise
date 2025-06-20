@@ -24,7 +24,7 @@ const debouncedSearch = useDebounceFn(async () => {
   isLoading.value = true;
   try {
     await searchSupervisors(searchQuery.value);
-  } catch (error) {
+  } catch {
     searchResults.value = [];
   } finally {
     isLoading.value = false;

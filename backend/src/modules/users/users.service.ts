@@ -1,13 +1,17 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { DeleteUserSuccessDto } from './dto/delete-user-success.dto';
 import { User, UserTag, Role, UserBlock } from '@prisma/client';
 import { UsersRepository } from './users.repository';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { UserWithRelations } from './entities/user-with-relations.entity';
 import { TagsService } from '../tags/tags.service';
 import { UserRegistrationException } from '../../common/exceptions/custom-exceptions/user-registration.exception';
+import { UserDeleteForbiddenException } from '../../common/exceptions/custom-exceptions/user-delete-forbidden.exception';
+import { LastAdminDeleteException } from '../../common/exceptions/custom-exceptions/last-admin-delete.exception';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
+import { DeleteUserOperation } from './types/user-operations.types';
 
 @Injectable()
 export class UsersService {
@@ -52,6 +56,7 @@ export class UsersService {
         role: Role.STUDENT,
         profile_image: createUserDto.profile_image,
         is_registered: true,
+        is_deleted: false,
       };
       return this.usersRepository.createUser(studentData);
     } else {
@@ -84,6 +89,7 @@ export class UsersService {
         return this.usersRepository.updateUser(existingUser.id, {
           clerk_id: authUser.clerk_id,
           is_registered: true,
+          is_deleted: false,
           // Update profile details if provided in DTO, otherwise keep existing
           first_name: createUserDto.first_name || existingUser.first_name,
           last_name: createUserDto.last_name || existingUser.last_name,
@@ -104,6 +110,7 @@ export class UsersService {
         return this.usersRepository.updateUser(existingUser.id, {
           clerk_id: authUser.clerk_id,
           is_registered: true,
+          is_deleted: false,
           // Update profile details if provided in DTO, otherwise keep existing
           first_name: createUserDto.first_name || existingUser.first_name,
           last_name: createUserDto.last_name || existingUser.last_name,
@@ -124,6 +131,7 @@ export class UsersService {
         return this.usersRepository.updateUser(existingUser.id, {
           clerk_id: authUser.clerk_id,
           is_registered: true,
+          is_deleted: false,
           // Update profile details if provided in DTO, otherwise keep existing
           first_name: createUserDto.first_name || existingUser.first_name,
           last_name: createUserDto.last_name || existingUser.last_name,
@@ -238,11 +246,56 @@ export class UsersService {
     return this.usersRepository.updateUser(id, updateUserDto);
   }
 
-  async deleteUser(id: string): Promise<User> {
-    // This will throw NotFoundException if user doesn't exist
-    await this.findUserById(id);
-    // Soft delete
-    return this.usersRepository.softDeleteUser(id);
+  async deleteUser(id: string, currentUser: User): Promise<DeleteUserSuccessDto> {
+    // Authorization check
+    if (currentUser.id !== id && currentUser.role !== Role.ADMIN) {
+      throw new UserDeleteForbiddenException();
+    }
+
+    // Find the user to be deleted
+    const userToDelete = await this.findUserByIdWithRelations(id);
+
+    // Check if admin is trying to delete themselves and they're the last admin
+    if (currentUser.id === id && currentUser.role === Role.ADMIN) {
+      const activeAdminCount = await this.usersRepository.countActiveAdmins();
+
+      if (activeAdminCount === 1) {
+        throw new LastAdminDeleteException();
+      }
+    }
+
+    // Get student/supervisor profile IDs if needed
+    let studentId: string | undefined;
+    let supervisorId: string | undefined;
+
+    if (userToDelete.role === Role.STUDENT) {
+      studentId = userToDelete.student_profile?.id;
+    } else if (userToDelete.role === Role.SUPERVISOR) {
+      supervisorId = userToDelete.supervisor_profile?.id;
+    }
+
+    // Use repository method for the transaction
+    const deleteOperation: DeleteUserOperation = {
+      userId: id,
+      userEmail: userToDelete.email,
+      userRole: userToDelete.role,
+      studentId,
+      supervisorId,
+    };
+
+    const deletionStats = await this.usersRepository.deleteUser(deleteOperation);
+
+    this.logger.log(
+      `Successfully soft deleted user ${userToDelete.email} (${id}). ` +
+        `Deleted ${deletionStats.deletedTagsCount} user tags, ${deletionStats.deletedBlocksCount} blocked users. ` +
+        `Profile updated: ${deletionStats.profileUpdated}`,
+      'UsersService',
+    );
+
+    return {
+      success: true,
+      message: `User ${userToDelete.email} has been deleted successfully`,
+    };
   }
 
   // User Tag operations
@@ -340,5 +393,13 @@ export class UsersService {
 
     // Delete the block
     await this.usersRepository.deleteUserBlock(studentUserId, supervisorUserId);
+  }
+
+  async deleteAllUserBlocks(userId: string): Promise<number> {
+    return this.usersRepository.deleteAllUserBlocks(userId);
+  }
+
+  async deleteAllUserTags(userId: string): Promise<number> {
+    return this.usersRepository.deleteAllUserTags(userId);
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Prisma, User, UserTag, Role, UserBlock } from '@prisma/client';
+import { DeleteUserOperation, DeleteUserResult } from './types/user-operations.types';
 
 export interface IUsersRepository {
   createUser(userData: {
@@ -36,7 +37,7 @@ export interface IUsersRepository {
       clerk_id?: string | null;
     },
   ): Promise<User>;
-  softDeleteUser(id: string): Promise<User>;
+  deleteUser(data: DeleteUserOperation): Promise<DeleteUserResult>;
 
   // User Tag operations
   findUserTagsByUserId(userId: string): Promise<UserTag[]>;
@@ -44,12 +45,17 @@ export interface IUsersRepository {
     userId: string,
     tags: Array<{ tag_id: string; priority: number }>,
   ): Promise<UserTag[]>;
+  deleteAllUserTags(userId: string): Promise<number>;
 
   // User Block operations
   findBlockedSupervisorsByStudentUserId(studentUserId: string): Promise<UserBlock[]>;
   createUserBlock(blockerUserId: string, blockedUserId: string): Promise<UserBlock>;
   deleteUserBlock(blockerUserId: string, blockedUserId: string): Promise<void>;
   findUserBlockByIds(blockerUserId: string, blockedUserId: string): Promise<UserBlock | null>;
+  deleteAllUserBlocks(userId: string): Promise<number>;
+
+  // Admin related operations
+  countActiveAdmins(): Promise<number>;
 }
 
 @Injectable()
@@ -71,6 +77,8 @@ export class UsersRepository implements IUsersRepository {
   }
 
   async searchUsers(searchQuery: string): Promise<User[]> {
+    const USER_SEARCH_LIMIT = 15; // TODO [SCRUM-315]: Make this configurable
+
     // If search query is empty, return empty array
     if (!searchQuery || searchQuery.trim() === '') {
       return [];
@@ -130,7 +138,7 @@ export class UsersRepository implements IUsersRepository {
           },
         },
       },
-      take: 15, // Limit to 15 results
+      take: USER_SEARCH_LIMIT,
     });
   }
 
@@ -260,13 +268,6 @@ export class UsersRepository implements IUsersRepository {
     });
   }
 
-  async softDeleteUser(id: string): Promise<User> {
-    return this.prisma.user.update({
-      where: { id },
-      data: { is_deleted: true },
-    });
-  }
-
   // User Tag operations implementation
   async findUserTagsByUserId(userId: string): Promise<UserTag[]> {
     return this.prisma.userTag.findMany({
@@ -312,6 +313,13 @@ export class UsersRepository implements IUsersRepository {
     return this.findUserTagsByUserId(userId);
   }
 
+  async deleteAllUserTags(userId: string): Promise<number> {
+    const result = await this.prisma.userTag.deleteMany({
+      where: { user_id: userId },
+    });
+    return result.count;
+  }
+
   // User Block operations
   async findBlockedSupervisorsByStudentUserId(studentUserId: string): Promise<UserBlock[]> {
     return this.prisma.userBlock.findMany({
@@ -351,6 +359,79 @@ export class UsersRepository implements IUsersRepository {
           blocker_id: blockerUserId,
           blocked_id: blockedUserId,
         },
+      },
+    });
+  }
+
+  async deleteAllUserBlocks(userId: string): Promise<number> {
+    const result = await this.prisma.userBlock.deleteMany({
+      where: {
+        OR: [{ blocker_id: userId }, { blocked_id: userId }],
+      },
+    });
+    return result.count;
+  }
+
+  async deleteUser(data: DeleteUserOperation): Promise<DeleteUserResult> {
+    return await this.prisma.$transaction(async tx => {
+      // Update user fields
+      await tx.user.update({
+        where: { id: data.userId },
+        data: {
+          first_name: '',
+          last_name: '',
+          profile_image: null,
+          is_deleted: true,
+          is_registered: false,
+          // Keep: email, role, clerk_id unchanged
+        },
+      });
+
+      // Delete user tags and capture count
+      const deletedTags = await tx.userTag.deleteMany({
+        where: { user_id: data.userId },
+      });
+
+      // Delete user blocks and capture count
+      const deletedBlocks = await tx.userBlock.deleteMany({
+        where: {
+          OR: [{ blocker_id: data.userId }, { blocked_id: data.userId }],
+        },
+      });
+
+      let profileUpdated = false;
+
+      // Handle role-specific cleanup
+      if (data.userRole === Role.STUDENT && data.studentId) {
+        await tx.student.update({
+          where: { id: data.studentId },
+          data: { thesis_description: '' },
+        });
+        profileUpdated = true;
+      } else if (data.userRole === Role.SUPERVISOR && data.supervisorId) {
+        await tx.supervisor.update({
+          where: { id: data.supervisorId },
+          data: {
+            bio: '',
+            available_spots: 0,
+            total_spots: 0,
+          },
+        });
+        profileUpdated = true;
+      }
+
+      return {
+        deletedTagsCount: deletedTags.count,
+        deletedBlocksCount: deletedBlocks.count,
+        profileUpdated,
+      };
+    });
+  }
+  async countActiveAdmins(): Promise<number> {
+    return this.prisma.user.count({
+      where: {
+        role: Role.ADMIN,
+        is_deleted: false,
       },
     });
   }

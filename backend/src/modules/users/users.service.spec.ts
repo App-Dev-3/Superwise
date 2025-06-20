@@ -1,13 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { UsersRepository } from './users.repository';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Role, UserTag, User, UserBlock } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SetUserTagsDto } from './dto/set-user-tags.dto';
 import { TagsService } from '../tags/tags.service';
 import { WinstonLoggerService } from '../../common/logging/winston-logger.service';
+import { UserDeleteForbiddenException } from '../../common/exceptions/custom-exceptions/user-delete-forbidden.exception';
+import { LastAdminDeleteException } from '../../common/exceptions/custom-exceptions/last-admin-delete.exception';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -34,6 +36,8 @@ describe('UsersService', () => {
     deleteUserBlock: jest.fn(),
     findUserBlockByIds: jest.fn(),
     searchUsers: jest.fn(),
+    deleteUser: jest.fn(),
+    countActiveAdmins: jest.fn(),
   };
 
   const mockLoggerService = {
@@ -45,6 +49,8 @@ describe('UsersService', () => {
 
   const USER_UUID = '123e4567-e89b-12d3-a456-426614174000';
   const USER_UUID_2 = '123e4567-e89b-12d3-a456-426614174001';
+  const USER_UUID_3 = '123e4567-e89b-12d3-a456-426614174003';
+  const ADMIN_UUID = '123e4567-e89b-12d3-a456-426614174002';
   const TAG_UUID_1 = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
   const TAG_UUID_2 = 'a1b2c3d4-e5f6-7890-1234-567890abcdef';
   const CLERK_ID = 'user_2NUj8tGhSFhTLD9sdP0q4P7VoJM';
@@ -164,7 +170,8 @@ describe('UsersService', () => {
         role: Role.STUDENT,
         profile_image: createUserDto.profile_image,
         is_registered: true,
-        clerk_id: CLERK_ID,
+        is_deleted: false,
+        clerk_id: authUser.clerk_id,
       });
     });
   });
@@ -333,28 +340,130 @@ describe('UsersService', () => {
   });
 
   describe('deleteUser', () => {
-    it('should soft delete a user after verifying existence', async () => {
-      const deletedUser = { ...mockUser, is_deleted: true };
-      mockUsersRepository.findUserById.mockResolvedValue(mockUser);
-      mockUsersRepository.softDeleteUser.mockResolvedValue(deletedUser);
+    const mockCurrentUser = {
+      id: USER_UUID,
+      email: 'current@example.com',
+      role: Role.STUDENT,
+      first_name: 'Current',
+      last_name: 'User',
+      profile_image: null,
+      is_registered: true,
+      is_deleted: false,
+      clerk_id: 'clerk_123',
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
 
-      const result = await service.deleteUser(USER_UUID);
+    const mockAdminUser = {
+      ...mockCurrentUser,
+      id: ADMIN_UUID,
+      email: 'admin@example.com',
+      role: Role.ADMIN,
+    };
 
-      expect(result).toEqual(deletedUser);
-      expect(mockUsersRepository.findUserById).toHaveBeenCalledWith(USER_UUID);
-      expect(mockUsersRepository.softDeleteUser).toHaveBeenCalledWith(USER_UUID);
+    const mockDeleteResult = {
+      success: true,
+      message: 'User test@example.com has been deleted successfully',
+    };
+
+    it('should allow user to delete their own account', async () => {
+      mockUsersRepository.findUserByIdWithRelations.mockResolvedValue({
+        ...mockUser,
+        student_profile: { id: 'student-123' },
+        supervisor_profile: null,
+        tags: [],
+      });
+      mockUsersRepository.deleteUser.mockResolvedValue({
+        deletedTagsCount: 2,
+        deletedBlocksCount: 1,
+        profileUpdated: true,
+      });
+
+      const result = await service.deleteUser(USER_UUID, mockCurrentUser);
+
+      expect(result).toEqual({
+        success: true,
+        message: `User ${mockUser.email} has been deleted successfully`,
+      });
+      expect(mockUsersRepository.findUserByIdWithRelations).toHaveBeenCalledWith(USER_UUID);
+      expect(mockUsersRepository.deleteUser).toHaveBeenCalledWith({
+        userId: USER_UUID,
+        userEmail: mockUser.email,
+        userRole: mockUser.role,
+        studentId: 'student-123',
+        supervisorId: undefined,
+      });
+      expect(mockLoggerService.log).toHaveBeenCalledWith(
+        expect.stringContaining('Successfully soft deleted user'),
+        'UsersService',
+      );
+      expect(mockLoggerService.log).toHaveBeenCalledWith(
+        expect.stringContaining('Deleted 2 user tags, 1 blocked users'),
+        'UsersService',
+      );
+    });
+
+    it('should allow admin to delete any user', async () => {
+      const targetUserId = USER_UUID_3;
+      const targetUser = { ...mockUser, id: targetUserId, role: Role.SUPERVISOR };
+
+      mockUsersRepository.findUserById.mockResolvedValue(targetUser);
+      mockUsersRepository.findUserByIdWithRelations.mockResolvedValue({
+        ...targetUser,
+        student_profile: null,
+        supervisor_profile: { id: 'supervisor-123' },
+        tags: [],
+      });
+      mockUsersRepository.deleteUser.mockResolvedValue({
+        deletedTagsCount: 0,
+        deletedBlocksCount: 0,
+        profileUpdated: true,
+      });
+
+      const result = await service.deleteUser(targetUserId, mockAdminUser);
+
+      expect(result).toEqual({
+        success: true,
+        message: `User ${targetUser.email} has been deleted successfully`,
+      });
+      expect(mockUsersRepository.deleteUser).toHaveBeenCalledWith({
+        userId: targetUserId,
+        userEmail: targetUser.email,
+        userRole: targetUser.role,
+        studentId: undefined,
+        supervisorId: 'supervisor-123',
+      });
+    });
+
+    it('should throw UserDeleteForbiddenException when user tries to delete another user', async () => {
+      const otherUserId = USER_UUID_3;
+
+      await expect(service.deleteUser(otherUserId, mockCurrentUser)).rejects.toThrow(
+        UserDeleteForbiddenException,
+      );
+      expect(mockUsersRepository.deleteUser).not.toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if user to delete not found', async () => {
-      // Arrange
       const nonExistentId = 'non-existent';
-      mockUsersRepository.findUserById.mockResolvedValue(null);
+      mockUsersRepository.findUserByIdWithRelations.mockResolvedValue(null);
 
-      // Act & Assert
-      await expect(service.deleteUser(nonExistentId)).rejects.toThrow(
+      await expect(service.deleteUser(nonExistentId, mockAdminUser)).rejects.toThrow(
         new NotFoundException(`User with ID ${nonExistentId} not found`),
       );
-      expect(mockUsersRepository.softDeleteUser).not.toHaveBeenCalled();
+      expect(mockUsersRepository.deleteUser).not.toHaveBeenCalled();
+    });
+
+    it('should prevent last admin from deleting themselves', async () => {
+      const lastAdmin = { ...mockAdminUser, id: ADMIN_UUID };
+
+      mockUsersRepository.findUserByIdWithRelations.mockResolvedValue(lastAdmin);
+      mockUsersRepository.countActiveAdmins.mockResolvedValue(1);
+
+      await expect(service.deleteUser(ADMIN_UUID, lastAdmin)).rejects.toThrow(
+        LastAdminDeleteException,
+      );
+      expect(mockUsersRepository.deleteUser).not.toHaveBeenCalled();
     });
   });
 

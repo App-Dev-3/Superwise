@@ -6,6 +6,8 @@ import { useColorMode } from "#imports";
 const router = useRouter();
 const colorMode = useColorMode();
 
+const { t } = useI18n();
+
 interface Props {
   variant?: "default" | "upload" | "download" | "delete" | "text" | "warning";
   headerText: string;
@@ -60,7 +62,7 @@ const emit = defineEmits([ 'right-button-click' ]);
     />
 
     <ClientOnly v-else>
-      <div class="navbar-center">
+      <div aria-hidden="true" class="navbar-center">
         <img
             :src="
               colorMode.value === 'dark'
@@ -73,8 +75,11 @@ const emit = defineEmits([ 'right-button-click' ]);
       </div>
     </ClientOnly>
 
+    <!--For some reason the aria-label is not read out... so i have disabled it for now!-->
     <span
+        :aria-label="t('aria.pageHeader', {pageName: props.headerText})"
         :class="{colorText}"
+        aria-hidden="true"
         class="text-header bg-info-soft w-full"
     >
       {{ props.headerText }}

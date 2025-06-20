@@ -142,7 +142,7 @@ const descriptionClasses = computed(() => ({
 
 <template>
   <div
-      :class="cardSizeClasses" class="card bg-base-100 shadow-lg border border-base-300">
+      :class="cardSizeClasses" aria-hidden="true" class="card bg-base-100 shadow-lg border border-base-300">
     <div class="card-body">
       <h2 class="card-title font-bold">
         <Avatar
@@ -151,6 +151,8 @@ const descriptionClasses = computed(() => ({
             :last-name="props.lastName"
             :size="props.size"
             :src="props.image"
+            aria-hidden="true"
+
         />
         <p class="text-large capitalize">
           {{ props.firstName }} {{ props.lastName }}

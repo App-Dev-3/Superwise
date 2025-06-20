@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {computed, onMounted, ref, watchEffect} from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 
 /**
  * Avatar component displays a user's profile image with various customization options.
@@ -214,7 +214,7 @@ const addPosition = computed(() => {
 
 // Handle image loading errors
 const handleImageError = () => {
-  console.log(`Image Error: ${props.src}`);
+  console.log(`Image Error: ${ props.src }`);
   imgError.value = true;
 };
 
@@ -224,28 +224,28 @@ const handleImageError = () => {
   <div :class="onlineStatus" class="avatar">
     <div :class="[imgSize, shapeClass, ringClass]">
       <img
-        :key="imgKey"
-        :alt="props.alt"
-        :src="(props.src && !imgError)
+          :key="imgKey"
+          :alt="props.alt"
+          :src="(props.src && !imgError)
               ? props.src
               : getPlaceholderImage(props.firstName, props.lastName)"
-        class="object-cover w-full h-full"
-        loading="lazy"
-        @error="handleImageError"
+          class="object-cover w-full h-full"
+          loading="lazy"
+          @error="handleImageError"
       >
     </div>
     <button
-      v-if="props.emoji"
-      :class="[emojiPosition, emojiStyle]"
-      class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+        v-if="props.emoji"
+        :class="[emojiPosition, emojiStyle]"
+        class="btn btn-soft absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
     >
       {{ props.emoji }}
     </button>
 
     <button
-      v-if="props.addButton"
-      :class="[addPosition, buttonStyle]"
-      class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
+        v-if="props.addButton"
+        :class="[addPosition, buttonStyle]"
+        class="btn absolute rounded-full ring-base-100 ring-offset-base-100 ring-1 ring-offset-1 flex items-center justify-center aspect-square p-0"
     >+
     </button>
 

@@ -137,6 +137,14 @@
       }
     }
   },
+  "aria": {
+    "matching": {
+      "supervisor": {
+        "generalCard": "Diese Person hat folgendes Kurzprofil: {bio}. Ihre Tags sind: {tags}. Deine Kompatibilität beträgt {compatability}. Aktuell sind {availableSpots} von {totalSpots} Betreuungsplätzen verfügbar. Momentan warten {pending} Studierende auf eine Rückmeldung."
+      }
+    },
+    "pageHeader": "Du bist auf der folgenden Seite: {pageName}"
+  },
   "confirmation": {
     "acceptedOn": "Akzeptiert am: {date}",
     "details": "Bestätigungsdetails",
@@ -227,6 +235,7 @@
     "manageRequest": "Anfrage verwalten",
     "addStudent": "Als Betreute*r hinzufügen",
     "noVideoSupport": "Dein Browser unterstützt kein HTML-Video... ich denke, es ist Zeit für ein Upgrade deines Geräts!",
+    "nothing": "Nichts",
     "pendingRequestTo": "Ausstehende Anfrage an",
     "profile": "Profil",
     "profilePictureAlt": "Profil Bild von {firstName} {lastName}",
@@ -254,6 +263,10 @@
     "acceptRequest": "Betreuungsanfrage annehmen",
     "acceptRequestButton": "Anfrage annehmen",
     "acceptRequestDescription": "Möchten Sie die Betreuungsanfrage von {firstName} {lastName} annehmen? Nach Annahme seid ihr offiziell ein Betreuer-Studenten-Paar.",
+    "aria": {
+      "matchWith": "Betreuungsanfrage an {name} senden",
+      "reject": "Entferne {name}"
+    },
     "confirmationToast": "Sie haben die Betreuungsanfrage {type}",
     "existingSupervision": {
       "actionButton": "Zurück zum Dashboard",
@@ -399,6 +412,7 @@
       "name": "Namen"
     },
     "noResults": "Keine Suchergebnisse...",
+    "placeholderForAdmins": "Benutzer suchen...",
     "placeholderForStudents": "Betreuer suchen...",
     "placeholderForSupervisors": "Studenten suchen...",
     "placeholderForAdmins": "Benutzer suchen..."
@@ -478,6 +492,12 @@
       "mainText": "Möchten Sie {firstName} {lastName} wirklich entfernen?",
       "subText": "",
       "title": "Studierenden entfernen"
+    }
+  },
+  "swipe": {
+    "announcement": {
+      "left": "Karte nach links gewischt.",
+      "right": "Karte nach links gewischt."
     }
   },
   "tagPriority": {

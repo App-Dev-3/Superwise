@@ -2,56 +2,64 @@
   <div class="flex flex-col size-full items-center px-6 py-8 gap-8">
     <template v-if="!hasSupervisor">
       <SwipeContainer
-        v-for="(supervisor, index) in recommendedSupervisors"
-        :key="supervisor.supervisor_userId || index"
-        :ref="(el) => setItemRef(el, supervisor.supervisor_userId)"
-        class="mb-4"
-        @swipe-left="handleSwipeLeft(supervisor)"
-        @swipe-right="handleSwipeRight(supervisor)"
+          v-for="(supervisor, index) in recommendedSupervisors"
+          :key="supervisor.supervisor_userId || index"
+          :ref="(el) => setItemRef(el, supervisor.supervisor_userId)"
+          :aria-label="
+                    t('aria.matching.supervisor.generalCard', {
+                      bio: supervisor.bio || t('generic.nothing'),
+                      tags: (Array.isArray(supervisor.tags) ? supervisor.tags.join(', ') : supervisor.tags) || t('generic.nothing'),
+                      compatability: supervisor.compatibilityScore != null ? Math.round(supervisor.compatibilityScore * 100) + '%' : '',
+                      availableSpots: supervisor.availableSpots || 0,
+                      totalSpots: supervisor.totalSpots || 0,
+                      pending: supervisor.pendingRequests || 0,
+                    })"
+          :name="supervisor.firstName + ' '+ supervisor.lastName"
+          class="mb-4"
+          @swipe-left="handleSwipeLeft(supervisor)"
+          @swipe-right="handleSwipeRight(supervisor)"
       >
         <SupervisorCard
-          :current-capacity="supervisor.availableSpots"
-          :description="supervisor.bio"
-          :first-name="supervisor.firstName"
-          :image="
-            supervisor.profileImage ||
-            getPlaceholderImage(supervisor.firstName, supervisor.lastName)
-          "
-          :last-name="supervisor.lastName"
-          :max-capacity="supervisor.totalSpots"
-          :similarity-score="Math.round(supervisor.compatibilityScore * 100)"
-          :tags="supervisor.tags"
-          size="sm"
+            :current-capacity="supervisor.availableSpots"
+            :description="supervisor.bio"
+            :first-name="supervisor.firstName"
+            :image="supervisor.profileImage || getPlaceholderImage(supervisor.firstName, supervisor.lastName)"
+            :last-name="supervisor.lastName"
+            :max-capacity="supervisor.totalSpots"
+            :similarity-score="Math.round((supervisor.compatibilityScore ?? 0) * 100)"
+            :tags="supervisor.tags"
+            aria-hidden="true"
+            size="sm"
         />
       </SwipeContainer>
       <EmptyPagePlaceholder
-        :render-condition="recommendedSupervisors"
-        :text="t('matching.noSupervisors')"
+          :render-condition="recommendedSupervisors"
+          :text="t('matching.noSupervisors')"
       />
     </template>
     <template v-else>
       <ActionCard
-        :button-text="t('matching.existingSupervision.actionButton')"
-        :header-text="t('matching.existingSupervision.headline')"
-        card-type="primary"
-        @action-button-clicked="navigate('/student/dashboard')"
+          :button-text="t('matching.existingSupervision.actionButton')"
+          :header-text="t('matching.existingSupervision.headline')"
+          card-type="primary"
+          @action-button-clicked="navigate('/student/dashboard')"
       >
         <div class="h-64 flex">
           <div class="flex flex-col w-full items-center justify-center p-3">
             <Avatar
-              :first-name="
+                :first-name="
                 acceptedSupervisionRequests?.supervisor.user.first_name || ''
               "
-              :last-name="
+                :last-name="
                 acceptedSupervisionRequests?.supervisor.user.last_name || ''
               "
-              :src="
+                :src="
                 acceptedSupervisionRequests?.supervisor.user.profile_image || ''
               "
-              alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
-              ring-color="success"
-              shape="circle"
-              size="xl"
+                alt="Profile Picture of {{ acceptedSupervisionRequests?.supervisor.user.first_name }} {{ acceptedSupervisionRequests?.supervisor.user.last_name }}"
+                ring-color="success"
+                shape="circle"
+                size="xl"
             />
             <h2 class="text-xl mx-4 py-8 text-center">
               {{ acceptedSupervisionRequests?.supervisor.user.first_name }}
@@ -63,26 +71,26 @@
       </ActionCard>
     </template>
     <Toast
-      v-if="toast.visible"
-      :button-text="t('generic.undo')"
-      :duration="3000"
-      :message="toast.message"
-      :type="toast.type"
-      @close="handleToastClosed"
-      @button-click="handleToastUndoClick"
+        v-if="toast.visible"
+        :button-text="t('generic.undo')"
+        :duration="3000"
+        :message="toast.message"
+        :type="toast.type"
+        @close="handleToastClosed"
+        @button-click="handleToastUndoClick"
     />
     <ConfirmationModal
-      v-if="modalInformation"
-      :confirm-button-color="modalInformation.confirmButtonColor"
-      :confirm-button-text="modalInformation.confirmButtonText"
-      :description="modalInformation.description"
-      :headline="modalInformation.headline"
-      :icon="modalInformation.icon"
-      :image="modalInformation.supervisor?.profileImage"
-      linked-component-id="confirmationModal"
-      @abort="handleActionResetSwipe(modalInformation.supervisor)"
-      @confirm="showToastInformation(modalInformation.type)"
-      @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
+        v-if="modalInformation"
+        :confirm-button-color="modalInformation.confirmButtonColor"
+        :confirm-button-text="modalInformation.confirmButtonText"
+        :description="modalInformation.description"
+        :headline="modalInformation.headline"
+        :icon="modalInformation.icon"
+        :image="modalInformation.supervisor?.profileImage"
+        linked-component-id="confirmationModal"
+        @abort="handleActionResetSwipe(modalInformation.supervisor)"
+        @confirm="showToastInformation(modalInformation.type)"
+        @dont-show-again="handleModalDontShowAgain(modalInformation.type)"
     />
   </div>
 </template>
@@ -92,10 +100,7 @@ import { useSupervisorStore } from "~/stores/useSupervisorStore";
 import { useSettingsStore } from "~/stores/useSettingsStore";
 import { computed, nextTick, ref } from "vue";
 import type { SupervisorData } from "~/shared/types/supervisorInterfaces";
-import type {
-  ConfirmationDialogData,
-  SupervisionRequestResponseData,
-} from "~/shared/types/userInterfaces";
+import type { ConfirmationDialogData, SupervisionRequestResponseData, } from "~/shared/types/userInterfaces";
 import { HttpMethods, supervisionRequestType } from "~/shared/enums/enums";
 import type { SwipeContainer } from "#components";
 import type { SupervisionRequestsData } from "#shared/types/supervisorInterfaces";
@@ -113,11 +118,11 @@ if (!userStore.user) {
 }
 
 const swipeContainerRefs = ref<
-  Record<string, InstanceType<typeof SwipeContainer> | null>
+    Record<string, InstanceType<typeof SwipeContainer> | null>
 >({});
 const modalInformation = ref<ConfirmationDialogData | null>(null);
 const supervisionRequestReturnData = ref<SupervisionRequestResponseData | null>(
-  null
+    null
 );
 const removedSupervisor = ref<SupervisorData | null>(null);
 const toast = ref({
@@ -135,7 +140,7 @@ onMounted(async () => {
     await studentStore.fetchSupervisionRequests();
   }
   acceptedSupervisionRequests.value =
-    studentStore.acceptedSupervisionRequests[0];
+      studentStore.acceptedSupervisionRequests[0];
 });
 
 onUnmounted(async () => {
@@ -145,7 +150,7 @@ onUnmounted(async () => {
 });
 
 if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
-  const { data, error } = await useFetch(`/api/match/${userStore.user?.id}`, {
+  const { data, error } = await useFetch(`/api/match/${ userStore.user?.id }`, {
     method: HttpMethods.GET,
   });
   if (error.value) {
@@ -157,7 +162,7 @@ if (!supervisorStore.supervisors || supervisorStore.supervisors.length === 0) {
 }
 
 const recommendedSupervisors = computed(() => {
-  return [...supervisorStore.supervisors].sort((a, b) => {
+  return [ ...supervisorStore.supervisors ].sort((a, b) => {
     return b.compatibilityScore - a.compatibilityScore;
   });
 });
@@ -170,7 +175,7 @@ const handleSwipeRight = async (supervisor: SupervisorData) => {
   removedSupervisor.value = supervisor;
   modalInformation.value = {
     type: supervisionRequestType.CONFIRM,
-    headline: `Request ${supervisor.firstName} ${supervisor.lastName}`,
+    headline: `Request ${ supervisor.firstName } ${ supervisor.lastName }`,
     icon: "",
     warning: "",
     description: t("modal.supervisionInfo"),
@@ -239,17 +244,17 @@ const handleToastClosed = () => {
 const handleActionConfirmation = async (supervisor: SupervisorData) => {
   if (modalInformation.value?.type === supervisionRequestType.CONFIRM) {
     const { data } = await useFetch<SupervisionRequestResponseData>(
-      `/api/supervision-requests`,
-      {
-        method: HttpMethods.POST,
-        body: {
-          supervisor_id: supervisor.supervisorId,
-        },
-      }
+        `/api/supervision-requests`,
+        {
+          method: HttpMethods.POST,
+          body: {
+            supervisor_id: supervisor.supervisorId,
+          },
+        }
     );
     supervisionRequestReturnData.value = data.value;
   } else if (modalInformation.value?.type === supervisionRequestType.DISMISS) {
-    await useFetch(`/api/users/${userStore.user?.id}/blocks`, {
+    await useFetch(`/api/users/${ userStore.user?.id }/blocks`, {
       method: HttpMethods.POST,
       body: {
         blocked_id: supervisor.supervisor_userId,
@@ -286,7 +291,7 @@ const handleModalDontShowAgain = (type: supervisionRequestType) => {
 const openModal = async () => {
   await nextTick();
   const modal = document.getElementById(
-    "confirmationModal"
+      "confirmationModal"
   ) as HTMLDialogElement;
   modal?.showModal();
 };
@@ -294,7 +299,7 @@ const openModal = async () => {
 const showToastInformation = (type: string) => {
   if (modalInformation.value?.supervisor?.supervisor_userId) {
     supervisorStore.removeSupervisor(
-      modalInformation.value?.supervisor?.supervisor_userId
+        modalInformation.value?.supervisor?.supervisor_userId
     );
   }
   if (type === supervisionRequestType.CONFIRM) {
@@ -313,8 +318,8 @@ const showToastInformation = (type: string) => {
 };
 
 const setItemRef = (
-  el: InstanceType<typeof SwipeContainer> | null,
-  id: string
+    el: InstanceType<typeof SwipeContainer> | null,
+    id: string
 ) => {
   if (el) {
     swipeContainerRefs.value[id] = el;

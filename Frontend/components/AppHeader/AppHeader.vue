@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
 import { useColorMode } from "#imports";
+import { useI18n } from "vue-i18n";
 
 const router = useRouter();
 const colorMode = useColorMode();
@@ -22,6 +23,8 @@ const props = withDefaults(defineProps<AppHeaderProps>(), {
   showSearch: false,
   modelValue: "",
 });
+
+const { t } = useI18n();
 
 const goBack = () => {
   router.back();
@@ -58,6 +61,7 @@ const goBack = () => {
                 : '../images/appHeader_logo_light.svg'
             "
           alt="Logo image"
+          aria-hidden="true"
           class="h-6"
       >
     </ClientOnly>
@@ -73,6 +77,7 @@ const goBack = () => {
 
     <CustomButton
         v-if="props.showSearch"
+        :aria-label="t('appHeader.search')"
         class="w-10"
         color="default"
         right-icon="fa-magnifying-glass"

@@ -23,6 +23,8 @@ const props = withDefaults(defineProps<AppHeaderProps>(), {
   modelValue: "",
 });
 
+const { t } = useI18n();
+
 const goBack = () => {
   router.back();
 };
@@ -58,6 +60,7 @@ const goBack = () => {
                 : '../images/appHeader_logo_light.svg'
             "
           alt="Logo image"
+          aria-hidden="true"
           class="h-6"
       >
     </ClientOnly>
@@ -73,6 +76,7 @@ const goBack = () => {
 
     <CustomButton
         v-if="props.showSearch"
+        :aria-label="t('appHeader.search')"
         class="w-10"
         color="default"
         right-icon="fa-magnifying-glass"
